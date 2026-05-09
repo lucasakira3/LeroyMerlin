@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --lm-green: #00843d;
+  --lm-yellow: #ffd100;
+  --lm-dark: #1a1a1a;
+  --lm-light: #f5f5f5;
+  --lm-orange: #e87722;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--lm-dark);
+}
