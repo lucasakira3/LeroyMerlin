@@ -38,5 +38,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# data (arquivo grande gerado localmente)
-data/produtos.json
+# data/produtos.json incluído no repo com dados mockados

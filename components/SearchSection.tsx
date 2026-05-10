@@ -4,6 +4,7 @@ import { useState } from 'react'
 import SearchBar from './SearchBar'
 import ImageUpload from './ImageUpload'
 import StoreMap from './StoreMap'
+import ProdutoDrawer from './ProdutoDrawer'
 import { MapPin } from 'lucide-react'
 import type { SearchResult } from '@/types/produto'
 
@@ -30,6 +31,7 @@ export default function SearchSection() {
   const [loading, setLoading] = useState(false)
   const [queryProcessada, setQueryProcessada] = useState('')
   const [loja, setLoja] = useState(LOJAS[0])
+  const [produtoDrawer, setProdutoDrawer] = useState<SearchResult['produto'] | null>(null)
 
   const handleSearchResults = (results: SearchResult[], query: string) => {
     setResultados(results)
@@ -43,6 +45,7 @@ export default function SearchSection() {
 
   return (
     <div className="space-y-4">
+      <ProdutoDrawer produto={produtoDrawer} onClose={() => setProdutoDrawer(null)} />
       {/* Seletor de loja */}
       <div className="flex items-center gap-2">
         <MapPin size={15} className="text-lm-green flex-shrink-0" />
@@ -90,6 +93,7 @@ export default function SearchSection() {
             resultados={resultados}
             loja={loja}
             totalEstimado={resultados.reduce((sum, r) => sum + ((r.produto as any).preco ?? 0), 0)}
+            onSelect={setProdutoDrawer}
           />
         </div>
       )}

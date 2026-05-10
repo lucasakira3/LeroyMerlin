@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal } from 'lucide-react'
+import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal, Info } from 'lucide-react'
 import StoreMap from './StoreMap'
+import ProdutoDrawer from './ProdutoDrawer'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 
 const LOJAS = [
@@ -39,6 +40,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const mapaRef = useRef<HTMLDivElement>(null)
   const [filtroComplexidade, setFiltroComplexidade] = useState<string>('Todos')
   const [filtroEstoque, setFiltroEstoque] = useState(false)
+  const [produtoDrawer, setProdutoDrawer] = useState<ProdutoSemEmbedding | null>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -66,6 +68,10 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
 
   return (
     <div>
+      <ProdutoDrawer
+        produto={produtoDrawer as any}
+        onClose={() => setProdutoDrawer(null)}
+      />
       {/* Header da categoria */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
@@ -194,12 +200,20 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
                   </span>
                 </div>
 
-                {/* Badge selecionado */}
-                {sel && (
-                  <div className="mt-2 flex items-center gap-1 text-lm-green text-[11px] font-semibold">
-                    <CheckCircle2 size={13} /> Selecionado
-                  </div>
-                )}
+                {/* Rodapé do card */}
+                <div className="mt-2 flex items-center justify-between">
+                  {sel ? (
+                    <div className="flex items-center gap-1 text-lm-green text-[11px] font-semibold">
+                      <CheckCircle2 size={13} /> Selecionado
+                    </div>
+                  ) : <span />}
+                  <button
+                    onClick={e => { e.stopPropagation(); setProdutoDrawer(p) }}
+                    className="flex items-center gap-1 text-[11px] font-semibold text-lm-green border border-lm-green/30 rounded-full px-2 py-0.5 hover:bg-lm-green/10 transition-colors"
+                  >
+                    <Info size={11} /> Detalhes
+                  </button>
+                </div>
               </button>
             )
           })}

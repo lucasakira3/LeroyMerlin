@@ -53,7 +53,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Descreva seu projeto" }, { status: 400 });
     }
 
-    // 1. Gemini analisa o projeto e gera lista de materiais
     const result = await flashModel.generateContent([
       PROMPT_SISTEMA,
       `Projeto do cliente: ${descricao}`,
@@ -63,7 +62,6 @@ export async function POST(req: NextRequest) {
     const jsonStr = texto.replace(/```json\n?|\n?```/g, "").trim();
     const projeto = JSON.parse(jsonStr);
 
-    // 2. Para cada item, busca o produto mais próximo na base
     const produtos = await carregarProdutos();
     const itensComProduto = projeto.itens.map((item: any) => ({
       ...item,
@@ -72,7 +70,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ...projeto, itens: itensComProduto });
   } catch (err) {
-    console.error("[POST /api/projeto]", err);
+    const msg = err instanceof Error ? err.message : "Erro desconhecido";
+    console.error("[POST /api/projeto]", msg);
     return NextResponse.json(
       { error: "Não foi possível analisar o projeto. Tente novamente." },
       { status: 500 }

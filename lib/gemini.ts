@@ -13,7 +13,7 @@ export const embeddingModel = genAI.getGenerativeModel({
   model: "text-embedding-004",
 });
 
-// gemini-2.0-flash: rápido e barato, suporte a visão e texto
+// gemini-2.5-flash: mais recente, suporte a visão e texto
 export const flashModel = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.5-flash",
 });

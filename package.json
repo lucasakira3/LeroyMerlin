@@ -11,6 +11,7 @@
     "processar-csv": "tsx scripts/processar-csv.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.95.1",
     "@google/generative-ai": "^0.24.1",
     "lucide-react": "0.468.0",
     "next": "14.2.0",

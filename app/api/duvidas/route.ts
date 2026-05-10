@@ -16,25 +16,27 @@ Se não souber algo específico, diga honestamente e oriente o cliente a buscar 
 
 export async function POST(request: NextRequest) {
   try {
-    const { pergunta } = await request.json();
+    const { pergunta, contexto } = await request.json();
 
     if (!pergunta?.trim()) {
       return NextResponse.json({ error: "Pergunta não pode ser vazia" }, { status: 400 });
     }
 
+    const mensagemUsuario = contexto
+      ? `Contexto do produto:\n${contexto}\n\nPergunta do cliente: ${pergunta}`
+      : `Pergunta do cliente: ${pergunta}`;
+
     const result = await flashModel.generateContent([
       SYSTEM_PROMPT,
-      `Pergunta do cliente: ${pergunta}`,
+      mensagemUsuario,
     ]);
 
     const resposta = result.response.text().trim();
 
     return NextResponse.json({ resposta });
   } catch (error) {
-    console.error("[POST /api/duvidas] Erro:", error);
-    return NextResponse.json(
-      { error: "Serviço temporariamente indisponível. Tente novamente em instantes." },
-      { status: 500 }
-    );
+    const msg = error instanceof Error ? error.message : "Erro desconhecido";
+    console.error("[POST /api/duvidas] Erro:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

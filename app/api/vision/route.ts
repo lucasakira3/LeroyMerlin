@@ -3,7 +3,6 @@ import { flashModel } from "@/lib/gemini";
 import { buscarProdutos } from "@/lib/search";
 import type { VisionRequest, VisionResponse } from "@/types/produto";
 
-// Prompt fixo para identificação de produto Leroy Merlin via imagem
 const VISION_PROMPT =
   "Você é um assistente especializado em produtos de construção e reforma da Leroy Merlin. " +
   "Analise a imagem fornecida e identifique o produto mostrado. " +
@@ -12,15 +11,15 @@ const VISION_PROMPT =
   "Se não conseguir identificar nenhum produto de construção ou reforma, responda exatamente: " +
   "'Produto não identificado'.";
 
-// Limite de tamanho da imagem em base64: ~4MB em bytes
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024;
+
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = (await request.json()) as VisionRequest & { mimeType?: string };
     const { image, mimeType = "image/jpeg" } = body;
 
-    // Validação: imagem é obrigatória
     if (!image || image.trim().length === 0) {
       return NextResponse.json(
         { error: "O campo 'image' é obrigatório (base64 sem prefixo data:image/)." },
@@ -28,7 +27,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Validação: tamanho máximo de 4MB
     const imageSizeBytes = Buffer.byteLength(image, "base64");
     if (imageSizeBytes > MAX_IMAGE_SIZE_BYTES) {
       return NextResponse.json(
@@ -37,31 +35,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Envia imagem ao Gemini Flash Vision com o prompt de identificação
+    const validMime = ALLOWED_MIME_TYPES.includes(mimeType) ? mimeType : "image/jpeg";
+
     const result = await flashModel.generateContent([
       VISION_PROMPT,
-      {
-        inlineData: {
-          mimeType,
-          data: image,
-        },
-      },
+      { inlineData: { mimeType: validMime, data: image } },
     ]);
 
-    const descricaoIdentificada =
-      result.response.text().trim() || "Produto não identificado";
+    const descricaoIdentificada = result.response.text().trim() || "Produto não identificado";
 
-    // Se o modelo não identificou produto, retorna resposta vazia sem busca
     if (descricaoIdentificada === "Produto não identificado") {
       const response: VisionResponse = {
         descricao_identificada: "Produto não identificado",
         resultados: [],
         total: 0,
       };
-      return NextResponse.json(response, { status: 200 });
+      return NextResponse.json(response);
     }
 
-    // Busca produtos semanticamente similares à descrição identificada
     const resultados = await buscarProdutos(descricaoIdentificada, 5);
 
     const response: VisionResponse = {
@@ -70,12 +61,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       total: resultados.length,
     };
 
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response);
   } catch (error) {
-    console.error("[POST /api/vision] Erro:", error);
-    return NextResponse.json(
-      { error: "Falha ao processar a imagem. Tente novamente." },
-      { status: 500 }
-    );
+    const msg = error instanceof Error ? error.message : "Erro desconhecido";
+    console.error("[POST /api/vision] Erro:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

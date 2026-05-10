@@ -92,10 +92,11 @@ interface Props {
   resultados: SearchResult[]
   loja: string
   totalEstimado?: number
+  onSelect?: (produto: SearchResult['produto']) => void
 }
 
-export default function StoreMap({ resultados, loja, totalEstimado }: Props) {
-  const [hovered, setHovered] = useState<string | null>(null)
+export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: Props) {
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const pins = resultados
     .map((r, i) => {
@@ -105,7 +106,11 @@ export default function StoreMap({ resultados, loja, totalEstimado }: Props) {
     })
     .filter(Boolean) as Array<SearchResult & { pos: {x:number;y:number}; color:string; idx:number }>
 
-  const hovPin = hovered ? pins.find(p => p.produto.id === hovered) : null
+  const selPin = selectedId ? pins.find(p => p.produto.id === selectedId) : null
+
+  function handlePinClick(pin: typeof pins[0]) {
+    setSelectedId(prev => prev === pin.produto.id ? null : pin.produto.id)
+  }
 
   const renderCorredor = (n: number, row: 1 | 2) => {
     const idx = row === 1 ? n - 1 : n - 26
@@ -153,7 +158,55 @@ export default function StoreMap({ resultados, loja, totalEstimado }: Props) {
         </div>
       </div>
 
-      <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white">
+      <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white relative">
+        {/* Info box HTML — aparece ao clicar num pin */}
+        {selPin && (() => {
+          const { pos, produto, color } = selPin
+          const preco = (produto as any).preco as number | undefined
+          const leftPct = (pos.x / VW) * 100
+          const topPct  = (pos.y / VH)  * 100
+          const flipX = leftPct > 70
+          const flipY = topPct  > 55
+          return (
+            <div
+              className="absolute z-20 w-52 bg-white rounded-xl shadow-xl border-2 pointer-events-auto"
+              style={{
+                borderColor: color,
+                left:   flipX ? 'auto' : `calc(${leftPct}% + 14px)`,
+                right:  flipX ? `calc(${100 - leftPct}% + 14px)` : 'auto',
+                top:    flipY ? 'auto' : `calc(${topPct}% + 14px)`,
+                bottom: flipY ? `calc(${100 - topPct}% + 14px)` : 'auto',
+              }}
+            >
+              <div className="rounded-t-[10px] px-3 py-2" style={{ backgroundColor: `${color}18` }}>
+                <p className="text-[11px] font-black" style={{ color }}>📍 {produto.corredor}</p>
+              </div>
+              <div className="px-3 py-2">
+                <p className="text-xs font-semibold text-gray-800 leading-tight mb-1 line-clamp-2">
+                  {produto.produto}
+                </p>
+                {preco != null && (
+                  <p className="text-sm font-black text-lm-green">
+                    {Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </p>
+                )}
+                <p className="text-[10px] text-gray-400 mt-0.5">
+                  {produto.estoque > 0 ? `${produto.estoque} un. em estoque` : 'Sem estoque'}
+                </p>
+                {onSelect && (
+                  <button
+                    onClick={() => { onSelect(produto); setSelectedId(null) }}
+                    className="mt-2 w-full text-[11px] font-bold text-white rounded-lg py-1.5 transition-colors"
+                    style={{ backgroundColor: color }}
+                  >
+                    Ver detalhes →
+                  </button>
+                )}
+              </div>
+            </div>
+          )
+        })()}
+
         <svg viewBox={`0 0 ${VW} ${VH}`} className="w-full" style={{ display: 'block' }}>
           <rect width={VW} height={VH} fill="#eef2f7" />
 
@@ -244,88 +297,64 @@ export default function StoreMap({ resultados, loja, totalEstimado }: Props) {
             fill="#475569" fontFamily="Inter,sans-serif" letterSpacing="4">ENTRADA PRINCIPAL</text>
 
           {/* Pins */}
-          {pins.map(pin => (
-            <g key={pin.produto.id}
-              onMouseEnter={() => setHovered(pin.produto.id)}
-              onMouseLeave={() => setHovered(null)}
-              style={{ cursor: 'pointer' }}>
-              <circle cx={pin.pos.x} cy={pin.pos.y+2} r="11" fill="rgba(0,0,0,0.2)" />
-              <circle cx={pin.pos.x} cy={pin.pos.y} r="15" fill={pin.color} opacity="0">
-                <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
-              </circle>
-              <circle cx={pin.pos.x} cy={pin.pos.y} r="11" fill={pin.color} stroke="white" strokeWidth="2.5" />
-              <text x={pin.pos.x} y={pin.pos.y+4} textAnchor="middle"
-                fontSize="10" fontWeight="800" fill="white" fontFamily="Inter,sans-serif">{pin.idx}</text>
-            </g>
-          ))}
-
-          {/* Tooltip */}
-          {hovPin && (() => {
-            const { pos, produto, color } = hovPin
-            const preco = (produto as any).preco
-            const precoStr = preco != null
-              ? Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-              : null
-            const tooltipH = precoStr ? 80 : 64
-            const tx = Math.min(Math.max(pos.x - 95, 8), VW - 212)
-            const ty = pos.y > 350 ? pos.y - tooltipH - 4 : pos.y + 18
+          {pins.map(pin => {
+            const isSel = selectedId === pin.produto.id
             return (
-              <g>
-                <rect x={tx} y={ty} width="204" height={tooltipH} rx="7"
-                  fill="white" stroke={color} strokeWidth="1.8"
-                  filter="drop-shadow(0 3px 8px rgba(0,0,0,0.18))" />
-                <rect x={tx} y={ty} width="204" height="20" rx="7" fill={color} opacity="0.12" />
-                <text x={tx+10} y={ty+14} fontSize="9" fill={color} fontWeight="800" fontFamily="Inter,sans-serif">
-                  📍 {produto.corredor}
-                </text>
-                <foreignObject x={tx+8} y={ty+20} width="188" height="30">
-                  <div xmlns="http://www.w3.org/1999/xhtml"
-                    style={{ fontSize: '10px', color: '#1f2937', lineHeight: '1.35',
-                      fontFamily: 'Inter,sans-serif', overflow: 'hidden',
-                      display: '-webkit-box', WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical' as const }}>
-                    {produto.produto}
-                  </div>
-                </foreignObject>
-                {precoStr && (
-                  <text x={tx+10} y={ty+58} fontSize="11" fontWeight="800" fill="#00843d" fontFamily="Inter,sans-serif">
-                    {precoStr}
-                  </text>
+              <g key={pin.produto.id}
+                onClick={() => handlePinClick(pin)}
+                style={{ cursor: 'pointer' }}>
+                <circle cx={pin.pos.x} cy={pin.pos.y+2} r="11" fill="rgba(0,0,0,0.2)" />
+                {isSel && (
+                  <circle cx={pin.pos.x} cy={pin.pos.y} r="18" fill={pin.color} opacity="0.25" />
                 )}
-                <text x={tx+10} y={ty+tooltipH-6} fontSize="8" fill="#94a3b8" fontFamily="Inter,sans-serif">
-                  {produto.estoque > 0 ? `${produto.estoque} un. em estoque` : 'Sem estoque'}
-                </text>
+                <circle cx={pin.pos.x} cy={pin.pos.y} r="15" fill={pin.color} opacity="0">
+                  <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
+                </circle>
+                <circle cx={pin.pos.x} cy={pin.pos.y} r={isSel ? 13 : 11}
+                  fill={pin.color} stroke="white" strokeWidth={isSel ? 3 : 2.5} />
+                <text x={pin.pos.x} y={pin.pos.y+4} textAnchor="middle"
+                  fontSize="10" fontWeight="800" fill="white" fontFamily="Inter,sans-serif">{pin.idx}</text>
               </g>
             )
-          })()}
+          })}
         </svg>
       </div>
 
       {/* Legenda */}
       {pins.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
-          {pins.map(pin => (
-            <div key={pin.produto.id}
-              onMouseEnter={() => setHovered(pin.produto.id)}
-              onMouseLeave={() => setHovered(null)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs cursor-pointer transition-all ${
-                hovered === pin.produto.id ? 'shadow-md scale-[1.03]' : 'hover:shadow-sm'
-              }`}
-              style={{ borderColor: pin.color, backgroundColor: `${pin.color}12` }}>
-              <span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black flex-shrink-0"
-                style={{ backgroundColor: pin.color }}>{pin.idx}</span>
-              <div className="min-w-0">
-                <p className="font-semibold text-gray-800 truncate max-w-[180px]">{pin.produto.produto}</p>
-                <p className="text-gray-500">{pin.produto.corredor} · {pin.produto.categoria}</p>
-                {(pin.produto as any).preco != null && (
-                  <p className="text-xs font-bold text-lm-green mt-0.5">
-                    {Number((pin.produto as any).preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                  </p>
+          {pins.map(pin => {
+            const isSel = selectedId === pin.produto.id
+            return (
+              <div key={pin.produto.id}
+                onClick={() => {
+                  if (onSelect) onSelect(pin.produto)
+                  else handlePinClick(pin)
+                }}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs cursor-pointer transition-all ${
+                  isSel ? 'shadow-md scale-[1.02]' : 'hover:shadow-sm'
+                }`}
+                style={{ borderColor: pin.color, backgroundColor: `${pin.color}12` }}>
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black flex-shrink-0"
+                  style={{ backgroundColor: pin.color }}>{pin.idx}</span>
+                <div className="min-w-0">
+                  <p className="font-semibold text-gray-800 truncate max-w-[180px]">{pin.produto.produto}</p>
+                  <p className="text-gray-500">{pin.produto.corredor} · {pin.produto.categoria}</p>
+                  {(pin.produto as any).preco != null && (
+                    <p className="text-xs font-bold text-lm-green mt-0.5">
+                      {Number((pin.produto as any).preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </p>
+                  )}
+                </div>
+                {onSelect && (
+                  <span className="ml-auto text-[10px] font-bold shrink-0" style={{ color: pin.color }}>
+                    Ver →
+                  </span>
                 )}
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
