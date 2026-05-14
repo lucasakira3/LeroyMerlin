@@ -14,6 +14,8 @@ const tabs = [
 export default function NavBar() {
   const pathname = usePathname()
 
+  if (pathname.startsWith('/funcionario')) return null;
+
   return (
     <header className="shadow-md" style={{ backgroundColor: '#2d6a4f' }}>
       <div className="px-6 flex items-center justify-between h-16">

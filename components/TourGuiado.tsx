@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { Search, Camera, Sparkles, MessageCircleQuestion, ArrowRight, MapPin, Brain, Clock, ChevronRight } from 'lucide-react'
 
 const TOUR_KEY = 'lm_tour_completo'
@@ -38,6 +39,8 @@ export default function TourGuiado() {
     }, 300)
   }
 
+  const pathname = usePathname()
+  if (pathname.startsWith('/funcionario')) return null;
   if (!visivel) return null
 
   const isUltimo = passo === 3

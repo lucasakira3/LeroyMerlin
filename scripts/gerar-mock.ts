@@ -387,7 +387,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco] of tools) {
-    list.push(p("Ferramentas", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number));
+    list.push(p("Ferramentas", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number));
   }
 
   // ELÉTRICA extras
@@ -400,7 +400,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco] of elItems) {
-    list.push(p("Elétrica", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number));
+    list.push(p("Elétrica", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number));
   }
 
   // PISOS extras
@@ -413,7 +413,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco, sust] of pisosExtra) {
-    list.push(p("Pisos e Cerâmica", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
+    list.push(p("Pisos e Cerâmica", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
   }
 
   // PINTURA extras
@@ -429,7 +429,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco] of pintExtra) {
-    list.push(p("Pintura", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number));
+    list.push(p("Pintura", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number));
   }
 
   // HIDRÁULICA extras
@@ -444,7 +444,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco, sust] of hidExtra) {
-    list.push(p("Hidráulica", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
+    list.push(p("Hidráulica", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
   }
 
   // ILUMINAÇÃO extras
@@ -457,7 +457,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco, sust] of ilumExtra) {
-    list.push(p("Iluminação", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
+    list.push(p("Iluminação", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
   }
 
   // JARDIM extras
@@ -471,7 +471,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco, sust] of jardimExtra) {
-    list.push(p("Jardim", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
+    list.push(p("Jardim", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
   }
 
   // BANHEIRO extras
@@ -484,7 +484,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco] of banhExtra) {
-    list.push(p("Banheiro", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number));
+    list.push(p("Banheiro", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number));
   }
 
   // CONSTRUÇÃO extras
@@ -498,7 +498,7 @@ function extra(): Produto[] {
   ] as const;
 
   for (const [nome, perg, resp, corr, compl, specs, tags, preco, sust] of constExtra) {
-    list.push(p("Construção", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
+    list.push(p("Construção", nome as string, perg as string, resp as string, corr as number, compl as Complexidade, specs as string, tags as unknown as string[], preco as number, (sust ?? "N/A") as Sustentabilidade));
   }
 
   return list;
