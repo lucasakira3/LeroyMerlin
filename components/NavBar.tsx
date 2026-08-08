@@ -1,19 +1,25 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Search, MessageCircleQuestion, CalendarCheck, Sparkles, LogIn, User } from 'lucide-react'
+import { getUsuarioLogado } from '@/lib/clientAuth'
 
 const tabs = [
   { href: '/', label: 'Buscar Produtos', icon: Search },
   { href: '/projeto', label: 'Projeto Guiado', icon: Sparkles },
   { href: '/duvidas', label: 'Tire Dúvidas', icon: MessageCircleQuestion },
   { href: '/agendamento', label: 'Agendar Visita', icon: CalendarCheck },
-  { href: '/conta', label: 'Minha Conta', icon: User },
 ]
 
 export default function NavBar() {
   const pathname = usePathname()
+  const [logado, setLogado] = useState(false)
+
+  useEffect(() => {
+    setLogado(getUsuarioLogado() !== null)
+  }, [])
 
   if (pathname.startsWith('/funcionario')) return null;
 
@@ -31,7 +37,7 @@ export default function NavBar() {
           />
         </Link>
 
-        {/* Tabs + login — direita */}
+        {/* Tabs + login/conta — direita */}
         <div className="flex items-center gap-3 h-full">
           <nav className="flex items-center gap-1 h-full py-2.5">
             {tabs.map(({ href, label, icon: Icon }) => {
@@ -53,13 +59,27 @@ export default function NavBar() {
             })}
           </nav>
 
-          <Link
-            href="/funcionario/login"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-green-500 shadow-soft hover:bg-green-400 transition-colors"
-          >
-            <LogIn size={15} />
-            Login
-          </Link>
+          {logado ? (
+            <Link
+              href="/conta"
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                pathname === '/conta'
+                  ? 'bg-white/15 text-white'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <User size={15} />
+              Minha Conta
+            </Link>
+          ) : (
+            <Link
+              href="/funcionario/login"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-green-500 shadow-soft hover:bg-green-400 transition-colors"
+            >
+              <LogIn size={15} />
+              Login
+            </Link>
+          )}
         </div>
 
       </div>
