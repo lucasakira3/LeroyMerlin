@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import AgendamentoForm from '@/components/AgendamentoForm'
 import AgendamentosLista from '@/components/AgendamentosLista'
+import Card from '@/components/ui/Card'
+import PageHeader from '@/components/ui/PageHeader'
 import { CalendarPlus, CalendarCheck } from 'lucide-react'
 
 export default function AgendamentoPage() {
@@ -10,13 +12,18 @@ export default function AgendamentoPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
+      <PageHeader
+        title="Agendar Visita à Loja"
+        description="Marque um atendimento presencial com um especialista Leroy Merlin, sem custo e sem compromisso."
+      />
+
       {/* Tabs da página */}
-      <div className="flex gap-1 mb-6 bg-white border border-gray-200 rounded-xl p-1 w-fit shadow-sm">
+      <div className="flex gap-1 mb-6 bg-white border border-gray-100 rounded-xl p-1 w-fit shadow-soft">
         <button
           onClick={() => setAba('novo')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
             aba === 'novo'
-              ? 'bg-lm-green text-white shadow-sm'
+              ? 'bg-lm-green text-white shadow-soft'
               : 'text-gray-500 hover:text-lm-green'
           }`}
         >
@@ -25,9 +32,9 @@ export default function AgendamentoPage() {
         </button>
         <button
           onClick={() => setAba('consultar')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
             aba === 'consultar'
-              ? 'bg-lm-green text-white shadow-sm'
+              ? 'bg-lm-green text-white shadow-soft'
               : 'text-gray-500 hover:text-lm-green'
           }`}
         >
@@ -38,18 +45,18 @@ export default function AgendamentoPage() {
 
       {aba === 'novo' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <Card className="lg:col-span-2">
             <div className="mb-6">
-              <h1 className="text-xl font-bold text-lm-dark">Agendar visita presencial</h1>
+              <h2 className="text-xl font-bold text-lm-dark">Agendar visita presencial</h2>
               <p className="text-sm text-gray-500 mt-1">
                 Converse com um especialista na loja mais próxima. Atendimento gratuito, sem compromisso.
               </p>
             </div>
             <AgendamentoForm onConfirmado={() => setAba('consultar')} />
-          </div>
+          </Card>
 
           <div className="space-y-4">
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-5">
+            <Card padding="sm">
               <h2 className="text-sm font-bold text-lm-dark mb-3">O que esperar da visita</h2>
               <ul className="space-y-3">
                 {[
@@ -67,8 +74,8 @@ export default function AgendamentoPage() {
                   </li>
                 ))}
               </ul>
-            </div>
-            <div className="bg-lm-yellow/20 border border-lm-yellow/40 rounded-lg p-4">
+            </Card>
+            <div className="bg-lm-yellow/20 border border-lm-yellow/40 rounded-card p-4">
               <p className="text-xs font-semibold text-lm-dark mb-1">Precisa de ajuda agora?</p>
               <p className="text-xs text-gray-600 mb-3">Fale com um especialista pelo WhatsApp.</p>
               <a href="https://wa.me/551140071380" target="_blank" rel="noopener noreferrer"
@@ -77,13 +84,13 @@ export default function AgendamentoPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <Card>
           <div className="mb-5">
             <h2 className="text-xl font-bold text-lm-dark">Meus Agendamentos</h2>
             <p className="text-sm text-gray-500 mt-1">Consulte, acompanhe e cancele suas visitas agendadas.</p>
           </div>
           <AgendamentosLista />
-        </div>
+        </Card>
       )}
     </div>
   )

@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { CalendarCheck, CheckCircle2, ChevronRight } from 'lucide-react'
 import { salvarAgendamento } from './AgendamentosLista'
+import Button from './ui/Button'
+import Card from './ui/Card'
 
 const lojas = [
   'Interlagos — São Paulo/SP',
@@ -75,13 +77,13 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
         <h2 className="text-2xl font-bold text-lm-dark mb-2">Visita agendada!</h2>
         <p className="text-gray-500 mb-6">Você receberá uma confirmação por e-mail e SMS.</p>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-5 text-left space-y-3 mb-6">
+        <Card padding="sm" className="text-left space-y-3 mb-6">
           <Row label="Serviço" value={servico?.label ?? form.servico} />
           <Row label="Loja" value={form.loja} />
           <Row label="Data" value={`${form.data} às ${form.horario}`} />
           <Row label="Nome" value={form.nome} />
           <Row label="Contato" value={form.telefone || form.email} />
-        </div>
+        </Card>
 
         <button
           onClick={() => { setConfirmado(false); setStep(1); setForm({ servico: '', loja: '', data: '', horario: '', nome: '', telefone: '', email: '', observacao: '' }) }}
@@ -120,7 +122,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 <button
                   key={s.id}
                   onClick={() => set('servico', s.id)}
-                  className={`text-left p-3 rounded-lg border transition-all ${
+                  className={`text-left p-3 rounded-xl border transition-all ${
                     form.servico === s.id
                       ? 'border-lm-green bg-lm-green/5 ring-1 ring-lm-green'
                       : 'border-gray-200 bg-white hover:border-lm-green/40'
@@ -138,20 +140,20 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
             <select
               value={form.loja}
               onChange={(e) => set('loja', e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green bg-white"
+              className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
             >
               <option value="">Selecione uma loja...</option>
               {lojas.map((l) => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
 
-          <button
+          <Button
             disabled={!form.servico || !form.loja}
             onClick={() => setStep(2)}
-            className="w-full h-12 bg-lm-green text-white rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-40 hover:bg-green-700 transition-colors"
+            className="w-full h-12"
           >
             Continuar <ChevronRight size={16} />
-          </button>
+          </Button>
         </div>
       )}
 
@@ -168,7 +170,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                   <button
                     key={iso}
                     onClick={() => set('data', label)}
-                    className={`p-2 rounded-lg border text-center text-xs transition-all ${
+                    className={`p-2 rounded-xl border text-center text-xs transition-all ${
                       form.data === label
                         ? 'border-lm-green bg-lm-green/10 text-lm-green font-semibold ring-1 ring-lm-green'
                         : 'border-gray-200 bg-white hover:border-lm-green/40'
@@ -188,7 +190,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 <button
                   key={h}
                   onClick={() => set('horario', h)}
-                  className={`py-2.5 rounded-lg border text-sm font-medium transition-all ${
+                  className={`py-2.5 rounded-xl border text-sm font-medium transition-all ${
                     form.horario === h
                       ? 'border-lm-green bg-lm-green text-white'
                       : 'border-gray-200 bg-white hover:border-lm-green/40'
@@ -201,16 +203,16 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
           </div>
 
           <div className="flex gap-3">
-            <button onClick={() => setStep(1)} className="flex-1 h-12 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+            <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 h-12 border border-gray-200">
               Voltar
-            </button>
-            <button
+            </Button>
+            <Button
               disabled={!form.data || !form.horario}
               onClick={() => setStep(3)}
-              className="flex-1 h-12 bg-lm-green text-white rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-40 hover:bg-green-700 transition-colors"
+              className="flex-1 h-12"
             >
               Continuar <ChevronRight size={16} />
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -227,7 +229,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
               value={form.nome}
               onChange={(e) => set('nome', e.target.value)}
               placeholder="João da Silva"
-              className="w-full h-11 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green"
+              className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
           </div>
 
@@ -239,7 +241,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 value={form.telefone}
                 onChange={(e) => set('telefone', e.target.value)}
                 placeholder="(11) 99999-9999"
-                className="w-full h-11 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green"
+                className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30"
               />
             </div>
             <div>
@@ -249,7 +251,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 value={form.email}
                 onChange={(e) => set('email', e.target.value)}
                 placeholder="joao@email.com"
-                className="w-full h-11 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green"
+                className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30"
               />
             </div>
           </div>
@@ -261,12 +263,12 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
               onChange={(e) => set('observacao', e.target.value)}
               placeholder="Descreva brevemente o que precisa..."
               rows={3}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green resize-none"
+              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 resize-none"
             />
           </div>
 
           {/* Resumo */}
-          <div className="bg-lm-green/5 border border-lm-green/20 rounded-lg p-4 space-y-1.5">
+          <div className="bg-lm-green/5 border border-lm-green/20 rounded-xl p-4 space-y-1.5">
             <p className="text-xs font-semibold text-lm-green mb-2">Resumo do agendamento</p>
             <Row label="Serviço" value={servicos.find((s) => s.id === form.servico)?.label ?? ''} />
             <Row label="Loja" value={form.loja} />
@@ -274,10 +276,10 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
           </div>
 
           <div className="flex gap-3">
-            <button onClick={() => setStep(2)} className="flex-1 h-12 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+            <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 h-12 border border-gray-200">
               Voltar
-            </button>
-            <button
+            </Button>
+            <Button
               disabled={!form.nome || (!form.telefone && !form.email)}
               onClick={() => {
                 salvarAgendamento({
@@ -294,10 +296,10 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 setConfirmado(true)
                 setTimeout(() => onConfirmado?.(), 2000)
               }}
-              className="flex-1 h-12 bg-lm-green text-white rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-40 hover:bg-green-700 transition-colors"
+              className="flex-1 h-12"
             >
               <CalendarCheck size={16} /> Confirmar visita
-            </button>
+            </Button>
           </div>
         </div>
       )}

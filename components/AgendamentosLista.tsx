@@ -1,7 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CalendarCheck, MapPin, Clock, Trash2, Tag } from 'lucide-react'
+import { CalendarCheck, MapPin, Clock, Trash2, Tag, Check, X } from 'lucide-react'
+import Card from './ui/Card'
+import Badge from './ui/Badge'
+import Button from './ui/Button'
 
 export interface Agendamento {
   id: string
@@ -18,9 +21,9 @@ export interface Agendamento {
   status: 'confirmado' | 'cancelado'
 }
 
-const STATUS_STYLE = {
-  confirmado: 'bg-lm-green/10 text-lm-green border-lm-green/20',
-  cancelado:  'bg-red-50 text-red-500 border-red-200',
+const STATUS_TONE: Record<Agendamento['status'], 'green' | 'red'> = {
+  confirmado: 'green',
+  cancelado: 'red',
 }
 
 export function salvarAgendamento(ag: Omit<Agendamento, 'id' | 'criadoEm' | 'status'>) {
@@ -71,7 +74,7 @@ export default function AgendamentosLista() {
             className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
               filtro === f
                 ? 'bg-lm-green text-white border-lm-green'
-                : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+                : 'bg-white text-gray-500 border-gray-100 hover:border-lm-green/40'
             }`}
           >
             {f === 'todos' ? 'Todos' : f === 'confirmado' ? 'Confirmados' : 'Cancelados'}
@@ -98,38 +101,41 @@ export default function AgendamentosLista() {
       {/* Cards de agendamento */}
       <div className="space-y-3">
         {filtrados.map(ag => (
-          <div
+          <Card
             key={ag.id}
-            className={`bg-white border rounded-xl p-4 ${
-              ag.status === 'cancelado' ? 'opacity-60 border-gray-200' : 'border-gray-200 shadow-sm'
-            }`}
+            padding="sm"
+            className={ag.status === 'cancelado' ? 'opacity-60' : ''}
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-lm-dark">{ag.servicoLabel}</span>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${STATUS_STYLE[ag.status]}`}>
-                    {ag.status === 'confirmado' ? '✓ Confirmado' : '✗ Cancelado'}
-                  </span>
+                  <Badge tone={STATUS_TONE[ag.status]}>
+                    {ag.status === 'confirmado' ? <Check size={11} /> : <X size={11} />}
+                    {ag.status === 'confirmado' ? 'Confirmado' : 'Cancelado'}
+                  </Badge>
                 </div>
                 <p className="text-xs text-gray-400 mt-0.5">#{ag.id} · Criado em {ag.criadoEm}</p>
               </div>
               {ag.status === 'confirmado' && (
-                <button
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => cancelar(ag.id)}
-                  className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 border border-red-200 rounded-lg px-2 py-1 hover:bg-red-50 transition-colors"
                 >
                   <Trash2 size={11} /> Cancelar
-                </button>
+                </Button>
               )}
               {ag.status === 'cancelado' && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => remover(ag.id)}
-                  className="text-xs text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg px-2 py-1 hover:bg-gray-50 transition-colors"
+                  className="border border-gray-200"
                 >
                   Remover
-                </button>
+                </Button>
               )}
             </div>
 
@@ -141,11 +147,11 @@ export default function AgendamentosLista() {
             </div>
 
             {ag.observacao && (
-              <p className="mt-2.5 text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">
+              <p className="mt-2.5 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
                 <span className="font-medium">Obs:</span> {ag.observacao}
               </p>
             )}
-          </div>
+          </Card>
         ))}
       </div>
     </div>
