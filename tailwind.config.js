@@ -16,6 +16,13 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
+      borderRadius: {
+        card: '1rem',
+      },
+      boxShadow: {
+        soft: '0 2px 12px -2px rgba(0, 0, 0, 0.08)',
+        'soft-lg': '0 8px 24px -4px rgba(0, 0, 0, 0.10)',
+      },
     },
   },
   plugins: [],
