@@ -1,10 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { LogOut } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
+import Button from '@/components/ui/Button'
 import ProductCard from '@/components/ProductCard'
 import { getFavoritosIds } from '@/lib/clientFavoritos'
 import { getHistoricoIds } from '@/lib/clientHistorico'
+import { getUsuarioLogado, logoutUsuario } from '@/lib/clientAuth'
 import type { SearchResult } from '@/types/produto'
 
 async function buscarProdutos(ids: string[]): Promise<SearchResult[]> {
@@ -70,18 +74,44 @@ function SecaoProdutos({
 }
 
 export default function ContaPage() {
+  const router = useRouter()
+  const [usuario, setUsuario] = useState<{ email: string } | null>(null)
   const [favoritosIds, setFavoritosIds] = useState<string[]>([])
   const [historicoIds, setHistoricoIds] = useState<string[]>([])
 
   useEffect(() => {
+    const usuarioLogado = getUsuarioLogado()
+    if (!usuarioLogado) {
+      router.push('/funcionario/login')
+      return
+    }
+    setUsuario(usuarioLogado)
     setFavoritosIds(getFavoritosIds())
     setHistoricoIds(getHistoricoIds())
-  }, [])
+  }, [router])
+
+  const handleSair = () => {
+    logoutUsuario()
+    window.location.href = '/'
+  }
+
+  if (!usuario) {
+    return null
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-8">
-        <PageHeader title="Minha Conta" description="Seus favoritos e produtos visitados recentemente" />
+        <PageHeader
+          title="Minha Conta"
+          description={`Olá, ${usuario.email}`}
+          action={
+            <Button variant="ghost" size="sm" onClick={handleSair}>
+              <LogOut size={16} />
+              Sair
+            </Button>
+          }
+        />
         <SecaoProdutos
           titulo="Favoritos"
           ids={favoritosIds}
