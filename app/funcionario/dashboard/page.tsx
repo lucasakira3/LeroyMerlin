@@ -1,6 +1,9 @@
 'use client'
 
 import { Users, Package, MessageSquare, TrendingUp, AlertTriangle } from 'lucide-react'
+import PageHeader from '@/components/ui/PageHeader'
+import Card from '@/components/ui/Card'
+import Badge from '@/components/ui/Badge'
 
 export default function DashboardPage() {
   const stats = [
@@ -12,49 +15,53 @@ export default function DashboardPage() {
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-black text-lm-dark">Visão Geral</h1>
-        <p className="text-gray-500 mt-1">Bem-vindo ao painel de controle da loja.</p>
-      </div>
+      <PageHeader title="Visão Geral" description="Bem-vindo ao painel de controle da loja." />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start gap-4">
-            <div className={`p-3 rounded-xl text-white ${stat.color} shadow-sm`}>
+          <Card key={i} className="flex items-start gap-4">
+            <div className={`p-3 rounded-xl text-white ${stat.color} shadow-soft`}>
               <stat.icon size={24} />
             </div>
             <div>
-              <p className="text-gray-500 text-sm font-medium">{stat.label}</p>
-              <p className="text-2xl font-black text-lm-dark mt-1">{stat.value}</p>
+              <p className="text-3xl font-semibold text-gray-900">{stat.value}</p>
+              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Atividades Recentes */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-lm-dark mb-4 flex items-center gap-2">
-            <TrendingUp size={20} className="text-lm-green" />
-            Atividades Recentes
-          </h2>
-          <div className="space-y-4">
+        <Card padding="none">
+          <div className="p-6 pb-4">
+            <h2 className="text-lg font-bold text-lm-dark flex items-center gap-2">
+              <TrendingUp size={20} className="text-lm-green" />
+              Atividades Recentes
+            </h2>
+          </div>
+          <div>
             {[
               { text: 'Novo chamado aberto no setor de Ferramentas.', time: 'Há 5 min' },
               { text: 'Estoque de "Furadeira Bosch" ajustado para 15.', time: 'Há 12 min' },
               { text: 'Cliente solicitou ajuda com Projeto Guiado (Cozinha).', time: 'Há 25 min' },
               { text: 'Novo produto cadastrado: "Tinta Acrílica Suvinil".', time: 'Há 1 hora' },
-            ].map((act, i) => (
-              <div key={i} className="flex justify-between items-start pb-4 border-b border-gray-50 last:border-0 last:pb-0">
+            ].map((act, i, arr) => (
+              <div
+                key={i}
+                className={`flex justify-between items-start px-6 py-4 ${
+                  i < arr.length - 1 ? 'border-b border-gray-100' : ''
+                }`}
+              >
                 <p className="text-sm text-gray-700">{act.text}</p>
                 <span className="text-xs font-medium text-gray-400 whitespace-nowrap ml-4">{act.time}</span>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Alertas Prioritários */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <Card>
           <h2 className="text-lg font-bold text-lm-dark mb-4 flex items-center gap-2">
             <AlertTriangle size={20} className="text-red-500" />
             Alertas Prioritários
@@ -68,7 +75,7 @@ export default function DashboardPage() {
               <div key={i} className="bg-red-50 rounded-xl p-4 border border-red-100 flex justify-between items-center">
                 <div>
                   <p className="font-bold text-sm text-gray-800">{alert.item}</p>
-                  <p className="text-xs text-red-600 mt-0.5">{alert.reason}</p>
+                  <Badge tone="red" className="mt-1.5">{alert.reason}</Badge>
                 </div>
                 <button className="text-xs font-bold text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">
                   Resolver
@@ -76,7 +83,7 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   )
