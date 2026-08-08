@@ -62,7 +62,7 @@ export default function SearchBar({ onResults, loading, setLoading }: SearchBarP
           placeholder="O que você está procurando?"
           disabled={loading}
           aria-label="Buscar produto na Leroy Merlin"
-          className="w-full h-14 pl-12 pr-14 rounded-xl border border-gray-200 bg-white text-lm-dark placeholder-gray-400 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full h-14 pl-12 pr-14 rounded-xl border border-gray-200 bg-white text-lm-dark placeholder-gray-400 text-base shadow-soft focus:outline-none focus:ring-2 focus:ring-lm-green/30 focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
         />
         <div className="absolute right-4">
           <VoiceButton onTranscript={handleTranscript} disabled={loading} />
@@ -71,7 +71,7 @@ export default function SearchBar({ onResults, loading, setLoading }: SearchBarP
       <button
         type="submit"
         disabled={loading || !query.trim()}
-        className="mt-3 w-full h-12 bg-lm-green text-white font-semibold rounded-xl hover:bg-green-700 active:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="mt-4 w-full h-12 bg-lm-green text-white font-semibold rounded-xl hover:bg-green-700 active:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
       >
         {loading ? (
           <>

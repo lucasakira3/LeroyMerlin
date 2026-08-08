@@ -11,7 +11,7 @@ export default function ProductGrid({ resultados }: { resultados: SearchResult[]
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
+    <div className="space-y-3">
       {resultados.map((result) => (
         <ProductCard key={result.produto.id} result={result} />
       ))}
