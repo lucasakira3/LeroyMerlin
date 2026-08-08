@@ -6,6 +6,7 @@ import StockIndicator from '@/components/StockIndicator'
 import SustainabilityBadge from '@/components/SustainabilityBadge'
 import Card from '@/components/ui/Card'
 import PageHeader from '@/components/ui/PageHeader'
+import ProdutoAcoesCliente from '@/components/ProdutoAcoesCliente'
 
 interface PageProps {
   params: { id: string }
@@ -34,7 +35,11 @@ export default async function ProdutoPage({ params }: PageProps) {
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        <PageHeader title={produto.produto} description={produto.categoria} />
+        <PageHeader
+          title={produto.produto}
+          description={produto.categoria}
+          action={<ProdutoAcoesCliente produtoId={produto.id} />}
+        />
 
         {/* Corredor — seção mais proeminente */}
         <Card className="text-center">
