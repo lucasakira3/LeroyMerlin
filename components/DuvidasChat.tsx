@@ -80,8 +80,8 @@ export default function DuvidasChat() {
             <div className={`max-w-[80%] ${msg.tipo === 'usuario' ? 'items-end' : 'items-start'} flex flex-col`}>
               <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                 msg.tipo === 'especialista'
-                  ? 'bg-white border border-gray-200 text-lm-dark rounded-tl-sm'
-                  : 'bg-lm-green text-white rounded-tr-sm'
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'bg-lm-green text-white'
               }`}>
                 {msg.texto}
               </div>
@@ -95,7 +95,7 @@ export default function DuvidasChat() {
             <div className="w-8 h-8 rounded-full bg-lm-green text-white flex items-center justify-center flex-shrink-0">
               <Bot size={16} />
             </div>
-            <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3">
+            <div className="bg-gray-100 rounded-2xl px-4 py-3">
               <div className="flex gap-1">
                 <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -126,7 +126,7 @@ export default function DuvidasChat() {
       )}
 
       {/* Input */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-100 p-4">
         <form
           onSubmit={(e) => { e.preventDefault(); enviar(input) }}
           className="flex gap-2"

@@ -67,7 +67,7 @@ export default function VoiceButton({ onTranscript, disabled = false }: VoiceBut
       className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
         isListening
           ? 'bg-lm-green text-white animate-pulse'
-          : 'text-gray-400 hover:text-lm-green hover:bg-green-50'
+          : 'bg-gray-100 text-gray-400 hover:text-lm-green'
       } disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       <Mic size={18} />
