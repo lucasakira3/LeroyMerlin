@@ -52,7 +52,7 @@ export default function ProdutoDrawer({ produto, onClose }: Props) {
 
       {/* Painel lateral */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white rounded-l-card shadow-soft-lg flex flex-col transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {produto && <DrawerContent produto={produto} onClose={onClose} />}
       </div>

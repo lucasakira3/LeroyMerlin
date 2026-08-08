@@ -158,7 +158,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
         </div>
       </div>
 
-      <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white relative">
+      <div className="border border-gray-100 rounded-card overflow-hidden shadow-soft bg-white relative">
         {/* Info box HTML — aparece ao clicar num pin */}
         {selPin && (() => {
           const { pos, produto, color } = selPin
