@@ -1,13 +1,15 @@
+import Badge from './ui/Badge'
+
 interface StockIndicatorProps {
   estoque: number
 }
 
 export default function StockIndicator({ estoque }: StockIndicatorProps) {
   if (estoque === 0) {
-    return <span className="text-xs text-gray-400">Sem estoque</span>
+    return <Badge tone="gray">Sem estoque</Badge>
   }
   if (estoque < 10) {
-    return <span className="text-xs text-lm-orange font-medium">Últimas {estoque} unidades</span>
+    return <Badge tone="orange">Últimas {estoque} unidades</Badge>
   }
-  return <span className="text-xs text-lm-green font-medium">✓ Disponível</span>
+  return <Badge tone="green">✓ Disponível</Badge>
 }
