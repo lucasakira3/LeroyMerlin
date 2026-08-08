@@ -2,6 +2,10 @@
 
 import { useState } from 'react'
 import { Search, Plus, Edit2, Package, Tag } from 'lucide-react'
+import PageHeader from '@/components/ui/PageHeader'
+import Card from '@/components/ui/Card'
+import Badge from '@/components/ui/Badge'
+import Button from '@/components/ui/Button'
 
 // Simulando alguns produtos
 const initialProducts = [
@@ -28,31 +32,31 @@ export default function ProdutosPage() {
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex justify-between items-end mb-8">
-        <div>
-          <h1 className="text-2xl font-black text-lm-dark">Estoque e Produtos</h1>
-          <p className="text-gray-500 mt-1">Controle o inventário e adicione novos itens.</p>
-        </div>
-        <button className="flex items-center gap-2 bg-lm-green text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#007034] transition-colors">
-          <Plus size={18} /> Novo Produto
-        </button>
-      </div>
+      <PageHeader
+        title="Estoque e Produtos"
+        description="Controle o inventário e adicione novos itens."
+        action={
+          <Button>
+            <Plus size={18} /> Adicionar produto
+          </Button>
+        }
+      />
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <Card padding="none">
         <div className="p-4 border-b border-gray-100 flex gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Buscar produto por nome ou código..." 
+            <input
+              type="text"
+              placeholder="Buscar produto por nome ou código..."
               value={busca}
               onChange={e => setBusca(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50">
+          <Button variant="secondary">
             <Tag size={16} /> Categorias
-          </button>
+          </Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -81,26 +85,34 @@ export default function ProdutosPage() {
                     </div>
                   </td>
                   <td className="p-4">
-                    <span className="inline-block bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md text-xs font-medium">
-                      {produto.categoria}
-                    </span>
+                    <Badge tone="gray">{produto.categoria}</Badge>
                   </td>
                   <td className="p-4 text-right font-medium text-sm text-gray-700">
                     {produto.preco.toFixed(2).replace('.', ',')}
                   </td>
                   <td className="p-4 text-center">
                     <div className="flex items-center justify-center gap-3">
-                      <button 
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => alterarEstoque(produto.id, -1)}
-                        className="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 font-bold flex items-center justify-center"
-                      >-</button>
-                      <span className={`font-bold w-6 text-center ${produto.estoque < 10 ? 'text-red-500' : 'text-lm-dark'}`}>
-                        {produto.estoque}
-                      </span>
-                      <button 
+                        className="w-7 h-7 !p-0 rounded-full"
+                      >-</Button>
+                      {produto.estoque < 10 ? (
+                        <Badge tone="red" className="font-bold w-10 justify-center">
+                          {produto.estoque}
+                        </Badge>
+                      ) : (
+                        <span className="font-bold w-10 text-center text-lm-dark">
+                          {produto.estoque}
+                        </span>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => alterarEstoque(produto.id, 1)}
-                        className="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 font-bold flex items-center justify-center"
-                      >+</button>
+                        className="w-7 h-7 !p-0 rounded-full"
+                      >+</Button>
                     </div>
                   </td>
                   <td className="p-4 text-right">
@@ -120,7 +132,7 @@ export default function ProdutosPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }
