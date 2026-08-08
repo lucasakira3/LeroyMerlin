@@ -1,6 +1,15 @@
 'use client'
 
 import { Search, MoreVertical, Edit2, Trash2 } from 'lucide-react'
+import PageHeader from '@/components/ui/PageHeader'
+import Card from '@/components/ui/Card'
+import Badge from '@/components/ui/Badge'
+
+const statusTone = {
+  Ativo: 'green',
+  Inativo: 'gray',
+  VIP: 'yellow',
+} as const
 
 export default function ClientesPage() {
   const clientes = [
@@ -12,17 +21,17 @@ export default function ClientesPage() {
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex justify-between items-end mb-8">
-        <div>
-          <h1 className="text-2xl font-black text-lm-dark">Clientes</h1>
-          <p className="text-gray-500 mt-1">Gerencie a base de clientes da loja.</p>
-        </div>
-        <button className="bg-lm-green text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#007034] transition-colors">
-          + Novo Cliente
-        </button>
-      </div>
+      <PageHeader
+        title="Clientes"
+        description="Gerencie a base de clientes da loja."
+        action={
+          <button className="bg-lm-green text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#007034] transition-colors">
+            + Novo Cliente
+          </button>
+        }
+      />
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <Card padding="none">
         <div className="p-4 border-b border-gray-100 flex gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -45,9 +54,9 @@ export default function ClientesPage() {
                 <th className="p-4 font-bold text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody>
               {clientes.map(cliente => (
-                <tr key={cliente.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={cliente.id} className="hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0">
                   <td className="p-4">
                     <p className="font-bold text-lm-dark">{cliente.nome}</p>
                     <p className="text-xs text-gray-500 mt-0.5">ID: {cliente.id}</p>
@@ -57,18 +66,12 @@ export default function ClientesPage() {
                     <p className="text-xs text-gray-500 mt-0.5">{cliente.telefone}</p>
                   </td>
                   <td className="p-4 text-center">
-                    <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold">
-                      {cliente.compras}
-                    </span>
+                    <Badge tone="gray">{cliente.compras}</Badge>
                   </td>
                   <td className="p-4 text-center">
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
-                      cliente.status === 'VIP' ? 'bg-purple-100 text-purple-700' :
-                      cliente.status === 'Ativo' ? 'bg-green-100 text-green-700' :
-                      'bg-gray-100 text-gray-600'
-                    }`}>
+                    <Badge tone={statusTone[cliente.status as keyof typeof statusTone] ?? 'gray'}>
                       {cliente.status}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-2 text-gray-400">
@@ -82,7 +85,7 @@ export default function ClientesPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }
