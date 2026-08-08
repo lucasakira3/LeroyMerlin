@@ -17,7 +17,7 @@ export default function NavBar() {
   if (pathname.startsWith('/funcionario')) return null;
 
   return (
-    <header className="shadow-md" style={{ backgroundColor: '#2d6a4f' }}>
+    <header className="bg-lm-green shadow-md">
       <div className="px-6 flex items-center justify-between h-16">
 
         {/* Logo — esquerda */}
@@ -31,17 +31,17 @@ export default function NavBar() {
         </Link>
 
         {/* Tabs — direita */}
-        <nav className="flex items-center h-full">
+        <nav className="flex items-center gap-1 h-full py-2.5">
           {tabs.map(({ href, label, icon: Icon }) => {
             const active = pathname === href
             return (
               <Link
                 key={href}
                 href={href}
-                className={`flex items-center gap-2 px-5 h-full text-sm font-medium border-b-2 transition-colors ${
+                className={`flex items-center gap-2 px-4 h-full rounded-xl text-sm font-medium transition-colors ${
                   active
-                    ? 'border-lm-yellow text-white'
-                    : 'border-transparent text-white/70 hover:text-white hover:border-white/30'
+                    ? 'bg-white/15 text-white'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <Icon size={15} />
