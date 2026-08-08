@@ -5,6 +5,8 @@ import { MapPin, CheckCircle2, Circle, Map, ShoppingBag, Lightbulb, CalendarChec
 import StoreMap from './StoreMap'
 import type { SearchResult } from '@/types/produto'
 import Link from 'next/link'
+import Card from './ui/Card'
+import Button from './ui/Button'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP', 'Osasco — Osasco/SP', 'Aricanduva — São Paulo/SP',
@@ -158,14 +160,14 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
 
         {/* ── Coluna esquerda: lista ────────────────────── */}
         <div className="lg:col-span-3 space-y-3">
-          <h3 className="text-sm font-bold text-lm-dark">Lista de materiais</h3>
+          <h3 className="text-sm font-bold text-gray-900">Lista de materiais</h3>
 
           {projeto.itens.map((item, idx) => (
-            <div key={idx} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-              <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+            <div key={idx} className="space-y-2">
+              <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="text-xs font-mono text-gray-400 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>
-                  <span className="font-semibold text-sm text-lm-dark truncate">{item.material}</span>
+                  <span className="font-semibold text-sm text-gray-900 truncate">{item.material}</span>
                   <span className="text-xs text-gray-400 flex-shrink-0 hidden sm:block">· {item.quantidade}</span>
                 </div>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0 ml-2 ${PRIORIDADE[item.prioridade] || ''}`}>
@@ -174,41 +176,46 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
               </div>
 
               {item.resultados.length > 0 ? (
-                <div className="divide-y divide-gray-50">
+                <div className="space-y-2">
                   {item.resultados.map(r => {
                     const sel = selecionados.has(r.produto.id)
                     return (
-                      <button key={r.produto.id} onClick={() => toggle(r.produto.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${sel ? 'bg-lm-green/5' : 'hover:bg-gray-50'}`}>
-                        {sel
-                          ? <CheckCircle2 size={17} className="text-lm-green flex-shrink-0" />
-                          : <Circle size={17} className="text-gray-300 flex-shrink-0" />}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-lm-dark truncate">{r.produto.produto}</p>
-                          <div className="flex items-center gap-3 mt-0.5">
-                            <span className="flex items-center gap-1 text-xs text-lm-green font-bold">
-                              <MapPin size={10} /> {r.produto.corredor}
-                            </span>
-                            <span className={`text-xs ${r.produto.estoque === 0 ? 'text-gray-400' : r.produto.estoque < 10 ? 'text-lm-orange' : 'text-gray-400'}`}>
-                              {r.produto.estoque === 0 ? 'Sem estoque' : r.produto.estoque < 10 ? `Últ. ${r.produto.estoque}` : `${r.produto.estoque} un.`}
-                            </span>
+                      <button key={r.produto.id} onClick={() => toggle(r.produto.id)} className="w-full text-left block">
+                        <Card
+                          padding="sm"
+                          hoverable
+                          className={`flex items-center gap-3 transition-colors ${sel ? 'ring-2 ring-lm-green/40 bg-lm-green/5' : ''}`}
+                        >
+                          {sel
+                            ? <CheckCircle2 size={17} className="text-lm-green flex-shrink-0" />
+                            : <Circle size={17} className="text-gray-300 flex-shrink-0" />}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{r.produto.produto}</p>
+                            <div className="flex items-center gap-3 mt-0.5">
+                              <span className="flex items-center gap-1 text-xs text-lm-green font-bold">
+                                <MapPin size={10} /> {r.produto.corredor}
+                              </span>
+                              <span className={`text-xs ${r.produto.estoque === 0 ? 'text-gray-400' : r.produto.estoque < 10 ? 'text-lm-orange' : 'text-gray-400'}`}>
+                                {r.produto.estoque === 0 ? 'Sem estoque' : r.produto.estoque < 10 ? `Últ. ${r.produto.estoque}` : `${r.produto.estoque} un.`}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        {(r.produto as any).preco != null && (
-                          <span className="text-sm font-bold text-lm-dark flex-shrink-0">
-                            {Number((r.produto as any).preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                          </span>
-                        )}
+                          {(r.produto as any).preco != null && (
+                            <span className="text-sm font-bold text-gray-900 flex-shrink-0">
+                              {Number((r.produto as any).preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </span>
+                          )}
+                        </Card>
                       </button>
                     )
                   })}
                 </div>
               ) : (
-                <p className="px-4 py-2.5 text-xs text-gray-400 italic">Peça ao vendedor da seção {item.categoria}</p>
+                <p className="px-1 text-xs text-gray-400 italic">Peça ao vendedor da seção {item.categoria}</p>
               )}
 
               {item.observacao && (
-                <div className="px-4 py-2 bg-lm-green/5 border-t border-lm-green/10">
+                <div className="px-4 py-2 bg-lm-green/5 border border-lm-green/10 rounded-xl">
                   <p className="text-xs text-gray-500">💡 {item.observacao}</p>
                 </div>
               )}
@@ -216,16 +223,17 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
           ))}
 
           {/* CTA Agendamento */}
-          <div className="bg-lm-yellow/10 border border-lm-yellow/30 rounded-2xl p-5 mt-2">
-            <p className="text-sm font-bold text-lm-dark mb-1">Quer ajuda especializada?</p>
+          <Card className="bg-lm-yellow/10 border-lm-yellow/30 mt-2">
+            <p className="text-sm font-bold text-gray-900 mb-1">Quer ajuda especializada?</p>
             <p className="text-xs text-gray-500 mb-4">
               Nossos consultores avaliam seu projeto na loja, sem custo e sem compromisso.
             </p>
-            <Link href="/agendamento"
-              className="flex items-center justify-center gap-2 w-full bg-lm-green text-white py-3 rounded-xl text-sm font-bold hover:bg-green-700 transition-colors">
-              <CalendarCheck size={16} /> Agendar consulta com especialista
+            <Link href="/agendamento" className="block">
+              <Button variant="primary" className="w-full">
+                <CalendarCheck size={16} /> Agendar consulta com especialista
+              </Button>
             </Link>
-          </div>
+          </Card>
         </div>
 
         {/* ── Coluna direita: mapa (sticky) ─────────────── */}
@@ -245,7 +253,7 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
             {mapaAberto && (
               <div className="bg-white border-2 border-lm-green rounded-2xl p-3 shadow-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-lm-dark">{loja.split(' — ')[0]}</span>
+                  <span className="text-xs font-semibold text-gray-900">{loja.split(' — ')[0]}</span>
                   <button onClick={() => setMapaAberto(false)}>
                     <X size={14} className="text-gray-400 hover:text-gray-600" />
                   </button>

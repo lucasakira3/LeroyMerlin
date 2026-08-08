@@ -3,6 +3,8 @@
 import { useState, useRef } from 'react'
 import { Mic, MicOff, Sparkles, Send, RotateCcw } from 'lucide-react'
 import ListaDeCompras from './ListaDeCompras'
+import Card from './ui/Card'
+import Button from './ui/Button'
 
 const EXEMPLOS = [
   'Quero reformar meu banheiro pequeno com orçamento de R$ 3.000',
@@ -89,12 +91,14 @@ export default function ProjetoWizard() {
   if (resultado) {
     return (
       <div>
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => { setResultado(null); setDescricao('') }}
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-lm-green mb-5 transition-colors"
+          className="mb-5"
         >
           <RotateCcw size={14} /> Novo projeto
-        </button>
+        </Button>
         <ListaDeCompras projeto={resultado} descricaoOriginal={descricao} />
       </div>
     )
@@ -107,7 +111,7 @@ export default function ProjetoWizard() {
         <div className="inline-flex items-center gap-2 bg-lm-green/10 text-lm-green border border-lm-green/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
           <Sparkles size={14} /> Powered by Gemini AI
         </div>
-        <h2 className="text-2xl font-bold text-lm-dark mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Descreva seu projeto
         </h2>
         <p className="text-gray-500 text-sm">
@@ -116,13 +120,13 @@ export default function ProjetoWizard() {
       </div>
 
       {/* Input principal */}
-      <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-sm p-4 mb-5 focus-within:border-lm-green transition-colors">
+      <Card className="mb-5 focus-within:ring-2 focus-within:ring-lm-green/30 transition-shadow">
         <textarea
           value={descricao}
           onChange={e => setDescricao(e.target.value)}
           placeholder="Ex: Quero reformar meu banheiro de 4m², trocar o piso, azulejo e torneira. Meu orçamento é de R$ 2.500..."
           rows={4}
-          className="w-full text-sm text-lm-dark placeholder-gray-400 resize-none focus:outline-none"
+          className="w-full text-sm text-gray-900 placeholder-gray-400 resize-none focus:outline-none"
         />
         <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
           <button
@@ -136,27 +140,27 @@ export default function ProjetoWizard() {
             {ouvindo ? <MicOff size={13} /> : <Mic size={13} />}
             {ouvindo ? 'Ouvindo...' : 'Falar'}
           </button>
-          <button
+          <Button
+            variant="primary"
             onClick={() => analisar(descricao)}
             disabled={!descricao.trim() || loading}
-            className="flex items-center gap-2 bg-lm-green text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-green-700 disabled:opacity-40 transition-colors"
           >
             <Send size={14} />
             Analisar projeto
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
 
       {/* Loading */}
       {loading && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm mb-5">
+        <Card className="text-center mb-5">
           <div className="flex justify-center mb-4">
             <div className="relative">
               <div className="w-14 h-14 border-4 border-lm-green/20 border-t-lm-green rounded-full animate-spin" />
               <Sparkles size={20} className="text-lm-green absolute inset-0 m-auto" />
             </div>
           </div>
-          <p className="text-sm font-semibold text-lm-dark mb-1">{etapa}</p>
+          <p className="text-sm font-semibold text-gray-900 mb-1">{etapa}</p>
           <div className="flex justify-center gap-1.5 mt-3">
             {ETAPAS.map((e, i) => (
               <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${
@@ -164,7 +168,7 @@ export default function ProjetoWizard() {
               }`} />
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Erro */}
@@ -176,7 +180,7 @@ export default function ProjetoWizard() {
 
       {/* Exemplos */}
       {!loading && (
-        <div>
+        <Card>
           <p className="text-xs text-gray-400 font-medium mb-3 text-center">Ou escolha um exemplo:</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {EXEMPLOS.map(ex => (
@@ -189,7 +193,7 @@ export default function ProjetoWizard() {
               </button>
             ))}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   )
