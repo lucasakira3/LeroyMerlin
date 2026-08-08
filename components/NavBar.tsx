@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, MessageCircleQuestion, CalendarCheck, Sparkles, LogIn } from 'lucide-react'
+import { Search, MessageCircleQuestion, CalendarCheck, Sparkles, LogIn, User } from 'lucide-react'
 
 const tabs = [
   { href: '/', label: 'Buscar Produtos', icon: Search },
   { href: '/projeto', label: 'Projeto Guiado', icon: Sparkles },
   { href: '/duvidas', label: 'Tire Dúvidas', icon: MessageCircleQuestion },
   { href: '/agendamento', label: 'Agendar Visita', icon: CalendarCheck },
+  { href: '/conta', label: 'Minha Conta', icon: User },
 ]
 
 export default function NavBar() {
