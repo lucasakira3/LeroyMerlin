@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { KeyRound, Mail, ArrowRight } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -30,8 +31,10 @@ export default function LoginFuncionario() {
       <Card className="w-full max-w-md relative z-10" padding="none">
         <div className="p-8">
           <div className="flex justify-center mb-8">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/leroy-logo.png" alt="Leroy Merlin" className="h-12 w-auto object-contain" />
+            <Link href="/">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/leroy-logo.png" alt="Leroy Merlin" className="h-12 w-auto object-contain" />
+            </Link>
           </div>
 
           <div className="text-center mb-8">
