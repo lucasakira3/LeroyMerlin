@@ -9,7 +9,7 @@ import ProductCard from '@/components/ProductCard'
 import ProductCardSkeleton from '@/components/ProductCardSkeleton'
 import { getFavoritosIds } from '@/lib/clientFavoritos'
 import { getHistoricoIds } from '@/lib/clientHistorico'
-import { getUsuarioLogado, logoutUsuario } from '@/lib/clientAuth'
+import { getUsuarioLogado, logoutUsuario, type UsuarioLogado } from '@/lib/clientAuth'
 import { getPedidos, type Pedido } from '@/lib/clientPedidos'
 import { buscarProdutosPorIds } from '@/lib/produtosCliente'
 import type { SearchResult } from '@/types/produto'
@@ -111,7 +111,7 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
 
 export default function ContaPage() {
   const router = useRouter()
-  const [usuario, setUsuario] = useState<{ email: string } | null>(null)
+  const [usuario, setUsuario] = useState<UsuarioLogado | null>(null)
   const [favoritosIds, setFavoritosIds] = useState<string[]>([])
   const [historicoIds, setHistoricoIds] = useState<string[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
@@ -142,7 +142,7 @@ export default function ContaPage() {
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-8">
         <PageHeader
           title="Minha Conta"
-          description={`Olá, ${usuario.email}`}
+          description={`Olá, ${usuario.nome ?? usuario.email}`}
           action={
             <Button variant="ghost" size="sm" onClick={handleSair}>
               <LogOut size={16} />
