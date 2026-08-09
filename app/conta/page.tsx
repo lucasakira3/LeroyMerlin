@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { LogOut } from 'lucide-react'
+import { LogOut, Package } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import ProductCard from '@/components/ProductCard'
@@ -10,6 +10,7 @@ import ProductCardSkeleton from '@/components/ProductCardSkeleton'
 import { getFavoritosIds } from '@/lib/clientFavoritos'
 import { getHistoricoIds } from '@/lib/clientHistorico'
 import { getUsuarioLogado, logoutUsuario } from '@/lib/clientAuth'
+import { getPedidos, type Pedido } from '@/lib/clientPedidos'
 import type { SearchResult } from '@/types/produto'
 
 async function buscarProdutos(ids: string[]): Promise<SearchResult[]> {
@@ -73,11 +74,53 @@ function SecaoProdutos({
   )
 }
 
+function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
+  return (
+    <section>
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Meus pedidos</h2>
+      {pedidos.length === 0 && (
+        <p className="text-sm text-gray-500 py-6">Você ainda não fez nenhum pedido.</p>
+      )}
+      {pedidos.length > 0 && (
+        <div className="space-y-3">
+          {pedidos.map(pedido => (
+            <div key={pedido.numero} className="bg-white rounded-card shadow-soft border border-gray-100 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Package size={15} className="text-lm-green" />
+                  <span className="font-mono text-sm font-semibold text-gray-900">{pedido.numero}</span>
+                </div>
+                <span className="text-xs text-gray-400">{new Date(pedido.data).toLocaleDateString('pt-BR')}</span>
+              </div>
+              <div className="space-y-1 mb-2">
+                {pedido.itens.map(item => (
+                  <p key={item.produtoId} className="text-sm text-gray-600">
+                    {item.quantidade}× {item.nome}
+                  </p>
+                ))}
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                <span className="text-xs text-gray-500">
+                  {pedido.metodo === 'retirada' ? `Retirada: ${pedido.loja}` : `Entrega: ${pedido.endereco}`}
+                </span>
+                <span className="text-sm font-bold text-gray-900">
+                  {pedido.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
 export default function ContaPage() {
   const router = useRouter()
   const [usuario, setUsuario] = useState<{ email: string } | null>(null)
   const [favoritosIds, setFavoritosIds] = useState<string[]>([])
   const [historicoIds, setHistoricoIds] = useState<string[]>([])
+  const [pedidos, setPedidos] = useState<Pedido[]>([])
 
   useEffect(() => {
     const usuarioLogado = getUsuarioLogado()
@@ -88,6 +131,7 @@ export default function ContaPage() {
     setUsuario(usuarioLogado)
     setFavoritosIds(getFavoritosIds())
     setHistoricoIds(getHistoricoIds())
+    setPedidos(getPedidos(usuarioLogado.email))
   }, [router])
 
   const handleSair = () => {
@@ -112,6 +156,7 @@ export default function ContaPage() {
             </Button>
           }
         />
+        <SecaoPedidos pedidos={pedidos} />
         <SecaoProdutos
           titulo="Favoritos"
           ids={favoritosIds}
