@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { ShoppingCart, Check } from 'lucide-react'
+import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { SearchResult } from '@/types/produto'
 
 const VW = 1200
@@ -97,6 +99,15 @@ interface Props {
 
 export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
+
+  function handleAdicionar(produtoId: string, estoque: number, e?: React.MouseEvent) {
+    e?.stopPropagation()
+    if (estoque === 0) return
+    adicionarAoCarrinho(produtoId)
+    setAdicionadoId(produtoId)
+    setTimeout(() => setAdicionadoId(prev => prev === produtoId ? null : prev), 1500)
+  }
 
   const pins = resultados
     .map((r, i) => {
@@ -193,15 +204,26 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
                 <p className="text-[10px] text-gray-400 mt-0.5">
                   {produto.estoque > 0 ? `${produto.estoque} un. em estoque` : 'Sem estoque'}
                 </p>
-                {onSelect && (
+                <div className="mt-2 flex gap-1.5">
                   <button
-                    onClick={() => { onSelect(produto); setSelectedId(null) }}
-                    className="mt-2 w-full text-[11px] font-bold text-white rounded-lg py-1.5 transition-colors"
+                    onClick={(e) => handleAdicionar(produto.id, produto.estoque, e)}
+                    disabled={produto.estoque === 0}
+                    aria-label="Adicionar ao carrinho"
+                    className="flex items-center justify-center w-8 h-8 rounded-lg text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
                     style={{ backgroundColor: color }}
                   >
-                    Ver detalhes →
+                    {adicionadoId === produto.id ? <Check size={14} /> : <ShoppingCart size={14} />}
                   </button>
-                )}
+                  {onSelect && (
+                    <button
+                      onClick={() => { onSelect(produto); setSelectedId(null) }}
+                      className="flex-1 text-[11px] font-bold text-white rounded-lg py-1.5 transition-colors"
+                      style={{ backgroundColor: color }}
+                    >
+                      Ver detalhes →
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )
@@ -347,11 +369,22 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
                     </p>
                   )}
                 </div>
-                {onSelect && (
-                  <span className="ml-auto text-[10px] font-bold shrink-0" style={{ color: pin.color }}>
-                    Ver →
-                  </span>
-                )}
+                <div className="ml-auto flex items-center gap-2 flex-shrink-0">
+                  <button
+                    onClick={(e) => handleAdicionar(pin.produto.id, pin.produto.estoque, e)}
+                    disabled={pin.produto.estoque === 0}
+                    aria-label="Adicionar ao carrinho"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: pin.color }}
+                  >
+                    {adicionadoId === pin.produto.id ? <Check size={13} /> : <ShoppingCart size={13} />}
+                  </button>
+                  {onSelect && (
+                    <span className="text-[10px] font-bold shrink-0" style={{ color: pin.color }}>
+                      Ver →
+                    </span>
+                  )}
+                </div>
               </div>
             )
           })}
