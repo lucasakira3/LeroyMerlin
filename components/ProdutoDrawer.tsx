@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Heart, ShoppingCart } from 'lucide-react'
+import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Heart, ShoppingCart, Scale } from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
+import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
 import { addAoHistorico } from '@/lib/clientHistorico'
 import AvaliacoesProduto from './AvaliacoesProduto'
 import type { SearchResult } from '@/types/produto'
@@ -72,6 +73,8 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const [loadingChat, setLoadingChat] = useState(false)
   const [favorito, setFavorito] = useState(false)
   const [adicionado, setAdicionado] = useState(false)
+  const [noComparador, setNoComparador] = useState(false)
+  const [comparadorMsg, setComparadorMsg] = useState<string | null>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -79,6 +82,8 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     setInputChat('')
     setFavorito(isFavorito(produto.id))
     setAdicionado(false)
+    setNoComparador(estaNoComparador(produto.id))
+    setComparadorMsg(null)
     addAoHistorico(produto.id)
   }, [produto.id])
 
@@ -121,6 +126,16 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     setTimeout(() => setAdicionado(false), 1500)
   }
 
+  function handleComparar() {
+    const resultado = toggleComparador(produto.id)
+    if (resultado === 'full') {
+      setComparadorMsg('Comparador cheio (máx. 3)')
+      setTimeout(() => setComparadorMsg(null), 1500)
+      return
+    }
+    setNoComparador(resultado === 'added')
+  }
+
   const preco = (produto as any).preco as number | undefined
   const precoStr = preco != null
     ? Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -149,6 +164,14 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               <Heart size={16} className={favorito ? 'fill-red-500 text-red-500' : 'text-white'} />
             </button>
             <button
+              onClick={handleComparar}
+              className="mt-0.5 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors relative"
+              aria-label={noComparador ? 'Remover da comparação' : 'Adicionar à comparação'}
+              aria-pressed={noComparador}
+            >
+              <Scale size={16} className={noComparador ? 'text-lm-yellow' : 'text-white'} />
+            </button>
+            <button
               onClick={onClose}
               className="mt-0.5 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
               aria-label="Fechar"
@@ -157,6 +180,10 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </button>
           </div>
         </div>
+
+        {comparadorMsg && (
+          <p className="text-[11px] text-lm-yellow text-right -mt-2 mb-2">{comparadorMsg}</p>
+        )}
 
         {/* Marca + Unidade */}
         <div className="flex items-center gap-2">
