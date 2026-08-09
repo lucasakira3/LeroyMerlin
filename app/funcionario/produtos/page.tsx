@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Search, Plus, Edit2, Package, Tag } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { Search, Plus, Edit2, Package, Tag, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
@@ -15,11 +15,41 @@ const initialProducts = [
   { id: '4', nome: 'Chuveiro Eletrônico Acqua Duo Lorenzetti', preco: 189.90, estoque: 3, categoria: 'Banheiro' },
 ]
 
+type SortKey = 'nome' | 'categoria' | 'preco' | 'estoque'
+type SortDir = 'asc' | 'desc'
+
+function SortIcon({ ativo, dir }: { ativo: boolean; dir: SortDir }) {
+  if (!ativo) return <ArrowUpDown size={13} className="text-gray-300" />
+  return dir === 'asc' ? <ArrowUp size={13} className="text-lm-green" /> : <ArrowDown size={13} className="text-lm-green" />
+}
+
 export default function ProdutosPage() {
   const [produtos, setProdutos] = useState(initialProducts)
   const [busca, setBusca] = useState('')
+  const [sortKey, setSortKey] = useState<SortKey | null>(null)
+  const [sortDir, setSortDir] = useState<SortDir>('asc')
 
   const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(busca.toLowerCase()))
+
+  const ordenados = useMemo(() => {
+    if (!sortKey) return filtrados
+    const sinal = sortDir === 'asc' ? 1 : -1
+    return [...filtrados].sort((a, b) => {
+      const va = a[sortKey]
+      const vb = b[sortKey]
+      if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * sinal
+      return String(va).localeCompare(String(vb), 'pt-BR') * sinal
+    })
+  }, [filtrados, sortKey, sortDir])
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(dir => (dir === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortKey(key)
+      setSortDir('asc')
+    }
+  }
 
   const alterarEstoque = (id: string, delta: number) => {
     setProdutos(produtos.map(p => {
@@ -63,15 +93,31 @@ export default function ProdutosPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
-                <th className="p-4 font-bold">Produto</th>
-                <th className="p-4 font-bold">Categoria</th>
-                <th className="p-4 font-bold text-right">Preço (R$)</th>
-                <th className="p-4 font-bold text-center">Estoque</th>
+                <th className="p-4 font-bold">
+                  <button onClick={() => handleSort('nome')} className="flex items-center gap-1.5 hover:text-lm-green transition-colors">
+                    Produto <SortIcon ativo={sortKey === 'nome'} dir={sortDir} />
+                  </button>
+                </th>
+                <th className="p-4 font-bold">
+                  <button onClick={() => handleSort('categoria')} className="flex items-center gap-1.5 hover:text-lm-green transition-colors">
+                    Categoria <SortIcon ativo={sortKey === 'categoria'} dir={sortDir} />
+                  </button>
+                </th>
+                <th className="p-4 font-bold text-right">
+                  <button onClick={() => handleSort('preco')} className="flex items-center gap-1.5 ml-auto hover:text-lm-green transition-colors">
+                    Preço (R$) <SortIcon ativo={sortKey === 'preco'} dir={sortDir} />
+                  </button>
+                </th>
+                <th className="p-4 font-bold text-center">
+                  <button onClick={() => handleSort('estoque')} className="flex items-center gap-1.5 mx-auto hover:text-lm-green transition-colors">
+                    Estoque <SortIcon ativo={sortKey === 'estoque'} dir={sortDir} />
+                  </button>
+                </th>
                 <th className="p-4 font-bold text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtrados.map(produto => (
+              {ordenados.map(produto => (
                 <tr key={produto.id} className="hover:bg-gray-50 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -122,7 +168,7 @@ export default function ProdutosPage() {
                   </td>
                 </tr>
               ))}
-              {filtrados.length === 0 && (
+              {ordenados.length === 0 && (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-gray-500">
                     Nenhum produto encontrado.

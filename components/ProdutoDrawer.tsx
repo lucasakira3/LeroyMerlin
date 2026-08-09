@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot } from 'lucide-react'
+import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Heart } from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
+import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
+import { addAoHistorico } from '@/lib/clientHistorico'
 import type { SearchResult } from '@/types/produto'
 
 interface Mensagem {
@@ -66,11 +68,14 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const [mensagens, setMensagens] = useState<Mensagem[]>([])
   const [inputChat, setInputChat] = useState('')
   const [loadingChat, setLoadingChat] = useState(false)
+  const [favorito, setFavorito] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMensagens([])
     setInputChat('')
+    setFavorito(isFavorito(produto.id))
+    addAoHistorico(produto.id)
   }, [produto.id])
 
   useEffect(() => {
@@ -124,13 +129,23 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </div>
             <h2 className="text-lg font-bold leading-snug">{produto.produto}</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
-            aria-label="Fechar"
-          >
-            <X size={16} />
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => setFavorito(toggleFavorito(produto.id))}
+              className="mt-0.5 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
+              aria-label={favorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              aria-pressed={favorito}
+            >
+              <Heart size={16} className={favorito ? 'fill-red-500 text-red-500' : 'text-white'} />
+            </button>
+            <button
+              onClick={onClose}
+              className="mt-0.5 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
+              aria-label="Fechar"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
 
         {/* Marca + Unidade */}
@@ -275,7 +290,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               onKeyDown={e => e.key === 'Enter' && enviarPergunta()}
               placeholder="Ex: Como instalar? Qual a garantia?"
               disabled={loadingChat}
-              className="flex-1 text-sm px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-lm-green/40 disabled:opacity-50"
+              className="flex-1 text-sm px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-lm-green/40 disabled:opacity-50 bg-white"
             />
             <button
               onClick={enviarPergunta}

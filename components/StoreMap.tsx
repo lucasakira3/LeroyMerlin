@@ -324,7 +324,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
       {/* Legenda */}
       {pins.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
-          {pins.map(pin => {
+          {pins.map((pin, i) => {
             const isSel = selectedId === pin.produto.id
             return (
               <div key={pin.produto.id}
@@ -332,10 +332,10 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
                   if (onSelect) onSelect(pin.produto)
                   else handlePinClick(pin)
                 }}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs cursor-pointer transition-all ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs cursor-pointer transition-all animate-fade-in-up ${
                   isSel ? 'shadow-md scale-[1.02]' : 'hover:shadow-sm'
                 }`}
-                style={{ borderColor: pin.color, backgroundColor: `${pin.color}12` }}>
+                style={{ borderColor: pin.color, backgroundColor: `${pin.color}12`, '--stagger-delay': `${Math.min(i, 15) * 25}ms` } as React.CSSProperties}>
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black flex-shrink-0"
                   style={{ backgroundColor: pin.color }}>{pin.idx}</span>
                 <div className="min-w-0">

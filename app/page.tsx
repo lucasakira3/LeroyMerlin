@@ -22,7 +22,7 @@ export default function Home() {
 
   if (categoriaAtiva) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-6">
+      <div key={categoriaAtiva.slug} className="max-w-6xl mx-auto px-4 py-6 animate-fade-in-up">
         <CategoriaView
           slug={categoriaAtiva.slug}
           label={categoriaAtiva.label}
@@ -33,18 +33,19 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in-up">
       {/* Categorias */}
       <div className="mb-8">
         <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
           Navegar por categoria
         </h2>
         <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
-          {CATEGORIAS.map(({ slug, label, icon: Icon, cor }) => (
+          {CATEGORIAS.map(({ slug, label, icon: Icon, cor }, i) => (
             <button
               key={slug}
               onClick={() => setCategoriaAtiva({ slug, label })}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs font-semibold transition-all hover:shadow-soft active:scale-95 cursor-pointer ${cor}`}
+              style={{ '--stagger-delay': `${i * 30}ms` } as React.CSSProperties}
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs font-semibold transition-all hover:shadow-soft hover:-translate-y-0.5 active:scale-95 cursor-pointer animate-fade-in-up ${cor}`}
             >
               <Icon size={22} />
               <span className="text-center leading-tight">{label}</span>

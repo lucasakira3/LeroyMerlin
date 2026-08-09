@@ -6,6 +6,7 @@ import { LogOut } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import ProductCard from '@/components/ProductCard'
+import ProductCardSkeleton from '@/components/ProductCardSkeleton'
 import { getFavoritosIds } from '@/lib/clientFavoritos'
 import { getHistoricoIds } from '@/lib/clientHistorico'
 import { getUsuarioLogado, logoutUsuario } from '@/lib/clientAuth'
@@ -52,11 +53,8 @@ function SecaoProdutos({
     <section>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">{titulo}</h2>
       {produtos === null && (
-        <div className="flex items-center justify-center py-14">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-4 border-lm-green border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gray-500">Carregando...</p>
-          </div>
+        <div className="space-y-3">
+          {[0, 1, 2].map((i) => <ProductCardSkeleton key={i} />)}
         </div>
       )}
       {produtos !== null && produtos.length === 0 && (
@@ -64,8 +62,10 @@ function SecaoProdutos({
       )}
       {produtos !== null && produtos.length > 0 && (
         <div className="space-y-3">
-          {produtos.map((resultado) => (
-            <ProductCard key={resultado.produto.id} result={resultado} />
+          {produtos.map((resultado, i) => (
+            <div key={resultado.produto.id} className="animate-fade-in-up" style={{ '--stagger-delay': `${Math.min(i, 15) * 30}ms` } as React.CSSProperties}>
+              <ProductCard result={resultado} />
+            </div>
           ))}
         </div>
       )}

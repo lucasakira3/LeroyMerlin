@@ -198,7 +198,7 @@ export default function TourGuiado() {
 
               <button
                 onClick={fechar}
-                className="w-full bg-lm-yellow text-lm-dark text-base font-black py-4 rounded-2xl hover:bg-yellow-300 transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-lm-yellow text-black text-base font-black py-4 rounded-2xl hover:bg-yellow-300 transition-colors flex items-center justify-center gap-2"
               >
                 Explorar o MVP <ArrowRight size={18} />
               </button>
@@ -222,7 +222,7 @@ export default function TourGuiado() {
             {!isUltimo && (
               <button
                 onClick={() => setPasso(p => p + 1)}
-                className="flex items-center gap-2 bg-lm-yellow text-lm-dark text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-yellow-300 transition-colors"
+                className="flex items-center gap-2 bg-lm-yellow text-black text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-yellow-300 transition-colors"
               >
                 {passo === 0 ? 'Conhecer' : 'Próximo'} <ChevronRight size={16} />
               </button>

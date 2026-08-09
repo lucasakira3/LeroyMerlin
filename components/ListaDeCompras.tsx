@@ -135,7 +135,7 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
             </div>
             <button
               onClick={compartilharWhatsApp}
-              className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-sm"
+              className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-black text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-sm"
             >
               {/* WhatsApp icon */}
               <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current flex-shrink-0">
@@ -163,7 +163,7 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
           <h3 className="text-sm font-bold text-gray-900">Lista de materiais</h3>
 
           {projeto.itens.map((item, idx) => (
-            <div key={idx} className="space-y-2">
+            <div key={idx} className="space-y-2 animate-fade-in-up" style={{ '--stagger-delay': `${Math.min(idx, 15) * 40}ms` } as React.CSSProperties}>
               <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="text-xs font-mono text-gray-400 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal, Info } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
+import Skeleton from './ui/Skeleton'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 
 const LOJAS = [
@@ -40,6 +41,8 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const mapaRef = useRef<HTMLDivElement>(null)
   const [filtroComplexidade, setFiltroComplexidade] = useState<string>('Todos')
   const [filtroEstoque, setFiltroEstoque] = useState(false)
+  const [filtroPrecoMin, setFiltroPrecoMin] = useState('')
+  const [filtroPrecoMax, setFiltroPrecoMax] = useState('')
   const [produtoDrawer, setProdutoDrawer] = useState<ProdutoSemEmbedding | null>(null)
 
   useEffect(() => {
@@ -60,9 +63,21 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   }
 
   const complexidades = ['Todos', ...COMPLEXIDADE_ORDER]
+  const precoMinNum = filtroPrecoMin ? Number(filtroPrecoMin) : null
+  const precoMaxNum = filtroPrecoMax ? Number(filtroPrecoMax) : null
+  const filtrosAtivos = filtroComplexidade !== 'Todos' || filtroEstoque || filtroPrecoMin !== '' || filtroPrecoMax !== ''
   const produtosFiltrados = produtos
     .filter(p => filtroComplexidade === 'Todos' || p.complexidade === filtroComplexidade)
     .filter(p => !filtroEstoque || p.estoque > 0)
+    .filter(p => precoMinNum === null || p.preco >= precoMinNum)
+    .filter(p => precoMaxNum === null || p.preco <= precoMaxNum)
+
+  function limparFiltros() {
+    setFiltroComplexidade('Todos')
+    setFiltroEstoque(false)
+    setFiltroPrecoMin('')
+    setFiltroPrecoMax('')
+  }
 
   const mapResultados = selecionados.map(p => ({ produto: p, score: 1 }))
 
@@ -73,8 +88,8 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
         onClose={() => setProdutoDrawer(null)}
       />
       {/* Header da categoria */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+        <div className="flex items-center gap-3 flex-wrap">
           <button onClick={onBack}
             className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-lm-green transition-colors">
             <ArrowLeft size={16} /> Voltar
@@ -89,10 +104,10 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
         </div>
 
         {/* Seletor de loja */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <MapPin size={14} className="text-lm-green flex-shrink-0" />
           <select value={loja} onChange={e => setLoja(e.target.value)}
-            className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green">
+            className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green flex-1 sm:flex-none min-w-0">
             {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
@@ -133,31 +148,76 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               }`}>{c}</button>
           ))}
         </div>
+        <div className="flex items-center gap-1.5">
+          <input
+            type="number"
+            min={0}
+            inputMode="numeric"
+            placeholder="Min R$"
+            value={filtroPrecoMin}
+            onChange={e => setFiltroPrecoMin(e.target.value)}
+            className="w-20 h-7 px-2 rounded-full border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+          />
+          <span className="text-xs text-gray-300">—</span>
+          <input
+            type="number"
+            min={0}
+            inputMode="numeric"
+            placeholder="Máx R$"
+            value={filtroPrecoMax}
+            onChange={e => setFiltroPrecoMax(e.target.value)}
+            className="w-20 h-7 px-2 rounded-full border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+          />
+        </div>
+
         <button onClick={() => setFiltroEstoque(v => !v)}
-          className={`text-xs px-3 py-1 rounded-full border transition-colors ml-auto ${
+          className={`text-xs px-3 py-1 rounded-full border transition-colors ${
             filtroEstoque
               ? 'bg-lm-green text-white border-lm-green'
               : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
           }`}>
           ✓ Só disponíveis
         </button>
+
+        {filtrosAtivos && (
+          <button onClick={limparFiltros}
+            className="text-xs text-gray-400 hover:text-lm-green ml-auto">
+            Limpar filtros
+          </button>
+        )}
       </div>
 
       {/* Loading */}
       {loading && (
-        <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-4 border-lm-green border-t-transparent rounded-full animate-spin" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="p-4 rounded-xl border-2 border-gray-200 bg-white space-y-2">
+              <div className="flex items-center justify-between">
+                <Skeleton className="w-14 h-2" />
+                <Skeleton className="w-10 h-2" />
+              </div>
+              <Skeleton className="w-full h-3.5" />
+              <Skeleton className="w-2/3 h-3.5" />
+              <Skeleton className="w-20 h-3" />
+              <Skeleton className="w-24 h-4" />
+              <div className="flex items-center justify-between pt-0.5">
+                <Skeleton className="w-16 h-3" />
+                <Skeleton className="w-12 h-4 rounded-full" />
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {/* Grid de produtos */}
       {!loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-6">
-          {produtosFiltrados.map(p => {
+          {produtosFiltrados.map((p, i) => {
             const sel = selecionados.some(s => s.id === p.id)
             return (
               <button key={p.id} onClick={() => toggleSelecionado(p)}
-                className={`text-left p-4 rounded-xl border-2 transition-all hover:shadow-md ${
+                style={{ '--stagger-delay': `${Math.min(i, 15) * 20}ms` } as React.CSSProperties}
+                className={`text-left p-4 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in-up ${
                   sel
                     ? 'border-lm-green bg-lm-green/5 shadow-sm'
                     : 'border-gray-200 bg-white hover:border-lm-green/40'

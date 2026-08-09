@@ -10,10 +10,10 @@ export default function DuvidasPage() {
         title="Dúvidas"
         description="Converse com o assistente especialista ou fale com um consultor humano."
       />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-220px)]">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-220px)]">
 
         {/* Chat — coluna principal */}
-        <Card padding="none" className="lg:col-span-2 flex flex-col overflow-hidden">
+        <Card padding="none" className="lg:col-span-2 flex flex-col overflow-hidden h-[70vh] lg:h-auto">
           {/* Header */}
           <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse" />
@@ -40,7 +40,7 @@ export default function DuvidasPage() {
               href="https://wa.me/551140071380"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 w-full bg-[#25D366] text-white px-4 py-3 rounded-xl text-sm font-semibold hover:bg-[#20b858] transition-colors mb-3"
+              className="flex items-center gap-3 w-full bg-[#25D366] text-black px-4 py-3 rounded-xl text-sm font-semibold hover:bg-[#20b858] transition-colors mb-3"
             >
               <MessageCircle size={18} />
               WhatsApp Leroy Merlin
@@ -93,7 +93,7 @@ export default function DuvidasPage() {
           {/* CTA agendamento */}
           <a
             href="/agendamento"
-            className="block w-full bg-lm-yellow text-lm-dark text-center py-3 rounded-xl text-sm font-bold hover:bg-yellow-300 transition-colors"
+            className="block w-full bg-lm-yellow text-black text-center py-3 rounded-xl text-sm font-bold hover:bg-yellow-300 transition-colors"
           >
             Agendar visita presencial →
           </a>

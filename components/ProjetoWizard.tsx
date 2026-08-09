@@ -126,7 +126,7 @@ export default function ProjetoWizard() {
           onChange={e => setDescricao(e.target.value)}
           placeholder="Ex: Quero reformar meu banheiro de 4m², trocar o piso, azulejo e torneira. Meu orçamento é de R$ 2.500..."
           rows={4}
-          className="w-full text-sm text-gray-900 placeholder-gray-400 resize-none focus:outline-none"
+          className="w-full text-sm text-gray-900 placeholder-gray-400 resize-none focus:outline-none bg-white"
         />
         <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
           <button

@@ -229,7 +229,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
               value={form.nome}
               onChange={(e) => set('nome', e.target.value)}
               placeholder="João da Silva"
-              className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
             />
           </div>
 
@@ -241,7 +241,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 value={form.telefone}
                 onChange={(e) => set('telefone', e.target.value)}
                 placeholder="(11) 99999-9999"
-                className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
               />
             </div>
             <div>
@@ -251,7 +251,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 value={form.email}
                 onChange={(e) => set('email', e.target.value)}
                 placeholder="joao@email.com"
-                className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
               />
             </div>
           </div>
@@ -263,7 +263,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
               onChange={(e) => set('observacao', e.target.value)}
               placeholder="Descreva brevemente o que precisa..."
               rows={3}
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 resize-none"
+              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 resize-none bg-white"
             />
           </div>
 

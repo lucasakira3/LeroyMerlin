@@ -24,7 +24,7 @@ export default function SearchBar({ onResults, loading, setLoading }: SearchBarP
         const res = await fetch('/api/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: q, limit: 5 }),
+          body: JSON.stringify({ query: q, limit: 12 }),
         })
 
         if (!res.ok) throw new Error('Erro na busca')

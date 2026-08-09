@@ -137,7 +137,7 @@ export default function DuvidasChat() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Digite sua dúvida..."
             disabled={loading}
-            className="flex-1 h-11 px-4 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-50"
+            className="flex-1 h-11 px-4 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-50 bg-white"
           />
           <button
             type="submit"

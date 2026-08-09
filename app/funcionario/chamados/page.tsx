@@ -19,15 +19,15 @@ export default function ChamadosPage() {
   const chamadoSelecionado = chamados.find(c => c.id === chamadoAtivo)
 
   return (
-    <div className="p-8 max-w-6xl mx-auto h-[calc(100vh-4rem)] flex flex-col">
+    <div className="p-4 lg:p-8 max-w-6xl mx-auto h-[calc(100vh-4rem)] flex flex-col">
       <PageHeader
         title="Chamados"
         description="Atenda os chamados de dúvidas dos clientes em tempo real."
       />
 
-      <div className="flex flex-1 min-h-0 gap-6">
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-4 lg:gap-6">
         {/* Sidebar de Chamados */}
-        <div className="w-80 shrink-0 flex flex-col min-h-0">
+        <div className="w-full lg:w-80 shrink-0 flex flex-col min-h-0 max-h-56 lg:max-h-none">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
             <input

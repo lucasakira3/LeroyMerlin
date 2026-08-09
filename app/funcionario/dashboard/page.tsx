@@ -19,7 +19,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, i) => (
-          <Card key={i} className="flex items-start gap-4">
+          <Card key={i} className="flex items-start gap-4 animate-fade-in-up" style={{ '--stagger-delay': `${i * 60}ms` } as React.CSSProperties}>
             <div className={`p-3 rounded-xl text-white ${stat.color} shadow-soft`}>
               <stat.icon size={24} />
             </div>
