@@ -1,7 +1,8 @@
 const CHAVE = 'lm_usuario_logado'
 
-interface UsuarioLogado {
+export interface UsuarioLogado {
   email: string
+  nome?: string
 }
 
 function ler(): UsuarioLogado | null {
@@ -17,9 +18,9 @@ function ler(): UsuarioLogado | null {
   }
 }
 
-export function loginUsuario(email: string): void {
+export function loginUsuario(email: string, nome?: string): void {
   if (typeof window === 'undefined') return
-  window.localStorage.setItem(CHAVE, JSON.stringify({ email }))
+  window.localStorage.setItem(CHAVE, JSON.stringify({ email, nome }))
 }
 
 export function logoutUsuario(): void {
