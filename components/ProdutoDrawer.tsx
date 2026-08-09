@@ -210,8 +210,6 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
           )}
         </div>
 
-        <AvaliacoesProduto produtoId={produto.id} />
-
         {/* O que o especialista diz */}
         {produto.resposta_ia && (
           <div className="px-5 py-4 border-b border-gray-100">
@@ -251,7 +249,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
         )}
 
         {/* Chat com IA */}
-        <div className="px-5 py-4">
+        <div className="px-5 py-4 border-b border-gray-100">
           <h3 className="text-xs font-bold text-lm-green uppercase tracking-widest mb-3 flex items-center gap-1.5">
             <Bot size={13} /> Pergunte sobre este produto
           </h3>
@@ -304,6 +302,8 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </button>
           </div>
         </div>
+
+        <AvaliacoesProduto produtoId={produto.id} />
       </div>
     </>
   )

@@ -52,7 +52,7 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
   const ordenadas = [...avaliacoes].sort((a, b) => b.data.localeCompare(a.data))
 
   return (
-    <div className="px-5 py-4 border-b border-gray-100">
+    <div className="px-5 py-4">
       <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
         Avaliações
       </h3>
