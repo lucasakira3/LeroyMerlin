@@ -7,6 +7,7 @@ import { KeyRound, Mail, ArrowRight } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import { loginUsuario } from '@/lib/clientAuth'
+import ClienteAuthForm from '@/components/ClienteAuthForm'
 
 type TipoLogin = 'funcionario' | 'cliente'
 
@@ -83,57 +84,63 @@ export default function LoginFuncionario() {
             </button>
           </div>
 
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-black text-gray-900">{textos.titulo}</h1>
-            <p className="text-gray-500 text-sm mt-2">{textos.descricao}</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5">{textos.labelEmail}</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail size={18} className="text-gray-400" />
-                </div>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
-                  placeholder={textos.placeholderEmail}
-                />
+          {tipo === 'cliente' ? (
+            <ClienteAuthForm />
+          ) : (
+            <>
+              <div className="text-center mb-8">
+                <h1 className="text-2xl font-black text-gray-900">{textos.titulo}</h1>
+                <p className="text-gray-500 text-sm mt-2">{textos.descricao}</p>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5">Senha</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <KeyRound size={18} className="text-gray-400" />
+              <form onSubmit={handleLogin} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1.5">{textos.labelEmail}</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail size={18} className="text-gray-400" />
+                    </div>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
+                      placeholder={textos.placeholderEmail}
+                    />
+                  </div>
                 </div>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
-                  placeholder="••••••••"
-                />
+
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1.5">Senha</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <KeyRound size={18} className="text-gray-400" />
+                    </div>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </div>
+
+                <Button type="submit" variant="primary" disabled={loading} className="w-full mt-2">
+                  {loading ? 'Autenticando...' : 'Entrar no Sistema'}
+                  {!loading && <ArrowRight size={18} />}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <a href="#" className="text-sm font-medium text-lm-green hover:underline">
+                  Esqueceu sua senha?
+                </a>
               </div>
-            </div>
-
-            <Button type="submit" variant="primary" disabled={loading} className="w-full mt-2">
-              {loading ? 'Autenticando...' : 'Entrar no Sistema'}
-              {!loading && <ArrowRight size={18} />}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <a href="#" className="text-sm font-medium text-lm-green hover:underline">
-              Esqueceu sua senha?
-            </a>
-          </div>
+            </>
+          )}
         </div>
       </Card>
     </div>
