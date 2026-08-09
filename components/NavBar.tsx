@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Search, MessageCircleQuestion, CalendarCheck, Sparkles, LogIn, User, Menu, X } from 'lucide-react'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import ThemeToggle from './ThemeToggle'
+import CarrinhoIcon from './CarrinhoIcon'
 
 const tabs = [
   { href: '/', label: 'Buscar Produtos', icon: Search },
@@ -65,6 +66,7 @@ export default function NavBar() {
             })}
           </nav>
 
+          <CarrinhoIcon />
           <ThemeToggle />
 
           {logado ? (
@@ -122,7 +124,10 @@ export default function NavBar() {
           })}
 
           <div className="flex items-center justify-between gap-3 pt-3 mt-2 border-t border-white/15">
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <CarrinhoIcon />
+              <ThemeToggle />
+            </div>
             {logado ? (
               <Link
                 href="/conta"
