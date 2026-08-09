@@ -5,6 +5,7 @@ import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Hea
 import { getMarca, getUnidade } from '@/lib/marcas'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { addAoHistorico } from '@/lib/clientHistorico'
+import AvaliacoesProduto from './AvaliacoesProduto'
 import type { SearchResult } from '@/types/produto'
 
 interface Mensagem {
@@ -208,6 +209,8 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </span>
           )}
         </div>
+
+        <AvaliacoesProduto produtoId={produto.id} />
 
         {/* O que o especialista diz */}
         {produto.resposta_ia && (
