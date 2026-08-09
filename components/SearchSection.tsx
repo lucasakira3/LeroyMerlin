@@ -6,6 +6,7 @@ import ImageUpload from './ImageUpload'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
 import SearchFilters, { FILTROS_INICIAIS, aplicarFiltros, type FiltrosBusca } from './SearchFilters'
+import ComparadorBar from './ComparadorBar'
 import Skeleton from './ui/Skeleton'
 import { MapPin } from 'lucide-react'
 import type { SearchResult } from '@/types/produto'
@@ -68,6 +69,8 @@ export default function SearchSection() {
           {LOJAS.map((l) => <option key={l} value={l}>{l}</option>)}
         </select>
       </div>
+
+      <ComparadorBar />
 
       {/* Busca */}
       <SearchBar

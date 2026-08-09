@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal, Info } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
+import ComparadorBar from './ComparadorBar'
 import Skeleton from './ui/Skeleton'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 
@@ -111,6 +112,10 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
+      </div>
+
+      <div className="mb-5">
+        <ComparadorBar />
       </div>
 
       {/* Mapa — aparece no topo com destaque */}
