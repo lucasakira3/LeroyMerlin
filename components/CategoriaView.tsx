@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal, Info } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal, Info, Scale } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
 import ComparadorBar from './ComparadorBar'
 import Skeleton from './ui/Skeleton'
+import { definirComparador } from '@/lib/clientComparador'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 
 const LOJAS = [
@@ -34,6 +36,7 @@ interface Props {
 const COMPLEXIDADE_ORDER = ['Baixa', 'DIY', 'Média', 'Alta', 'Profissional', 'Especialista']
 
 export default function CategoriaView({ slug, label, onBack }: Props) {
+  const router = useRouter()
   const [produtos, setProdutos] = useState<ProdutoSemEmbedding[]>([])
   const [loading, setLoading] = useState(true)
   const [selecionados, setSelecionados] = useState<ProdutoSemEmbedding[]>([])
@@ -72,6 +75,11 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
     .filter(p => !filtroEstoque || p.estoque > 0)
     .filter(p => precoMinNum === null || p.preco >= precoMinNum)
     .filter(p => precoMaxNum === null || p.preco <= precoMaxNum)
+
+  function handleComparar() {
+    definirComparador(selecionados.map(p => p.id))
+    router.push('/comparar')
+  }
 
   function limparFiltros() {
     setFiltroComplexidade('Todos')
@@ -300,6 +308,13 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               <button onClick={() => setSelecionados([])}
                 className="text-xs px-3 py-2 border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
                 Limpar
+              </button>
+              <button
+                onClick={handleComparar}
+                disabled={selecionados.length > 3}
+                title={selecionados.length > 3 ? 'Selecione até 3 produtos para comparar' : undefined}
+                className="flex items-center gap-2 text-sm font-semibold bg-lm-yellow text-black px-4 py-2 rounded-xl hover:bg-yellow-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                <Scale size={14} /> Comparar
               </button>
               <button
                 onClick={() => {

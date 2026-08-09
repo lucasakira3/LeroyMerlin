@@ -52,3 +52,7 @@ export function removerDoComparador(produtoId: string): void {
 export function limparComparador(): void {
   salvarIds([])
 }
+
+export function definirComparador(ids: string[]): void {
+  salvarIds(ids.slice(0, MAX_ITENS))
+}
