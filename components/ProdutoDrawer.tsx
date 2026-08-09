@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Heart } from 'lucide-react'
+import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Heart, ShoppingCart } from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
+import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { addAoHistorico } from '@/lib/clientHistorico'
 import AvaliacoesProduto from './AvaliacoesProduto'
 import type { SearchResult } from '@/types/produto'
@@ -70,12 +71,14 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const [inputChat, setInputChat] = useState('')
   const [loadingChat, setLoadingChat] = useState(false)
   const [favorito, setFavorito] = useState(false)
+  const [adicionado, setAdicionado] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMensagens([])
     setInputChat('')
     setFavorito(isFavorito(produto.id))
+    setAdicionado(false)
     addAoHistorico(produto.id)
   }, [produto.id])
 
@@ -112,6 +115,12 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
       setLoadingChat(false)
     }
   }
+  function handleAdicionarCarrinho() {
+    adicionarAoCarrinho(produto.id)
+    setAdicionado(true)
+    setTimeout(() => setAdicionado(false), 1500)
+  }
+
   const preco = (produto as any).preco as number | undefined
   const precoStr = preco != null
     ? Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -171,6 +180,14 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               ? <p className="text-2xl font-black text-lm-green">{precoStr}</p>
               : <p className="text-sm text-gray-400 italic">Consultar loja</p>
             }
+            <button
+              onClick={handleAdicionarCarrinho}
+              disabled={produto.estoque === 0}
+              className="mt-2 flex items-center gap-1.5 bg-lm-green text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ShoppingCart size={13} />
+              {adicionado ? 'Adicionado ✓' : 'Adicionar ao carrinho'}
+            </button>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-400 mb-1 uppercase tracking-wide">Localização</p>
