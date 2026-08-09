@@ -9,7 +9,7 @@ import Card from '@/components/ui/Card'
 import { getCarrinho, atualizarQuantidade, removerDoCarrinho, limparCarrinho, type CartItem } from '@/lib/clientCarrinho'
 import { salvarPedido, gerarNumeroPedido, type Pedido, type ItemPedido } from '@/lib/clientPedidos'
 import { getUsuarioLogado } from '@/lib/clientAuth'
-import type { SearchResult } from '@/types/produto'
+import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -29,21 +29,10 @@ const LOJAS = [
   'Goiânia — Goiânia/GO',
 ]
 
-type ProdutoResolvido = SearchResult['produto']
-
 async function buscarProdutos(ids: string[]): Promise<Record<string, ProdutoResolvido>> {
-  const respostas = await Promise.all(
-    ids.map(async (id) => {
-      const resposta = await fetch(`/api/produto/${id}`)
-      if (!resposta.ok) return null
-      const produto = await resposta.json()
-      return produto as ProdutoResolvido
-    })
-  )
+  const produtos = await buscarProdutosPorIds(ids)
   const mapa: Record<string, ProdutoResolvido> = {}
-  for (const p of respostas) {
-    if (p) mapa[p.id] = p
-  }
+  for (const p of produtos) mapa[p.id] = p
   return mapa
 }
 

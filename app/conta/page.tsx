@@ -11,18 +11,12 @@ import { getFavoritosIds } from '@/lib/clientFavoritos'
 import { getHistoricoIds } from '@/lib/clientHistorico'
 import { getUsuarioLogado, logoutUsuario } from '@/lib/clientAuth'
 import { getPedidos, type Pedido } from '@/lib/clientPedidos'
+import { buscarProdutosPorIds } from '@/lib/produtosCliente'
 import type { SearchResult } from '@/types/produto'
 
 async function buscarProdutos(ids: string[]): Promise<SearchResult[]> {
-  const respostas = await Promise.all(
-    ids.map(async (id) => {
-      const resposta = await fetch(`/api/produto/${id}`)
-      if (!resposta.ok) return null
-      const produto = await resposta.json()
-      return { produto, score: 1 } as SearchResult
-    })
-  )
-  return respostas.filter((item): item is SearchResult => item !== null)
+  const produtos = await buscarProdutosPorIds(ids)
+  return produtos.map((produto) => ({ produto, score: 1 }))
 }
 
 function SecaoProdutos({
