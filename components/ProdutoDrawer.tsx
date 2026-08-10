@@ -8,7 +8,6 @@ import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
 import { addAoHistorico } from '@/lib/clientHistorico'
 import AvaliacoesProduto from './AvaliacoesProduto'
-import FormattedText from './ui/FormattedText'
 import type { SearchResult } from '@/types/produto'
 
 interface Mensagem {
@@ -57,11 +56,14 @@ export default function ProdutoDrawer({ produto, onClose }: Props) {
       />
 
       {/* Painel lateral */}
-      <div
-        className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white rounded-l-card shadow-soft-lg flex flex-col transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
-      >
-        {produto && <DrawerContent produto={produto} onClose={onClose} />}
+      <div>
+          <div
+          className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white rounded-l-card shadow-soft-lg flex flex-col transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
+        >
+          {produto && <DrawerContent produto={produto} onClose={onClose} />}
+        </div>
       </div>
+      
     </>
   )
 }
@@ -309,7 +311,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                       ? 'bg-lm-green text-white rounded-br-sm'
                       : 'bg-gray-100 text-gray-800 rounded-bl-sm'
                   }`}>
-                    {m.role === 'ai' ? <FormattedText text={m.texto} /> : m.texto}
+                    {m.texto}
                   </div>
                 </div>
               ))}
