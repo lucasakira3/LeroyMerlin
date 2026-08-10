@@ -8,6 +8,7 @@ import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
 import { addAoHistorico } from '@/lib/clientHistorico'
 import AvaliacoesProduto from './AvaliacoesProduto'
+import FormattedText from './ui/FormattedText'
 import type { SearchResult } from '@/types/produto'
 
 interface Mensagem {
@@ -308,7 +309,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                       ? 'bg-lm-green text-white rounded-br-sm'
                       : 'bg-gray-100 text-gray-800 rounded-bl-sm'
                   }`}>
-                    {m.texto}
+                    {m.role === 'ai' ? <FormattedText text={m.texto} /> : m.texto}
                   </div>
                 </div>
               ))}

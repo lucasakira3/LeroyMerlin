@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Send, Bot, User, Phone, MessageCircle } from 'lucide-react'
+import FormattedText from './ui/FormattedText'
 
 interface Mensagem {
   tipo: 'usuario' | 'especialista'
@@ -83,7 +84,7 @@ export default function DuvidasChat() {
                   ? 'bg-gray-100 text-gray-800'
                   : 'bg-lm-green text-white'
               }`}>
-                {msg.texto}
+                {msg.tipo === 'especialista' ? <FormattedText text={msg.texto} /> : msg.texto}
               </div>
               <span className="text-[10px] text-gray-400 mt-1 px-1">{msg.hora}</span>
             </div>
