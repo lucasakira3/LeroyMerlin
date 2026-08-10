@@ -41,7 +41,10 @@ function buscaTextoSimples(produtos: Awaited<ReturnType<typeof carregarProdutos>
       return { produto: p, score };
     })
     .filter(r => r.score > 0)
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return (b.produto.estoque > 0 ? 1 : 0) - (a.produto.estoque > 0 ? 1 : 0);
+    })
     .slice(0, limit)
     .map(({ produto: { embedding: _e, embedding_text: _et, ...p }, score }) => ({ produto: p, score }));
 }

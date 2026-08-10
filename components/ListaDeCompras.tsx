@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPin, CheckCircle2, Circle, Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2 } from 'lucide-react'
+import { MapPin, CheckCircle2, Circle, Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2, AlertTriangle } from 'lucide-react'
 import StoreMap from './StoreMap'
 import type { SearchResult } from '@/types/produto'
 import Link from 'next/link'
 import Card from './ui/Card'
 import Button from './ui/Button'
+import Badge from './ui/Badge'
 import { codificarLista } from '@/lib/listaCompartilhada'
 
 const LOJAS = [
@@ -41,7 +42,10 @@ interface Projeto {
 export default function ListaDeCompras({ projeto }: { projeto: Projeto; descricaoOriginal: string }) {
   const [loja, setLoja] = useState(LOJAS[0])
   const [selecionados, setSelecionados] = useState<Set<string>>(
-    () => new Set(projeto.itens.flatMap(i => i.resultados.slice(0, 1).map(r => r.produto.id)))
+    () => new Set(projeto.itens.flatMap(i => {
+      const preferido = i.resultados.find(r => r.produto.estoque > 0) ?? i.resultados[0]
+      return preferido ? [preferido.produto.id] : []
+    }))
   )
   const [mapaAberto, setMapaAberto] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
@@ -193,6 +197,17 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
                 </span>
               </div>
 
+              {item.resultados.length > 0 && item.resultados[0].produto.estoque === 0 && (
+                <div className="flex items-start gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl">
+                  <AlertTriangle size={14} className="text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-red-700">
+                    {item.resultados.some(r => r.produto.estoque > 0)
+                      ? 'O produto recomendado está sem estoque nessa loja. Veja as alternativas disponíveis abaixo.'
+                      : `Nenhuma opção para este item está em estoque no momento. Peça ajuda ao vendedor da seção ${item.categoria}.`}
+                  </p>
+                </div>
+              )}
+
               {item.resultados.length > 0 ? (
                 <div className="space-y-2">
                   {item.resultados.map(r => {
@@ -213,9 +228,13 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
                               <span className="flex items-center gap-1 text-xs text-lm-green font-bold">
                                 <MapPin size={10} /> {r.produto.corredor}
                               </span>
-                              <span className={`text-xs ${r.produto.estoque === 0 ? 'text-gray-400' : r.produto.estoque < 10 ? 'text-lm-orange' : 'text-gray-400'}`}>
-                                {r.produto.estoque === 0 ? 'Sem estoque' : r.produto.estoque < 10 ? `Últ. ${r.produto.estoque}` : `${r.produto.estoque} un.`}
-                              </span>
+                              {r.produto.estoque === 0 ? (
+                                <Badge tone="red">Sem estoque</Badge>
+                              ) : r.produto.estoque < 10 ? (
+                                <Badge tone="orange">Últ. {r.produto.estoque}</Badge>
+                              ) : (
+                                <span className="text-xs text-gray-400">{r.produto.estoque} un.</span>
+                              )}
                             </div>
                           </div>
                           {(r.produto as any).preco != null && (
