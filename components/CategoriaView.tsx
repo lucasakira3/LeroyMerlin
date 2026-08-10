@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal, Info, Scale } from 'lucide-react'
+import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal, Info, Scale, ShoppingCart, Check } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
 import ComparadorBar from './ComparadorBar'
 import Skeleton from './ui/Skeleton'
 import { definirComparador } from '@/lib/clientComparador'
+import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 
 const LOJAS = [
@@ -48,6 +49,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const [filtroPrecoMin, setFiltroPrecoMin] = useState('')
   const [filtroPrecoMax, setFiltroPrecoMax] = useState('')
   const [produtoDrawer, setProdutoDrawer] = useState<ProdutoSemEmbedding | null>(null)
+  const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -75,6 +77,14 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
     .filter(p => !filtroEstoque || p.estoque > 0)
     .filter(p => precoMinNum === null || p.preco >= precoMinNum)
     .filter(p => precoMaxNum === null || p.preco <= precoMaxNum)
+
+  function handleAdicionarCarrinho(produtoId: string, estoque: number, e: React.MouseEvent) {
+    e.stopPropagation()
+    if (estoque === 0) return
+    adicionarAoCarrinho(produtoId)
+    setAdicionadoId(produtoId)
+    setTimeout(() => setAdicionadoId(prev => prev === produtoId ? null : prev), 1500)
+  }
 
   function handleComparar() {
     definirComparador(selecionados.map(p => p.id))
@@ -230,11 +240,24 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             return (
               <button key={p.id} onClick={() => toggleSelecionado(p)}
                 style={{ '--stagger-delay': `${Math.min(i, 15) * 20}ms` } as React.CSSProperties}
-                className={`text-left p-4 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in-up ${
+                className={`group relative text-left p-4 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in-up ${
                   sel
                     ? 'border-lm-green bg-lm-green/5 shadow-sm'
                     : 'border-gray-200 bg-white hover:border-lm-green/40'
                 }`}>
+                {/* Adicionar ao carrinho rápido — aparece ao passar o mouse */}
+                <button
+                  type="button"
+                  onClick={e => handleAdicionarCarrinho(p.id, p.estoque, e)}
+                  disabled={p.estoque === 0}
+                  aria-label="Adicionar ao carrinho"
+                  className={`absolute top-2 right-2 z-10 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40 disabled:cursor-not-allowed text-white ${
+                    adicionadoId === p.id ? 'bg-lm-green' : 'bg-lm-dark/80 hover:bg-lm-green'
+                  }`}
+                >
+                  {adicionadoId === p.id ? <Check size={13} /> : <ShoppingCart size={13} />}
+                </button>
+
                 {/* Categoria + ID */}
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[10px] text-gray-400 uppercase tracking-wide">{p.categoria}</span>
