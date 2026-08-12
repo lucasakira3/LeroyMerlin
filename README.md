@@ -12,6 +12,7 @@ Acesse a jornada principal em `/`
 - **Busca por imagem** — Fotografe o produto e o sistema identifica e localiza na loja através de IA.
 - **Mapa da loja interativo** — Mapa SVG interativo com corredores e pins animados mostrando localização, preço e estoque em tempo real.
 - **Projeto Guiado** — Descreva o projeto (ex: "quero instalar um chuveiro") e receba uma lista de materiais completa com a localização de cada item.
+- **Timeline do projeto** — Dentro do Projeto Guiado, a IA organiza os materiais em etapas cronológicas (ex: preparo → hidráulica → acabamento → pintura), mostrando a ordem sugerida de execução do projeto.
 - **Tire Dúvidas (Chat com IA)** — Especialista virtual disponível 24h para tirar dúvidas técnicas sobre produtos e materiais.
 - **Agendamento** — Agende um atendimento presencial com um especialista na loja física.
 

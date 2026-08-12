@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { MapPin, CheckCircle2, Circle, Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2, AlertTriangle } from 'lucide-react'
 import StoreMap from './StoreMap'
+import ProjetoTimeline from './ProjetoTimeline'
 import type { SearchResult } from '@/types/produto'
 import Link from 'next/link'
 import Card from './ui/Card'
@@ -36,6 +37,8 @@ interface Projeto {
     prioridade: string
     observacao: string
     resultados: SearchResult[]
+    etapa_ordem?: number
+    etapa_nome?: string
   }>
 }
 
@@ -182,6 +185,8 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
 
         {/* ── Coluna esquerda: lista ────────────────────── */}
         <div className="lg:col-span-3 space-y-3">
+          <ProjetoTimeline itens={projeto.itens} />
+
           <h3 className="text-sm font-bold text-gray-900">Lista de materiais</h3>
 
           {projeto.itens.map((item, idx) => (

@@ -20,7 +20,9 @@ Responda APENAS com um JSON válido (sem markdown, sem texto fora do JSON):
       "categoria": "categoria geral ex: Hidráulica, Pintura, Ferramentas",
       "quantidade": "ex: 2 un., 5L, 12m²",
       "prioridade": "essencial",
-      "observacao": "dica rápida de uso"
+      "observacao": "dica rápida de uso",
+      "etapa_ordem": 1,
+      "etapa_nome": "Nome curto da fase do projeto em que este item é usado, ex: Remoção e preparo"
     }
   ]
 }
@@ -30,7 +32,8 @@ Regras:
 - Materiais específicos e buscáveis (ex: "Rejunte Branco 1kg", não apenas "rejunte")
 - Incluir ferramentas necessárias
 - prioridade pode ser: essencial, recomendado, opcional
-- Focar em produtos que a Leroy Merlin vende`;
+- Focar em produtos que a Leroy Merlin vende
+- Organize os itens em etapas cronológicas do projeto (ex: para uma reforma: 1 remoção/preparo, 2 hidráulica/elétrica, 3 acabamento, 4 pintura/detalhes). Use "etapa_ordem" (número sequencial a partir de 1, itens da mesma fase compartilham o mesmo número) e "etapa_nome" (nome curto e específico para o projeto do cliente, não genérico) em TODOS os itens. Projetos simples podem ter só 1 ou 2 etapas.`;
 
 function buscaTextoSimples(produtos: Awaited<ReturnType<typeof carregarProdutos>>, query: string, limit = 1) {
   const termos = query.toLowerCase().split(/\s+/).filter(t => t.length > 2);
