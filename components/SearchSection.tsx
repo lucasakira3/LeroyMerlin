@@ -43,9 +43,9 @@ export default function SearchSection() {
     setFiltros(FILTROS_INICIAIS)
   }
 
-  const handleImageResults = (results: SearchResult[]) => {
+  const handleImageResults = (results: SearchResult[], label?: string) => {
     setResultados(results)
-    setQueryProcessada('busca por imagem')
+    setQueryProcessada(label ?? 'busca por imagem')
     setFiltros(FILTROS_INICIAIS)
   }
 
@@ -79,11 +79,12 @@ export default function SearchSection() {
         setLoading={setLoading}
       />
 
-      {/* Upload de imagem */}
+      {/* Upload de imagem — produto ou diagnóstico visual do problema */}
       <ImageUpload
         onResults={handleImageResults}
         loading={loading}
         setLoading={setLoading}
+        onSelectProduto={setProdutoDrawer}
       />
 
       {/* Loading */}

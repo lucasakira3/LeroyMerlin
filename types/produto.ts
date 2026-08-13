@@ -53,3 +53,22 @@ export interface VisionResponse {
   resultados: SearchResult[];
   total: number;
 }
+
+export interface DiagnosticoVisualRequest {
+  image: string; // base64 da imagem (sem prefixo data:image/...)
+  mimeType?: string;
+}
+
+export interface DiagnosticoItem {
+  nome_busca: string;   // termo específico e buscável, ex: "Vedante para torneira"
+  motivo: string;       // por que esse item ajuda a resolver o problema
+  resultados: SearchResult[]; // produtos reais do catálogo cruzados com nome_busca
+}
+
+export interface DiagnosticoVisualResponse {
+  problema_identificado: boolean;
+  diagnostico: string;              // explicação em linguagem simples do que a IA viu
+  itens_sugeridos: DiagnosticoItem[];
+  resultados: SearchResult[];       // lista achatada e sem duplicatas, pronta pro mapa da loja
+  total: number;
+}
