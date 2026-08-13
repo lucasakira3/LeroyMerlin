@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ShoppingCart, Check } from 'lucide-react'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { SearchResult } from '@/types/produto'
+import { trackProductView } from '@/lib/hooks/useProductTracker'
 
 const VW = 1200
 const VH = 590
@@ -216,7 +217,11 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
                   </button>
                   {onSelect && (
                     <button
-                      onClick={() => { onSelect(produto); setSelectedId(null) }}
+                      onClick={() => {
+                        trackProductView({ id: produto.id, nome: produto.produto, categoria: produto.categoria })
+                        onSelect(produto)
+                        setSelectedId(null)
+                      }}
                       className="flex-1 text-[11px] font-bold text-white rounded-lg py-1.5 transition-colors"
                       style={{ backgroundColor: color }}
                     >

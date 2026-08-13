@@ -4,6 +4,7 @@ import './globals.css'
 import NavBar from '@/components/NavBar'
 import TourGuiado from '@/components/TourGuiado'
 import PageTransition from '@/components/PageTransition'
+import CompareToast from '@/components/CompareToast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NavBar />
         <TourGuiado />
         <PageTransition>{children}</PageTransition>
+        <CompareToast />
       </body>
     </html>
   )

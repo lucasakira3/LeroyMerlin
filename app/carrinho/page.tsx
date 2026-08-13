@@ -10,6 +10,7 @@ import { getCarrinho, atualizarQuantidade, removerDoCarrinho, limparCarrinho, ty
 import { salvarPedido, gerarNumeroPedido, type Pedido, type ItemPedido } from '@/lib/clientPedidos'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
+import { clearProductHistory } from '@/lib/hooks/useProductTracker'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -106,6 +107,7 @@ export default function CarrinhoPage() {
 
     salvarPedido(usuario.email, pedido)
     limparCarrinho()
+    clearProductHistory()
     setPedidoConfirmado(pedido)
   }
 

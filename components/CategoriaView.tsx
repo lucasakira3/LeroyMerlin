@@ -10,6 +10,7 @@ import Skeleton from './ui/Skeleton'
 import { definirComparador } from '@/lib/clientComparador'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
+import { trackProductView } from '@/lib/hooks/useProductTracker'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -304,7 +305,11 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
                     </div>
                   ) : <span />}
                   <button
-                    onClick={e => { e.stopPropagation(); setProdutoDrawer(p) }}
+                    onClick={e => {
+                      e.stopPropagation()
+                      trackProductView({ id: p.id, nome: p.produto, categoria: p.categoria })
+                      setProdutoDrawer(p)
+                    }}
                     className="flex items-center gap-1 text-[11px] font-semibold text-lm-green border border-lm-green/30 rounded-full px-2 py-0.5 hover:bg-lm-green/10 transition-colors"
                   >
                     <Info size={11} /> Detalhes

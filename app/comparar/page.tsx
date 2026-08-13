@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { Scale, Trash2, ShoppingCart, MapPin } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
@@ -9,25 +10,34 @@ import Card from '@/components/ui/Card'
 import StarRating from '@/components/ui/StarRating'
 import StockIndicator from '@/components/StockIndicator'
 import SustainabilityBadge from '@/components/SustainabilityBadge'
-import { getComparador, removerDoComparador } from '@/lib/clientComparador'
+import { getComparador, removerDoComparador, definirComparador } from '@/lib/clientComparador'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { getMedia } from '@/lib/clientAvaliacoes'
 
-export default function ComparadorPage() {
+function ComparadorContent() {
   const [ids, setIds] = useState<string[]>([])
   const [produtos, setProdutos] = useState<ProdutoResolvido[] | null>(null)
   const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+  const idsParam = searchParams.get('ids')
 
   useEffect(() => {
-    const atuais = getComparador()
+    let atuais = getComparador()
+    if (idsParam) {
+      const queryIds = idsParam.split(',').map(id => id.trim()).filter(Boolean)
+      if (queryIds.length > 0) {
+        definirComparador(queryIds)
+        atuais = queryIds
+      }
+    }
     setIds(atuais)
     if (atuais.length === 0) {
       setProdutos([])
       return
     }
     buscarProdutosPorIds(atuais).then(setProdutos)
-  }, [])
+  }, [idsParam])
 
   function remover(produtoId: string) {
     removerDoComparador(produtoId)
@@ -163,5 +173,19 @@ export default function ComparadorPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function ComparadorPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          <p className="text-sm text-gray-400">Carregando...</p>
+        </div>
+      </main>
+    }>
+      <ComparadorContent />
+    </Suspense>
   )
 }

@@ -4,12 +4,17 @@ import StockIndicator from './StockIndicator'
 import SustainabilityBadge from './SustainabilityBadge'
 import Card from './ui/Card'
 import type { SearchResult } from '@/types/produto'
+import { trackProductView } from '@/lib/hooks/useProductTracker'
 
 export default function ProductCard({ result }: { result: SearchResult }) {
   const { produto, score } = result
 
   return (
-    <Link href={`/produto/${produto.id}`} className="block">
+    <Link
+      href={`/produto/${produto.id}`}
+      className="block"
+      onClick={() => trackProductView({ id: produto.id, nome: produto.produto, categoria: produto.categoria })}
+    >
       <Card hoverable padding="none" className="overflow-hidden">
         <div className="flex items-stretch">
           <div className="bg-lm-green/5 px-3 py-3 flex flex-col items-center justify-center min-w-[64px]">
