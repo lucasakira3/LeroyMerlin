@@ -8,6 +8,7 @@ import ProdutoDrawer from './ProdutoDrawer'
 import ComparadorBar from './ComparadorBar'
 import ProductCard from './ProductCard'
 import Skeleton from './ui/Skeleton'
+import Pagination from './ui/Pagination'
 import { definirComparador } from '@/lib/clientComparador'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
@@ -36,6 +37,7 @@ interface Props {
 }
 
 const COMPLEXIDADE_ORDER = ['Baixa', 'DIY', 'Média', 'Alta', 'Profissional', 'Especialista']
+const ITENS_POR_PAGINA = 20
 
 export default function CategoriaView({ slug, label, onBack }: Props) {
   const router = useRouter()
@@ -50,6 +52,8 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const [filtroPrecoMin, setFiltroPrecoMin] = useState('')
   const [filtroPrecoMax, setFiltroPrecoMax] = useState('')
   const [produtoDrawer, setProdutoDrawer] = useState<ProdutoSemEmbedding | null>(null)
+  const [pagina, setPagina] = useState(1)
+  const gridRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -58,6 +62,11 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
       .then(data => { setProdutos(data); setLoading(false) })
       .catch(() => setLoading(false))
   }, [slug])
+
+  // Volta pra primeira página sempre que a categoria ou os filtros mudam
+  useEffect(() => {
+    setPagina(1)
+  }, [slug, filtroComplexidade, filtroEstoque, filtroPrecoMin, filtroPrecoMax])
 
   function toggleSelecionado(p: ProdutoSemEmbedding) {
     setSelecionados(prev => {
@@ -77,10 +86,17 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
     .filter(p => !filtroEstoque || p.estoque > 0)
     .filter(p => precoMinNum === null || p.preco >= precoMinNum)
     .filter(p => precoMaxNum === null || p.preco <= precoMaxNum)
+  const totalPaginas = Math.max(1, Math.ceil(produtosFiltrados.length / ITENS_POR_PAGINA))
+  const produtosPaginados = produtosFiltrados.slice((pagina - 1) * ITENS_POR_PAGINA, pagina * ITENS_POR_PAGINA)
 
   function handleComparar() {
     definirComparador(selecionados.map(p => p.id))
     router.push('/comparar')
+  }
+
+  function mudarPagina(nova: number) {
+    setPagina(nova)
+    gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   function limparFiltros() {
@@ -226,22 +242,26 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
 
       {/* Grid de produtos */}
       {!loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-6">
-          {produtosFiltrados.map((p, i) => (
-            <ProductCard
-              key={p.id}
-              produto={p}
-              selected={selecionados.some(s => s.id === p.id)}
-              onSelect={() => toggleSelecionado(p)}
-              onDetalhes={() => {
-                trackProductView({ id: p.id, nome: p.produto, categoria: p.categoria })
-                setProdutoDrawer(p)
-              }}
-              className="animate-fade-in-up"
-              style={{ '--stagger-delay': `${Math.min(i, 15) * 20}ms` } as React.CSSProperties}
-            />
-          ))}
-        </div>
+        <>
+          <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-6 scroll-mt-4">
+            {produtosPaginados.map((p, i) => (
+              <ProductCard
+                key={p.id}
+                produto={p}
+                selected={selecionados.some(s => s.id === p.id)}
+                onSelect={() => toggleSelecionado(p)}
+                onDetalhes={() => {
+                  trackProductView({ id: p.id, nome: p.produto, categoria: p.categoria })
+                  setProdutoDrawer(p)
+                }}
+                className="animate-fade-in-up"
+                style={{ '--stagger-delay': `${Math.min(i, 15) * 20}ms` } as React.CSSProperties}
+              />
+            ))}
+          </div>
+
+          <Pagination page={pagina} totalPages={totalPaginas} onChange={mudarPagina} className="mb-6" />
+        </>
       )}
 
       {/* Barra flutuante de selecionados */}

@@ -7,12 +7,16 @@ import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import ProductCard from '@/components/ProductCard'
 import ProductCardSkeleton from '@/components/ProductCardSkeleton'
+import Pagination from '@/components/ui/Pagination'
 import { getFavoritosIds } from '@/lib/clientFavoritos'
 import { getHistoricoIds } from '@/lib/clientHistorico'
 import { getUsuarioLogado, logoutUsuario, type UsuarioLogado } from '@/lib/clientAuth'
 import { getPedidos, type Pedido } from '@/lib/clientPedidos'
 import { buscarProdutosPorIds } from '@/lib/produtosCliente'
 import type { SearchResult } from '@/types/produto'
+
+const PRODUTOS_POR_PAGINA = 8
+const PEDIDOS_POR_PAGINA = 5
 
 async function buscarProdutos(ids: string[]): Promise<SearchResult[]> {
   const produtos = await buscarProdutosPorIds(ids)
@@ -29,6 +33,7 @@ function SecaoProdutos({
   mensagemVazia: string
 }) {
   const [produtos, setProdutos] = useState<SearchResult[] | null>(null)
+  const [pagina, setPagina] = useState(1)
 
   useEffect(() => {
     let cancelado = false
@@ -44,6 +49,15 @@ function SecaoProdutos({
     }
   }, [ids])
 
+  useEffect(() => {
+    setPagina(1)
+  }, [ids])
+
+  const totalPaginas = produtos ? Math.max(1, Math.ceil(produtos.length / PRODUTOS_POR_PAGINA)) : 1
+  const produtosPaginados = produtos
+    ? produtos.slice((pagina - 1) * PRODUTOS_POR_PAGINA, pagina * PRODUTOS_POR_PAGINA)
+    : []
+
   return (
     <section>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">{titulo}</h2>
@@ -56,23 +70,30 @@ function SecaoProdutos({
         <p className="text-sm text-gray-500 py-6">{mensagemVazia}</p>
       )}
       {produtos !== null && produtos.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {produtos.map(({ produto }, i) => (
-            <ProductCard
-              key={produto.id}
-              produto={produto}
-              href={`/produto/${produto.id}`}
-              className="animate-fade-in-up"
-              style={{ '--stagger-delay': `${Math.min(i, 15) * 30}ms` } as React.CSSProperties}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {produtosPaginados.map(({ produto }, i) => (
+              <ProductCard
+                key={produto.id}
+                produto={produto}
+                href={`/produto/${produto.id}`}
+                className="animate-fade-in-up"
+                style={{ '--stagger-delay': `${Math.min(i, 15) * 30}ms` } as React.CSSProperties}
+              />
+            ))}
+          </div>
+          <Pagination page={pagina} totalPages={totalPaginas} onChange={setPagina} className="mt-4" />
+        </>
       )}
     </section>
   )
 }
 
 function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
+  const [pagina, setPagina] = useState(1)
+  const totalPaginas = Math.max(1, Math.ceil(pedidos.length / PEDIDOS_POR_PAGINA))
+  const pedidosPaginados = pedidos.slice((pagina - 1) * PEDIDOS_POR_PAGINA, pagina * PEDIDOS_POR_PAGINA)
+
   return (
     <section>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">Meus pedidos</h2>
@@ -81,7 +102,7 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
       )}
       {pedidos.length > 0 && (
         <div className="space-y-3">
-          {pedidos.map(pedido => (
+          {pedidosPaginados.map(pedido => (
             <div key={pedido.numero} className="bg-white rounded-card shadow-soft border border-gray-100 p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
@@ -109,6 +130,7 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
           ))}
         </div>
       )}
+      <Pagination page={pagina} totalPages={totalPaginas} onChange={setPagina} className="mt-4" />
     </section>
   )
 }
