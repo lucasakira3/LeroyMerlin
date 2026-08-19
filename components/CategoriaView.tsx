@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, MapPin, Package, CheckCircle2, SlidersHorizontal, Info, Scale, ShoppingCart, Check } from 'lucide-react'
+import { ArrowLeft, MapPin, Package, SlidersHorizontal, Scale } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
 import ComparadorBar from './ComparadorBar'
+import ProductCard from './ProductCard'
 import Skeleton from './ui/Skeleton'
 import { definirComparador } from '@/lib/clientComparador'
-import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
 
@@ -50,7 +50,6 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const [filtroPrecoMin, setFiltroPrecoMin] = useState('')
   const [filtroPrecoMax, setFiltroPrecoMax] = useState('')
   const [produtoDrawer, setProdutoDrawer] = useState<ProdutoSemEmbedding | null>(null)
-  const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -78,14 +77,6 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
     .filter(p => !filtroEstoque || p.estoque > 0)
     .filter(p => precoMinNum === null || p.preco >= precoMinNum)
     .filter(p => precoMaxNum === null || p.preco <= precoMaxNum)
-
-  function handleAdicionarCarrinho(produtoId: string, estoque: number, e: React.MouseEvent) {
-    e.stopPropagation()
-    if (estoque === 0) return
-    adicionarAoCarrinho(produtoId)
-    setAdicionadoId(produtoId)
-    setTimeout(() => setAdicionadoId(prev => prev === produtoId ? null : prev), 1500)
-  }
 
   function handleComparar() {
     definirComparador(selecionados.map(p => p.id))
@@ -236,88 +227,20 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
       {/* Grid de produtos */}
       {!loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-6">
-          {produtosFiltrados.map((p, i) => {
-            const sel = selecionados.some(s => s.id === p.id)
-            return (
-              <button key={p.id} onClick={() => toggleSelecionado(p)}
-                style={{ '--stagger-delay': `${Math.min(i, 15) * 20}ms` } as React.CSSProperties}
-                className={`group relative text-left p-4 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in-up ${
-                  sel
-                    ? 'border-lm-green bg-lm-green/5 shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-lm-green/40'
-                }`}>
-                {/* Adicionar ao carrinho rápido — aparece ao passar o mouse */}
-                <button
-                  type="button"
-                  onClick={e => handleAdicionarCarrinho(p.id, p.estoque, e)}
-                  disabled={p.estoque === 0}
-                  aria-label="Adicionar ao carrinho"
-                  className={`absolute top-2 right-2 z-10 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40 disabled:cursor-not-allowed text-white ${
-                    adicionadoId === p.id ? 'bg-lm-green' : 'bg-lm-dark/80 hover:bg-lm-green'
-                  }`}
-                >
-                  {adicionadoId === p.id ? <Check size={13} /> : <ShoppingCart size={13} />}
-                </button>
-
-                {/* Categoria + ID */}
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wide">{p.categoria}</span>
-                  <span className="text-[10px] text-gray-300 font-mono">{p.id}</span>
-                </div>
-
-                {/* Nome */}
-                <p className="text-sm font-semibold text-lm-dark leading-snug mb-2 line-clamp-2">
-                  {p.produto}
-                </p>
-
-                {/* Corredor destaque */}
-                <div className={`flex items-center gap-1.5 mb-2 ${sel ? 'text-lm-green' : 'text-lm-green'}`}>
-                  <MapPin size={12} strokeWidth={2.5} />
-                  <span className="text-xs font-bold">{p.corredor}</span>
-                </div>
-
-                {/* Preço */}
-                {'preco' in p && (
-                  <p className="text-base font-bold text-lm-dark mb-1.5">
-                    {Number(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                  </p>
-                )}
-
-                {/* Footer */}
-                <div className="flex items-center justify-between">
-                  <span className={`text-[11px] font-medium ${
-                    p.estoque === 0 ? 'text-gray-400' :
-                    p.estoque < 10 ? 'text-lm-orange' : 'text-lm-green'
-                  }`}>
-                    {p.estoque === 0 ? 'Sem estoque' :
-                     p.estoque < 10 ? `Últ. ${p.estoque} un.` : `${p.estoque} un.`}
-                  </span>
-                  <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                    {p.complexidade}
-                  </span>
-                </div>
-
-                {/* Rodapé do card */}
-                <div className="mt-2 flex items-center justify-between">
-                  {sel ? (
-                    <div className="flex items-center gap-1 text-lm-green text-[11px] font-semibold">
-                      <CheckCircle2 size={13} /> Selecionado
-                    </div>
-                  ) : <span />}
-                  <button
-                    onClick={e => {
-                      e.stopPropagation()
-                      trackProductView({ id: p.id, nome: p.produto, categoria: p.categoria })
-                      setProdutoDrawer(p)
-                    }}
-                    className="flex items-center gap-1 text-[11px] font-semibold text-lm-green border border-lm-green/30 rounded-full px-2 py-0.5 hover:bg-lm-green/10 transition-colors"
-                  >
-                    <Info size={11} /> Detalhes
-                  </button>
-                </div>
-              </button>
-            )
-          })}
+          {produtosFiltrados.map((p, i) => (
+            <ProductCard
+              key={p.id}
+              produto={p}
+              selected={selecionados.some(s => s.id === p.id)}
+              onSelect={() => toggleSelecionado(p)}
+              onDetalhes={() => {
+                trackProductView({ id: p.id, nome: p.produto, categoria: p.categoria })
+                setProdutoDrawer(p)
+              }}
+              className="animate-fade-in-up"
+              style={{ '--stagger-delay': `${Math.min(i, 15) * 20}ms` } as React.CSSProperties}
+            />
+          ))}
         </div>
       )}
 
