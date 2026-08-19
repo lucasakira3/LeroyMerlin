@@ -5,6 +5,7 @@ import { ShoppingCart, Check } from 'lucide-react'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { SearchResult } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
+import { getImagemCategoria } from '@/lib/categoriaImagens'
 
 const VW = 1200
 const VH = 590
@@ -365,6 +366,11 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
                 style={{ borderColor: pin.color, backgroundColor: `${pin.color}12`, '--stagger-delay': `${Math.min(i, 15) * 25}ms` } as React.CSSProperties}>
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black flex-shrink-0"
                   style={{ backgroundColor: pin.color }}>{pin.idx}</span>
+                <img
+                  src={getImagemCategoria(pin.produto.categoria)}
+                  alt={pin.produto.categoria}
+                  className="w-9 h-9 rounded-md object-cover flex-shrink-0"
+                />
                 <div className="min-w-0">
                   <p className="font-semibold text-gray-800 truncate max-w-[180px]">{pin.produto.produto}</p>
                   <p className="text-gray-500">{pin.produto.corredor} · {pin.produto.categoria}</p>
