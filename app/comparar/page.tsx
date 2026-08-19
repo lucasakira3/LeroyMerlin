@@ -14,6 +14,7 @@ import { getComparador, removerDoComparador, definirComparador } from '@/lib/cli
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { getMedia } from '@/lib/clientAvaliacoes'
+import { getImagemCategoria } from '@/lib/categoriaImagens'
 
 function ComparadorContent() {
   const [ids, setIds] = useState<string[]>([])
@@ -96,6 +97,12 @@ function ComparadorContent() {
                   >
                     <Trash2 size={15} />
                   </button>
+
+                  <img
+                    src={getImagemCategoria(produto.categoria)}
+                    alt={produto.categoria}
+                    className="w-full h-28 object-cover rounded-lg mb-3"
+                  />
 
                   <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{produto.categoria}</p>
                   <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3 pr-6">{produto.produto}</h3>
