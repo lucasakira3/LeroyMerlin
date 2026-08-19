@@ -5,6 +5,7 @@ import SearchSection from '@/components/SearchSection'
 import CategoriaView from '@/components/CategoriaView'
 import Card from '@/components/ui/Card'
 import { Grid2x2, Zap, Droplets, Hammer, Palette, Flower2, Lightbulb, BrickWall } from 'lucide-react'
+import { getImagemCategoria } from '@/lib/categoriaImagens'
 
 const CATEGORIAS = [
   { slug: 'ferramentas', label: 'Ferramentas', icon: Hammer,    cor: 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100' },
@@ -34,23 +35,57 @@ export default function Home() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in-up">
+      {/* Banner promocional */}
+      <div className="relative h-40 sm:h-44 mb-8 overflow-hidden rounded-card bg-gradient-to-r from-green-800 to-lm-green">
+        <img
+          src={getImagemCategoria('Ferramentas')}
+          alt=""
+          className="absolute -right-4 -top-2 h-[120%] w-3/5 object-cover"
+        />
+        <div className="relative h-full flex flex-col justify-center px-6 sm:px-10 max-w-xs sm:max-w-sm">
+          <span className="inline-block w-fit bg-lm-yellow text-black text-[10px] font-extrabold px-2.5 py-1 rounded-md mb-2 tracking-wide">
+            OFERTA DA SEMANA
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">Até 30% off</h1>
+          <p className="text-sm text-white/85 mt-1">em ferramentas elétricas selecionadas</p>
+        </div>
+      </div>
+
       {/* Categorias */}
       <div className="mb-8">
         <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
           Navegar por categoria
         </h2>
         <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
-          {CATEGORIAS.map(({ slug, label, icon: Icon, cor }, i) => (
-            <button
-              key={slug}
-              onClick={() => setCategoriaAtiva({ slug, label })}
-              style={{ '--stagger-delay': `${i * 30}ms` } as React.CSSProperties}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs font-semibold transition-all hover:shadow-soft hover:-translate-y-0.5 active:scale-95 cursor-pointer animate-fade-in-up ${cor}`}
-            >
-              <Icon size={22} />
-              <span className="text-center leading-tight">{label}</span>
-            </button>
-          ))}
+          {CATEGORIAS.map(({ slug, label, icon: Icon, cor }, i) => {
+            if (slug === 'todos') {
+              return (
+                <button
+                  key={slug}
+                  onClick={() => setCategoriaAtiva({ slug, label })}
+                  style={{ '--stagger-delay': `${i * 30}ms` } as React.CSSProperties}
+                  className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs font-semibold transition-all hover:shadow-soft hover:-translate-y-0.5 active:scale-95 cursor-pointer animate-fade-in-up ${cor}`}
+                >
+                  <Icon size={22} />
+                  <span className="text-center leading-tight">{label}</span>
+                </button>
+              )
+            }
+            return (
+              <button
+                key={slug}
+                onClick={() => setCategoriaAtiva({ slug, label })}
+                style={{ '--stagger-delay': `${i * 30}ms` } as React.CSSProperties}
+                className="group relative rounded-xl overflow-hidden aspect-square animate-fade-in-up hover:shadow-soft hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer"
+              >
+                <img src={getImagemCategoria(label)} alt={label} className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <span className="absolute bottom-1.5 left-0 right-0 text-center text-white text-[11px] font-bold leading-tight px-1">
+                  {label}
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
 
