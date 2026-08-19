@@ -48,7 +48,7 @@ function SecaoProdutos({
     <section>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">{titulo}</h2>
       {produtos === null && (
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {[0, 1, 2].map((i) => <ProductCardSkeleton key={i} />)}
         </div>
       )}
@@ -56,11 +56,15 @@ function SecaoProdutos({
         <p className="text-sm text-gray-500 py-6">{mensagemVazia}</p>
       )}
       {produtos !== null && produtos.length > 0 && (
-        <div className="space-y-3">
-          {produtos.map((resultado, i) => (
-            <div key={resultado.produto.id} className="animate-fade-in-up" style={{ '--stagger-delay': `${Math.min(i, 15) * 30}ms` } as React.CSSProperties}>
-              <ProductCard result={resultado} />
-            </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {produtos.map(({ produto }, i) => (
+            <ProductCard
+              key={produto.id}
+              produto={produto}
+              href={`/produto/${produto.id}`}
+              className="animate-fade-in-up"
+              style={{ '--stagger-delay': `${Math.min(i, 15) * 30}ms` } as React.CSSProperties}
+            />
           ))}
         </div>
       )}
