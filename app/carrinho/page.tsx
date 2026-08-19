@@ -11,6 +11,7 @@ import { salvarPedido, gerarNumeroPedido, type Pedido, type ItemPedido } from '@
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { clearProductHistory } from '@/lib/hooks/useProductTracker'
+import { getImagemCategoria } from '@/lib/categoriaImagens'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -171,6 +172,11 @@ export default function CarrinhoPage() {
             <div className="space-y-3 mb-6">
               {itensResolvidos.map(({ item, produto }) => (
                 <Card key={produto.id} padding="sm" className="flex items-center gap-3">
+                  <img
+                    src={getImagemCategoria(produto.categoria)}
+                    alt={produto.categoria}
+                    className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+                  />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-900 truncate">{produto.produto}</p>
                     <div className="flex items-center gap-3 mt-0.5">
