@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Heart, ShoppingCart, Scale } from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
+import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
@@ -58,7 +59,7 @@ export default function ProdutoDrawer({ produto, onClose }: Props) {
       {/* Painel lateral */}
       <div>
           <div
-          className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white rounded-l-card shadow-soft-lg flex flex-col transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
+          className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white rounded-l-card shadow-soft-lg overflow-hidden flex flex-col transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
         >
           {produto && <DrawerContent produto={produto} onClose={onClose} />}
         </div>
@@ -146,6 +147,13 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
 
   return (
     <>
+      {/* Foto da categoria */}
+      <img
+        src={getImagemCategoria(produto.categoria)}
+        alt={produto.categoria}
+        className="w-full h-40 object-cover flex-shrink-0"
+      />
+
       {/* Header */}
       <div className="bg-lm-green px-5 pt-5 pb-4 text-white flex-shrink-0">
         <div className="flex items-start justify-between gap-3 mb-3">
