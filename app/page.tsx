@@ -4,7 +4,7 @@ import { useState } from 'react'
 import SearchSection from '@/components/SearchSection'
 import CategoriaView from '@/components/CategoriaView'
 import Card from '@/components/ui/Card'
-import { Grid2x2, Zap, Droplets, Hammer, Palette, Flower2, Lightbulb, BrickWall } from 'lucide-react'
+import { Grid2x2, Zap, Droplets, Hammer, Palette, Flower2, Lightbulb, BrickWall, Frame } from 'lucide-react'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 
 const CATEGORIAS = [
@@ -15,6 +15,7 @@ const CATEGORIAS = [
   { slug: 'jardim',      label: 'Jardim',      icon: Flower2,   cor: 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100' },
   { slug: 'iluminacao',  label: 'Iluminação',  icon: Lightbulb, cor: 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100' },
   { slug: 'construcao',  label: 'Construção',  icon: BrickWall, cor: 'bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100' },
+  { slug: 'decoracao',   label: 'Decoração',   icon: Frame,     cor: 'bg-pink-50 text-pink-600 border-pink-200 hover:bg-pink-100' },
   { slug: 'todos',       label: 'Todos',       icon: Grid2x2,   cor: 'bg-lm-green/10 text-lm-green border-lm-green/30 hover:bg-lm-green/20' },
 ]
 

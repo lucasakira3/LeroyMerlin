@@ -9,6 +9,7 @@
 // banheiro: Washbasins of the restrooms in Crowne Plaza Vientiane.jpg
 // pintura: Paint roller 4.jpg
 // construcao: Brick and Flint facade of house under construction.jpg
+// decoracao: Furnished living room (Unsplash).jpg
 
 const IMAGENS_POR_CATEGORIA: Record<string, string> = {
   'Ferramentas': '/categorias/ferramentas.jpg',
@@ -20,6 +21,7 @@ const IMAGENS_POR_CATEGORIA: Record<string, string> = {
   'Banheiro': '/categorias/banheiro.jpg',
   'Pintura': '/categorias/pintura.jpg',
   'Construção': '/categorias/construcao.jpg',
+  'Decoração': '/categorias/decoracao.jpg',
 }
 
 const FALLBACK = IMAGENS_POR_CATEGORIA['Ferramentas']

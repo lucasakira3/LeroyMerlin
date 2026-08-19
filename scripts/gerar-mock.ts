@@ -360,6 +360,460 @@ const construcao2: Produto[] = [
   p("Construção","Parafuso Ancla Fixação Parede Concreto 6x50mm (cx 100)","Parafuso para fixar na parede?","Parafuso com bucha para fixação em paredes de concreto, alvenaria e gesso. Conjunto.",7,"DIY","Diâmetro: 6mm\nComprimento: 50mm\nBucha: Inclusa\nQuantidade: 100 conjuntos",["parafuso","bucha","fixação","parede","concreto"],19.90),
 ];
 
+// ─── expansão pra 1000 produtos + categoria Decoração ────────────────────────
+// Gera variações combinando tipo de produto x marca/variante — mesmo padrão de
+// dados dos produtos acima, só que gerado programaticamente pra atingir volume.
+function gerarLinha(
+  categoria: string,
+  corredores: number[],
+  baseNome: string,
+  pergunta: string,
+  respostaFn: (marca: string, variante: string) => string,
+  specsFn: (variante: string) => string,
+  tagsBase: string[],
+  complPool: Complexidade[],
+  precoMin: number,
+  precoMax: number,
+  variantes: string[],
+  marcas: string[],
+  sustPool: Sustentabilidade[] = ["N/A"]
+): Produto[] {
+  const out: Produto[] = [];
+  for (const variante of variantes) {
+    for (const marca of marcas) {
+      const nome = `${baseNome} ${variante} ${marca}`;
+      const preco = Math.round((precoMin + Math.random() * (precoMax - precoMin)) * 100) / 100;
+      out.push(p(
+        categoria, nome, pergunta, respostaFn(marca, variante),
+        pick(corredores), pick(complPool), specsFn(variante),
+        [...tagsBase, variante.toLowerCase().replace(/\s+/g, "-")],
+        preco, pick(sustPool)
+      ));
+    }
+  }
+  return out;
+}
+
+function gerarExpansao(): Produto[] {
+  const out: Produto[] = [];
+
+  // ═══ FERRAMENTAS (+39, corredores 1-8) ═══
+  out.push(...gerarLinha(
+    "Ferramentas", [1,2,3,4,8], "Chave de Fenda",
+    "Chave de fenda para uso geral?",
+    (m, v) => `Chave de fenda ponta ${v} com cabo emborrachado antiderrapante, aço cromo-vanádio. ${m}.`,
+    (v) => `Ponta: ${v}\nMaterial: Aço Cr-V\nCabo: Emborrachado`,
+    ["chave de fenda", "manual"], ["DIY"], 9.90, 29.90,
+    ["3mm","5mm","6mm","8mm"], ["Tramontina","Vonder","Stanley","Bosch","Makita"]
+  ));
+  out.push(...gerarLinha(
+    "Ferramentas", [3,4,5], "Furadeira de Bancada",
+    "Furadeira de bancada para oficina?",
+    (m, v) => `Furadeira de bancada ${v} para furos precisos em madeira e metal. ${m}.`,
+    (v) => `Potência: ${v}\nMandril: 13mm\nVelocidades: 5\nBase: Fixa`,
+    ["furadeira", "bancada", "oficina"], ["Profissional","Especialista"], 349.90, 899.90,
+    ["350W","450W","550W","650W"], ["Vonder","Bosch","Makita","Skil","Lynus"]
+  ).slice(0, 20));
+  out.splice(39); // mantém exatamente +39
+
+  // ═══ ELÉTRICA (+56, corredores 9-15) ═══
+  const eletricaExt: Produto[] = [];
+  eletricaExt.push(...gerarLinha(
+    "Elétrica", [9,10], "Fita Isolante 19mm x 10m",
+    "Fita isolante colorida para identificar circuitos?",
+    (m, v) => `Fita isolante PVC cor ${v.toLowerCase()} para emendas e identificação de fase. ${m}.`,
+    (v) => `Cor: ${v}\nLargura: 19mm\nComprimento: 10m\nTensão: até 600V`,
+    ["fita isolante", "emenda"], ["DIY"], 6.90, 14.90,
+    ["Preta","Branca","Vermelha","Azul","Amarela","Verde"], ["3M","Vonder","Tramontina"]
+  ));
+  eletricaExt.push(...gerarLinha(
+    "Elétrica", [11], "Tomada Dupla 2P+T 10A",
+    "Tomada dupla para instalar na parede?",
+    (m, v) => `Tomada dupla padrão NBR 14136, acabamento ${v.toLowerCase()}. ${m}.`,
+    (v) => `Cor: ${v}\nCorrente: 10A\nTensão: 250V\nPadrão: NBR 14136`,
+    ["tomada", "dupla", "instalação"], ["Profissional"], 19.90, 39.90,
+    ["Branca","Preta","Bege","Cinza"], ["Pial Legrand","Tramontina","Weg","Fame"]
+  ));
+  eletricaExt.push(...gerarLinha(
+    "Elétrica", [11, 14], "Lâmpada Dicroica Halógena 50W",
+    "Lâmpada dicroica para spot?",
+    (m, v) => `Lâmpada dicroica halógena 50W, base ${v}, para spots direcionáveis. ${m}.`,
+    (v) => `Potência: 50W\nBase: ${v}\nÂngulo: 36°\nBivolt: Sim`,
+    ["dicroica", "halógena", "spot"], ["DIY"], 8.90, 19.90,
+    ["GU10","MR16","AR111"], ["Osram","Philips","Empalux","Taschibra","Avant"]
+  ));
+  eletricaExt.push(...gerarLinha(
+    "Elétrica", [12], "Cabo Flexível 4mm² 750V",
+    "Cabo mais grosso para chuveiro e ar-condicionado?",
+    (m, v) => `Cabo flexível 4mm² cor ${v.toLowerCase()}, rolo de 100m, para circuitos de maior corrente. ${m}.`,
+    (v) => `Seção: 4mm²\nCor: ${v}\nTensão: 750V\nCorrente máx: 28A`,
+    ["cabo", "4mm", "flexível"], ["Profissional"], 219.90, 289.90,
+    ["Preto","Azul","Vermelho","Verde/Amarelo"], ["Prysmian","Sil","Cobrecom"]
+  ));
+  out.push(...eletricaExt.slice(0, 56));
+
+  // ═══ HIDRÁULICA (+59, corredores 16-22) ═══
+  const hidraulicaExt: Produto[] = [];
+  hidraulicaExt.push(...gerarLinha(
+    "Hidráulica", [18], "Torneira de Cozinha",
+    "Torneira para pia de cozinha?",
+    (m, v) => `Torneira de cozinha estilo ${v.toLowerCase()}, acabamento cromado, bica alta giratória. ${m}.`,
+    (v) => `Estilo: ${v}\nMaterial: Metal cromado\nFuro instalação: 35mm`,
+    ["torneira", "cozinha"], ["Profissional"], 149.90, 649.90,
+    ["Gourmet","Parede","Bancada","Filtro Acoplado","Retrátil"], ["Docol","Deca","Lorenzetti","Fabrimar"]
+  ));
+  hidraulicaExt.push(...gerarLinha(
+    "Hidráulica", [17], "Registro de Gaveta Bronze",
+    "Registro para controlar água em bitola específica?",
+    (m, v) => `Registro de gaveta em bronze, bitola ${v}, resistente à corrosão. ${m}.`,
+    (v) => `Bitola: ${v}\nMaterial: Bronze\nPressão máx: 10 bar`,
+    ["registro", "gaveta", "bronze"], ["Profissional"], 24.90, 89.90,
+    ['1/2"','1"','1.1/2"','2"'], ["Deca","Docol","Blukit"]
+  ));
+  hidraulicaExt.push(...gerarLinha(
+    "Hidráulica", [19], "Tubo PVC Soldável (barra 6m)",
+    "Tubo PVC para diâmetro específico de encanamento?",
+    (m, v) => `Tubo PVC soldável ${v} para água fria, barra de 6m. ${m}.`,
+    (v) => `Diâmetro: ${v}\nComprimento: 6m\nPadrão: NBR 5648`,
+    ["tubo", "PVC", "encanamento"], ["Profissional"], 24.90, 129.90,
+    ["20mm","25mm","32mm","40mm","50mm","60mm"], ["Tigre","Amanco","Krona"]
+  ));
+  hidraulicaExt.push(...gerarLinha(
+    "Hidráulica", [19,20], "Conexão Joelho 90° PVC",
+    "Joelho para mudar direção do cano?",
+    (m, v) => `Joelho 90° soldável ${v} para mudança de direção em instalações de água fria. ${m}.`,
+    (v) => `Diâmetro: ${v}\nÂngulo: 90°\nMaterial: PVC`,
+    ["joelho", "PVC", "conexão"], ["DIY"], 2.90, 12.90,
+    ["20mm","25mm","32mm","40mm"], ["Tigre","Amanco","Krona","Plastilit"]
+  ));
+  out.push(...hidraulicaExt.slice(0, 59));
+
+  // ═══ ILUMINAÇÃO (+80, corredores 23-25) ═══
+  const iluminacaoExt: Produto[] = [];
+  iluminacaoExt.push(...gerarLinha(
+    "Iluminação", [23], "Lâmpada LED Bulbo",
+    "Lâmpada LED com potência específica?",
+    (m, v) => `Lâmpada LED bulbo ${v}, base E27, luz branca. ${m}.`,
+    (v) => `Potência: ${v}\nBase: E27\nVida útil: 15.000h`,
+    ["lâmpada", "LED", "bulbo"], ["DIY"], 9.90, 34.90,
+    ["5W","7W","9W","12W","15W","20W"], ["Philips","Osram","Taschibra","Avant","Empalux","Kian"],
+    ["N/A","Ouro"]
+  ));
+  iluminacaoExt.push(...gerarLinha(
+    "Iluminação", [25], "Fita LED",
+    "Fita LED para sanca e decoração?",
+    (m, v) => `Fita LED ${v.toLowerCase()}, adesivo 3M, ideal para sancas e móveis. ${m}.`,
+    (v) => `Especificação: ${v}\nTensão: 12V\nDensidade: 60 LEDs/m`,
+    ["fita LED", "sanca"], ["DIY"], 39.90, 89.90,
+    ["3m Branco Frio","5m Branco Quente","5m RGB","10m Branco Frio"], ["Taschibra","Intelbras","Avant","Kian"]
+  ));
+  iluminacaoExt.push(...gerarLinha(
+    "Iluminação", [23,24], "Luminária Pendente",
+    "Luminária pendente para sala de jantar?",
+    (m, v) => `Luminária pendente estilo ${v.toLowerCase()}, base E27, cabo têxtil ajustável. ${m}.`,
+    (v) => `Estilo: ${v}\nBase: E27\nCabo: Têxtil ajustável`,
+    ["luminária", "pendente"], ["DIY","Profissional"], 89.90, 299.90,
+    ["Industrial","Minimalista","Rústica","Moderna","Vintage"], ["Taschibra","Avant","Startec","Bella Iluminação"]
+  ));
+  iluminacaoExt.push(...gerarLinha(
+    "Iluminação", [24], "Spot de Embutir LED",
+    "Spot de embutir com potência específica?",
+    (m, v) => `Spot LED de embutir ${v}, para forro de gesso, luz neutra. ${m}.`,
+    (v) => `Potência: ${v}\nFuro: 75mm\nTemperatura: 4000K`,
+    ["spot", "embutir", "LED"], ["Profissional"], 19.90, 49.90,
+    ["5W","7W","9W","12W"], ["Taschibra","Avant","Save Energy","Kian"]
+  ));
+  out.push(...iluminacaoExt.slice(0, 80));
+
+  // ═══ JARDIM (+64, corredores 26-32) ═══
+  const jardimExt: Produto[] = [];
+  jardimExt.push(...gerarLinha(
+    "Jardim", [29], "Vaso de Cerâmica",
+    "Vaso de cerâmica para plantas em tamanho específico?",
+    (m, v) => `Vaso de cerâmica ${v} para plantas internas e externas. ${m}.`,
+    (v) => `Diâmetro: ${v}\nMaterial: Cerâmica\nDreno: Sim`,
+    ["vaso", "cerâmica", "plantas"], ["DIY"], 19.90, 149.90,
+    ["15cm","20cm","25cm","30cm","40cm"], ["Vasart","Vonder","N.Pot","Terracota Brasil"]
+  ));
+  jardimExt.push(...gerarLinha(
+    "Jardim", [28], "Adubo Fertilizante",
+    "Adubo específico para tipo de planta?",
+    (m, v) => `Fertilizante ${v} para jardins, hortas e vasos. ${m}.`,
+    (v) => `Fórmula: ${v}\nApresentação: Granulado ou pó\nUso: Jardim e horta`,
+    ["adubo", "fertilizante"], ["DIY"], 14.90, 44.90,
+    ["NPK 04-14-08","NPK 10-10-10","Composto Orgânico","Húmus de Minhoca","Farinha de Osso"],
+    ["Forth","Vitaplan","Turfa Fértil","Basacote"],
+    ["N/A","Prata","Ouro"]
+  ));
+  jardimExt.push(...gerarLinha(
+    "Jardim", [30], "Ferramenta de Jardinagem Manual",
+    "Ferramenta manual para cuidar do jardim?",
+    (m, v) => `${v} para cultivo e manutenção de jardins e hortas, cabo ergonômico. ${m}.`,
+    (v) => `Tipo: ${v}\nMaterial: Aço carbono\nCabo: Ergonômico`,
+    ["jardinagem", "manual", "ferramenta"], ["DIY"], 19.90, 49.90,
+    ["Pá de Mão","Garfo de Mão","Cultivador Manual","Ancinho de Mão","Transplantador"],
+    ["Tramontina","Vonder","Bellota"]
+  ));
+  jardimExt.push(...gerarLinha(
+    "Jardim", [27], "Mangueira de Jardim",
+    "Mangueira em comprimento específico?",
+    (m, v) => `Mangueira de jardim ${v}, resistente a UV e torções. ${m}.`,
+    (v) => `Comprimento: ${v}\nDiâmetro: 1/2"\nPressão máx: 4 bar`,
+    ["mangueira", "jardim", "rega"], ["DIY"], 39.90, 129.90,
+    ["10m","15m","20m","25m","30m"], ["Tramontina","Vonder"]
+  ));
+  out.push(...jardimExt.slice(0, 64));
+
+  // ═══ PISOS E CERÂMICA (+67, corredores 33-43) ═══
+  const pisosExt: Produto[] = [];
+  pisosExt.push(...gerarLinha(
+    "Pisos e Cerâmica", [38], "Porcelanato",
+    "Porcelanato em formato específico?",
+    (m, v) => `Porcelanato ${v}, acabamento acetinado, alta resistência ao tráfego. ${m}.`,
+    (v) => `Tamanho: ${v}\nPEI: 4\nAcabamento: Acetinado`,
+    ["porcelanato", "piso"], ["Profissional"], 59.90, 189.90,
+    ["60x60cm","80x80cm","90x90cm","120x60cm","30x60cm"],
+    ["Portobello","Eliane","Cecafi","Delta","Villagres"],
+    ["N/A","Prata"]
+  ));
+  pisosExt.push(...gerarLinha(
+    "Pisos e Cerâmica", [40,41], "Piso Vinílico",
+    "Piso vinílico em sistema específico?",
+    (m, v) => `Piso vinílico sistema ${v.toLowerCase()}, resistente à água. ${m}.`,
+    (v) => `Sistema: ${v}\nImpermeável: Sim`,
+    ["vinílico", "piso"], ["DIY"], 39.90, 79.90,
+    ["Régua Click 4mm","Régua Colado 2mm","Manta 3mm","Placa Click 5mm"],
+    ["Tarkett","Durafloor","Eucafloor"]
+  ));
+  pisosExt.push(...gerarLinha(
+    "Pisos e Cerâmica", [36], "Rejunte Flexível 1kg",
+    "Rejunte de cor específica?",
+    (m, v) => `Rejunte flexível cor ${v.toLowerCase()} para cerâmica e porcelanato. ${m}.`,
+    (v) => `Cor: ${v}\nPeso: 1kg\nJunta: 1 a 10mm`,
+    ["rejunte", "junta"], ["DIY"], 11.90, 19.90,
+    ["Branco","Cinza Platina","Grafite","Bege","Marrom","Cristal"], ["Quartzolit","Portokoll","Fortaleza"]
+  ));
+  pisosExt.push(...gerarLinha(
+    "Pisos e Cerâmica", [35], "Argamassa Colante 20kg",
+    "Argamassa em classificação específica?",
+    (m, v) => `Argamassa colante ${v} para assentamento de cerâmica e porcelanato. ${m}.`,
+    (v) => `Tipo: ${v}\nPeso: 20kg\nRendimento: 4-7kg/m²`,
+    ["argamassa", "colante"], ["Profissional"], 29.90, 64.90,
+    ["AC-I","AC-II","AC-III","Flexível"], ["Quartzolit","Votorantim","Fortaleza"]
+  ));
+  out.push(...pisosExt.slice(0, 67));
+
+  // ═══ BANHEIRO (+72, corredores 44-47) ═══
+  const banheiroExt: Produto[] = [];
+  banheiroExt.push(...gerarLinha(
+    "Banheiro", [45], "Vaso Sanitário",
+    "Vaso sanitário em modelo específico?",
+    (m, v) => `Vaso sanitário modelo ${v.toLowerCase()}, dual flush, louça branca. ${m}.`,
+    (v) => `Modelo: ${v}\nFlush: Dual 3/6L\nCor: Branco`,
+    ["vaso", "sanitário"], ["Profissional"], 349.90, 999.90,
+    ["Caixa Acoplada","Convencional","Suspenso","Com Bidê Integrado"], ["Deca","Celite","Roca","Icasa"],
+    ["N/A","Prata"]
+  ));
+  banheiroExt.push(...gerarLinha(
+    "Banheiro", [44], "Cuba de Apoio",
+    "Cuba de apoio em formato específico?",
+    (m, v) => `Cuba de apoio ${v.toLowerCase()} para bancada de banheiro, visual moderno. ${m}.`,
+    (v) => `Formato: ${v}\nMaterial: Louça\nInstalação: Apoio`,
+    ["cuba", "apoio", "banheiro"], ["Profissional"], 129.90, 399.90,
+    ["Redonda","Oval","Quadrada","Retangular","Esculpida"], ["Deca","Celite","Roca","Compace"]
+  ));
+  banheiroExt.push(...gerarLinha(
+    "Banheiro", [44], "Torneira de Banheiro",
+    "Torneira de banheiro em estilo específico?",
+    (m, v) => `Torneira de banheiro estilo ${v.toLowerCase()}, acabamento cromado. ${m}.`,
+    (v) => `Estilo: ${v}\nMaterial: Metal cromado\nFuro: 35mm`,
+    ["torneira", "banheiro"], ["Profissional"], 119.90, 449.90,
+    ["Monocomando Alta","Monocomando Baixa","Parede","Cascata","Bica Baixa"], ["Deca","Docol","Fabrimar","Lorenzetti"]
+  ));
+  banheiroExt.push(...gerarLinha(
+    "Banheiro", [47], "Acessório Metálico para Banheiro",
+    "Acessório de metal para organizar o banheiro?",
+    (m, v) => `${v} em metal cromado, fixação por parafusos. ${m}.`,
+    (v) => `Tipo: ${v}\nMaterial: Metal cromado\nFixação: Parafusos`,
+    ["acessório", "banheiro", "metálico"], ["DIY"], 39.90, 119.90,
+    ["Toalheiro Duplo","Porta Escova","Cabide Duplo","Saboneteira de Parede","Papeleira"],
+    ["Docol","Deca","Compace","Ducon"]
+  ));
+  out.push(...banheiroExt.slice(0, 72));
+
+  // ═══ PINTURA (+74, corredores 48-50) ═══
+  const pinturaExt: Produto[] = [];
+  pinturaExt.push(...gerarLinha(
+    "Pintura", [49], "Tinta Látex Acrílica 18L",
+    "Tinta látex de cor específica?",
+    (m, v) => `Tinta látex acrílica cor ${v.toLowerCase()}, acabamento fosco, alta cobertura. ${m}.`,
+    (v) => `Cor: ${v}\nVolume: 18L\nRendimento: 350-400m²`,
+    ["tinta", "látex", "parede"], ["DIY"], 219.90, 349.90,
+    ["Branco Neve","Areia","Azul Sereno","Verde Sálvia","Cinza Urbano","Amarelo Canário","Rosa Quartzo"],
+    ["Suvinil","Coral","Sherwin-Williams","Metalatex"],
+    ["N/A","Prata"]
+  ));
+  pinturaExt.push(...gerarLinha(
+    "Pintura", [49], "Tinta Esmalte Sintético 3.6L",
+    "Esmalte sintético de cor específica?",
+    (m, v) => `Tinta esmalte sintético cor ${v.toLowerCase()} para madeira e metal. ${m}.`,
+    (v) => `Cor: ${v}\nVolume: 3.6L\nAcabamento: Brilhante`,
+    ["tinta", "esmalte", "metal"], ["DIY"], 69.90, 109.90,
+    ["Branco","Preto","Vermelho","Azul","Verde","Marrom"], ["Suvinil","Coral","Eucatex"]
+  ));
+  pinturaExt.push(...gerarLinha(
+    "Pintura", [50], "Verniz para Madeira 900ml",
+    "Verniz em acabamento específico?",
+    (m, v) => `Verniz acrílico acabamento ${v.toLowerCase()} para móveis e pisos de madeira. ${m}.`,
+    (v) => `Acabamento: ${v}\nVolume: 900ml\nRendimento: 20m²`,
+    ["verniz", "madeira"], ["DIY"], 44.90, 74.90,
+    ["Brilhante","Acetinado","Fosco"], ["Suvinil","Sherwin-Williams","Montana"]
+  ));
+  pinturaExt.push(...gerarLinha(
+    "Pintura", [48], "Ferramenta de Pintura",
+    "Acessório para aplicar tinta?",
+    (m, v) => `${v} para aplicação de tinta látex e esmalte. ${m}.`,
+    (v) => `Tipo: ${v}\nUso: Látex e esmalte`,
+    ["pintura", "ferramenta", "rolo"], ["DIY"], 9.90, 24.90,
+    ["Rolo Lã 23cm","Rolo Espuma 15cm",'Trincha 1"','Trincha 3"','Pincel Chato 2"'],
+    ["Tigre Tintas","Condor","Atlas"]
+  ));
+  pinturaExt.push(...gerarLinha(
+    "Pintura", [50], "Massa e Textura para Parede",
+    "Massa ou textura para preparar parede?",
+    (m, v) => `${v} para preparação e acabamento de paredes internas e externas. ${m}.`,
+    (v) => `Produto: ${v}\nAplicação: Parede`,
+    ["massa", "textura", "parede"], ["DIY","Profissional"], 79.90, 159.90,
+    ["Massa Corrida PVA 18L","Massa Acrílica 18L","Textura Grafiatada 25kg","Textura Lisa 20kg"],
+    ["Suvinil","Coral"]
+  ));
+  out.push(...pinturaExt.slice(0, 74));
+
+  // ═══ CONSTRUÇÃO (+72, corredores 6-8) ═══
+  const construcaoExt: Produto[] = [];
+  construcaoExt.push(...gerarLinha(
+    "Construção", [6], "Cimento 50kg",
+    "Cimento em tipo específico?",
+    (m, v) => `Cimento Portland tipo ${v} para argamassas, rebocos e concreto. ${m}.`,
+    (v) => `Tipo: ${v}\nPeso: 50kg\nSaco: Kraft`,
+    ["cimento", "construção"], ["Profissional"], 34.90, 54.90,
+    ["CPII-E 32","CPII-Z 32","CPIII-40","CPV-ARI"], ["Votorantim","Cauê","Itambé","Nassau"]
+  ));
+  construcaoExt.push(...gerarLinha(
+    "Construção", [6,7], "Tijolo/Bloco (unidade)",
+    "Tijolo ou bloco para levantar parede?",
+    (m, v) => `${v} para paredes internas e externas, alta resistência.`,
+    (v) => `Tipo: ${v}\nUso: Alvenaria`,
+    ["tijolo", "bloco", "alvenaria"], ["Profissional"], 1.20, 6.90,
+    ["Tijolo Cerâmico 6 Furos","Tijolo Cerâmico 8 Furos","Bloco de Concreto 9cm","Bloco de Concreto 14cm","Bloco de Concreto 19cm"],
+    ["Padrão","Vazado","Reforçado"]
+  ));
+  construcaoExt.push(...gerarLinha(
+    "Construção", [7], "Vergalhão de Aço CA-50",
+    "Vergalhão em diâmetro específico?",
+    (m, v) => `Vergalhão de aço CA-50 nervurado, diâmetro ${v}, para reforço estrutural.`,
+    (v) => `Diâmetro: ${v}\nTipo: CA-50 nervurado`,
+    ["vergalhão", "aço", "estrutura"], ["Especialista"], 19.90, 89.90,
+    ["6.3mm","8mm","10mm","12.5mm","16mm"], ["6m","12m"]
+  ));
+  construcaoExt.push(...gerarLinha(
+    "Construção", [8], "Telha",
+    "Telha em material específico?",
+    (m, v) => `Telha ${v.toLowerCase()} para cobertura de casas e galpões. ${m}.`,
+    (v) => `Material: ${v}\nUso: Cobertura`,
+    ["telha", "cobertura", "telhado"], ["Profissional"], 24.90, 149.90,
+    ["Fibrocimento 6mm","Cerâmica Colonial","Metálica Termoacústica","Shingle Asfáltica","Policarbonato Alveolar"],
+    ["Brasilit","Eternit","Isodren","Onduline"]
+  ));
+  construcaoExt.push(...gerarLinha(
+    "Construção", [8], "Selante e Argamassa de Construção",
+    "Selante ou argamassa para acabamento de obra?",
+    (m, v) => `${v} para vedação e acabamento em obras e reformas. ${m}.`,
+    (v) => `Produto: ${v}`,
+    ["selante", "argamassa", "construção"], ["Profissional"], 19.90, 199.90,
+    ["Selante PU","Selante MS","Argamassa de Reboco 20kg","Impermeabilizante Acrílico 18L"],
+    ["Tekbond","Vedacit","Sika"]
+  ));
+  out.push(...construcaoExt.slice(0, 72));
+
+  // ═══ DECORAÇÃO (+100, nova categoria — corredores 48-50, mesma zona de Pintura) ═══
+  const decoracaoExt: Produto[] = [];
+  decoracaoExt.push(...gerarLinha(
+    "Decoração", [48,49,50], "Quadro Decorativo",
+    "Quadro para decorar parede?",
+    (m, v) => `Quadro decorativo tema ${v.toLowerCase()}, moldura inclusa, pronto para pendurar.`,
+    (v) => `Tema: ${v}\nMoldura: Inclusa`,
+    ["quadro", "decorativo", "parede"], ["DIY"], 49.90, 199.90,
+    ["Abstrato","Botânico","Geométrico","Preto e Branco","Tipográfico","Paisagem"],
+    ["30x40cm","40x60cm","50x70cm"]
+  ));
+  decoracaoExt.push(...gerarLinha(
+    "Decoração", [48,49,50], "Almofada Decorativa",
+    "Almofada para sofá e cama?",
+    (m, v) => `Almofada decorativa estampa ${v.toLowerCase()}, capa removível com zíper.`,
+    (v) => `Estampa: ${v}\nCapa: Removível`,
+    ["almofada", "sofá", "decorativa"], ["DIY"], 29.90, 89.90,
+    ["Lisa","Listrada","Geométrica","Floral","Texturizada","Boho"],
+    ["40x40cm","45x45cm","50x50cm"]
+  ));
+  decoracaoExt.push(...gerarLinha(
+    "Decoração", [48,49,50], "Tapete",
+    "Tapete para sala ou quarto?",
+    (m, v) => `Tapete estilo ${v.toLowerCase()}, antiderrapante, fácil limpeza.`,
+    (v) => `Estilo: ${v}\nAntiderrapante: Sim`,
+    ["tapete", "sala", "decoração"], ["DIY"], 99.90, 399.90,
+    ["Shaggy","Sisal","Kilim","Retangular Liso","Redondo Boho"],
+    ["1,50x2,00m","2,00x2,50m","1,20x1,80m"]
+  ));
+  decoracaoExt.push(...gerarLinha(
+    "Decoração", [48,49,50], "Espelho Decorativo",
+    "Espelho para decorar parede?",
+    (m, v) => `Espelho decorativo formato ${v.toLowerCase()}, pronto para pendurar.`,
+    (v) => `Formato: ${v}\nInstalação: Parede`,
+    ["espelho", "decorativo", "parede"], ["DIY"], 79.90, 349.90,
+    ["Redondo","Sol","Orgânico","Retangular com Moldura","Veneziano"],
+    ["40cm","60cm","80cm"]
+  ));
+  decoracaoExt.push(...gerarLinha(
+    "Decoração", [48,49,50], "Vaso Decorativo",
+    "Vaso decorativo para interiores?",
+    (m, v) => `Vaso decorativo em ${v.toLowerCase()}, para composições internas.`,
+    (v) => `Material: ${v}`,
+    ["vaso", "decorativo", "interior"], ["DIY"], 39.90, 149.90,
+    ["Cerâmica Fosca","Cimento Queimado","Vidro Fumê","Cerâmica Texturizada"],
+    ["Pequeno","Médio","Grande"]
+  ));
+  decoracaoExt.push(...gerarLinha(
+    "Decoração", [48,49,50], "Luminária de Mesa Decorativa",
+    "Luminária de mesa para decoração?",
+    (m, v) => `Luminária de mesa estilo ${v.toLowerCase()}, acabamento decorativo. ${m}.`,
+    (v) => `Estilo: ${v}\nUso: Mesa e cabeceira`,
+    ["luminária", "mesa", "decoração"], ["DIY"], 89.90, 249.90,
+    ["Industrial","Articulada","Cúpula em Tecido","Minimalista LED"],
+    ["Startec","Taschibra","Bella Iluminação"]
+  ));
+  decoracaoExt.push(...gerarLinha(
+    "Decoração", [48,49,50], "Cortina",
+    "Cortina para sala ou quarto?",
+    (m, v) => `Cortina tipo ${v.toLowerCase()}, inclui trilho ou varão.`,
+    (v) => `Tipo: ${v}\nInclui: Trilho ou varão`,
+    ["cortina", "sala", "quarto"], ["DIY"], 89.90, 249.90,
+    ["Blackout Lisa","Voil Transparente","Rústica em Linho","Persiana Rolô"],
+    ["2,00x2,60m","3,00x2,60m"]
+  ));
+  decoracaoExt.push(...gerarLinha(
+    "Decoração", [48,49,50], "Porta-Retrato",
+    "Porta-retrato para fotos?",
+    (m, v) => `Porta-retrato tamanho ${v}, acabamento decorativo. ${m}.`,
+    (v) => `Tamanho: ${v}`,
+    ["porta-retrato", "decoração"], ["DIY"], 19.90, 49.90,
+    ["10x15cm","13x18cm","15x21cm"], ["Kapos","Prestige"]
+  ));
+  out.push(...decoracaoExt.slice(0, 100));
+
+  return out;
+}
+
 // ─── junta tudo e salva ───────────────────────────────────────────────────────
 const todos: Produto[] = [
   ...ferramentas, ...eletrica, ...hidraulica, ...iluminacao,
@@ -367,6 +821,7 @@ const todos: Produto[] = [
   ...ferramentas2, ...eletrica2, ...hidraulica2, ...jardim2,
   ...pisos2, ...banheiro2, ...construcao2,
   ...extra(),
+  ...gerarExpansao(),
 ];
 
 function extra(): Produto[] {
@@ -505,6 +960,25 @@ function extra(): Produto[] {
 }
 
 // garante IDs únicos sequenciais (já foram atribuídos no momento da criação)
-const out = path.join(process.cwd(), "data", "produtos.json");
-fs.writeFileSync(out, JSON.stringify(todos, null, 2), "utf-8");
-console.log(`✅ ${todos.length} produtos gerados em data/produtos.json`);
+const outPath = path.join(process.cwd(), "data", "produtos.json");
+
+// Preserva embeddings já calculados: produtos existentes (mesmo id + mesmo
+// embedding_text) não perdem o embedding gerado pela API do Gemini — evita
+// ter que recalcular os 1000 do zero, só os novos ficam com embedding: [].
+let reaproveitados = 0;
+try {
+  const anterior = JSON.parse(fs.readFileSync(outPath, "utf-8")) as Produto[];
+  const porId = new Map(anterior.map((p) => [p.id, p]));
+  for (const produto of todos) {
+    const velho = porId.get(produto.id);
+    if (velho && velho.embedding?.length > 0 && velho.embedding_text === produto.embedding_text) {
+      produto.embedding = velho.embedding;
+      reaproveitados++;
+    }
+  }
+} catch {
+  // primeira geração, sem arquivo anterior — segue com embedding: [] em tudo
+}
+
+fs.writeFileSync(outPath, JSON.stringify(todos, null, 2), "utf-8");
+console.log(`✅ ${todos.length} produtos gerados em data/produtos.json (${reaproveitados} embeddings reaproveitados, ${todos.length - reaproveitados} pendentes)`);

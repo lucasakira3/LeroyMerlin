@@ -9,6 +9,7 @@ const MAPA: Record<string, string[]> = {
   jardim:      ["jardim", "planta", "exterior", "paisag", "biofílica", "flores"],
   iluminacao:  ["iluminação", "iluminacao", "luminária", "led", "lâmpada"],
   construcao:  ["construção", "material de construção", "madeira", "cimento", "concreto", "tijolos"],
+  decoracao:   ["decoração", "decoracao", "decorativo", "enfeite"],
   todos:       [],
 };
 
@@ -26,7 +27,7 @@ export async function GET(
           termos.some((t) => p.categoria.toLowerCase().includes(t))
         );
 
-  const resultado = filtrados.slice(0, 80).map(
+  const resultado = filtrados.slice(0, 300).map(
     ({ embedding: _e, embedding_text: _et, ...rest }) => rest
   );
 
