@@ -18,6 +18,7 @@ Responda APENAS com um JSON válido (sem markdown, sem texto fora do JSON):
     {
       "material": "Nome exato do produto para buscar no estoque",
       "categoria": "categoria geral ex: Hidráulica, Pintura, Ferramentas",
+      "comodo": "Cômodo ou área da casa onde este item é usado, ex: Cozinha, Banheiro, Área externa",
       "quantidade": "ex: 2 un., 5L, 12m²",
       "prioridade": "essencial",
       "observacao": "dica rápida de uso",
@@ -32,6 +33,7 @@ Regras:
 - Materiais específicos e buscáveis (ex: "Rejunte Branco 1kg", não apenas "rejunte")
 - Incluir ferramentas necessárias
 - prioridade pode ser: essencial, recomendado, opcional
+- comodo é obrigatório em todos os itens. Se o projeto não menciona um cômodo específico para aquele item (ex: elétrica da casa toda, ferramentas gerais que servem para o projeto inteiro), use exatamente "Geral"
 - Focar em produtos que a Leroy Merlin vende
 - Organize os itens em etapas cronológicas do projeto (ex: para uma reforma: 1 remoção/preparo, 2 hidráulica/elétrica, 3 acabamento, 4 pintura/detalhes). Use "etapa_ordem" (número sequencial a partir de 1, itens da mesma fase compartilham o mesmo número) e "etapa_nome" (nome curto e específico para o projeto do cliente, não genérico) em TODOS os itens. Projetos simples podem ter só 1 ou 2 etapas.`;
 
