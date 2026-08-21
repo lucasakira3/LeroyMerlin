@@ -1,3 +1,5 @@
+'use client'
+
 import type { SearchResult } from '@/types/produto'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 import Badge from './ui/Badge'
@@ -69,33 +71,53 @@ interface ProjetoMosaicoProps {
   itens: ItemProjeto[]
   selecionados: Set<string>
   onSelecionarProduto: (produto: SearchResult['produto']) => void
-  onVerMais?: () => void
+  onVerMais: () => void
 }
 
 export default function ProjetoMosaico({ itens, selecionados, onSelecionarProduto, onVerMais }: ProjetoMosaicoProps) {
   const grupos = agruparPorComodo(itens)
 
+  const gruposComProdutos = grupos
+    .map(grupo => {
+      const produtosDoGrupo = grupo.itens
+        .map(item => ({ item, produto: resolverProdutoSelecionado(item, selecionados) }))
+        .filter((x): x is { item: ItemProjeto; produto: SearchResult['produto'] } => x.produto !== null)
+
+      const produtosUnicos: typeof produtosDoGrupo = []
+      const idsVistos = new Set<string>()
+      for (const entry of produtosDoGrupo) {
+        if (idsVistos.has(entry.produto.id)) continue
+        idsVistos.add(entry.produto.id)
+        produtosUnicos.push(entry)
+      }
+
+      return { comodo: grupo.comodo, produtosUnicos }
+    })
+    .filter(grupo => grupo.produtosUnicos.length > 0)
+
+  if (gruposComProdutos.length === 0) {
+    return (
+      <p className="text-sm text-gray-500">Nenhum produto encontrado para este projeto. Veja a Lista completa.</p>
+    )
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {grupos.map(grupo => {
-        const produtosDoGrupo = grupo.itens
-          .map(item => ({ item, produto: resolverProdutoSelecionado(item, selecionados) }))
-          .filter((x): x is { item: ItemProjeto; produto: SearchResult['produto'] } => x.produto !== null)
-
-        const visiveis = produtosDoGrupo.slice(0, MAX_FOTOS_VISIVEIS)
-        const restantes = produtosDoGrupo.length - visiveis.length
+      {gruposComProdutos.map(grupo => {
+        const visiveis = grupo.produtosUnicos.slice(0, MAX_FOTOS_VISIVEIS)
+        const restantes = grupo.produtosUnicos.length - visiveis.length
 
         return (
           <Card
             key={grupo.comodo}
             padding="sm"
-            className={grupos.length === 1 ? 'sm:col-span-2 lg:col-span-3' : ''}
+            className={gruposComProdutos.length === 1 ? 'sm:col-span-2 lg:col-span-3' : ''}
           >
             <p className="text-sm font-bold text-gray-900 mb-3">{grupo.comodo}</p>
             <div className="grid grid-cols-3 gap-2">
-              {visiveis.map(({ item, produto }) => (
+              {visiveis.map(({ item, produto }, idx) => (
                 <button
-                  key={produto.id}
+                  key={`${grupo.comodo}-${idx}`}
                   onClick={() => onSelecionarProduto(produto)}
                   className="text-left"
                 >
