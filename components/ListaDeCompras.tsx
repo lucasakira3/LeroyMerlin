@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { MapPin, CheckCircle2, Circle, Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2, AlertTriangle } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProjetoTimeline from './ProjetoTimeline'
+import ProjetoMosaico, { type Projeto } from './ProjetoMosaico'
+import ProdutoDrawer from './ProdutoDrawer'
 import type { SearchResult } from '@/types/produto'
 import Link from 'next/link'
 import Card from './ui/Card'
@@ -24,24 +26,6 @@ const PRIORIDADE: Record<string, string> = {
   opcional:    'bg-gray-50 text-gray-500 border-gray-200',
 }
 
-interface Projeto {
-  titulo: string
-  resumo: string
-  orcamento_estimado: string
-  complexidade: string
-  dica_especialista: string
-  itens: Array<{
-    material: string
-    categoria: string
-    quantidade: string
-    prioridade: string
-    observacao: string
-    resultados: SearchResult[]
-    etapa_ordem?: number
-    etapa_nome?: string
-  }>
-}
-
 export default function ListaDeCompras({ projeto }: { projeto: Projeto; descricaoOriginal: string }) {
   const [loja, setLoja] = useState(LOJAS[0])
   const [selecionados, setSelecionados] = useState<Set<string>>(
@@ -52,6 +36,8 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
   )
   const [mapaAberto, setMapaAberto] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
+  const [aba, setAba] = useState<'visao-geral' | 'lista-completa'>('visao-geral')
+  const [produtoDrawer, setProdutoDrawer] = useState<SearchResult['produto'] | null>(null)
 
   const toggle = (id: string) => setSelecionados(prev => {
     const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next
@@ -126,7 +112,6 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
               <ShoppingBag size={16} className="text-lm-yellow flex-shrink-0" />
               <h2 className="font-bold text-xl">{projeto.titulo}</h2>
             </div>
-            <p className="text-white/80 text-sm mb-3">{projeto.resumo}</p>
             <div className="flex flex-wrap gap-2">
               <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">💰 {projeto.orcamento_estimado}</span>
               <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">📋 {projeto.itens.length} materiais</span>
@@ -180,7 +165,38 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
         )}
       </div>
 
-      {/* Layout 2 colunas */}
+      {/* Abas */}
+      <div className="flex rounded-xl bg-gray-100 p-1 mb-5">
+        <button
+          type="button"
+          onClick={() => setAba('visao-geral')}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+            aba === 'visao-geral' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Visão geral
+        </button>
+        <button
+          type="button"
+          onClick={() => setAba('lista-completa')}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+            aba === 'lista-completa' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Lista completa
+        </button>
+      </div>
+
+      {aba === 'visao-geral' && (
+        <ProjetoMosaico
+          itens={projeto.itens}
+          selecionados={selecionados}
+          onSelecionarProduto={setProdutoDrawer}
+          onVerMais={() => setAba('lista-completa')}
+        />
+      )}
+
+      {aba === 'lista-completa' && (
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
 
         {/* ── Coluna esquerda: lista ────────────────────── */}
@@ -330,6 +346,9 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
           </div>
         </div>
       </div>
+      )}
+
+      <ProdutoDrawer produto={produtoDrawer} onClose={() => setProdutoDrawer(null)} />
     </div>
   )
 }
