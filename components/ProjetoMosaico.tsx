@@ -86,7 +86,11 @@ export default function ProjetoMosaico({ itens, selecionados, onSelecionarProdut
         const restantes = produtosDoGrupo.length - visiveis.length
 
         return (
-          <Card key={grupo.comodo} padding="sm">
+          <Card
+            key={grupo.comodo}
+            padding="sm"
+            className={grupos.length === 1 ? 'sm:col-span-2 lg:col-span-3' : ''}
+          >
             <p className="text-sm font-bold text-gray-900 mb-3">{grupo.comodo}</p>
             <div className="grid grid-cols-3 gap-2">
               {visiveis.map(({ item, produto }) => (
