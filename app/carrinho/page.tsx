@@ -173,7 +173,7 @@ export default function CarrinhoPage() {
               {itensResolvidos.map(({ item, produto }) => (
                 <Card key={produto.id} padding="sm" className="flex items-center gap-3">
                   <img
-                    src={getImagemCategoria(produto.categoria)}
+                    src={getImagemCategoria(produto.categoria, produto.id)}
                     alt={produto.categoria}
                     className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
                   />

@@ -367,7 +367,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black flex-shrink-0"
                   style={{ backgroundColor: pin.color }}>{pin.idx}</span>
                 <img
-                  src={getImagemCategoria(pin.produto.categoria)}
+                  src={getImagemCategoria(pin.produto.categoria, pin.produto.id)}
                   alt={pin.produto.categoria}
                   className="w-9 h-9 rounded-md object-cover flex-shrink-0"
                 />

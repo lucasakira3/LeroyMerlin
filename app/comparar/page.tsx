@@ -99,7 +99,7 @@ function ComparadorContent() {
                   </button>
 
                   <img
-                    src={getImagemCategoria(produto.categoria)}
+                    src={getImagemCategoria(produto.categoria, produto.id)}
                     alt={produto.categoria}
                     className="w-full h-28 object-cover rounded-lg mb-3"
                   />

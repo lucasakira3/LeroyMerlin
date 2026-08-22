@@ -34,6 +34,8 @@ yarn-error.log*
 # claude code
 .claude/
 .superpowers/
+.agents/
+skills-lock.json
 
 # typescript
 *.tsbuildinfo

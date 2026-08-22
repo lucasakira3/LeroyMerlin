@@ -149,7 +149,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     <>
       {/* Foto da categoria */}
       <img
-        src={getImagemCategoria(produto.categoria)}
+        src={getImagemCategoria(produto.categoria, produto.id)}
         alt={produto.categoria}
         className="w-full h-40 object-cover flex-shrink-0"
       />

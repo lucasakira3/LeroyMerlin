@@ -57,7 +57,7 @@ export default function ProductCard({
     <>
       <div className="relative">
         <img
-          src={getImagemCategoria(produto.categoria)}
+          src={getImagemCategoria(produto.categoria, produto.id)}
           alt={produto.categoria}
           className="w-full h-36 object-cover"
         />
