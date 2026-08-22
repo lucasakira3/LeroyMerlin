@@ -2,6 +2,7 @@
 
 import type { SearchResult } from '@/types/produto'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { getIconeComodo } from '@/lib/comodoIcones'
 import Badge from './ui/Badge'
 import Card from './ui/Card'
 
@@ -106,6 +107,7 @@ export default function ProjetoMosaico({ itens, selecionados, onSelecionarProdut
       {gruposComProdutos.map(grupo => {
         const visiveis = grupo.produtosUnicos.slice(0, MAX_FOTOS_VISIVEIS)
         const restantes = grupo.produtosUnicos.length - visiveis.length
+        const IconeComodo = getIconeComodo(grupo.comodo)
 
         return (
           <Card
@@ -113,7 +115,10 @@ export default function ProjetoMosaico({ itens, selecionados, onSelecionarProdut
             padding="sm"
             className={gruposComProdutos.length === 1 ? 'sm:col-span-2 lg:col-span-3' : ''}
           >
-            <p className="text-sm font-bold text-gray-900 mb-3">{grupo.comodo}</p>
+            <p className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-1.5">
+              <IconeComodo size={15} className="text-lm-green flex-shrink-0" />
+              {grupo.comodo}
+            </p>
             <div className="grid grid-cols-3 gap-2">
               {visiveis.map(({ item, produto }, idx) => (
                 <button
