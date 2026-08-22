@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Mic, MicOff, Sparkles, Send, RotateCcw } from 'lucide-react'
+import { Mic, MicOff, Sparkles, Send, RotateCcw, ArrowLeft } from 'lucide-react'
 import ListaDeCompras from './ListaDeCompras'
 import Card from './ui/Card'
 import Button from './ui/Button'
+import { COMODOS_DISPONIVEIS, getIconeComodo } from '@/lib/comodoIcones'
 
 const EXEMPLOS = [
   'Quero reformar meu banheiro pequeno com orçamento de R$ 3.000',
@@ -30,6 +31,16 @@ export default function ProjetoWizard() {
   const [erro, setErro] = useState('')
   const [ouvindo, setOuvindo] = useState(false)
   const recRef = useRef<SpeechRecognition | null>(null)
+  const [etapaWizard, setEtapaWizard] = useState<'comodos' | 'descricao'>('comodos')
+  const [comodosSelecionados, setComodosSelecionados] = useState<Set<string>>(new Set())
+
+  function toggleComodo(comodo: string) {
+    setComodosSelecionados(prev => {
+      const next = new Set(prev)
+      next.has(comodo) ? next.delete(comodo) : next.add(comodo)
+      return next
+    })
+  }
 
   const ETAPAS = [
     'Lendo seu projeto...',
@@ -55,7 +66,7 @@ export default function ProjetoWizard() {
       const res = await fetch('/api/projeto', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ descricao: texto }),
+        body: JSON.stringify({ descricao: texto, comodos: Array.from(comodosSelecionados) }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
@@ -94,12 +105,69 @@ export default function ProjetoWizard() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => { setResultado(null); setDescricao('') }}
+          onClick={() => {
+            setResultado(null)
+            setDescricao('')
+            setEtapaWizard('comodos')
+            setComodosSelecionados(new Set())
+          }}
           className="mb-5"
         >
           <RotateCcw size={14} /> Novo projeto
         </Button>
         <ListaDeCompras projeto={resultado} descricaoOriginal={descricao} />
+      </div>
+    )
+  }
+
+  if (etapaWizard === 'comodos') {
+    return (
+      <div className="max-w-3xl mx-auto">
+        {/* Hero */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 bg-lm-green/10 text-lm-green border border-lm-green/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+            <Sparkles size={14} /> Powered by Gemini AI
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Quais cômodos você vai reformar?
+          </h2>
+          <p className="text-gray-500 text-sm">
+            Selecione um ou mais cômodos — isso ajuda a IA a organizar sua lista de materiais por área da casa.
+          </p>
+        </div>
+
+        <Card className="mb-5">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {COMODOS_DISPONIVEIS.map(comodo => {
+              const Icone = getIconeComodo(comodo)
+              const selecionado = comodosSelecionados.has(comodo)
+              return (
+                <button
+                  key={comodo}
+                  onClick={() => toggleComodo(comodo)}
+                  className={`flex items-center gap-1.5 text-sm px-4 py-2 rounded-full border transition-colors ${
+                    selecionado
+                      ? 'bg-lm-green text-white border-lm-green'
+                      : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+                  }`}
+                >
+                  <Icone size={15} />
+                  {comodo}
+                </button>
+              )
+            })}
+          </div>
+        </Card>
+
+        <div className="flex justify-center">
+          <Button
+            variant="primary"
+            onClick={() => setEtapaWizard('descricao')}
+            disabled={comodosSelecionados.size === 0}
+          >
+            Continuar
+          </Button>
+        </div>
       </div>
     )
   }
@@ -117,6 +185,30 @@ export default function ProjetoWizard() {
         <p className="text-gray-500 text-sm">
           A IA analisa o que você precisa e monta a lista completa de materiais com os corredores da loja.
         </p>
+      </div>
+
+      {/* Recap dos cômodos + voltar */}
+      <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+        <button
+          onClick={() => setEtapaWizard('comodos')}
+          className="flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-lm-green transition-colors flex-shrink-0"
+        >
+          <ArrowLeft size={13} /> Voltar
+        </button>
+        <div className="flex flex-wrap gap-1.5 justify-end">
+          {Array.from(comodosSelecionados).map(comodo => {
+            const Icone = getIconeComodo(comodo)
+            return (
+              <span
+                key={comodo}
+                className="flex items-center gap-1 text-[11px] font-semibold text-lm-green bg-lm-green/10 border border-lm-green/20 px-2.5 py-1 rounded-full"
+              >
+                <Icone size={12} />
+                {comodo}
+              </span>
+            )
+          })}
+        </div>
       </div>
 
       {/* Input principal */}
