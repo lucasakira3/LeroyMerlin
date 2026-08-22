@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button'
 import ProductCard from '@/components/ProductCard'
 import ProductCardSkeleton from '@/components/ProductCardSkeleton'
 import Pagination from '@/components/ui/Pagination'
+import EntrevistaGuiada from '@/components/EntrevistaGuiada'
 import { getFavoritosIds } from '@/lib/clientFavoritos'
 import { getHistoricoIds } from '@/lib/clientHistorico'
 import { getUsuarioLogado, logoutUsuario, type UsuarioLogado } from '@/lib/clientAuth'
@@ -176,6 +177,7 @@ export default function ContaPage() {
             </Button>
           }
         />
+        <EntrevistaGuiada email={usuario.email} />
         <SecaoPedidos pedidos={pedidos} />
         <SecaoProdutos
           titulo="Favoritos"
