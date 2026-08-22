@@ -70,6 +70,10 @@ body {
 /* Texto de marca (usado no lugar de text-gray-900 em vários lugares) */
 .dark .text-lm-dark { color: #f9fafb; }
 
+/* text-lm-green (#00843d) é escuro demais pra ler bem sobre fundo escuro — mesmo tratamento de clarear já aplicado a text-green-600/700 (ver bloco de cores de status abaixo) */
+.dark .text-lm-green { color: #4ade80; }
+.dark .hover\:text-lm-green:hover { color: #4ade80; }
+
 /* Escala de cinza — texto, bordas e preenchimentos sutis */
 .dark .text-gray-900 { color: #f9fafb; }
 .dark .text-gray-800 { color: #f3f4f6; }
