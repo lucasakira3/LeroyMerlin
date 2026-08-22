@@ -27,7 +27,7 @@ const ICONES_POR_COMODO: Record<string, LucideIcon> = {
 }
 
 export function getIconeComodo(comodo: string): LucideIcon {
-  const lower = comodo.toLowerCase()
+  const lower = String(comodo).toLowerCase()
   const key = Object.keys(ICONES_POR_COMODO).find(k => lower.includes(k))
   return key ? ICONES_POR_COMODO[key] : LayoutGrid
 }
