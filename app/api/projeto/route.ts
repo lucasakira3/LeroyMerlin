@@ -56,15 +56,22 @@ function buscaTextoSimples(produtos: Awaited<ReturnType<typeof carregarProdutos>
 
 export async function POST(req: NextRequest) {
   try {
-    const { descricao } = await req.json();
+    const { descricao, comodos } = await req.json();
     if (!descricao?.trim()) {
       return NextResponse.json({ error: "Descreva seu projeto" }, { status: 400 });
     }
 
-    const result = await flashModel.generateContent([
-      PROMPT_SISTEMA,
-      `Projeto do cliente: ${descricao}`,
-    ]);
+    const mensagens: string[] = [PROMPT_SISTEMA];
+    if (Array.isArray(comodos) && comodos.length > 0) {
+      mensagens.push(
+        `O cliente indicou que o projeto envolve os seguintes cômodos: ${comodos.join(", ")}. ` +
+        `Use exatamente esses nomes no campo "comodo" dos itens que pertencerem a um deles. ` +
+        `Para "Casa toda / Geral" ou itens que não pertencem a nenhum cômodo específico, use "Geral".`
+      );
+    }
+    mensagens.push(`Projeto do cliente: ${descricao}`);
+
+    const result = await flashModel.generateContent(mensagens);
 
     const texto = result.response.text().trim();
     const jsonStr = texto.replace(/```json\n?|\n?```/g, "").trim();
