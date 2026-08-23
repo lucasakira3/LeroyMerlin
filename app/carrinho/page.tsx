@@ -108,12 +108,14 @@ export default function CarrinhoPage() {
     }
 
     salvarPedido(usuario.email, pedido)
-    adicionarNotificacao(usuario.email, {
-      tipo: 'pedido',
-      titulo: 'Pedido confirmado',
-      mensagem: `Pedido #${pedido.numero} confirmado com sucesso.`,
-      href: '/conta',
-    })
+    try {
+      adicionarNotificacao(usuario.email, {
+        tipo: 'pedido',
+        titulo: 'Pedido confirmado',
+        mensagem: `Pedido #${pedido.numero} confirmado com sucesso.`,
+        href: '/conta',
+      })
+    } catch {}
     limparCarrinho()
     clearProductHistory()
     setPedidoConfirmado(pedido)

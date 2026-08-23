@@ -124,12 +124,14 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
       respondidoEm: new Date().toISOString(),
     }
     salvarPerfil(email, perfil)
-    adicionarNotificacao(email, {
-      tipo: 'entrevista',
-      titulo: 'Perfil traçado',
-      mensagem: 'Suas sugestões personalizadas já estão disponíveis.',
-      href: '/conta',
-    })
+    try {
+      adicionarNotificacao(email, {
+        tipo: 'entrevista',
+        titulo: 'Perfil traçado',
+        mensagem: 'Suas sugestões personalizadas já estão disponíveis.',
+        href: '/conta',
+      })
+    } catch {}
     buscarSugestoes(perfil)
   }
 

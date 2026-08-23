@@ -44,7 +44,7 @@ export function adicionarNotificacao(email: string, dados: Omit<Notificacao, 'id
   const lista = mapa[chave] ?? []
   const notificacao: Notificacao = {
     ...dados,
-    id: crypto.randomUUID(),
+    id: `NT-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     criadaEm: new Date().toISOString(),
     lida: false,
   }

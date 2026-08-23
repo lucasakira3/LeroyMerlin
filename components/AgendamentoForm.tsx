@@ -297,12 +297,14 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 })
                 const usuarioLogado = getUsuarioLogado()
                 if (usuarioLogado) {
-                  adicionarNotificacao(usuarioLogado.email, {
-                    tipo: 'agendamento',
-                    titulo: 'Visita agendada',
-                    mensagem: `Sua visita em ${form.loja} foi confirmada para ${form.data} às ${form.horario}.`,
-                    href: '/agendamento',
-                  })
+                  try {
+                    adicionarNotificacao(usuarioLogado.email, {
+                      tipo: 'agendamento',
+                      titulo: 'Visita agendada',
+                      mensagem: `Sua visita em ${form.loja} foi confirmada para ${form.data} às ${form.horario}.`,
+                      href: '/agendamento',
+                    })
+                  } catch {}
                 }
                 setConfirmado(true)
                 setTimeout(() => onConfirmado?.(), 2000)

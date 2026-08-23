@@ -6,7 +6,6 @@ import { Bell } from 'lucide-react'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import {
   getNotificacoes,
-  getQuantidadeNaoLida,
   marcarComoLida,
   marcarTodasComoLidas,
   type Notificacao,
@@ -36,8 +35,9 @@ export default function NotificacoesBell() {
     if (!email) return
     const emailAtual = email
     const atualizar = () => {
-      setNotificacoes(getNotificacoes(emailAtual))
-      setQuantidade(getQuantidadeNaoLida(emailAtual))
+      const lista = getNotificacoes(emailAtual)
+      setNotificacoes(lista)
+      setQuantidade(lista.filter(n => !n.lida).length)
     }
     atualizar()
     window.addEventListener('lm-notificacoes-change', atualizar)
@@ -75,7 +75,9 @@ export default function NotificacoesBell() {
       <button
         type="button"
         onClick={() => setAberto(v => !v)}
-        aria-label={`Notificações${quantidade > 0 ? ` (${quantidade} não lidas)` : ''}`}
+        aria-label={`Notificações${quantidade > 0 ? ` (${quantidade} ${quantidade === 1 ? 'não lida' : 'não lidas'})` : ''}`}
+        aria-haspopup="true"
+        aria-expanded={aberto}
         className="relative flex items-center justify-center w-10 h-10 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
       >
         <Bell size={19} />
@@ -87,7 +89,7 @@ export default function NotificacoesBell() {
       </button>
 
       {aberto && (
-        <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto bg-white rounded-xl shadow-lg border border-gray-100 z-50">
+        <div className="absolute left-0 md:left-auto md:right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto bg-white rounded-xl shadow-lg border border-gray-100 z-50">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <span className="text-sm font-bold text-lm-dark">Notificações</span>
             {quantidade > 0 && (
@@ -108,9 +110,9 @@ export default function NotificacoesBell() {
               {notificacoes.map((n) => (
                 <li key={n.id}>
                   <Link
-                    href={n.href}
+                    href={n.href?.startsWith('/') ? n.href : '/conta'}
                     onClick={() => abrirNotificacao(n)}
-                    className={`flex items-start gap-2 px-4 py-3 border-b border-gray-50 last:border-b-0 hover:bg-gray-50 transition-colors ${
+                    className={`flex items-start gap-2 px-4 py-3 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors ${
                       n.lida ? 'bg-white' : 'bg-lm-green/5'
                     }`}
                   >
