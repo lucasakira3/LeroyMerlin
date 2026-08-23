@@ -17,9 +17,9 @@ export async function POST(req: NextRequest) {
       perfil.areas.map((area) => [
         area,
         candidatos
-          .filter((p) => AREA_PARA_CATEGORIAS[area].includes(p.categoria))
+          .filter((p) => (AREA_PARA_CATEGORIAS[area] ?? []).includes(p.categoria))
           .map((p) => ({ produto: p, pontos: pontuarProduto(p, perfil) }))
-          .sort((a, b) => b.pontos - a.pontos),
+          .sort((a, b) => b.pontos - a.pontos || b.produto.estoque - a.produto.estoque),
       ])
     );
 

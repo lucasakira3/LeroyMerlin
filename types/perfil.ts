@@ -6,7 +6,7 @@ export type Area =
   | 'Cozinha' | 'Banheiro' | 'Quarto' | 'Sala'
   | 'Jardim ou área externa' | 'Elétrica' | 'Iluminação' | 'Pintura'
 
-export type Orcamento = 'Até R$500' | 'R$500–2.000' | 'R$2.000–5.000' | 'Acima de R$5.000'
+export type Orcamento = 'Até R$100' | 'R$100–300' | 'R$300–600' | 'Acima de R$600'
 
 export type SustentabilidadePreferencia = 'Pouco importante' | 'Importante, mas não decisivo' | 'Muito importante'
 

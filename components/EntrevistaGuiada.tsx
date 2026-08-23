@@ -13,7 +13,7 @@ import type { SearchResult } from '@/types/produto'
 const MORADIAS: Moradia[] = ['Casa', 'Apartamento', 'Sítio ou chácara', 'Comércio']
 const EXPERIENCIAS: Experiencia[] = ['Iniciante', 'Intermediário', 'Avançado', 'Prefiro contratar um profissional']
 const AREAS: Area[] = ['Cozinha', 'Banheiro', 'Quarto', 'Sala', 'Jardim ou área externa', 'Elétrica', 'Iluminação', 'Pintura']
-const ORCAMENTOS: Orcamento[] = ['Até R$500', 'R$500–2.000', 'R$2.000–5.000', 'Acima de R$5.000']
+const ORCAMENTOS: Orcamento[] = ['Até R$100', 'R$100–300', 'R$300–600', 'Acima de R$600']
 const SUSTENTABILIDADES: SustentabilidadePreferencia[] = ['Pouco importante', 'Importante, mas não decisivo', 'Muito importante']
 
 const MAX_AREAS = 3
@@ -31,6 +31,7 @@ function Chip({ label, selecionado, onClick, disabled }: ChipProps) {
       type="button"
       onClick={onClick}
       disabled={disabled}
+      aria-pressed={selecionado}
       className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
         selecionado
           ? 'bg-lm-green text-white border-lm-green'
@@ -65,7 +66,9 @@ function respostaCompleta(r: Resposta): boolean {
 }
 
 export default function EntrevistaGuiada({ email }: { email: string }) {
-  const [modo, setModo] = useState<'convite' | 'formulario' | 'carregando' | 'resultado'>('convite')
+  const [modo, setModo] = useState<'convite' | 'formulario' | 'carregando' | 'resultado'>(
+    () => (getPerfil(email) ? 'carregando' : 'convite')
+  )
   const [resposta, setResposta] = useState<Resposta>(RESPOSTA_VAZIA)
   const [produtos, setProdutos] = useState<SearchResult[]>([])
   const [servicos, setServicos] = useState<ServicoSugerido[]>([])
@@ -88,13 +91,14 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ perfil }),
       })
+      if (!res.ok) throw new Error()
       const data = await res.json()
-      if (data.error) throw new Error(data.error)
+      if (data.error) throw new Error()
       setProdutos(data.produtos)
       setServicos(data.servicos)
       setModo('resultado')
-    } catch (e: any) {
-      setErro(e.message || 'Não foi possível gerar sugestões.')
+    } catch {
+      setErro('Não foi possível gerar sugestões. Tente novamente.')
       setModo('resultado')
     }
   }
@@ -184,7 +188,7 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
           </div>
 
           <div>
-            <p className="text-xs font-semibold text-gray-600 mb-2">Qual sua faixa de orçamento típica pra um projeto?</p>
+            <p className="text-xs font-semibold text-gray-600 mb-2">Quanto você costuma investir por produto?</p>
             <div className="flex flex-wrap gap-2">
               {ORCAMENTOS.map(o => (
                 <Chip key={o} label={o} selecionado={resposta.orcamento === o} onClick={() => setResposta(prev => ({ ...prev, orcamento: o }))} />

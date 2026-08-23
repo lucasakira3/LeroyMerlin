@@ -1,4 +1,4 @@
-import type { Perfil, Area, Experiencia, Orcamento, ServicoSugerido } from '@/types/perfil'
+import type { Perfil, Moradia, Area, Experiencia, Orcamento, ServicoSugerido } from '@/types/perfil'
 import type { Produto, Complexidade } from '@/types/produto'
 
 export const AREA_PARA_CATEGORIAS: Record<Area, string[]> = {
@@ -12,22 +12,30 @@ export const AREA_PARA_CATEGORIAS: Record<Area, string[]> = {
   'Pintura': ['Pintura'],
 }
 
+export const MORADIA_PARA_CATEGORIAS: Record<Moradia, string[]> = {
+  'Casa': ['Jardim', 'Construção'],
+  'Apartamento': ['Decoração', 'Iluminação'],
+  'Sítio ou chácara': ['Jardim', 'Construção'],
+  'Comércio': ['Elétrica', 'Iluminação', 'Pintura'],
+}
+
 export const EXPERIENCIA_PARA_COMPLEXIDADE: Record<Experiencia, Complexidade[]> = {
-  'Iniciante': ['Baixa', 'DIY'],
-  'Intermediário': ['Baixa', 'DIY', 'Média'],
-  'Avançado': ['Média', 'Alta', 'Profissional', 'Especialista'],
-  'Prefiro contratar um profissional': ['Baixa', 'DIY', 'Média'],
+  'Iniciante': ['DIY'],
+  'Intermediário': ['DIY', 'Profissional'],
+  'Avançado': ['Profissional', 'Especialista'],
+  'Prefiro contratar um profissional': ['DIY', 'Profissional', 'Especialista'],
 }
 
 export const ORCAMENTO_PARA_FAIXA: Record<Orcamento, [number, number]> = {
-  'Até R$500': [0, 500],
-  'R$500–2.000': [500, 2000],
-  'R$2.000–5.000': [2000, 5000],
-  'Acima de R$5.000': [5000, Infinity],
+  'Até R$100': [0, 100],
+  'R$100–300': [100, 300],
+  'R$300–600': [300, 600],
+  'Acima de R$600': [600, Infinity],
 }
 
 export function pontuarProduto(produto: Produto, perfil: Perfil): number {
   let pontos = 0
+  if (MORADIA_PARA_CATEGORIAS[perfil.moradia].includes(produto.categoria)) pontos += 1
   if (EXPERIENCIA_PARA_COMPLEXIDADE[perfil.experiencia].includes(produto.complexidade)) pontos += 2
   const [min, max] = ORCAMENTO_PARA_FAIXA[perfil.orcamento]
   if (produto.preco >= min && produto.preco <= max) pontos += 1
