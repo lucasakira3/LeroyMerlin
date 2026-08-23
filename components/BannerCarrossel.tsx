@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 
 type AcaoSlide =
@@ -73,6 +74,14 @@ export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselPro
   const atual = SLIDES[slide]
   const acao = atual.acao
 
+  function irParaAnterior() {
+    setSlide(s => (s - 1 + SLIDES.length) % SLIDES.length)
+  }
+
+  function irParaProximo() {
+    setSlide(s => (s + 1) % SLIDES.length)
+  }
+
   const conteudo = (
     <div className="relative h-full flex flex-col justify-center px-6 sm:px-10 max-w-xs sm:max-w-sm">
       <span className={`inline-block w-fit text-[10px] font-extrabold px-2.5 py-1 rounded-md mb-2 tracking-wide ${atual.badgeClasse}`}>
@@ -116,6 +125,23 @@ export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselPro
           {conteudo}
         </div>
       )}
+
+      <button
+        type="button"
+        onClick={irParaAnterior}
+        aria-label="Slide anterior"
+        className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-colors"
+      >
+        <ChevronLeft size={18} />
+      </button>
+      <button
+        type="button"
+        onClick={irParaProximo}
+        aria-label="Próximo slide"
+        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-colors"
+      >
+        <ChevronRight size={18} />
+      </button>
 
       <div className="absolute bottom-3 left-6 sm:left-10 flex items-center gap-1.5 z-10">
         {SLIDES.map((_, i) => (
