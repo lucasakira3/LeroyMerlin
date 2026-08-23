@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import SearchSection from '@/components/SearchSection'
 import CategoriaView from '@/components/CategoriaView'
+import BannerCarrossel from '@/components/BannerCarrossel'
 import Card from '@/components/ui/Card'
 import { Grid2x2, Zap, Droplets, Hammer, Palette, Flower2, Lightbulb, BrickWall, Frame } from 'lucide-react'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
@@ -37,20 +38,7 @@ export default function Home() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in-up">
       {/* Banner promocional */}
-      <div className="relative h-40 sm:h-44 mb-8 overflow-hidden rounded-card bg-gradient-to-r from-green-800 to-lm-green">
-        <img
-          src={getImagemCategoria('Ferramentas')}
-          alt=""
-          className="absolute -right-4 -top-2 h-[120%] w-3/5 object-cover"
-        />
-        <div className="relative h-full flex flex-col justify-center px-6 sm:px-10 max-w-xs sm:max-w-sm">
-          <span className="inline-block w-fit bg-lm-yellow text-black text-[10px] font-extrabold px-2.5 py-1 rounded-md mb-2 tracking-wide">
-            OFERTA DA SEMANA
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">Até 30% off</h1>
-          <p className="text-sm text-white/85 mt-1">em ferramentas elétricas selecionadas</p>
-        </div>
-      </div>
+      <BannerCarrossel onCategoriaClick={setCategoriaAtiva} />
 
       {/* Categorias */}
       <div className="mb-8">
