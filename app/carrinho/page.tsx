@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { getCarrinho, atualizarQuantidade, removerDoCarrinho, limparCarrinho, type CartItem } from '@/lib/clientCarrinho'
 import { salvarPedido, gerarNumeroPedido, type Pedido, type ItemPedido } from '@/lib/clientPedidos'
+import { adicionarNotificacao } from '@/lib/clientNotificacoes'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { clearProductHistory } from '@/lib/hooks/useProductTracker'
@@ -107,6 +108,12 @@ export default function CarrinhoPage() {
     }
 
     salvarPedido(usuario.email, pedido)
+    adicionarNotificacao(usuario.email, {
+      tipo: 'pedido',
+      titulo: 'Pedido confirmado',
+      mensagem: `Pedido #${pedido.numero} confirmado com sucesso.`,
+      href: '/conta',
+    })
     limparCarrinho()
     clearProductHistory()
     setPedidoConfirmado(pedido)

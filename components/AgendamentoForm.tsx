@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { CalendarCheck, CheckCircle2, ChevronRight } from 'lucide-react'
 import { salvarAgendamento } from './AgendamentosLista'
+import { getUsuarioLogado } from '@/lib/clientAuth'
+import { adicionarNotificacao } from '@/lib/clientNotificacoes'
 import Button from './ui/Button'
 import Card from './ui/Card'
 
@@ -293,6 +295,15 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                   email: form.email,
                   observacao: form.observacao,
                 })
+                const usuarioLogado = getUsuarioLogado()
+                if (usuarioLogado) {
+                  adicionarNotificacao(usuarioLogado.email, {
+                    tipo: 'agendamento',
+                    titulo: 'Visita agendada',
+                    mensagem: `Sua visita em ${form.loja} foi confirmada para ${form.data} às ${form.horario}.`,
+                    href: '/agendamento',
+                  })
+                }
                 setConfirmado(true)
                 setTimeout(() => onConfirmado?.(), 2000)
               }}

@@ -7,6 +7,7 @@ import Card from './ui/Card'
 import Button from './ui/Button'
 import ProductCard from './ProductCard'
 import { getPerfil, salvarPerfil } from '@/lib/clientPerfil'
+import { adicionarNotificacao } from '@/lib/clientNotificacoes'
 import type { Perfil, Moradia, Experiencia, Area, Orcamento, SustentabilidadePreferencia, ServicoSugerido } from '@/types/perfil'
 import type { SearchResult } from '@/types/produto'
 
@@ -123,6 +124,12 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
       respondidoEm: new Date().toISOString(),
     }
     salvarPerfil(email, perfil)
+    adicionarNotificacao(email, {
+      tipo: 'entrevista',
+      titulo: 'Perfil traçado',
+      mensagem: 'Suas sugestões personalizadas já estão disponíveis.',
+      href: '/conta',
+    })
     buscarSugestoes(perfil)
   }
 
