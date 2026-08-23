@@ -78,7 +78,7 @@ export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselPro
       <span className={`inline-block w-fit text-[10px] font-extrabold px-2.5 py-1 rounded-md mb-2 tracking-wide ${atual.badgeClasse}`}>
         {atual.badge}
       </span>
-      <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">{atual.titulo}</h1>
+      <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">{atual.titulo}</h2>
       <p className="text-sm text-white/85 mt-1">{atual.subtitulo}</p>
     </div>
   )
@@ -93,7 +93,7 @@ export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselPro
       <img
         src={getImagemCategoria(atual.categoria)}
         alt=""
-        className="absolute -right-4 -top-2 h-[120%] w-3/5 object-cover"
+        className="pointer-events-none absolute -right-4 -top-2 h-[120%] w-3/5 object-cover"
       />
 
       {acao.tipo === 'link' ? (
@@ -101,7 +101,18 @@ export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselPro
           {conteudo}
         </Link>
       ) : (
-        <div className="h-full cursor-pointer" onClick={() => onCategoriaClick({ slug: acao.slug, label: acao.label })}>
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => onCategoriaClick({ slug: acao.slug, label: acao.label })}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onCategoriaClick({ slug: acao.slug, label: acao.label })
+            }
+          }}
+          className="h-full cursor-pointer"
+        >
           {conteudo}
         </div>
       )}
@@ -113,6 +124,7 @@ export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselPro
             type="button"
             onClick={() => setSlide(i)}
             aria-label={`Slide ${i + 1}`}
+            aria-current={i === slide ? 'true' : undefined}
             className={`rounded-full transition-all ${i === slide ? 'w-5 h-2 bg-white' : 'w-2 h-2 bg-white/30 hover:bg-white/50'}`}
           />
         ))}
