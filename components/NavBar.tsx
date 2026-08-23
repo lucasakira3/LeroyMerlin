@@ -7,6 +7,7 @@ import { Search, MessageCircleQuestion, CalendarCheck, Sparkles, LogIn, User, Me
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import ThemeToggle from './ThemeToggle'
 import CarrinhoIcon from './CarrinhoIcon'
+import NotificacoesBell from './NotificacoesBell'
 
 const tabs = [
   { href: '/', label: 'Buscar Produtos', icon: Search },
@@ -67,6 +68,7 @@ export default function NavBar() {
           </nav>
 
           <CarrinhoIcon />
+          {logado && <NotificacoesBell />}
           <ThemeToggle />
 
           {logado ? (
@@ -126,6 +128,7 @@ export default function NavBar() {
           <div className="flex items-center justify-between gap-3 pt-3 mt-2 border-t border-white/15">
             <div className="flex items-center gap-2">
               <CarrinhoIcon />
+              {logado && <NotificacoesBell />}
               <ThemeToggle />
             </div>
             {logado ? (
