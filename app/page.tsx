@@ -25,7 +25,7 @@ export default function Home() {
 
   if (categoriaAtiva) {
     return (
-      <div key={categoriaAtiva.slug} className="max-w-6xl mx-auto px-4 py-6 animate-fade-in-up">
+      <div key={categoriaAtiva.slug} className="px-4 sm:px-6 lg:px-8 py-6 animate-fade-in-up">
         <CategoriaView
           slug={categoriaAtiva.slug}
           label={categoriaAtiva.label}
@@ -36,7 +36,7 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in-up">
+    <div className="px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
       {/* Banner promocional */}
       <BannerCarrossel onCategoriaClick={setCategoriaAtiva} />
 
