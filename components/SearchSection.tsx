@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import SearchBar from './SearchBar'
 import ImageUpload from './ImageUpload'
 import StoreMap from './StoreMap'
@@ -9,6 +9,7 @@ import SearchFilters, { FILTROS_INICIAIS, aplicarFiltros, type FiltrosBusca } fr
 import ComparadorBar from './ComparadorBar'
 import Skeleton from './ui/Skeleton'
 import { MapPin } from 'lucide-react'
+import { buscarProdutos } from '@/lib/buscarProdutos'
 import type { SearchResult } from '@/types/produto'
 
 const LOJAS = [
@@ -29,13 +30,31 @@ const LOJAS = [
   'Goiânia — Goiânia/GO',
 ]
 
-export default function SearchSection() {
+interface SearchSectionProps {
+  initialQuery?: string
+}
+
+export default function SearchSection({ initialQuery }: SearchSectionProps) {
+  const sectionRef = useRef<HTMLDivElement>(null)
   const [resultados, setResultados] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
   const [queryProcessada, setQueryProcessada] = useState('')
   const [loja, setLoja] = useState(LOJAS[0])
   const [produtoDrawer, setProdutoDrawer] = useState<SearchResult['produto'] | null>(null)
   const [filtros, setFiltros] = useState<FiltrosBusca>(FILTROS_INICIAIS)
+
+  useEffect(() => {
+    if (!initialQuery) return
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    setLoading(true)
+    buscarProdutos(initialQuery).then(({ resultados, queryProcessada }) => {
+      setResultados(resultados)
+      setQueryProcessada(queryProcessada)
+      setFiltros(FILTROS_INICIAIS)
+      setLoading(false)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuery])
 
   const handleSearchResults = (results: SearchResult[], query: string) => {
     setResultados(results)
@@ -55,7 +74,7 @@ export default function SearchSection() {
   )
 
   return (
-    <div className="space-y-5">
+    <div ref={sectionRef} className="space-y-5">
       <ProdutoDrawer produto={produtoDrawer} onClose={() => setProdutoDrawer(null)} />
       {/* Seletor de loja */}
       <div className="flex items-center gap-3">
