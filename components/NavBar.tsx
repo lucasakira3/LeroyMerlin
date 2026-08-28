@@ -58,7 +58,7 @@ export default function NavBar() {
         <HeaderSearch />
 
         {/* Ícones — desktop */}
-        <div className="hidden md:flex items-center gap-1 flex-shrink-0">
+        <div className="hidden md:flex items-center gap-1 flex-shrink-0 ml-auto">
           {logado && <NotificacoesBell />}
           <ThemeToggle />
           <Link href={logado ? '/conta' : '/funcionario/login'} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>
