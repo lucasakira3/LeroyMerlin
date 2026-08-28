@@ -34,7 +34,10 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className={`${inter.className} bg-lm-light min-h-screen`}>
+      <body
+        className={`${inter.className} bg-lm-light min-h-screen`}
+        suppressHydrationWarning
+      >
         <NavBar />
         <TourGuiado />
         <PageTransition>{children}</PageTransition>
