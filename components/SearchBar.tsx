@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { Search } from 'lucide-react'
 import VoiceButton from './VoiceButton'
+import { buscarProdutos } from '@/lib/buscarProdutos'
 import type { SearchResult } from '@/types/produto'
 
 interface SearchBarProps {
@@ -16,27 +17,12 @@ export default function SearchBar({ onResults, loading, setLoading }: SearchBarP
 
   const handleSearch = useCallback(
     async (searchQuery: string) => {
-      const q = searchQuery.trim()
-      if (!q) return
+      if (!searchQuery.trim()) return
 
       setLoading(true)
-      try {
-        const res = await fetch('/api/search', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: q, limit: 12 }),
-        })
-
-        if (!res.ok) throw new Error('Erro na busca')
-
-        const data = await res.json()
-        onResults(data.resultados, data.query_processada || q)
-      } catch (err) {
-        console.error('Erro ao buscar:', err)
-        onResults([], q)
-      } finally {
-        setLoading(false)
-      }
+      const { resultados, queryProcessada } = await buscarProdutos(searchQuery)
+      onResults(resultados, queryProcessada)
+      setLoading(false)
     },
     [onResults, setLoading]
   )
