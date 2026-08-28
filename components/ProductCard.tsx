@@ -15,6 +15,7 @@ interface ProductCardProduto {
   produto: string
   corredor: string
   preco: number
+  precoOriginal?: number
   estoque: number
   sustentabilidade: SustentabilidadeScore
 }
@@ -61,6 +62,11 @@ export default function ProductCard({
           alt={produto.categoria}
           className="w-full h-36 object-cover"
         />
+        {produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco && (
+          <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-md">
+            -{Math.round((1 - produto.preco / produto.precoOriginal) * 100)}%
+          </span>
+        )}
         <span className="absolute bottom-2 left-2 flex items-center gap-1 bg-lm-green text-white text-[10px] font-bold px-2 py-1 rounded-md">
           <MapPin size={10} strokeWidth={2.5} /> {produto.corredor}
         </span>
@@ -90,6 +96,11 @@ export default function ProductCard({
         <h3 className="text-sm font-semibold text-lm-dark leading-snug mb-1.5 line-clamp-2 min-h-[2.5rem]">
           {produto.produto}
         </h3>
+        {produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco && (
+          <p className="text-xs text-gray-400 line-through">
+            {produto.precoOriginal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </p>
+        )}
         <p className="text-base font-black text-lm-dark mb-1.5">
           {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
         </p>
