@@ -182,7 +182,7 @@ export default function Home() {
 
 **`components/HomeView.tsx` (novo)** recebe o corpo inteiro do componente `Home` que hoje está em `app/page.tsx` (banner, grade de categorias, card "Busca inteligente", barra de info — sem mudança nenhuma nesse conteúdo), com três adições:
 1. `import { useSearchParams } from 'next/navigation'` e `const initialQuery = useSearchParams().get('q') ?? undefined` no topo do componente.
-2. `<SearchSection key={initialQuery ?? 'default'} initialQuery={initialQuery} />` no lugar de `<SearchSection />` — a `key` força remontagem sempre que uma nova busca chega pela URL (inclusive uma busca repetida), garantindo que o efeito de `initialQuery` sempre dispare.
+2. `<SearchSection key={initialQuery ?? 'default'} initialQuery={initialQuery} />` no lugar de `<SearchSection />` — a `key` força remontagem sempre que uma busca **diferente** da anterior chega pela URL, garantindo que o efeito de `initialQuery` sempre dispare pra uma consulta nova (uma busca idêntica repetida não precisa de remontagem, já que o resultado já exibido continuaria sendo o mesmo).
 3. A troca do tile "Todos" por um link "Ver todos" (seção 5 abaixo).
 
 ## 4. Feature Ofertas

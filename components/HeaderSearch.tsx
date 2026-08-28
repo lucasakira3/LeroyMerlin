@@ -16,7 +16,7 @@ export default function HeaderSearch() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="relative flex-1 md:max-w-2xl">
+    <form onSubmit={handleSubmit} className="relative flex-1 min-w-0 md:max-w-2xl">
       <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={17} />
       <input
         type="text"

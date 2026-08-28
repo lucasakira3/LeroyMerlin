@@ -1,29 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import SearchSection from '@/components/SearchSection'
 import CategoriaView from '@/components/CategoriaView'
 import BannerCarrossel from '@/components/BannerCarrossel'
 import Card from '@/components/ui/Card'
-import { Grid2x2, Zap, Droplets, Hammer, Palette, Flower2, Lightbulb, BrickWall, Frame } from 'lucide-react'
+import { Grid2x2 } from 'lucide-react'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 
 const CATEGORIAS = [
-  { slug: 'ferramentas', label: 'Ferramentas', icon: Hammer },
-  { slug: 'eletrica',    label: 'Elétrica',    icon: Zap },
-  { slug: 'hidraulica',  label: 'Hidráulica',  icon: Droplets },
-  { slug: 'pintura',     label: 'Pintura',     icon: Palette },
-  { slug: 'jardim',      label: 'Jardim',      icon: Flower2 },
-  { slug: 'iluminacao',  label: 'Iluminação',  icon: Lightbulb },
-  { slug: 'construcao',  label: 'Construção',  icon: BrickWall },
-  { slug: 'decoracao',   label: 'Decoração',   icon: Frame },
+  { slug: 'ferramentas', label: 'Ferramentas' },
+  { slug: 'eletrica',    label: 'Elétrica' },
+  { slug: 'hidraulica',  label: 'Hidráulica' },
+  { slug: 'pintura',     label: 'Pintura' },
+  { slug: 'jardim',      label: 'Jardim' },
+  { slug: 'iluminacao',  label: 'Iluminação' },
+  { slug: 'construcao',  label: 'Construção' },
+  { slug: 'decoracao',   label: 'Decoração' },
 ]
 
 export default function HomeView() {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q') ?? undefined
   const [categoriaAtiva, setCategoriaAtiva] = useState<{ slug: string; label: string } | null>(null)
+
+  useEffect(() => {
+    if (initialQuery) setCategoriaAtiva(null)
+  }, [initialQuery])
 
   if (categoriaAtiva) {
     return (
@@ -56,7 +60,7 @@ export default function HomeView() {
           </button>
         </div>
         <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
-          {CATEGORIAS.map(({ slug, label, icon: Icon }, i) => (
+          {CATEGORIAS.map(({ slug, label }, i) => (
             <button
               key={slug}
               onClick={() => setCategoriaAtiva({ slug, label })}

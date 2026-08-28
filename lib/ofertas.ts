@@ -15,7 +15,7 @@ export function getInfoOferta(id: string, preco: number): InfoOferta {
     return { emOferta: false, percentualDesconto: 0, precoOriginal: preco, precoComDesconto: preco }
   }
 
-  const percentualDesconto = PERCENTUAIS_DESCONTO[hash % PERCENTUAIS_DESCONTO.length]
+  const percentualDesconto = PERCENTUAIS_DESCONTO[Math.floor(hash / 5) % PERCENTUAIS_DESCONTO.length]
   const precoComDesconto = Math.round(preco * (1 - percentualDesconto / 100) * 100) / 100
   return { emOferta: true, percentualDesconto, precoOriginal: preco, precoComDesconto }
 }

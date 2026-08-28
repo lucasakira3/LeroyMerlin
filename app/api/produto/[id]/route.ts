@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { carregarProdutos } from "@/lib/produtos";
+import { getInfoOferta } from "@/lib/ofertas";
 import type { Produto } from "@/types/produto";
 
 // Regex para validar formato de ID: LM- seguido de exatamente 4 dígitos
@@ -43,7 +44,10 @@ export async function GET(
       ...produtoPublico
     }: Produto = produto;
 
-    return NextResponse.json(produtoPublico as ProdutoPublico, { status: 200 });
+    const info = getInfoOferta(produto.id, produto.preco);
+    const resposta: ProdutoPublico = { ...produtoPublico, preco: info.precoComDesconto };
+
+    return NextResponse.json(resposta, { status: 200 });
   } catch (error) {
     console.error("[GET /api/produto/[id]] Erro:", error);
     return NextResponse.json(

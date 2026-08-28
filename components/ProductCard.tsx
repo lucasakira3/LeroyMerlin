@@ -40,6 +40,7 @@ export default function ProductCard({
   className = '',
 }: ProductCardProps) {
   const [adicionado, setAdicionado] = useState(false)
+  const emOferta = produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco
 
   function handleAdicionarCarrinho(e: React.MouseEvent) {
     e.stopPropagation()
@@ -62,9 +63,9 @@ export default function ProductCard({
           alt={produto.categoria}
           className="w-full h-36 object-cover"
         />
-        {produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco && (
+        {emOferta && (
           <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-md">
-            -{Math.round((1 - produto.preco / produto.precoOriginal) * 100)}%
+            -{Math.round((1 - produto.preco / produto.precoOriginal!) * 100)}%
           </span>
         )}
         <span className="absolute bottom-2 left-2 flex items-center gap-1 bg-lm-green text-white text-[10px] font-bold px-2 py-1 rounded-md">
@@ -96,9 +97,9 @@ export default function ProductCard({
         <h3 className="text-sm font-semibold text-lm-dark leading-snug mb-1.5 line-clamp-2 min-h-[2.5rem]">
           {produto.produto}
         </h3>
-        {produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco && (
+        {emOferta && (
           <p className="text-xs text-gray-400 line-through">
-            {produto.precoOriginal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
         )}
         <p className="text-base font-black text-lm-dark mb-1.5">
