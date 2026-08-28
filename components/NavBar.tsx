@@ -42,10 +42,10 @@ export default function NavBar() {
   return (
     <header className="bg-lm-green shadow-md relative z-30">
       {/* Linha 1 — logo, busca, ícones */}
-      <div className="px-4 md:px-6 flex items-center gap-3 md:gap-4 h-16">
+      <div className="px-4 md:px-6 flex md:grid md:grid-cols-[1fr_min(42rem,100%)_1fr] items-center gap-3 md:gap-4 h-16">
 
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0">
+        <Link href="/" className="flex-shrink-0 md:justify-self-start">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/leroy-logo.png"
@@ -54,11 +54,11 @@ export default function NavBar() {
           />
         </Link>
 
-        {/* Busca — visível em qualquer largura de tela */}
+        {/* Busca — visível em qualquer largura de tela; centralizada no header a partir de md: */}
         <HeaderSearch />
 
         {/* Ícones — desktop */}
-        <div className="hidden md:flex items-center gap-1 flex-shrink-0 ml-auto">
+        <div className="hidden md:flex items-center gap-1 flex-shrink-0 md:justify-self-end">
           {logado && <NotificacoesBell />}
           <ThemeToggle />
           <Link href={logado ? '/conta' : '/funcionario/login'} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>
