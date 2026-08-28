@@ -11,7 +11,7 @@ export default function AgendamentoPage() {
   const [aba, setAba] = useState<'novo' | 'consultar'>('novo')
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6">
+    <div className="px-4 sm:px-6 lg:px-8 py-6">
       <PageHeader
         title="Agendar Visita à Loja"
         description="Marque um atendimento presencial com um especialista Leroy Merlin, sem custo e sem compromisso."
