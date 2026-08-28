@@ -11,13 +11,14 @@ import { isFavorito, toggleFavorito } from "@/lib/clientFavoritos";
 import type { SustentabilidadeScore } from "@/types/produto";
 
 interface ProductCardProduto {
-  id: string
-  categoria: string
-  produto: string
-  corredor: string
-  preco: number
-  estoque: number
-  sustentabilidade: SustentabilidadeScore
+  id: string;
+  categoria: string;
+  produto: string;
+  corredor: string;
+  preco: number;
+  precoOriginal?: number;
+  estoque: number;
+  sustentabilidade: SustentabilidadeScore;
 }
 
 interface ProductCardProps {
@@ -39,7 +40,16 @@ export default function ProductCard({
   style,
   className = "",
 }: ProductCardProps) {
-  const [adicionado, setAdicionado] = useState(false)
+  const [adicionado, setAdicionado] = useState(false);
+  const [favoritado, setFavoritado] = useState(false);
+
+  const emOferta =
+    typeof produto.precoOriginal === "number" &&
+    produto.precoOriginal > produto.preco;
+
+  useEffect(() => {
+    setFavoritado(isFavorito(produto.id));
+  }, [produto.id]);
 
   function handleAdicionarCarrinho(e: React.MouseEvent) {
     e.stopPropagation();
@@ -125,7 +135,10 @@ export default function ProductCard({
         </h3>
         {emOferta && (
           <p className="text-xs text-gray-400 line-through">
-            {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            {produto.precoOriginal!.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
           </p>
         )}
         <p className="text-base font-black text-lm-dark mb-1.5">
