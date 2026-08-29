@@ -14,6 +14,7 @@ import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosClien
 import { clearProductHistory } from '@/lib/hooks/useProductTracker'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { formatarParcelamento } from '@/lib/parcelamento'
+import CartItemSkeleton from '@/components/CartItemSkeleton'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -168,7 +169,11 @@ export default function CarrinhoPage() {
       <div className="max-w-2xl mx-auto px-4 py-6">
         <PageHeader title="Carrinho" description={itens.length > 0 ? `${itens.length} ${itens.length === 1 ? 'item' : 'itens'}` : undefined} />
 
-        {produtos === null && <p className="text-sm text-gray-400">Carregando...</p>}
+        {produtos === null && (
+          <div className="space-y-3">
+            {[0, 1, 2].map(i => <CartItemSkeleton key={i} />)}
+          </div>
+        )}
 
         {produtos !== null && itensResolvidos.length === 0 && (
           <Card className="text-center py-10">

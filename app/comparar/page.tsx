@@ -15,6 +15,7 @@ import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosClien
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { getMedia } from '@/lib/clientAvaliacoes'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
+import ComparadorCardSkeleton from '@/components/ComparadorCardSkeleton'
 
 function ComparadorContent() {
   const [ids, setIds] = useState<string[]>([])
@@ -57,7 +58,12 @@ function ComparadorContent() {
     return (
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <p className="text-sm text-gray-400">Carregando...</p>
+          <PageHeader title="Comparar produtos" />
+          <div className="overflow-x-auto">
+            <div className="flex gap-4 min-w-full">
+              {[0, 1, 2].map(i => <ComparadorCardSkeleton key={i} />)}
+            </div>
+          </div>
         </div>
       </main>
     )
@@ -188,7 +194,12 @@ export default function ComparadorPage() {
     <Suspense fallback={
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <p className="text-sm text-gray-400">Carregando...</p>
+          <PageHeader title="Comparar produtos" />
+          <div className="overflow-x-auto">
+            <div className="flex gap-4 min-w-full">
+              {[0, 1, 2].map(i => <ComparadorCardSkeleton key={i} />)}
+            </div>
+          </div>
         </div>
       </main>
     }>

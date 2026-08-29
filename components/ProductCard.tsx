@@ -172,9 +172,24 @@ export default function ProductCard({
     )
   }
 
+  // Não pode ser <button> aqui: o card já contém o checkbox de seleção e o coração de
+  // favoritar, que são <button> por baixo — <button> dentro de <button> é HTML inválido
+  // (aviso "cannot be a descendant of" no console) e quebra em alguns navegadores.
   return (
-    <button type="button" onClick={onDetalhes} className={wrapperClass} style={style}>
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onDetalhes}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onDetalhes?.()
+        }
+      }}
+      className={wrapperClass}
+      style={style}
+    >
       {conteudo}
-    </button>
+    </div>
   )
 }

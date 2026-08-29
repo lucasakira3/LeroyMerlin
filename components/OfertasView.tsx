@@ -7,7 +7,7 @@ import { X } from 'lucide-react'
 import ProductCard from './ProductCard'
 import ProdutoDrawer from './ProdutoDrawer'
 import Pagination from './ui/Pagination'
-import Skeleton from './ui/Skeleton'
+import ProductCardSkeleton from './ProductCardSkeleton'
 import { CATEGORIA_LABELS } from '@/lib/categorias'
 import type { Produto } from '@/types/produto'
 
@@ -57,13 +57,7 @@ export default function OfertasView() {
       <>
         {filtro}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-xl border-2 border-gray-200 bg-white space-y-2">
-              <Skeleton className="w-full h-36" />
-              <Skeleton className="w-full h-3.5" />
-              <Skeleton className="w-2/3 h-3.5" />
-            </div>
-          ))}
+          {Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)}
         </div>
       </>
     )
