@@ -37,6 +37,10 @@ Regras:
 - Focar em produtos que a Leroy Merlin vende
 - Organize os itens em etapas cronológicas do projeto (ex: para uma reforma: 1 remoção/preparo, 2 hidráulica/elétrica, 3 acabamento, 4 pintura/detalhes). Use "etapa_ordem" (número sequencial a partir de 1, itens da mesma fase compartilham o mesmo número) e "etapa_nome" (nome curto e específico para o projeto do cliente, não genérico) em TODOS os itens. Projetos simples podem ter só 1 ou 2 etapas.`;
 
+// Versão simplificada do fallback de lib/search.ts (mesma ideia: fração de termos batendo
+// no texto do produto), usada aqui em vez da busca semântica porque a IA já devolveu o
+// "material" como texto curto e específico (ex: "Rejunte Branco 1kg") — não precisa de
+// embedding pra isso, e evita uma chamada de API por item da lista gerada.
 function buscaTextoSimples(produtos: Awaited<ReturnType<typeof carregarProdutos>>, query: string, limit = 1) {
   const termos = query.toLowerCase().split(/\s+/).filter(t => t.length > 2);
   return produtos

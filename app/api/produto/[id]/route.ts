@@ -44,6 +44,13 @@ export async function GET(
       ...produtoPublico
     }: Produto = produto;
 
+    // Aplica o mesmo desconto de lib/ofertas.ts aqui, no ponto único de resolução de
+    // produto por id — isso garante que o preço fica correto pra QUALQUER consumidor
+    // (carrinho, checkout, /produto/[id]), não só pra quem navegou via /ofertas. Sem isso,
+    // um item comprado a partir de /ofertas voltava a cobrar o preço cheio no carrinho,
+    // porque o carrinho só guarda o id e revalida o preço aqui (ver lib/clientCarrinho.ts).
+    // De propósito NÃO expõe precoOriginal/percentualDesconto — só a rota /api/ofertas
+    // expõe esses campos, pro badge de desconto não vazar pra categoria/busca normal.
     const info = getInfoOferta(produto.id, produto.preco);
     const resposta: ProdutoPublico = { ...produtoPublico, preco: info.precoComDesconto };
 

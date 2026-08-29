@@ -1,5 +1,7 @@
 import type { Perfil } from '@/types/perfil'
 
+// Mesmo padrão de clientCarrinho.ts, mas indexado por e-mail normalizado (lowercase+trim)
+// já que o perfil da entrevista guiada é por conta, não global como o carrinho.
 const CHAVE = 'lm_perfil_cliente'
 
 type Mapa = Record<string, Perfil>

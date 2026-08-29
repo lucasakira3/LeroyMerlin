@@ -1,3 +1,7 @@
+// Por e-mail (não normalizado, ao contrário de clientPerfil.ts/clientNotificacoes.ts —
+// checar o call site em app/carrinho/page.tsx antes de mudar isso). Um Pedido é um
+// instantâneo (nome/preço travados no momento da compra), não uma referência viva ao
+// produto — preço mudar depois no catálogo não altera pedidos já feitos.
 const CHAVE = 'lm_pedidos_cliente'
 
 export interface ItemPedido {

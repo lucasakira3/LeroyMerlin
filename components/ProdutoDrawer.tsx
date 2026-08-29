@@ -40,6 +40,14 @@ const SUST_COR: Record<string, string> = {
 }
 
 export default function ProdutoDrawer({ produto, onClose }: Props) {
+  // createPortal + este `mounted` existem por um motivo específico, não é boilerplate à
+  // toa: components/PageTransition.tsx envolve toda página com uma div `animate-fade-in-up`,
+  // e QUALQUER transform em ancestral (mesmo já "zerado" ao fim da animação) vira o
+  // containing block de todo `position: fixed` descendente — sem o portal, este popup
+  // centralizava relativo à div da animação, não à tela de verdade (achado testando o
+  // popup, não óbvio por leitura de código). `document.body` escapa desse problema.
+  // `mounted` evita o portal tentar acessar `document` durante SSR (Next.js roda esse
+  // componente no servidor antes da primeira renderização no cliente).
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -67,6 +75,9 @@ export default function ProdutoDrawer({ produto, onClose }: Props) {
 
       {/* Popup centralizado (tela cheia no mobile, cartão centralizado a partir de md:) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center md:p-4 pointer-events-none">
+        {/* pointer-events precisa acompanhar `visible`, não só a opacidade: fechado, o
+            cartão só fica opacity-0/scale-95 (não sai da tela fisicamente), então sem
+            isso ele continuava bloqueando cliques em tudo por baixo mesmo invisível. */}
         <div
           className={`bg-white w-full h-full md:h-auto md:max-h-[90vh] md:max-w-4xl md:rounded-card shadow-soft-lg overflow-hidden flex flex-col transition-all duration-300 ease-out ${
             visible ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'

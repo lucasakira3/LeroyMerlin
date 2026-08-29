@@ -1,3 +1,6 @@
+// Mapa por produtoId -> lista de avaliações (uma por e-mail, upsert em salvarAvaliacao —
+// avaliar de novo edita a anterior em vez de duplicar). Sem backend: getMedia() calcula
+// a média na hora a partir da lista completa, não é um valor persistido separadamente.
 const CHAVE = 'lm_avaliacoes_produtos'
 
 export interface Avaliacao {

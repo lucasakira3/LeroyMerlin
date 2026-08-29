@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from 'react'
 
+// Agente "proativo": rastreia produtos vistos numa sessão (sessionStorage, não persiste
+// entre sessões) e, se o cliente olhar 3+ produtos da MESMA categoria seguidos, sugere
+// compará-los (toast disparado por CompareToast.tsx após um delay de 10s, ver
+// trackProductView). Máquina de estados simples: idle -> pending -> triggered ->
+// dismissed/accepted, guardada em sessionStorage pra sobreviver a um reload durante o delay.
 export interface VisitedProduct {
   id: string
   nome: string

@@ -1,3 +1,6 @@
+// Lista global (sem login, igual clientCarrinho.ts), limitada a 3 itens — toggleComparador
+// retorna 'full' em vez de aceitar silenciosamente quando já tem 3, pro chamador decidir
+// como avisar o usuário (a UI nunca trunca pros 3 primeiros sem avisar).
 const CHAVE = 'lm_comparador'
 const MAX_ITENS = 3
 

@@ -2,6 +2,9 @@ import { readFile } from "fs/promises";
 import path from "path";
 import type { Produto } from "@/types/produto";
 
+// Cache em memória do módulo: o catálogo (1000 produtos com embeddings) só é lido do
+// disco uma vez por processo do servidor, não a cada request — evita reparsear ~mbs de
+// JSON em toda chamada de API. Reseta sozinho quando o servidor reinicia (dev ou deploy).
 let cache: Produto[] | null = null;
 
 export async function carregarProdutos(): Promise<Produto[]> {

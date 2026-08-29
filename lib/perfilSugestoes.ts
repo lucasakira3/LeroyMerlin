@@ -1,6 +1,13 @@
 import type { Perfil, Moradia, Area, Experiencia, Orcamento, ServicoSugerido } from '@/types/perfil'
 import type { Produto, Complexidade } from '@/types/produto'
 
+// Motor de pontuação da "entrevista guiada" (perfil do cliente -> sugestões de produto).
+// As tabelas abaixo (faixas de preço, complexidade, moradia) foram calibradas contra a
+// DISTRIBUIÇÃO REAL de data/produtos.json, não contra o range teórico dos tipos TypeScript.
+// Ex.: Complexidade permite 6 valores no tipo, mas o gerador de mock só emite 3 deles
+// (DIY/Profissional/Especialista); um bug real já aconteceu aqui por assumir os 6.
+// Antes de mudar qualquer faixa/mapeamento, reaudite a distribuição real do campo em
+// data/produtos.json (ex.: `node -e "..."` contando valores) — não assuma pelo tipo.
 export const AREA_PARA_CATEGORIAS: Record<Area, string[]> = {
   'Cozinha': ['Pisos e Cerâmica', 'Hidráulica', 'Elétrica', 'Iluminação'],
   'Banheiro': ['Banheiro', 'Hidráulica', 'Pisos e Cerâmica'],

@@ -1,3 +1,5 @@
+// Lista global de ids (não por e-mail, funciona sem login — igual clientCarrinho.ts).
+// 'lm-favoritos-change' alimenta o contador do FavoritosIcon no header.
 const CHAVE = 'lm_favoritos_produtos'
 
 function lerIds(): string[] {

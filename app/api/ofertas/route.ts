@@ -3,6 +3,9 @@ import { carregarProdutos } from "@/lib/produtos";
 import { getInfoOferta } from "@/lib/ofertas";
 import { CATEGORIA_TERMOS } from "@/lib/categorias";
 
+// `preco` na resposta já vem com o desconto aplicado (não é o preço de catálogo) —
+// `precoOriginal`/`percentualDesconto` são só pra UI desenhar o preço riscado/badge.
+// ?categoria= é opcional; sem ele, devolve produtos em oferta de todas as categorias.
 export async function GET(req: NextRequest) {
   const categoriaSlug = req.nextUrl.searchParams.get("categoria");
   const termos = categoriaSlug ? (CATEGORIA_TERMOS[categoriaSlug] ?? []) : [];

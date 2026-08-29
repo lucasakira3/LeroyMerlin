@@ -2,6 +2,9 @@ import { gerarEmbedding, cosineSimilarity } from "./embeddings";
 import { carregarProdutos } from "./produtos";
 import type { Produto, SearchResult } from "@/types/produto";
 
+// Fallback quando não há embeddings (cota da API esgotada, ou produto novo sem
+// embedding ainda gerado): pontua por fração de termos da query encontrados nos
+// campos de texto do produto — mais simples que busca semântica, mas não depende de rede.
 function buscaTexto(produtos: Produto[], query: string, limit: number): SearchResult[] {
   const termos = query.toLowerCase().split(/\s+/).filter(Boolean);
 
@@ -27,11 +30,16 @@ function buscaTexto(produtos: Produto[], query: string, limit: number): SearchRe
     .slice(0, Math.min(limit, 20));
 }
 
+// Ponto de entrada único da busca de produto usado por texto, imagem (vision) e
+// diagnóstico visual — todos convergem pra cá depois de virar uma string de busca.
 export async function buscarProdutos(
   query: string,
   limit: number
 ): Promise<SearchResult[]> {
   const produtos = await carregarProdutos();
+  // Nem todo produto tem embedding real (alguns bateram no limite diário da API na geração
+  // do catálogo) — filtra pra só considerar os que têm, senão a similaridade de coseno
+  // comparando contra um vetor vazio distorceria o ranking.
   const produtosComEmbedding = produtos.filter((p) => p.embedding && p.embedding.length > 0);
 
   // Tenta busca semântica; se a API falhar, usa busca por texto

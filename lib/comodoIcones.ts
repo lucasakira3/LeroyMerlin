@@ -26,6 +26,9 @@ const ICONES_POR_COMODO: Record<string, LucideIcon> = {
   escritório: Briefcase,
 }
 
+// O nome do cômodo vem de texto livre gerado pela IA (campo "comodo" da resposta do
+// /api/projeto), não de um enum fechado — por isso o match é por substring, não igualdade
+// exata, e sempre cai num ícone genérico (LayoutGrid) em vez de quebrar quando não bate.
 export function getIconeComodo(comodo: string): LucideIcon {
   const lower = String(comodo).toLowerCase()
   const key = Object.keys(ICONES_POR_COMODO).find(k => lower.includes(k))

@@ -7,6 +7,8 @@ export async function GET(
   { params }: { params: { slug: string } }
 ) {
   const produtos = await carregarProdutos();
+  // slug desconhecido (ou "todos") cai em `[]` -> nenhum filtro aplicado, devolve o
+  // catálogo inteiro em vez de dar 404 ou lista vazia. Decisão deliberada, não omissão.
   const termos = CATEGORIA_TERMOS[params.slug] ?? [];
 
   const filtrados =

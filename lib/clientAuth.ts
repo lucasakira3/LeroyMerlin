@@ -1,3 +1,7 @@
+// Projeto não tem backend: "logar" só grava {email, nome} no localStorage, sem validar
+// senha nem checar se a conta existe de verdade (isso é responsabilidade de
+// lib/clientContas.ts, chamado antes de loginUsuario nos fluxos de login/cadastro).
+// Fake auth por design (é um MVP acadêmico) — não é um bug de segurança a corrigir.
 const CHAVE = 'lm_usuario_logado'
 
 export interface UsuarioLogado {

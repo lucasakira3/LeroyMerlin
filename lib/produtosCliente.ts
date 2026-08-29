@@ -2,6 +2,9 @@ import type { SearchResult } from '@/types/produto'
 
 export type ProdutoResolvido = SearchResult['produto']
 
+// Ponto único de "dado o id, me dê o produto completo" pro lado do cliente — carrinho,
+// lista compartilhada e Minha Conta só guardam ids (não o produto inteiro) e usam isso
+// pra resolver. Um id inexistente vira `null` e é descartado, não quebra a lista inteira.
 export async function buscarProdutosPorIds(ids: string[]): Promise<ProdutoResolvido[]> {
   const respostas = await Promise.all(
     ids.map(async (id) => {

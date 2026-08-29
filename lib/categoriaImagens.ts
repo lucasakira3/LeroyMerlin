@@ -86,6 +86,10 @@ const IMAGENS_POR_CATEGORIA: Record<string, string[]> = {
 
 const FALLBACK = IMAGENS_POR_CATEGORIA['Ferramentas']
 
+// Sem `seed` (banners/tiles genéricos de categoria), sempre a primeira foto. Com `seed`
+// (normalmente o id do produto), hash determinístico escolhe entre as 5 fotos daquela
+// categoria — o mesmo produto sempre mostra a mesma foto, mas produtos diferentes da
+// mesma categoria variam entre si. Mesmo padrão reaproveitado em lib/marcas.ts e lib/ofertas.ts.
 export function getImagemCategoria(categoria: string, seed?: string): string {
   const lista = IMAGENS_POR_CATEGORIA[categoria] ?? FALLBACK
   if (!seed) return lista[0]

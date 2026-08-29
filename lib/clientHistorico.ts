@@ -1,3 +1,6 @@
+// Histórico de produtos visitados (Minha Conta), não por e-mail — lista global de até 12,
+// mais recente primeiro. addAoHistorico remove qualquer entrada duplicada do mesmo produto
+// antes de reinserir no topo, então revisitar um produto só reordena, não duplica.
 const CHAVE = 'lm_historico_produtos'
 const LIMITE = 12
 

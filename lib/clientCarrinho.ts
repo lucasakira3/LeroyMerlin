@@ -1,3 +1,7 @@
+// Persistência 100% local (sem backend, ver lib/clientAuth.ts) — só {produtoId, quantidade},
+// funciona sem login. `salvarItens` dispara 'lm-carrinho-change' em toda mudança pra
+// qualquer componente que mostre a contagem (CarrinhoIcon no header) atualizar sozinho,
+// mesmo componentes que não chamaram a função que mudou o carrinho.
 const CHAVE = 'lm_carrinho'
 
 export interface CartItem {

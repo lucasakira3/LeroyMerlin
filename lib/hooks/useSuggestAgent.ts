@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from 'react'
 
+// Segunda implementação, independente e paralela, da MESMA ideia de useProductTracker.ts:
+// sugerir comparar produtos após visitas repetidas na mesma categoria. Essa aqui alimenta
+// SuggestBanner.tsx (pushView chamado por TrackProduct.tsx); useProductTracker.ts alimenta
+// CompareToast.tsx — os dois rodam ao mesmo tempo no app hoje, não é uma substituindo a
+// outra. Critério aqui é mais simples (3 visitas seguidas na mesma categoria, sem agrupar
+// categorias parecidas como useProductTracker.ts faz) e sem o delay de 10s antes de aparecer.
 type AgentState = {
   history: string[]
   suggestedCategory?: string | null

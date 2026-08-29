@@ -23,6 +23,11 @@ export async function POST(req: NextRequest) {
       ])
     );
 
+    // Round-robin entre as áreas escolhidas (1 produto de cada área por volta) em vez de
+    // simplesmente pegar os top-N por pontuação — sem isso, uma área com muitos produtos
+    // bem pontuados dominaria as 12 sugestões e áreas com poucos produtos ficariam de fora,
+    // mesmo o cliente tendo pedido as duas. `progresso` para o loop quando nenhuma área
+    // tem mais produto novo pra oferecer (evita loop infinito com poucas áreas/produtos).
     const selecionados: { produto: Awaited<ReturnType<typeof carregarProdutos>>[number]; pontos: number }[] = [];
     const vistos = new Set<string>();
     let progresso = true;

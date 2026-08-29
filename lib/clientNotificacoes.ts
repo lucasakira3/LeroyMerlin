@@ -10,6 +10,11 @@ export interface Notificacao {
   lida: boolean
 }
 
+// Notificações só nascem de eventos reais do próprio app (pedido finalizado, agendamento
+// confirmado, entrevista guiada respondida — ver os call sites de adicionarNotificacao),
+// nunca simuladas — decisão explícita de produto, não esquecimento de feature.
+// Toda escrita passa por salvarMapa, que já dispara 'lm-notificacoes-change' — nenhuma
+// função exportada precisa lembrar de disparar o evento individualmente.
 const CHAVE = 'lm_notificacoes'
 const LIMITE = 20
 

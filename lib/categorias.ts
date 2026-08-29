@@ -1,3 +1,8 @@
+// Fonte única de verdade pra "categoria" no app: slug de URL (?categoria=iluminacao),
+// nome de exibição (Iluminação) e termos de busca, todos derivados daqui. Usado por
+// /api/categoria/[slug], /api/ofertas (?categoria=) e a home (tiles + VitrineOfertas).
+// `todos: []` é intencional — array vazio de termos = "não filtra por categoria nenhuma"
+// (ver app/api/categoria/[slug]/route.ts), não "categoria sem nenhum termo válido".
 export const CATEGORIA_TERMOS: Record<string, string[]> = {
   ferramentas: ["ferramentas", "máquinas", "manutenção", "equipamentos"],
   eletrica:    ["elétrica", "eletrica", "energia", "fios", "cabos"],

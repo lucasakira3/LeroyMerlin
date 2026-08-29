@@ -1,3 +1,6 @@
+// Cadastro de cliente sem backend: senha fica em texto puro no localStorage (aceitável só
+// porque é um MVP local/acadêmico, nunca faria isso com dado real). validarLogin distingue
+// 'nao_encontrada' de 'senha_incorreta' pra dar mensagem de erro específica no formulário.
 const CHAVE = 'lm_contas_cliente'
 
 export interface ContaCliente {
