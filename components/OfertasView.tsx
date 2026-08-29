@@ -87,7 +87,7 @@ export default function OfertasView() {
       <p className="text-xs text-gray-400 mb-4">{produtos.length} produtos em oferta</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6">
         {produtosPaginados.map(p => (
-          <ProductCard key={p.id} produto={p} onSelect={() => setProdutoDrawer(p)} />
+          <ProductCard key={p.id} produto={p} onDetalhes={() => setProdutoDrawer(p)} />
         ))}
       </div>
       <Pagination page={pagina} totalPages={totalPaginas} onChange={setPagina} />

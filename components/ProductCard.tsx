@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { MapPin, ShoppingCart, Check } from 'lucide-react'
+import { MapPin, ShoppingCart, Check, Square, CheckSquare } from 'lucide-react'
 import StockIndicator from './StockIndicator'
 import SustainabilityBadge from './SustainabilityBadge'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
@@ -51,6 +51,12 @@ export default function ProductCard({
     setTimeout(() => setAdicionado(false), 1500)
   }
 
+  function handleToggleSelecao(e: React.MouseEvent) {
+    e.stopPropagation()
+    e.preventDefault()
+    onSelect?.()
+  }
+
   const wrapperClass = `group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white transition-all hover:shadow-md ${
     selected ? 'border-lm-green shadow-sm' : 'border-gray-200 hover:border-lm-green/40'
   } ${className}`
@@ -68,33 +74,26 @@ export default function ProductCard({
             -{Math.round((1 - produto.preco / produto.precoOriginal!) * 100)}%
           </span>
         )}
-        <span className="absolute bottom-2 left-2 flex items-center gap-1 bg-lm-green text-white text-[10px] font-bold px-2 py-1 rounded-md">
-          <MapPin size={10} strokeWidth={2.5} /> {produto.corredor}
-        </span>
-        <button
-          type="button"
-          onClick={handleAdicionarCarrinho}
-          disabled={produto.estoque === 0}
-          aria-label="Adicionar ao carrinho"
-          className={`absolute top-2 right-2 flex items-center justify-center w-8 h-8 rounded-full shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed text-white ${
-            adicionado ? 'bg-lm-green' : 'bg-lm-dark/80 hover:bg-lm-green'
-          }`}
-        >
-          {adicionado ? <Check size={14} /> : <ShoppingCart size={14} />}
-        </button>
-        {onDetalhes && (
+        {onSelect && (
           <button
             type="button"
-            onClick={e => { e.stopPropagation(); e.preventDefault(); onDetalhes() }}
-            className="absolute bottom-2 right-2 text-[10px] font-semibold text-white bg-black/50 hover:bg-black/70 rounded-full px-2 py-1 transition-colors"
+            onClick={handleToggleSelecao}
+            aria-label={selected ? 'Remover da seleção' : 'Selecionar produto'}
+            aria-pressed={selected}
+            className={`absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors ${
+              selected ? 'bg-lm-green text-white' : 'bg-white/90 text-gray-400 hover:text-lm-green'
+            }`}
           >
-            Detalhes
+            {selected ? <CheckSquare size={15} /> : <Square size={15} />}
           </button>
         )}
       </div>
 
       <div className="p-3">
-        <h3 className="text-sm font-semibold text-lm-dark leading-snug mb-1.5 line-clamp-2 min-h-[2.5rem]">
+        <div className="flex items-center gap-1 text-[10px] font-bold text-lm-green mb-1.5">
+          <MapPin size={10} strokeWidth={2.5} /> {produto.corredor}
+        </div>
+        <h3 className="text-sm font-semibold text-lm-dark leading-snug mb-2 line-clamp-2 min-h-[2.5rem]">
           {produto.produto}
         </h3>
         {emOferta && (
@@ -102,9 +101,22 @@ export default function ProductCard({
             {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
         )}
-        <p className="text-base font-black text-lm-dark mb-1.5">
-          {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-        </p>
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <p className="text-base font-black text-lm-dark">
+            {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </p>
+          <button
+            type="button"
+            onClick={handleAdicionarCarrinho}
+            disabled={produto.estoque === 0}
+            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 text-white ${
+              adicionado ? 'bg-lm-green' : 'bg-lm-dark hover:bg-lm-green'
+            }`}
+          >
+            <ShoppingCart size={13} />
+            {adicionado ? 'Adicionado ✓' : 'Adicionar'}
+          </button>
+        </div>
         <div className="flex items-center justify-between gap-1.5 flex-wrap">
           <StockIndicator estoque={produto.estoque} />
           <SustainabilityBadge sustentabilidade={produto.sustentabilidade} />
@@ -113,7 +125,7 @@ export default function ProductCard({
     </>
   )
 
-  if (href && !onSelect) {
+  if (href && !onDetalhes) {
     return (
       <Link href={href} className={wrapperClass} style={style}>
         {conteudo}
@@ -122,7 +134,7 @@ export default function ProductCard({
   }
 
   return (
-    <button type="button" onClick={onSelect} className={wrapperClass} style={style}>
+    <button type="button" onClick={onDetalhes} className={wrapperClass} style={style}>
       {conteudo}
     </button>
   )
