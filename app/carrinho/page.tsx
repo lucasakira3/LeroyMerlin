@@ -13,6 +13,7 @@ import { getUsuarioLogado } from '@/lib/clientAuth'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { clearProductHistory } from '@/lib/hooks/useProductTracker'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { formatarParcelamento } from '@/lib/parcelamento'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -84,6 +85,7 @@ export default function CarrinhoPage() {
     : []
 
   const total = itensResolvidos.reduce((soma, { item, produto }) => soma + (produto.preco ?? 0) * item.quantidade, 0)
+  const parcelamentoStr = formatarParcelamento(total)
 
   function confirmarPedido() {
     if (!usuario) return
@@ -233,9 +235,14 @@ export default function CarrinhoPage() {
             <Card className="mb-6">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-bold text-gray-900">Total</span>
-                <span className="text-xl font-black text-lm-green">
-                  {total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                </span>
+                <div className="text-right">
+                  <span className="text-xl font-black text-lm-green block">
+                    {total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </span>
+                  {parcelamentoStr && (
+                    <span className="text-xs text-gray-400">{parcelamentoStr}</span>
+                  )}
+                </div>
               </div>
             </Card>
 

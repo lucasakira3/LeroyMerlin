@@ -9,6 +9,7 @@ import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
 import { addAoHistorico } from '@/lib/clientHistorico'
+import { formatarParcelamento } from '@/lib/parcelamento'
 import AvaliacoesProduto from './AvaliacoesProduto'
 import type { SearchResult } from '@/types/produto'
 
@@ -166,6 +167,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const precoStr = preco != null
     ? Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     : null
+  const parcelamentoStr = preco != null ? formatarParcelamento(Number(preco)) : null
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -288,14 +290,17 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </div>
           </div>
 
-          {/* Preço + Localização */}
-          <div className="p-5 md:px-0 border-b border-gray-100 flex items-center justify-between gap-4">
+          {/* Preço + Localização — sticky pra continuar visível rolando o resto do popup
+              (chat, especificações, avaliações), já que essa coluna pode ficar bem mais
+              alta que a viewport do popup. */}
+          <div className="sticky top-0 z-10 bg-white p-5 md:px-0 border-b border-gray-100 flex items-center justify-between gap-4">
             <div>
               <p className="text-xs text-gray-400 mb-0.5 uppercase tracking-wide">Preço</p>
               {precoStr
                 ? <p className="text-2xl font-black text-lm-green">{precoStr}</p>
                 : <p className="text-sm text-gray-400 italic">Consultar loja</p>
               }
+              {parcelamentoStr && <p className="text-xs text-gray-400 mt-0.5">{parcelamentoStr}</p>}
               <button
                 onClick={handleAdicionarCarrinho}
                 disabled={produto.estoque === 0}

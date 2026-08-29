@@ -10,6 +10,7 @@ import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { getMedia } from '@/lib/clientAvaliacoes'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
+import { formatarParcelamento } from '@/lib/parcelamento'
 import type { SustentabilidadeScore } from '@/types/produto'
 
 interface ProductCardProduto {
@@ -46,6 +47,7 @@ export default function ProductCard({
   const [favoritado, setFavoritado] = useState(false)
   const emOferta = produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco
   const { media, total: totalAvaliacoes } = getMedia(produto.id)
+  const parcelamentoStr = formatarParcelamento(produto.preco)
 
   useEffect(() => {
     setFavoritado(isFavorito(produto.id))
@@ -136,9 +138,12 @@ export default function ProductCard({
           </p>
         )}
         <div className="flex items-center justify-between gap-2 mb-2">
-          <p className="text-base font-black text-lm-dark">
-            {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </p>
+          <div>
+            <p className="text-base font-black text-lm-dark">
+              {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </p>
+            {parcelamentoStr && <p className="text-[10px] text-gray-400">{parcelamentoStr}</p>}
+          </div>
           <button
             type="button"
             onClick={handleAdicionarCarrinho}
