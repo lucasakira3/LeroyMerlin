@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import SearchSection from '@/components/SearchSection'
 import CategoriaView from '@/components/CategoriaView'
 import BannerCarrossel from '@/components/BannerCarrossel'
+import VitrineOfertas from '@/components/VitrineOfertas'
 import Card from '@/components/ui/Card'
 import { Grid2x2 } from 'lucide-react'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
@@ -76,6 +77,9 @@ export default function HomeView() {
           ))}
         </div>
       </div>
+
+      {/* Ofertas em destaque */}
+      <VitrineOfertas />
 
       {/* Busca semântica */}
       <Card className="mb-8">
