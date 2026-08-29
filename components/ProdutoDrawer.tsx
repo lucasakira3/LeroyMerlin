@@ -10,6 +10,7 @@ import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
 import { addAoHistorico } from '@/lib/clientHistorico'
 import { formatarParcelamento } from '@/lib/parcelamento'
+import { showToast } from '@/lib/toast'
 import AvaliacoesProduto from './AvaliacoesProduto'
 import type { SearchResult } from '@/types/produto'
 
@@ -99,6 +100,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const [inputChat, setInputChat] = useState('')
   const [loadingChat, setLoadingChat] = useState(false)
   const [favorito, setFavorito] = useState(false)
+  const [zoomAberto, setZoomAberto] = useState(false)
   const [adicionado, setAdicionado] = useState(false)
   const [noComparador, setNoComparador] = useState(false)
   const [comparadorMsg, setComparadorMsg] = useState<string | null>(null)
@@ -108,6 +110,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     setMensagens([])
     setInputChat('')
     setFavorito(isFavorito(produto.id))
+    setZoomAberto(false)
     setAdicionado(false)
     setNoComparador(estaNoComparador(produto.id))
     setComparadorMsg(null)
@@ -153,6 +156,14 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     setTimeout(() => setAdicionado(false), 1500)
   }
 
+  function handleFavorito() {
+    const novoEstado = toggleFavorito(produto.id)
+    setFavorito(novoEstado)
+    if (!novoEstado) {
+      showToast('Removido dos favoritos', () => setFavorito(toggleFavorito(produto.id)))
+    }
+  }
+
   function handleComparar() {
     const resultado = toggleComparador(produto.id)
     if (resultado === 'full') {
@@ -170,6 +181,31 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const parcelamentoStr = preco != null ? formatarParcelamento(Number(preco)) : null
 
   return (
+    <>
+    {/* Zoom da imagem — portal próprio (não só um filho a mais aqui) porque o cartão do
+        popup já tem `scale-100`/`scale-95` (transform não-nulo), que criaria containing
+        block errado pro `position: fixed` do lightbox se ele ficasse dentro dessa árvore. */}
+    {zoomAberto && createPortal(
+      <div
+        className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4"
+        onClick={() => setZoomAberto(false)}
+      >
+        <button
+          onClick={() => setZoomAberto(false)}
+          aria-label="Fechar"
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+        >
+          <X size={20} />
+        </button>
+        <img
+          src={getImagemCategoria(produto.categoria, produto.id)}
+          alt={produto.categoria}
+          onClick={e => e.stopPropagation()}
+          className="max-w-full max-h-full object-contain rounded-lg"
+        />
+      </div>,
+      document.body
+    )}
     <div className="flex-1 overflow-y-auto">
       <div className="md:grid md:grid-cols-2 md:gap-x-8 md:items-start md:p-6">
 
@@ -180,11 +216,12 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             <img
               src={getImagemCategoria(produto.categoria, produto.id)}
               alt={produto.categoria}
-              className="w-full h-56 md:h-72 object-cover md:rounded-card"
+              onClick={() => setZoomAberto(true)}
+              className="w-full h-56 md:h-72 object-cover md:rounded-card cursor-zoom-in"
             />
             <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-lm-green/90 backdrop-blur-sm rounded-full p-1.5 shadow-md">
               <button
-                onClick={() => setFavorito(toggleFavorito(produto.id))}
+                onClick={handleFavorito}
                 className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
                 aria-label={favorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
                 aria-pressed={favorito}
@@ -390,5 +427,6 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
         </div>
       </div>
     </div>
+    </>
   )
 }

@@ -11,6 +11,7 @@ import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { getMedia } from '@/lib/clientAvaliacoes'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { formatarParcelamento } from '@/lib/parcelamento'
+import { showToast } from '@/lib/toast'
 import type { SustentabilidadeScore } from '@/types/produto'
 
 interface ProductCardProduto {
@@ -65,7 +66,11 @@ export default function ProductCard({
   function handleFavorito(e: React.MouseEvent) {
     e.stopPropagation()
     e.preventDefault()
-    setFavoritado(toggleFavorito(produto.id))
+    const novoEstado = toggleFavorito(produto.id)
+    setFavoritado(novoEstado)
+    if (!novoEstado) {
+      showToast('Removido dos favoritos', () => setFavoritado(toggleFavorito(produto.id)))
+    }
   }
 
   function handleToggleSelecao(e: React.MouseEvent) {

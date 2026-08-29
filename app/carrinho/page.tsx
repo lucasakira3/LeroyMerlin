@@ -6,7 +6,7 @@ import { Minus, Plus, Trash2, ShoppingCart, MapPin, CheckCircle2 } from 'lucide-
 import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
-import { getCarrinho, atualizarQuantidade, removerDoCarrinho, limparCarrinho, type CartItem } from '@/lib/clientCarrinho'
+import { getCarrinho, atualizarQuantidade, removerDoCarrinho, limparCarrinho, adicionarAoCarrinho, type CartItem } from '@/lib/clientCarrinho'
 import { salvarPedido, gerarNumeroPedido, type Pedido, type ItemPedido } from '@/lib/clientPedidos'
 import { adicionarNotificacao } from '@/lib/clientNotificacoes'
 import { getUsuarioLogado } from '@/lib/clientAuth'
@@ -15,6 +15,7 @@ import { clearProductHistory } from '@/lib/hooks/useProductTracker'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { formatarParcelamento } from '@/lib/parcelamento'
 import CartItemSkeleton from '@/components/CartItemSkeleton'
+import { showToast } from '@/lib/toast'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -75,8 +76,15 @@ export default function CarrinhoPage() {
   }
 
   function remover(produtoId: string) {
+    const item = itens.find(i => i.produtoId === produtoId)
     removerDoCarrinho(produtoId)
     recarregarCarrinho()
+    if (item) {
+      showToast('Produto removido do carrinho', () => {
+        adicionarAoCarrinho(produtoId, item.quantidade)
+        recarregarCarrinho()
+      })
+    }
   }
 
   const itensResolvidos = produtos

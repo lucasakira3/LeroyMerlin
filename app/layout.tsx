@@ -5,6 +5,7 @@ import NavBar from "@/components/NavBar";
 import TourGuiado from "@/components/TourGuiado";
 import PageTransition from "@/components/PageTransition";
 import CompareToast from "@/components/CompareToast";
+import UndoToast from "@/components/UndoToast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,6 +43,7 @@ export default function RootLayout({
         <TourGuiado />
         <PageTransition>{children}</PageTransition>
         <CompareToast />
+        <UndoToast />
       </body>
     </html>
   );

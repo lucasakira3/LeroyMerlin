@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { Search } from 'lucide-react'
 import VoiceButton from './VoiceButton'
 import { buscarProdutos } from '@/lib/buscarProdutos'
+import { registrarBusca } from '@/lib/buscasRecentes'
 import type { SearchResult } from '@/types/produto'
 
 interface SearchBarProps {
@@ -19,6 +20,7 @@ export default function SearchBar({ onResults, loading, setLoading }: SearchBarP
     async (searchQuery: string) => {
       if (!searchQuery.trim()) return
 
+      registrarBusca(searchQuery)
       setLoading(true)
       const { resultados, queryProcessada } = await buscarProdutos(searchQuery)
       onResults(resultados, queryProcessada)
