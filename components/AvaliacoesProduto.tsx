@@ -1,8 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Camera, X } from 'lucide-react'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { getAvaliacoes, getAvaliacaoDoUsuario, salvarAvaliacao, type Avaliacao } from '@/lib/clientAvaliacoes'
+import { redimensionarImagem } from '@/lib/imagemUtil'
 import StarRating from './ui/StarRating'
 
 function mascararEmail(email: string): string {
@@ -16,7 +18,9 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
   const [usuario, setUsuario] = useState<{ email: string } | null>(null)
   const [notaForm, setNotaForm] = useState(0)
   const [comentarioForm, setComentarioForm] = useState('')
+  const [fotoForm, setFotoForm] = useState<string | undefined>(undefined)
   const [enviando, setEnviando] = useState(false)
+  const inputFotoRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const logado = getUsuarioLogado()
@@ -27,9 +31,11 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
       const existente = getAvaliacaoDoUsuario(produtoId, logado.email)
       setNotaForm(existente?.nota ?? 0)
       setComentarioForm(existente?.comentario ?? '')
+      setFotoForm(existente?.foto)
     } else {
       setNotaForm(0)
       setComentarioForm('')
+      setFotoForm(undefined)
     }
   }, [produtoId])
 
@@ -41,10 +47,17 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
 
   const jaAvaliou = usuario ? avaliacoes.some(a => a.email === usuario.email) : false
 
+  async function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !file.type.startsWith('image/')) return
+    const dataUrl = await redimensionarImagem(file)
+    setFotoForm(dataUrl)
+  }
+
   function enviar() {
     if (!usuario || enviando) return
     setEnviando(true)
-    salvarAvaliacao(produtoId, usuario.email, notaForm, comentarioForm)
+    salvarAvaliacao(produtoId, usuario.email, notaForm, comentarioForm, fotoForm)
     setAvaliacoes(getAvaliacoes(produtoId))
     setEnviando(false)
   }
@@ -80,6 +93,37 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
             rows={2}
             className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 resize-none bg-white"
           />
+
+          {fotoForm ? (
+            <div className="relative w-20 h-20">
+              <img src={fotoForm} alt="Foto da avaliação" className="w-20 h-20 rounded-lg object-cover" />
+              <button
+                type="button"
+                onClick={() => { setFotoForm(undefined); if (inputFotoRef.current) inputFotoRef.current.value = '' }}
+                aria-label="Remover foto"
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-900 text-white flex items-center justify-center"
+              >
+                <X size={11} />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => inputFotoRef.current?.click()}
+              className="self-start flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-lm-green transition-colors"
+            >
+              <Camera size={14} /> Adicionar foto
+            </button>
+          )}
+          <input
+            ref={inputFotoRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFoto}
+            className="hidden"
+            aria-label="Selecionar foto da avaliação"
+          />
+
           <button
             onClick={enviar}
             disabled={enviando}
@@ -99,6 +143,9 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
                 <span className="text-[11px] text-gray-400">{new Date(a.data).toLocaleDateString('pt-BR')}</span>
               </div>
               {a.comentario && <p className="text-sm text-gray-600 leading-relaxed mb-1">{a.comentario}</p>}
+              {a.foto && (
+                <img src={a.foto} alt="Foto enviada na avaliação" className="w-16 h-16 rounded-lg object-cover mb-1" />
+              )}
               <p className="text-[11px] text-gray-400">{mascararEmail(a.email)}</p>
             </div>
           ))}

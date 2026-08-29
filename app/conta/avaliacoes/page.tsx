@@ -46,7 +46,7 @@ export default function MinhasAvaliacoesPage() {
     removerAvaliacao(avaliacao.produtoId, email)
     setAvaliacoes(prev => prev?.filter(a => a.produtoId !== avaliacao.produtoId) ?? null)
     showToast('Avaliação removida', () => {
-      salvarAvaliacao(avaliacao.produtoId, email, avaliacao.nota, avaliacao.comentario)
+      salvarAvaliacao(avaliacao.produtoId, email, avaliacao.nota, avaliacao.comentario, avaliacao.foto)
       carregar(email)
     })
   }
@@ -102,6 +102,13 @@ export default function MinhasAvaliacoesPage() {
                     </div>
                     {avaliacao.comentario && (
                       <p className="text-sm text-gray-600 leading-relaxed">{avaliacao.comentario}</p>
+                    )}
+                    {avaliacao.foto && (
+                      <img
+                        src={avaliacao.foto}
+                        alt="Foto enviada na avaliação"
+                        className="w-16 h-16 rounded-lg object-cover mt-2"
+                      />
                     )}
                   </div>
                 </div>

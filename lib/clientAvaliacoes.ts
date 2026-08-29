@@ -7,6 +7,9 @@ export interface Avaliacao {
   email: string
   nota: number
   comentario?: string
+  // Data URL JPEG já redimensionada (ver lib/imagemUtil.ts) — nunca o arquivo original,
+  // pra não estourar a cota de localStorage com fotos de celular sem compressão.
+  foto?: string
   data: string
 }
 
@@ -40,11 +43,11 @@ export function getAvaliacaoDoUsuario(produtoId: string, email: string): Avaliac
   return avaliacoes.find(a => a.email === email) ?? null
 }
 
-export function salvarAvaliacao(produtoId: string, email: string, nota: number, comentario?: string): void {
+export function salvarAvaliacao(produtoId: string, email: string, nota: number, comentario?: string, foto?: string): void {
   const mapa = lerMapa()
   const avaliacoes = mapa[produtoId] ?? []
   const notaClamp = Math.max(0, Math.min(5, Math.round(nota)))
-  const nova: Avaliacao = { email, nota: notaClamp, comentario: comentario?.trim() || undefined, data: new Date().toISOString() }
+  const nova: Avaliacao = { email, nota: notaClamp, comentario: comentario?.trim() || undefined, foto, data: new Date().toISOString() }
   const index = avaliacoes.findIndex(a => a.email === email)
   if (index === -1) {
     avaliacoes.push(nova)

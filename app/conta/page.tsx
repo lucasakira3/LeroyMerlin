@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LogOut, Package } from "lucide-react";
+import { LogOut, Package, RotateCcw, Share2 } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
 import ProductCard from "@/components/ProductCard";
@@ -25,6 +25,9 @@ import { getStatusPedido } from "@/lib/statusPedido";
 import { getAvaliacoesDoUsuario, type AvaliacaoComProduto } from "@/lib/clientAvaliacoes";
 import { buscarProdutosPorIds } from "@/lib/produtosCliente";
 import { getImagemCategoria } from "@/lib/categoriaImagens";
+import { adicionarAoCarrinho } from "@/lib/clientCarrinho";
+import { codificarPedido } from "@/lib/pedidoCompartilhado";
+import { showToast } from "@/lib/toast";
 import type { SearchResult } from "@/types/produto";
 
 const STATUS_COR: Record<string, string> = {
@@ -138,7 +141,9 @@ function SecaoProdutos({
 }
 
 function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
+  const router = useRouter();
   const [pagina, setPagina] = useState(1);
+  const [linkCopiadoId, setLinkCopiadoId] = useState<string | null>(null);
   const totalPaginas = Math.max(
     1,
     Math.ceil(pedidos.length / PEDIDOS_POR_PAGINA),
@@ -147,6 +152,23 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
     (pagina - 1) * PEDIDOS_POR_PAGINA,
     pagina * PEDIDOS_POR_PAGINA,
   );
+
+  function comprarDeNovo(pedido: Pedido) {
+    for (const item of pedido.itens) {
+      adicionarAoCarrinho(item.produtoId, item.quantidade);
+    }
+    showToast(
+      `${pedido.itens.length} ${pedido.itens.length === 1 ? "item adicionado" : "itens adicionados"} ao carrinho`,
+    );
+    router.push("/carrinho");
+  }
+
+  async function compartilharPedido(pedido: Pedido) {
+    const url = `${window.location.origin}/pedido?d=${encodeURIComponent(codificarPedido(pedido))}`;
+    await navigator.clipboard.writeText(url);
+    setLinkCopiadoId(pedido.numero);
+    setTimeout(() => setLinkCopiadoId(null), 1500);
+  }
 
   return (
     <section>
@@ -203,6 +225,23 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
                     currency: "BRL",
                   })}
                 </span>
+              </div>
+              <div className="flex items-center gap-3 pt-2 mt-2 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => comprarDeNovo(pedido)}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-lm-green hover:underline"
+                >
+                  <RotateCcw size={13} /> Comprar de novo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => compartilharPedido(pedido)}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-lm-green transition-colors"
+                >
+                  <Share2 size={13} />
+                  {linkCopiadoId === pedido.numero ? "Link copiado ✓" : "Compartilhar"}
+                </button>
               </div>
             </div>
           ))}
