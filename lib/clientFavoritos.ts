@@ -16,6 +16,7 @@ function lerIds(): string[] {
 function salvarIds(ids: string[]): void {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(CHAVE, JSON.stringify(ids))
+  window.dispatchEvent(new Event('lm-favoritos-change'))
 }
 
 export function isFavorito(id: string): boolean {

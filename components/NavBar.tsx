@@ -7,6 +7,7 @@ import { Search, MessageCircleQuestion, CalendarCheck, Sparkles, Tag, User, Menu
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import ThemeToggle from './ThemeToggle'
 import CarrinhoIcon from './CarrinhoIcon'
+import FavoritosIcon from './FavoritosIcon'
 import NotificacoesBell from './NotificacoesBell'
 import HeaderSearch from './HeaderSearch'
 
@@ -61,6 +62,7 @@ export default function NavBar() {
         <div className="hidden md:flex items-center gap-1 flex-shrink-0 md:justify-self-end">
           {logado && <NotificacoesBell />}
           <ThemeToggle />
+          <FavoritosIcon />
           <Link href={logado ? '/conta' : '/funcionario/login'} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>
             <User size={19} />
           </Link>
@@ -125,6 +127,7 @@ export default function NavBar() {
             <div className="flex items-center gap-1">
               {logado && <NotificacoesBell />}
               <ThemeToggle />
+              <FavoritosIcon />
               <CarrinhoIcon />
             </div>
             <Link href={logado ? '/conta' : '/funcionario/login'} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>

@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { MapPin, ShoppingCart, Check, Square, CheckSquare } from 'lucide-react'
 import StockIndicator from './StockIndicator'
 import SustainabilityBadge from './SustainabilityBadge'
+import StarRating from './ui/StarRating'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
+import { getMedia } from '@/lib/clientAvaliacoes'
 import type { SustentabilidadeScore } from '@/types/produto'
 
 interface ProductCardProduto {
@@ -41,6 +43,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [adicionado, setAdicionado] = useState(false)
   const emOferta = produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco
+  const { media, total: totalAvaliacoes } = getMedia(produto.id)
 
   function handleAdicionarCarrinho(e: React.MouseEvent) {
     e.stopPropagation()
@@ -96,6 +99,12 @@ export default function ProductCard({
         <h3 className="text-sm font-semibold text-lm-dark leading-snug mb-2 line-clamp-2 min-h-[2.5rem]">
           {produto.produto}
         </h3>
+        {totalAvaliacoes > 0 && (
+          <div className="flex items-center gap-1.5 mb-2">
+            <StarRating value={media} size={12} />
+            <span className="text-[11px] text-gray-400">({totalAvaliacoes})</span>
+          </div>
+        )}
         {emOferta && (
           <p className="text-xs text-gray-400 line-through">
             {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
