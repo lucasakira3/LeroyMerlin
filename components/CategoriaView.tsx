@@ -7,9 +7,12 @@ import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
 import ComparadorBar from './ComparadorBar'
 import ProductCard from './ProductCard'
+import SortSelect from './SortSelect'
 import Skeleton from './ui/Skeleton'
 import Pagination from './ui/Pagination'
 import { definirComparador } from '@/lib/clientComparador'
+import { getMedia } from '@/lib/clientAvaliacoes'
+import { ordenarProdutos, type CriterioOrdenacao } from '@/lib/ordenarProdutos'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
 
@@ -51,6 +54,8 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const [filtroEstoque, setFiltroEstoque] = useState(false)
   const [filtroPrecoMin, setFiltroPrecoMin] = useState('')
   const [filtroPrecoMax, setFiltroPrecoMax] = useState('')
+  const [filtroNotaMinima, setFiltroNotaMinima] = useState(0)
+  const [ordenacao, setOrdenacao] = useState<CriterioOrdenacao>('relevancia')
   const [produtoDrawer, setProdutoDrawer] = useState<ProdutoSemEmbedding | null>(null)
   const [pagina, setPagina] = useState(1)
   const gridRef = useRef<HTMLDivElement>(null)
@@ -66,7 +71,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   // Volta pra primeira página sempre que a categoria ou os filtros mudam
   useEffect(() => {
     setPagina(1)
-  }, [slug, filtroComplexidade, filtroEstoque, filtroPrecoMin, filtroPrecoMax])
+  }, [slug, filtroComplexidade, filtroEstoque, filtroPrecoMin, filtroPrecoMax, filtroNotaMinima])
 
   function toggleSelecionado(p: ProdutoSemEmbedding) {
     setSelecionados(prev => {
@@ -80,14 +85,16 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const complexidades = ['Todos', ...COMPLEXIDADE_ORDER]
   const precoMinNum = filtroPrecoMin ? Number(filtroPrecoMin) : null
   const precoMaxNum = filtroPrecoMax ? Number(filtroPrecoMax) : null
-  const filtrosAtivos = filtroComplexidade !== 'Todos' || filtroEstoque || filtroPrecoMin !== '' || filtroPrecoMax !== ''
+  const filtrosAtivos = filtroComplexidade !== 'Todos' || filtroEstoque || filtroPrecoMin !== '' || filtroPrecoMax !== '' || filtroNotaMinima > 0
   const produtosFiltrados = produtos
     .filter(p => filtroComplexidade === 'Todos' || p.complexidade === filtroComplexidade)
     .filter(p => !filtroEstoque || p.estoque > 0)
     .filter(p => precoMinNum === null || p.preco >= precoMinNum)
     .filter(p => precoMaxNum === null || p.preco <= precoMaxNum)
-  const totalPaginas = Math.max(1, Math.ceil(produtosFiltrados.length / ITENS_POR_PAGINA))
-  const produtosPaginados = produtosFiltrados.slice((pagina - 1) * ITENS_POR_PAGINA, pagina * ITENS_POR_PAGINA)
+    .filter(p => filtroNotaMinima === 0 || getMedia(p.id).media >= filtroNotaMinima)
+  const produtosOrdenados = ordenarProdutos(produtosFiltrados, ordenacao, p => p.id, p => p.preco)
+  const totalPaginas = Math.max(1, Math.ceil(produtosOrdenados.length / ITENS_POR_PAGINA))
+  const produtosPaginados = produtosOrdenados.slice((pagina - 1) * ITENS_POR_PAGINA, pagina * ITENS_POR_PAGINA)
 
   function handleComparar() {
     definirComparador(selecionados.map(p => p.id))
@@ -104,6 +111,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
     setFiltroEstoque(false)
     setFiltroPrecoMin('')
     setFiltroPrecoMax('')
+    setFiltroNotaMinima(0)
   }
 
   const mapResultados = selecionados.map(p => ({ produto: p, score: 1 }))
@@ -209,6 +217,19 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
           }`}>
           ✓ Só disponíveis
         </button>
+
+        <div className="flex gap-1.5">
+          {[{ valor: 0, label: 'Todas notas' }, { valor: 3, label: '3+ ★' }, { valor: 4, label: '4+ ★' }].map(o => (
+            <button key={o.valor} onClick={() => setFiltroNotaMinima(o.valor)}
+              className={`text-xs px-3 py-1 rounded-full border transition-colors ${
+                filtroNotaMinima === o.valor
+                  ? 'bg-lm-green text-white border-lm-green'
+                  : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+              }`}>{o.label}</button>
+          ))}
+        </div>
+
+        <SortSelect value={ordenacao} onChange={setOrdenacao} />
 
         {filtrosAtivos && (
           <button onClick={limparFiltros}

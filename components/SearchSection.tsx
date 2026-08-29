@@ -6,10 +6,12 @@ import ImageUpload from './ImageUpload'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
 import SearchFilters, { FILTROS_INICIAIS, aplicarFiltros, type FiltrosBusca } from './SearchFilters'
+import SortSelect from './SortSelect'
 import ComparadorBar from './ComparadorBar'
 import Skeleton from './ui/Skeleton'
 import { MapPin } from 'lucide-react'
 import { buscarProdutos } from '@/lib/buscarProdutos'
+import { ordenarProdutos, type CriterioOrdenacao } from '@/lib/ordenarProdutos'
 import type { SearchResult } from '@/types/produto'
 
 const LOJAS = [
@@ -42,6 +44,7 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
   const [loja, setLoja] = useState(LOJAS[0])
   const [produtoDrawer, setProdutoDrawer] = useState<SearchResult['produto'] | null>(null)
   const [filtros, setFiltros] = useState<FiltrosBusca>(FILTROS_INICIAIS)
+  const [ordenacao, setOrdenacao] = useState<CriterioOrdenacao>('relevancia')
 
   useEffect(() => {
     if (!initialQuery) return
@@ -51,6 +54,7 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
       setResultados(resultados)
       setQueryProcessada(queryProcessada)
       setFiltros(FILTROS_INICIAIS)
+      setOrdenacao('relevancia')
       setLoading(false)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,17 +64,24 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
     setResultados(results)
     setQueryProcessada(query)
     setFiltros(FILTROS_INICIAIS)
+    setOrdenacao('relevancia')
   }
 
   const handleImageResults = (results: SearchResult[], label?: string) => {
     setResultados(results)
     setQueryProcessada(label ?? 'busca por imagem')
     setFiltros(FILTROS_INICIAIS)
+    setOrdenacao('relevancia')
   }
 
   const resultadosFiltrados = useMemo(
-    () => aplicarFiltros(resultados, filtros),
-    [resultados, filtros]
+    () => ordenarProdutos(
+      aplicarFiltros(resultados, filtros),
+      ordenacao,
+      (r) => r.produto.id,
+      (r) => r.produto.preco
+    ),
+    [resultados, filtros, ordenacao]
   )
 
   return (
@@ -132,6 +143,7 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
           </p>
 
           <SearchFilters resultados={resultados} filtros={filtros} onChange={setFiltros} />
+          <SortSelect value={ordenacao} onChange={setOrdenacao} />
 
           {resultadosFiltrados.length > 0 ? (
             <StoreMap

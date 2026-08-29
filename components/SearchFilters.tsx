@@ -1,6 +1,7 @@
 'use client'
 
 import { SlidersHorizontal } from 'lucide-react'
+import { getMedia } from '@/lib/clientAvaliacoes'
 import type { SearchResult } from '@/types/produto'
 
 export interface FiltrosBusca {
@@ -8,6 +9,7 @@ export interface FiltrosBusca {
   precoMin: string
   precoMax: string
   apenasDisponiveis: boolean
+  notaMinima: number
 }
 
 export const FILTROS_INICIAIS: FiltrosBusca = {
@@ -15,14 +17,22 @@ export const FILTROS_INICIAIS: FiltrosBusca = {
   precoMin: '',
   precoMax: '',
   apenasDisponiveis: false,
+  notaMinima: 0,
 }
+
+const OPCOES_NOTA = [
+  { valor: 0, label: 'Todas' },
+  { valor: 3, label: '3+ ★' },
+  { valor: 4, label: '4+ ★' },
+]
 
 export function temFiltroAtivo(filtros: FiltrosBusca): boolean {
   return (
     filtros.categoria !== 'Todas' ||
     filtros.precoMin !== '' ||
     filtros.precoMax !== '' ||
-    filtros.apenasDisponiveis
+    filtros.apenasDisponiveis ||
+    filtros.notaMinima > 0
   )
 }
 
@@ -35,6 +45,9 @@ export function aplicarFiltros(resultados: SearchResult[], filtros: FiltrosBusca
     if (filtros.apenasDisponiveis && produto.estoque <= 0) return false
     if (min !== null && produto.preco < min) return false
     if (max !== null && produto.preco > max) return false
+    // Nota mínima é lida do mesmo localStorage de sempre (clientAvaliacoes.ts) — reflete
+    // só as avaliações que este navegador conhece, igual ao rating exibido nos cards.
+    if (filtros.notaMinima > 0 && getMedia(produto.id).media < filtros.notaMinima) return false
     return true
   })
 }
@@ -85,6 +98,23 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
           onChange={(e) => onChange({ ...filtros, precoMax: e.target.value })}
           className="w-20 h-8 px-2 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
         />
+      </div>
+
+      <div className="flex gap-1.5">
+        {OPCOES_NOTA.map((o) => (
+          <button
+            key={o.valor}
+            type="button"
+            onClick={() => onChange({ ...filtros, notaMinima: o.valor })}
+            className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+              filtros.notaMinima === o.valor
+                ? 'bg-lm-green text-white border-lm-green'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
       </div>
 
       <button
