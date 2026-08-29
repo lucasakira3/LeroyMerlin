@@ -54,3 +54,19 @@ export function validarLogin(email: string, senha: string): 'ok' | 'nao_encontra
 export function getConta(email: string): ContaCliente | null {
   return lerMapa()[normalizar(email)] ?? null
 }
+
+// Só nome e senha são editáveis — email não, porque é a chave usada em clientPedidos.ts,
+// clientAvaliacoes.ts, clientPerfil.ts e clientHistorico.ts; deixar trocar o email
+// órfãozaria todo o histórico do cliente nesses outros mapas.
+export function atualizarConta(email: string, dados: { nome?: string; senha?: string }): void {
+  const mapa = lerMapa()
+  const chave = normalizar(email)
+  const atual = mapa[chave]
+  if (!atual) return
+  mapa[chave] = {
+    ...atual,
+    nome: dados.nome?.trim() || atual.nome,
+    senha: dados.senha || atual.senha,
+  }
+  salvarMapa(mapa)
+}

@@ -10,6 +10,9 @@ import ProductCard from "@/components/ProductCard";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import Pagination from "@/components/ui/Pagination";
 import EntrevistaGuiada from "@/components/EntrevistaGuiada";
+import MeusDados from "@/components/MeusDados";
+import EnderecosSalvos from "@/components/EnderecosSalvos";
+import StarRating from "@/components/ui/StarRating";
 import { getFavoritosIds } from "@/lib/clientFavoritos";
 import { getHistoricoIds } from "@/lib/clientHistorico";
 import {
@@ -18,8 +21,18 @@ import {
   type UsuarioLogado,
 } from "@/lib/clientAuth";
 import { getPedidos, type Pedido } from "@/lib/clientPedidos";
+import { getStatusPedido } from "@/lib/statusPedido";
+import { getAvaliacoesDoUsuario, type AvaliacaoComProduto } from "@/lib/clientAvaliacoes";
 import { buscarProdutosPorIds } from "@/lib/produtosCliente";
+import { getImagemCategoria } from "@/lib/categoriaImagens";
 import type { SearchResult } from "@/types/produto";
+
+const STATUS_COR: Record<string, string> = {
+  blue: "bg-blue-100 text-blue-700",
+  amber: "bg-amber-100 text-amber-700",
+  purple: "bg-purple-100 text-purple-700",
+  green: "bg-green-100 text-green-700",
+};
 
 const PRODUTOS_POR_PAGINA = 8;
 const PEDIDOS_POR_PAGINA = 5;
@@ -156,6 +169,16 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
                   <span className="font-mono text-sm font-semibold text-gray-900">
                     {pedido.numero}
                   </span>
+                  {(() => {
+                    const status = getStatusPedido(pedido);
+                    return (
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COR[status.cor]}`}
+                      >
+                        {status.label}
+                      </span>
+                    );
+                  })()}
                 </div>
                 <span className="text-xs text-gray-400">
                   {new Date(pedido.data).toLocaleDateString("pt-BR")}
@@ -195,12 +218,79 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
   );
 }
 
+const AVALIACOES_PREVIEW = 3;
+
+function SecaoAvaliacoes({ avaliacoes }: { avaliacoes: AvaliacaoComProduto[] }) {
+  const [produtos, setProdutos] = useState<Record<
+    string,
+    { produto: string; categoria: string; id: string }
+  > | null>(null);
+  const preview = avaliacoes.slice(0, AVALIACOES_PREVIEW);
+
+  useEffect(() => {
+    if (preview.length === 0) {
+      setProdutos({});
+      return;
+    }
+    buscarProdutosPorIds(preview.map((a) => a.produtoId)).then((resolvidos) => {
+      const mapa: Record<string, { produto: string; categoria: string; id: string }> = {};
+      for (const p of resolvidos) mapa[p.id] = p;
+      setProdutos(mapa);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [avaliacoes]);
+
+  return (
+    <section>
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Minhas avaliações</h2>
+      {avaliacoes.length === 0 && (
+        <p className="text-sm text-gray-500 py-6">
+          Você ainda não avaliou nenhum produto.
+        </p>
+      )}
+      {avaliacoes.length > 0 && produtos && (
+        <div className="space-y-2">
+          {preview.map((avaliacao) => {
+            const produto = produtos[avaliacao.produtoId];
+            if (!produto) return null;
+            return (
+              <div
+                key={avaliacao.produtoId}
+                className="flex items-center gap-3 bg-white rounded-card shadow-soft border border-gray-100 p-3"
+              >
+                <img
+                  src={getImagemCategoria(produto.categoria, produto.id)}
+                  alt={produto.categoria}
+                  className="w-11 h-11 rounded-lg object-cover flex-shrink-0"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-gray-900 truncate">
+                    {produto.produto}
+                  </p>
+                  <StarRating value={avaliacao.nota} size={12} />
+                </div>
+              </div>
+            );
+          })}
+          <Link
+            href="/conta/avaliacoes"
+            className="inline-flex mt-2 text-sm font-semibold text-lm-green hover:underline"
+          >
+            Ver todas as avaliações
+          </Link>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function ContaPage() {
   const router = useRouter();
   const [usuario, setUsuario] = useState<UsuarioLogado | null>(null);
   const [favoritosIds, setFavoritosIds] = useState<string[]>([]);
   const [historicoIds, setHistoricoIds] = useState<string[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [avaliacoes, setAvaliacoes] = useState<AvaliacaoComProduto[]>([]);
 
   useEffect(() => {
     const atualizarFavoritos = () => setFavoritosIds(getFavoritosIds());
@@ -213,6 +303,7 @@ export default function ContaPage() {
     atualizarFavoritos();
     setHistoricoIds(getHistoricoIds());
     setPedidos(getPedidos(usuarioLogado.email));
+    setAvaliacoes(getAvaliacoesDoUsuario(usuarioLogado.email));
     window.addEventListener("lm:favoritos-atualizados", atualizarFavoritos);
     window.addEventListener("storage", atualizarFavoritos);
     return () => {
@@ -246,8 +337,15 @@ export default function ContaPage() {
             </Button>
           }
         />
+        <MeusDados
+          email={usuario.email}
+          nomeAtual={usuario.nome ?? usuario.email}
+          onNomeAtualizado={(novoNome) => setUsuario({ ...usuario, nome: novoNome })}
+        />
         <EntrevistaGuiada email={usuario.email} />
         <SecaoPedidos pedidos={pedidos} />
+        <SecaoAvaliacoes avaliacoes={avaliacoes} />
+        <EnderecosSalvos email={usuario.email} />
         <SecaoProdutos
           titulo="Favoritos"
           ids={favoritosIds}

@@ -61,3 +61,26 @@ export function getMedia(produtoId: string): { media: number; total: number } {
   const soma = avaliacoes.reduce((acc, a) => acc + a.nota, 0)
   return { media: soma / avaliacoes.length, total: avaliacoes.length }
 }
+
+export interface AvaliacaoComProduto extends Avaliacao {
+  produtoId: string
+}
+
+// Sem índice reverso por e-mail — o mapa é pequeno (uma avaliação por produto por
+// usuário), então varrer todas as chaves é barato e evita duplicar estado.
+export function getAvaliacoesDoUsuario(email: string): AvaliacaoComProduto[] {
+  const mapa = lerMapa()
+  const resultado: AvaliacaoComProduto[] = []
+  for (const [produtoId, avaliacoes] of Object.entries(mapa)) {
+    const minha = avaliacoes.find(a => a.email === email)
+    if (minha) resultado.push({ ...minha, produtoId })
+  }
+  return resultado.sort((a, b) => b.data.localeCompare(a.data))
+}
+
+export function removerAvaliacao(produtoId: string, email: string): void {
+  const mapa = lerMapa()
+  const avaliacoes = mapa[produtoId] ?? []
+  mapa[produtoId] = avaliacoes.filter(a => a.email !== email)
+  salvarMapa(mapa)
+}

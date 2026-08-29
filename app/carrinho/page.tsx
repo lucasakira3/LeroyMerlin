@@ -16,6 +16,7 @@ import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { formatarParcelamento } from '@/lib/parcelamento'
 import CartItemSkeleton from '@/components/CartItemSkeleton'
 import { showToast } from '@/lib/toast'
+import { getEnderecos, type Endereco } from '@/lib/clientEnderecos'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -49,10 +50,18 @@ export default function CarrinhoPage() {
   const [metodo, setMetodo] = useState<'retirada' | 'entrega'>('retirada')
   const [loja, setLoja] = useState(LOJAS[0])
   const [endereco, setEndereco] = useState('')
+  const [enderecosSalvos, setEnderecosSalvos] = useState<Endereco[]>([])
   const [pedidoConfirmado, setPedidoConfirmado] = useState<Pedido | null>(null)
 
   useEffect(() => {
-    setUsuario(getUsuarioLogado())
+    const usuarioLogado = getUsuarioLogado()
+    setUsuario(usuarioLogado)
+    if (usuarioLogado) {
+      const salvos = getEnderecos(usuarioLogado.email)
+      setEnderecosSalvos(salvos)
+      const padrao = salvos.find(e => e.padrao)
+      if (padrao) setEndereco(padrao.texto)
+    }
     const carrinho = getCarrinho()
     setItens(carrinho)
     if (carrinho.length === 0) {
@@ -300,13 +309,33 @@ export default function CarrinhoPage() {
                     {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
                   </select>
                 ) : (
-                  <textarea
-                    value={endereco}
-                    onChange={e => setEndereco(e.target.value)}
-                    placeholder="Endereço completo (rua, número, bairro, cidade)"
-                    rows={3}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 resize-none bg-white mb-4"
-                  />
+                  <>
+                    {enderecosSalvos.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {enderecosSalvos.map(end => (
+                          <button
+                            key={end.id}
+                            type="button"
+                            onClick={() => setEndereco(end.texto)}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                              endereco === end.texto
+                                ? 'bg-lm-green text-white border-lm-green'
+                                : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                            }`}
+                          >
+                            {end.rotulo}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <textarea
+                      value={endereco}
+                      onChange={e => setEndereco(e.target.value)}
+                      placeholder="Endereço completo (rua, número, bairro, cidade)"
+                      rows={3}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 resize-none bg-white mb-4"
+                    />
+                  </>
                 )}
 
                 <Button
