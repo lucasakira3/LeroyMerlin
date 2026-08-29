@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { MapPin, ShoppingCart, Check, Square, CheckSquare } from 'lucide-react'
+import { MapPin, ShoppingCart, Check, Square, CheckSquare, Heart } from 'lucide-react'
 import StockIndicator from './StockIndicator'
 import SustainabilityBadge from './SustainabilityBadge'
 import StarRating from './ui/StarRating'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { getMedia } from '@/lib/clientAvaliacoes'
+import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import type { SustentabilidadeScore } from '@/types/produto'
 
 interface ProductCardProduto {
@@ -42,8 +43,13 @@ export default function ProductCard({
   className = '',
 }: ProductCardProps) {
   const [adicionado, setAdicionado] = useState(false)
+  const [favoritado, setFavoritado] = useState(false)
   const emOferta = produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco
   const { media, total: totalAvaliacoes } = getMedia(produto.id)
+
+  useEffect(() => {
+    setFavoritado(isFavorito(produto.id))
+  }, [produto.id])
 
   function handleAdicionarCarrinho(e: React.MouseEvent) {
     e.stopPropagation()
@@ -52,6 +58,12 @@ export default function ProductCard({
     adicionarAoCarrinho(produto.id)
     setAdicionado(true)
     setTimeout(() => setAdicionado(false), 1500)
+  }
+
+  function handleFavorito(e: React.MouseEvent) {
+    e.stopPropagation()
+    e.preventDefault()
+    setFavoritado(toggleFavorito(produto.id))
   }
 
   function handleToggleSelecao(e: React.MouseEvent) {
@@ -77,19 +89,32 @@ export default function ProductCard({
             -{Math.round((1 - produto.preco / produto.precoOriginal!) * 100)}%
           </span>
         )}
-        {onSelect && (
+        <div className="absolute top-2 right-2 flex items-center gap-1.5">
+          {onSelect && (
+            <button
+              type="button"
+              onClick={handleToggleSelecao}
+              aria-label={selected ? 'Remover da seleção' : 'Selecionar produto'}
+              aria-pressed={selected}
+              className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors ${
+                selected ? 'bg-lm-green text-white' : 'bg-white/90 text-gray-400 hover:text-lm-green'
+              }`}
+            >
+              {selected ? <CheckSquare size={15} /> : <Square size={15} />}
+            </button>
+          )}
           <button
             type="button"
-            onClick={handleToggleSelecao}
-            aria-label={selected ? 'Remover da seleção' : 'Selecionar produto'}
-            aria-pressed={selected}
-            className={`absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors ${
-              selected ? 'bg-lm-green text-white' : 'bg-white/90 text-gray-400 hover:text-lm-green'
+            onClick={handleFavorito}
+            aria-label={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+            aria-pressed={favoritado}
+            className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors bg-white/90 ${
+              favoritado ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
             }`}
           >
-            {selected ? <CheckSquare size={15} /> : <Square size={15} />}
+            <Heart size={15} fill={favoritado ? 'currentColor' : 'none'} />
           </button>
-        )}
+        </div>
       </div>
 
       <div className="p-3">

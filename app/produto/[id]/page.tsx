@@ -10,12 +10,13 @@ import ProdutoAcoesCliente from '@/components/ProdutoAcoesCliente'
 import TrackProduct from '@/components/TrackProduct'
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function ProdutoPage({ params }: PageProps) {
+  const { id } = await params
   const produtos = await carregarProdutos()
-  const produto = produtos.find((p) => p.id === params.id)
+  const produto = produtos.find((p) => p.id === id)
 
   if (!produto) {
     notFound()
