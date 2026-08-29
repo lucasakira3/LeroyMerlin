@@ -1,16 +1,98 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { Users, Package, MessageSquare, TrendingUp, AlertTriangle } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
+import { aplicarAjustes } from '@/lib/ajustesFuncionario'
+import { getEstadoChamado } from '@/lib/chamadosFuncionario'
+import { parseDataBR } from '@/lib/dataBr'
+import type { Produto } from '@/types/produto'
+import type { Agendamento } from '@/components/AgendamentosLista'
+
+interface Pedido {
+  numero: string
+  data: string
+  total: number
+}
+
+interface Atividade {
+  texto: string
+  quando: Date
+}
+
+interface AlertaEstoque {
+  id: string
+  nome: string
+  estoque: number
+}
+
+function tempoRelativo(data: Date): string {
+  const diffMs = Date.now() - data.getTime()
+  const min = Math.floor(diffMs / 60000)
+  if (min < 1) return 'agora'
+  if (min < 60) return `há ${min} min`
+  const h = Math.floor(min / 60)
+  if (h < 24) return `há ${h}h`
+  return `há ${Math.floor(h / 24)}d`
+}
 
 export default function DashboardPage() {
+  const [totalClientes, setTotalClientes] = useState(0)
+  const [totalProdutos, setTotalProdutos] = useState<number | null>(null)
+  const [alertasEstoque, setAlertasEstoque] = useState<AlertaEstoque[]>([])
+  const [chamadosPendentes, setChamadosPendentes] = useState(0)
+  const [atividades, setAtividades] = useState<Atividade[]>([])
+
+  useEffect(() => {
+    // Tudo abaixo é lido do mesmo localStorage já usado pelo lado do cliente — sem número
+    // inventado, ver lib/clientContas.ts, lib/clientPedidos.ts, components/AgendamentosLista.tsx.
+    const contas = JSON.parse(localStorage.getItem('lm_contas_cliente') ?? '{}')
+    setTotalClientes(Object.keys(contas).length)
+
+    const pedidosPorEmail: Record<string, Pedido[]> = JSON.parse(localStorage.getItem('lm_pedidos_cliente') ?? '{}')
+    const todosPedidos = Object.values(pedidosPorEmail).flat()
+
+    const agendamentos: Agendamento[] = JSON.parse(localStorage.getItem('lm_agendamentos') ?? '[]')
+    const pendentes = agendamentos.filter(a => a.status === 'confirmado' && !getEstadoChamado(a.id).atendido)
+    setChamadosPendentes(pendentes.length)
+
+    const atividadesPedidos: Atividade[] = todosPedidos.map(p => ({
+      texto: `Pedido ${p.numero} confirmado — ${p.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,
+      quando: new Date(p.data),
+    }))
+    const atividadesAgendamentos: Atividade[] = agendamentos.map(a => ({
+      texto: `${a.nome} agendou ${a.servicoLabel.toLowerCase()} para ${a.data}`,
+      quando: parseDataBR(a.criadoEm),
+    }))
+    setAtividades(
+      [...atividadesPedidos, ...atividadesAgendamentos]
+        .sort((a, b) => b.quando.getTime() - a.quando.getTime())
+        .slice(0, 6)
+    )
+
+    fetch('/api/funcionario/produtos')
+      .then(r => r.json())
+      .then((produtos: Produto[]) => {
+        setTotalProdutos(produtos.length)
+        const comAjustes = produtos.map(p =>
+          aplicarAjustes({ id: p.id, nome: p.produto, preco: p.preco, estoque: p.estoque })
+        )
+        const baixos = comAjustes
+          .filter(p => p.estoque < 10)
+          .sort((a, b) => a.estoque - b.estoque)
+          .slice(0, 4)
+        setAlertasEstoque(baixos)
+      })
+  }, [])
+
   const stats = [
-    { label: 'Clientes Ativos (Hoje)', value: '142', icon: Users, color: 'bg-blue-500' },
-    { label: 'Alertas de Estoque', value: '12', icon: AlertTriangle, color: 'bg-red-500' },
-    { label: 'Chamados em Espera', value: '5', icon: MessageSquare, color: 'bg-lm-orange' },
-    { label: 'Produtos Cadastrados', value: '5.240', icon: Package, color: 'bg-lm-green' },
+    { label: 'Clientes cadastrados', value: String(totalClientes), icon: Users, color: 'bg-blue-500', href: '/funcionario/clientes' },
+    { label: 'Alertas de estoque', value: String(alertasEstoque.length), icon: AlertTriangle, color: 'bg-red-500', href: '/funcionario/produtos' },
+    { label: 'Chamados pendentes', value: String(chamadosPendentes), icon: MessageSquare, color: 'bg-lm-orange', href: '/funcionario/chamados' },
+    { label: 'Produtos no catálogo', value: totalProdutos !== null ? totalProdutos.toLocaleString('pt-BR') : '…', icon: Package, color: 'bg-lm-green', href: '/funcionario/produtos' },
   ]
 
   return (
@@ -19,15 +101,21 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, i) => (
-          <Card key={i} className="flex items-start gap-4 animate-fade-in-up" style={{ '--stagger-delay': `${i * 60}ms` } as React.CSSProperties}>
-            <div className={`p-3 rounded-xl text-white ${stat.color} shadow-soft`}>
-              <stat.icon size={24} />
-            </div>
-            <div>
-              <p className="text-3xl font-semibold text-gray-900">{stat.value}</p>
-              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
-            </div>
-          </Card>
+          <Link key={i} href={stat.href}>
+            <Card
+              hoverable
+              className="flex items-start gap-4 animate-fade-in-up"
+              style={{ '--stagger-delay': `${i * 60}ms` } as React.CSSProperties}
+            >
+              <div className={`p-3 rounded-xl text-white ${stat.color} shadow-soft`}>
+                <stat.icon size={24} />
+              </div>
+              <div>
+                <p className="text-3xl font-semibold text-gray-900">{stat.value}</p>
+                <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+              </div>
+            </Card>
+          </Link>
         ))}
       </div>
 
@@ -41,45 +129,47 @@ export default function DashboardPage() {
             </h2>
           </div>
           <div>
-            {[
-              { text: 'Novo chamado aberto no setor de Ferramentas.', time: 'Há 5 min' },
-              { text: 'Estoque de "Furadeira Bosch" ajustado para 15.', time: 'Há 12 min' },
-              { text: 'Cliente solicitou ajuda com Projeto Guiado (Cozinha).', time: 'Há 25 min' },
-              { text: 'Novo produto cadastrado: "Tinta Acrílica Suvinil".', time: 'Há 1 hora' },
-            ].map((act, i, arr) => (
+            {atividades.length === 0 && (
+              <p className="px-6 pb-6 text-sm text-gray-500">Nenhuma atividade registrada ainda.</p>
+            )}
+            {atividades.map((act, i) => (
               <div
                 key={i}
-                className={`flex justify-between items-start px-6 py-4 ${
-                  i < arr.length - 1 ? 'border-b border-gray-100' : ''
+                className={`flex justify-between items-start gap-4 px-6 py-4 ${
+                  i < atividades.length - 1 ? 'border-b border-gray-100' : ''
                 }`}
               >
-                <p className="text-sm text-gray-700">{act.text}</p>
-                <span className="text-xs font-medium text-gray-400 whitespace-nowrap ml-4">{act.time}</span>
+                <p className="text-sm text-gray-700">{act.texto}</p>
+                <span className="text-xs font-medium text-gray-400 whitespace-nowrap">{tempoRelativo(act.quando)}</span>
               </div>
             ))}
           </div>
         </Card>
 
-        {/* Alertas Prioritários */}
+        {/* Alertas de Estoque */}
         <Card>
           <h2 className="text-lg font-bold text-lm-dark mb-4 flex items-center gap-2">
             <AlertTriangle size={20} className="text-red-500" />
-            Alertas Prioritários
+            Alertas de Estoque
           </h2>
           <div className="space-y-4">
-            {[
-              { item: 'Cimento CP II 50kg', reason: 'Estoque Crítico (Restam 2)' },
-              { item: 'Piso Cerâmico 60x60', reason: 'Divergência de prateleira reportada' },
-              { item: 'Chamado #492', reason: 'Cliente aguardando há mais de 15 min' },
-            ].map((alert, i) => (
-              <div key={i} className="bg-red-50 rounded-xl p-4 border border-red-100 flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-sm text-gray-800">{alert.item}</p>
-                  <Badge tone="red" className="mt-1.5">{alert.reason}</Badge>
+            {alertasEstoque.length === 0 && (
+              <p className="text-sm text-gray-500">Nenhum produto com estoque crítico no momento.</p>
+            )}
+            {alertasEstoque.map(alerta => (
+              <div key={alerta.id} className="bg-red-50 rounded-xl p-4 border border-red-100 flex justify-between items-center gap-3">
+                <div className="min-w-0">
+                  <p className="font-bold text-sm text-gray-800 truncate">{alerta.nome}</p>
+                  <Badge tone="red" className="mt-1.5">
+                    {alerta.estoque === 0 ? 'Sem estoque' : `Restam ${alerta.estoque}`}
+                  </Badge>
                 </div>
-                <button className="text-xs font-bold text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">
-                  Resolver
-                </button>
+                <Link
+                  href="/funcionario/produtos"
+                  className="text-xs font-bold text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0"
+                >
+                  Ver
+                </Link>
               </div>
             ))}
           </div>

@@ -7,6 +7,7 @@ import { KeyRound, Mail, ArrowRight } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import { loginUsuario } from '@/lib/clientAuth'
+import { loginFuncionario } from '@/lib/funcionarioAuth'
 import ClienteAuthForm from '@/components/ClienteAuthForm'
 
 type TipoLogin = 'funcionario' | 'cliente'
@@ -40,6 +41,7 @@ export default function LoginFuncionario() {
     // Simular delay de rede
     setTimeout(() => {
       if (tipo === 'funcionario') {
+        loginFuncionario(email)
         setLoading(false)
         router.push('/funcionario/dashboard')
         return

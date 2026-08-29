@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { LayoutDashboard, Users, Package, MessageSquare, LogOut, Menu, X } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
+import { getFuncionarioLogado, logoutFuncionario } from '@/lib/funcionarioAuth'
 
 export default function FuncionarioLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
   const [sidebarAberta, setSidebarAberta] = useState(false)
+  const [email, setEmail] = useState<string | null>(null)
 
   const isLoginPage = pathname === '/funcionario/login'
 
@@ -16,8 +19,29 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
     setSidebarAberta(false)
   }, [pathname])
 
+  // Sem isso, qualquer /funcionario/* era acessível direto por URL sem nenhuma sessão —
+  // fake auth por design (MVP acadêmico, ver lib/funcionarioAuth.ts), mas pelo menos real.
+  useEffect(() => {
+    if (isLoginPage) return
+    const logado = getFuncionarioLogado()
+    if (!logado) {
+      router.push('/funcionario/login')
+      return
+    }
+    setEmail(logado.email)
+  }, [isLoginPage, pathname, router])
+
   if (isLoginPage) {
     return <>{children}</>
+  }
+
+  if (!email) {
+    return null
+  }
+
+  function handleSair() {
+    logoutFuncionario()
+    router.push('/funcionario/login')
   }
 
   const menuItems = [
@@ -60,6 +84,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
           </span>
           <ThemeToggle variant="onLight" />
         </div>
+        <p className="px-6 pb-2 text-xs text-gray-500 truncate" title={email}>{email}</p>
         <nav className="flex-1 px-4 py-2 space-y-1">
           {menuItems.map(item => {
             const active = pathname.startsWith(item.href)
@@ -80,13 +105,14 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
           })}
         </nav>
         <div className="p-4 border-t border-gray-100 bg-gray-50">
-          <Link
-            href="/funcionario/login"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+          <button
+            type="button"
+            onClick={handleSair}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
           >
             <LogOut size={18} />
             Sair do Sistema
-          </Link>
+          </button>
         </div>
       </aside>
 
