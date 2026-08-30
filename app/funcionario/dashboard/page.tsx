@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Users, Package, MessageSquare, TrendingUp, AlertTriangle } from 'lucide-react'
+import { Users, Package, MessageSquare, TrendingUp, AlertTriangle, BarChart3 } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
+import GraficoBarras from '@/components/GraficoBarras'
 import { aplicarAjustes } from '@/lib/ajustesFuncionario'
 import { getEstadoChamado } from '@/lib/chamadosFuncionario'
 import { parseDataBR } from '@/lib/dataBr'
@@ -26,6 +27,7 @@ interface Atividade {
 interface AlertaEstoque {
   id: string
   nome: string
+  categoria: string
   estoque: number
 }
 
@@ -45,6 +47,7 @@ export default function DashboardPage() {
   const [alertasEstoque, setAlertasEstoque] = useState<AlertaEstoque[]>([])
   const [chamadosPendentes, setChamadosPendentes] = useState(0)
   const [atividades, setAtividades] = useState<Atividade[]>([])
+  const [estoquePorCategoria, setEstoquePorCategoria] = useState<{ label: string; valor: number }[]>([])
 
   useEffect(() => {
     // Tudo abaixo é lido do mesmo localStorage já usado pelo lado do cliente — sem número
@@ -78,13 +81,23 @@ export default function DashboardPage() {
       .then((produtos: Produto[]) => {
         setTotalProdutos(produtos.length)
         const comAjustes = produtos.map(p =>
-          aplicarAjustes({ id: p.id, nome: p.produto, preco: p.preco, estoque: p.estoque })
+          aplicarAjustes({ id: p.id, nome: p.produto, categoria: p.categoria, preco: p.preco, estoque: p.estoque })
         )
         const baixos = comAjustes
           .filter(p => p.estoque < 10)
           .sort((a, b) => a.estoque - b.estoque)
           .slice(0, 4)
         setAlertasEstoque(baixos)
+
+        const somaPorCategoria = new Map<string, number>()
+        for (const p of comAjustes) {
+          somaPorCategoria.set(p.categoria, (somaPorCategoria.get(p.categoria) ?? 0) + p.estoque)
+        }
+        setEstoquePorCategoria(
+          [...somaPorCategoria.entries()]
+            .map(([label, valor]) => ({ label, valor }))
+            .sort((a, b) => b.valor - a.valor)
+        )
       })
   }, [])
 
@@ -175,6 +188,19 @@ export default function DashboardPage() {
           </div>
         </Card>
       </div>
+
+      {/* Estoque por Categoria */}
+      <Card className="mt-6">
+        <h2 className="text-lg font-bold text-lm-dark mb-4 flex items-center gap-2">
+          <BarChart3 size={20} className="text-lm-green" />
+          Estoque por Categoria
+        </h2>
+        {estoquePorCategoria.length === 0 ? (
+          <p className="text-sm text-gray-500">Carregando...</p>
+        ) : (
+          <GraficoBarras dados={estoquePorCategoria} />
+        )}
+      </Card>
     </div>
   )
 }

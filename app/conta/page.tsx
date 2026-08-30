@@ -12,6 +12,7 @@ import Pagination from "@/components/ui/Pagination";
 import EntrevistaGuiada from "@/components/EntrevistaGuiada";
 import MeusDados from "@/components/MeusDados";
 import EnderecosSalvos from "@/components/EnderecosSalvos";
+import PedidoTimeline from "@/components/PedidoTimeline";
 import StarRating from "@/components/ui/StarRating";
 import { getFavoritosIds } from "@/lib/clientFavoritos";
 import { getHistoricoIds } from "@/lib/clientHistorico";
@@ -180,7 +181,9 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
       )}
       {pedidos.length > 0 && (
         <div className="space-y-3">
-          {pedidosPaginados.map((pedido) => (
+          {pedidosPaginados.map((pedido) => {
+            const status = getStatusPedido(pedido);
+            return (
             <div
               key={pedido.numero}
               className="bg-white rounded-card shadow-soft border border-gray-100 p-4"
@@ -191,27 +194,25 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
                   <span className="font-mono text-sm font-semibold text-gray-900">
                     {pedido.numero}
                   </span>
-                  {(() => {
-                    const status = getStatusPedido(pedido);
-                    return (
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COR[status.cor]}`}
-                      >
-                        {status.label}
-                      </span>
-                    );
-                  })()}
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COR[status.cor]}`}
+                  >
+                    {status.label}
+                  </span>
                 </div>
                 <span className="text-xs text-gray-400">
                   {new Date(pedido.data).toLocaleDateString("pt-BR")}
                 </span>
               </div>
-              <div className="space-y-1 mb-2">
+              <div className="space-y-1 mb-3">
                 {pedido.itens.map((item) => (
                   <p key={item.produtoId} className="text-sm text-gray-600">
                     {item.quantidade}× {item.nome}
                   </p>
                 ))}
+              </div>
+              <div className="mb-3 px-1">
+                <PedidoTimeline etapas={status.etapas} etapaAtual={status.etapa} />
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                 <span className="text-xs text-gray-500">
@@ -244,7 +245,8 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
       <Pagination

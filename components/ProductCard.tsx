@@ -12,6 +12,7 @@ import { getMedia } from '@/lib/clientAvaliacoes'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { formatarParcelamento } from '@/lib/parcelamento'
 import { showToast } from '@/lib/toast'
+import MiniMapaCorredor from './MiniMapaCorredor'
 import type { SustentabilidadeScore } from '@/types/produto'
 
 interface ProductCardProduto {
@@ -19,6 +20,7 @@ interface ProductCardProduto {
   categoria: string
   produto: string
   corredor: string
+  corredor_normalizado: string
   preco: number
   precoOriginal?: number
   estoque: number
@@ -125,8 +127,13 @@ export default function ProductCard({
       </div>
 
       <div className="p-3">
-        <div className="flex items-center gap-1 text-[10px] font-bold text-lm-green mb-1.5">
-          <MapPin size={10} strokeWidth={2.5} /> {produto.corredor}
+        <div className="flex items-center gap-2 mb-1.5">
+          <div className="flex items-center gap-1 text-[10px] font-bold text-lm-green flex-shrink-0">
+            <MapPin size={10} strokeWidth={2.5} /> {produto.corredor}
+          </div>
+          <div className="w-14 flex-shrink-0">
+            <MiniMapaCorredor corredorNormalizado={produto.corredor_normalizado} />
+          </div>
         </div>
         <h3 className="text-sm font-semibold text-lm-dark leading-snug mb-2 line-clamp-2 min-h-[2.5rem]">
           {produto.produto}

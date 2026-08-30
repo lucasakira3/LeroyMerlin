@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Heart, ShoppingCart, Scale } from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
-import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { getGaleriaCategoria } from '@/lib/categoriaImagens'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
 import { addAoHistorico } from '@/lib/clientHistorico'
 import { formatarParcelamento } from '@/lib/parcelamento'
 import { showToast } from '@/lib/toast'
+import { getIconeEspecificacao, parseEspecificacoes } from '@/lib/especificacaoIcones'
 import AvaliacoesProduto from './AvaliacoesProduto'
 import type { SearchResult } from '@/types/produto'
 
@@ -101,6 +102,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const [loadingChat, setLoadingChat] = useState(false)
   const [favorito, setFavorito] = useState(false)
   const [zoomAberto, setZoomAberto] = useState(false)
+  const [fotoAtiva, setFotoAtiva] = useState(0)
   const [adicionado, setAdicionado] = useState(false)
   const [noComparador, setNoComparador] = useState(false)
   const [comparadorMsg, setComparadorMsg] = useState<string | null>(null)
@@ -111,6 +113,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     setInputChat('')
     setFavorito(isFavorito(produto.id))
     setZoomAberto(false)
+    setFotoAtiva(0)
     setAdicionado(false)
     setNoComparador(estaNoComparador(produto.id))
     setComparadorMsg(null)
@@ -179,6 +182,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     ? Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     : null
   const parcelamentoStr = preco != null ? formatarParcelamento(Number(preco)) : null
+  const galeria = getGaleriaCategoria(produto.categoria, produto.id, 4)
 
   return (
     <>
@@ -198,7 +202,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
           <X size={20} />
         </button>
         <img
-          src={getImagemCategoria(produto.categoria, produto.id)}
+          src={galeria[fotoAtiva]}
           alt={produto.categoria}
           onClick={e => e.stopPropagation()}
           className="max-w-full max-h-full object-contain rounded-lg"
@@ -214,11 +218,28 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
           {/* Foto da categoria, com ações flutuantes no canto */}
           <div className="relative flex-shrink-0">
             <img
-              src={getImagemCategoria(produto.categoria, produto.id)}
+              src={galeria[fotoAtiva]}
               alt={produto.categoria}
               onClick={() => setZoomAberto(true)}
               className="w-full h-56 md:h-72 object-cover md:rounded-card cursor-zoom-in"
             />
+            {galeria.length > 1 && (
+              <div className="absolute bottom-2 left-2 right-16 flex gap-1.5">
+                {galeria.map((src, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setFotoAtiva(i)}
+                    aria-label={`Ver foto ${i + 1}`}
+                    aria-current={fotoAtiva === i}
+                    className={`h-10 w-10 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${
+                      fotoAtiva === i ? 'border-white shadow-md scale-105' : 'border-white/40 opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    <img src={src} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-lm-green/90 backdrop-blur-sm rounded-full p-1.5 shadow-md">
               <button
                 onClick={handleFavorito}
@@ -395,15 +416,30 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </div>
           )}
 
-          {/* Especificações */}
+          {/* Especificações — ilustradas com ícone por rótulo em vez de texto corrido, ver
+              lib/especificacaoIcones.ts (heurística por palavra-chave, mesmo padrão de
+              lib/comodoIcones.ts) */}
           {produto.especificacoes && (
             <div className="px-5 py-4 md:px-0 border-b border-gray-100">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
                 Especificações técnicas
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                {produto.especificacoes}
-              </p>
+              <div className="grid grid-cols-2 gap-2.5">
+                {parseEspecificacoes(produto.especificacoes).map((item, i) => {
+                  const Icone = getIconeEspecificacao(item.rotulo)
+                  return (
+                    <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2">
+                      <div className="w-8 h-8 rounded-lg bg-lm-green/10 text-lm-green flex items-center justify-center flex-shrink-0">
+                        <Icone size={15} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] text-gray-400 truncate">{item.rotulo}</p>
+                        <p className="text-xs font-semibold text-gray-800 truncate">{item.valor}</p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )}
 

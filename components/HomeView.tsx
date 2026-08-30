@@ -66,10 +66,14 @@ export default function HomeView() {
               key={slug}
               onClick={() => setCategoriaAtiva({ slug, label })}
               style={{ '--stagger-delay': `${i * 30}ms` } as React.CSSProperties}
-              className="group relative rounded-xl overflow-hidden aspect-square animate-fade-in-up hover:shadow-soft hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer"
+              className="group relative rounded-xl overflow-hidden aspect-square animate-fade-in-up shadow-sm hover:shadow-lg hover:-translate-y-1 active:scale-95 transition-all duration-300 cursor-pointer"
             >
-              <img src={getImagemCategoria(label)} alt={label} className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <img
+                src={getImagemCategoria(label)}
+                alt={label}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-125"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent transition-opacity duration-300 group-hover:from-lm-green/85 group-hover:via-black/20" />
               <span className="absolute bottom-1.5 left-0 right-0 text-center text-white text-[11px] font-bold leading-tight px-1">
                 {label}
               </span>

@@ -96,3 +96,16 @@ export function getImagemCategoria(categoria: string, seed?: string): string {
   const hash = seed.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
   return lista[hash % lista.length]
 }
+
+// Galeria pro popup de produto (components/ProdutoDrawer.tsx) — não são fotos reais do
+// produto (o catálogo não tem isso), são as mesmas fotos de categoria já compartilhadas
+// entre produtos, só que exibidas como um conjunto em vez de uma única foto. O índice 0
+// desta lista é sempre igual ao retorno de getImagemCategoria com o mesmo seed, pra não
+// haver inconsistência entre a foto "principal" usada no card e na galeria do popup.
+export function getGaleriaCategoria(categoria: string, seed: string, quantidade: number = 3): string[] {
+  const lista = IMAGENS_POR_CATEGORIA[categoria] ?? FALLBACK
+  const hash = seed.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+  const inicio = hash % lista.length
+  const n = Math.min(quantidade, lista.length)
+  return Array.from({ length: n }, (_, i) => lista[(inicio + i) % lista.length])
+}

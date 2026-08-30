@@ -7,6 +7,8 @@ import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { decodificarPedido } from '@/lib/pedidoCompartilhado'
+import { getStatusPedido } from '@/lib/statusPedido'
+import PedidoTimeline from '@/components/PedidoTimeline'
 
 export default function PedidoCompartilhadoView() {
   const searchParams = useSearchParams()
@@ -26,6 +28,8 @@ export default function PedidoCompartilhadoView() {
     )
   }
 
+  const status = getStatusPedido(pedido)
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-6">
@@ -43,6 +47,10 @@ export default function PedidoCompartilhadoView() {
             <span className="text-xs text-gray-400">
               {new Date(pedido.data).toLocaleDateString('pt-BR')}
             </span>
+          </div>
+
+          <div className="mb-4 px-1">
+            <PedidoTimeline etapas={status.etapas} etapaAtual={status.etapa} />
           </div>
 
           <div className="space-y-1.5 mb-3">

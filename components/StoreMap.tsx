@@ -51,32 +51,34 @@ function specialToNumeric(slug: string): number | null {
   return Math.round(min + ratio * (max - min))
 }
 
-function getPos(corridorNorm: string): { x: number; y: number } | null {
+// Extraído de getPos pra ser reaproveitado por components/MiniMapaCorredor.tsx (miniatura
+// no card de produto) sem precisar do sistema de coordenadas em pixel do mapa completo —
+// só a posição lógica (linha 1 ou 2, índice 0-24 dentro da linha) já basta ali.
+export function getCorredorRowIndex(corridorNorm: string): { row: 1 | 2; idx: number } | null {
   const slug = corridorNorm.toLowerCase().trim()
 
   const numM = slug.match(/^corredor-(\d+)$/)
   if (numM) {
     const n = parseInt(numM[1])
     if (n < 1 || n > 50) return null
-    const row = n <= 25 ? 1 : 2
-    const idx = n <= 25 ? n - 1 : n - 26
-    return {
-      x: LMARG + idx * CORR_W + CORR_W / 2,
-      y: (row === 1 ? ROW1_Y : ROW2_Y) + SHELF_H / 2,
-    }
+    return { row: n <= 25 ? 1 : 2, idx: n <= 25 ? n - 1 : n - 26 }
   }
 
   const mapped = specialToNumeric(slug)
   if (mapped) {
-    const row = mapped <= 25 ? 1 : 2
-    const idx = mapped <= 25 ? mapped - 1 : mapped - 26
-    return {
-      x: LMARG + idx * CORR_W + CORR_W / 2,
-      y: (row === 1 ? ROW1_Y : ROW2_Y) + SHELF_H / 2,
-    }
+    return { row: mapped <= 25 ? 1 : 2, idx: mapped <= 25 ? mapped - 1 : mapped - 26 }
   }
 
   return null
+}
+
+function getPos(corridorNorm: string): { x: number; y: number } | null {
+  const pos = getCorredorRowIndex(corridorNorm)
+  if (!pos) return null
+  return {
+    x: LMARG + pos.idx * CORR_W + CORR_W / 2,
+    y: (pos.row === 1 ? ROW1_Y : ROW2_Y) + SHELF_H / 2,
+  }
 }
 
 const PIN_COLORS = ['#ef4444','#3b82f6','#f59e0b','#10b981','#8b5cf6','#ec4899','#06b6d4','#84cc16']

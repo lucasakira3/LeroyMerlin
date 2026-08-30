@@ -84,6 +84,16 @@ function ComparadorContent() {
   }
 
   const menorPreco = Math.min(...produtos.map(p => p.preco))
+  const maiorEstoque = Math.max(...produtos.map(p => p.estoque))
+  const RANK_SUSTENTABILIDADE: Record<string, number> = { 'Ouro': 3, 'Prata': 2, 'Bronze': 1, 'N/A': 0 }
+  const maiorRankSustentabilidade = Math.max(...produtos.map(p => RANK_SUSTENTABILIDADE[p.sustentabilidade] ?? 0))
+  const maiorMedia = Math.max(
+    0,
+    ...produtos.map(p => (getMedia(p.id).total > 0 ? getMedia(p.id).media : 0))
+  )
+  const destaque = produtos.length > 1
+    ? 'ring-2 ring-lm-green bg-lm-green/5 -mx-2 px-2 py-1.5 rounded-lg'
+    : ''
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -118,38 +128,51 @@ function ComparadorContent() {
                     <span className="text-xs font-bold">{produto.corredor}</span>
                   </div>
 
-                  <div className="mb-3">
-                    <p className="text-xl font-black text-lm-green">
-                      {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                    </p>
-                    {produto.preco === menorPreco && produtos.length > 1 && (
-                      <span className="inline-block mt-1 text-[10px] font-semibold text-lm-green bg-lm-green/10 px-2 py-0.5 rounded-full">
-                        Melhor preço
-                      </span>
-                    )}
-                  </div>
+                  {(() => {
+                    const venceuPreco = produto.preco === menorPreco && produtos.length > 1
+                    const venceuEstoque = produto.estoque === maiorEstoque && maiorEstoque > 0 && produtos.length > 1
+                    const venceuSustentabilidade =
+                      (RANK_SUSTENTABILIDADE[produto.sustentabilidade] ?? 0) === maiorRankSustentabilidade &&
+                      maiorRankSustentabilidade > 0 && produtos.length > 1
+                    const venceuAvaliacao = total > 0 && media === maiorMedia && produtos.length > 1
 
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    <StockIndicator estoque={produto.estoque} />
-                    <SustainabilityBadge sustentabilidade={produto.sustentabilidade} />
-                  </div>
+                    return (
+                      <>
+                        <div className={`mb-3 ${venceuPreco ? destaque : ''}`}>
+                          <p className="text-xl font-black text-lm-green">
+                            {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          </p>
+                          {venceuPreco && (
+                            <span className="inline-block mt-1 text-[10px] font-semibold text-lm-green bg-lm-green/10 px-2 py-0.5 rounded-full">
+                              Melhor preço
+                            </span>
+                          )}
+                        </div>
 
-                  <div className="mb-3">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Complexidade</p>
-                    <p className="text-xs text-gray-700">{produto.complexidade}</p>
-                  </div>
+                        <div className={`flex flex-wrap gap-1.5 mb-3 ${(venceuEstoque || venceuSustentabilidade) ? destaque : ''}`}>
+                          <StockIndicator estoque={produto.estoque} />
+                          <SustainabilityBadge sustentabilidade={produto.sustentabilidade} />
+                        </div>
 
-                  <div className="mb-3">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Avaliação</p>
-                    {total > 0 ? (
-                      <div className="flex items-center gap-1.5">
-                        <StarRating value={media} size={13} />
-                        <span className="text-xs text-gray-500">{media.toFixed(1)} ({total})</span>
-                      </div>
-                    ) : (
-                      <p className="text-xs text-gray-400 italic">Sem avaliações</p>
-                    )}
-                  </div>
+                        <div className="mb-3">
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Complexidade</p>
+                          <p className="text-xs text-gray-700">{produto.complexidade}</p>
+                        </div>
+
+                        <div className={`mb-3 ${venceuAvaliacao ? destaque : ''}`}>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Avaliação</p>
+                          {total > 0 ? (
+                            <div className="flex items-center gap-1.5">
+                              <StarRating value={media} size={13} />
+                              <span className="text-xs text-gray-500">{media.toFixed(1)} ({total})</span>
+                            </div>
+                          ) : (
+                            <p className="text-xs text-gray-400 italic">Sem avaliações</p>
+                          )}
+                        </div>
+                      </>
+                    )
+                  })()}
 
                   {produto.especificacoes && (
                     <div className="mb-3">
