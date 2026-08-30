@@ -6,10 +6,8 @@ import Link from "next/link";
 import { LogOut, Package, RotateCcw, Share2 } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
-import ProductCard from "@/components/ProductCard";
-import ProductCardSkeleton from "@/components/ProductCardSkeleton";
+import ProductListItem from "@/components/ProductListItem";
 import Pagination from "@/components/ui/Pagination";
-import EntrevistaGuiada from "@/components/EntrevistaGuiada";
 import MeusDados from "@/components/MeusDados";
 import EnderecosSalvos from "@/components/EnderecosSalvos";
 import PedidoTimeline from "@/components/PedidoTimeline";
@@ -51,11 +49,15 @@ function SecaoProdutos({
   ids,
   mensagemVazia,
   limite,
+  verTodosHref,
+  verTodosLabel,
 }: {
   titulo: string;
   ids: string[];
   mensagemVazia: string;
   limite?: number;
+  verTodosHref?: string;
+  verTodosLabel?: string;
 }) {
   const [produtos, setProdutos] = useState<SearchResult[] | null>(null);
   const [pagina, setPagina] = useState(1);
@@ -94,9 +96,9 @@ function SecaoProdutos({
     <section>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">{titulo}</h2>
       {produtos === null && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="space-y-2">
           {[0, 1, 2].map((i) => (
-            <ProductCardSkeleton key={i} />
+            <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />
           ))}
         </div>
       )}
@@ -105,9 +107,9 @@ function SecaoProdutos({
       )}
       {produtos !== null && produtos.length > 0 && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div className="space-y-2">
             {produtosPaginados.map(({ produto }, i) => (
-              <ProductCard
+              <ProductListItem
                 key={produto.id}
                 produto={produto}
                 href={`/produto/${produto.id}`}
@@ -120,12 +122,12 @@ function SecaoProdutos({
               />
             ))}
           </div>
-          {limite && produtos.length > limite ? (
+          {limite && produtos.length > limite && verTodosHref ? (
             <Link
-              href="/conta/favoritos"
+              href={verTodosHref}
               className="inline-flex mt-4 text-sm font-semibold text-lm-green hover:underline"
             >
-              Ver todos os favoritos
+              {verTodosLabel}
             </Link>
           ) : !limite ? (
             <Pagination
@@ -352,11 +354,11 @@ export default function ContaPage() {
     setHistoricoIds(getHistoricoIds());
     setPedidos(getPedidos(usuarioLogado.email));
     setAvaliacoes(getAvaliacoesDoUsuario(usuarioLogado.email));
-    window.addEventListener("lm:favoritos-atualizados", atualizarFavoritos);
+    window.addEventListener("lm-favoritos-change", atualizarFavoritos);
     window.addEventListener("storage", atualizarFavoritos);
     return () => {
       window.removeEventListener(
-        "lm:favoritos-atualizados",
+        "lm-favoritos-change",
         atualizarFavoritos,
       );
       window.removeEventListener("storage", atualizarFavoritos);
@@ -390,7 +392,6 @@ export default function ContaPage() {
           nomeAtual={usuario.nome ?? usuario.email}
           onNomeAtualizado={(novoNome) => setUsuario({ ...usuario, nome: novoNome })}
         />
-        <EntrevistaGuiada email={usuario.email} />
         <SecaoPedidos pedidos={pedidos} />
         <SecaoAvaliacoes avaliacoes={avaliacoes} />
         <EnderecosSalvos email={usuario.email} />
@@ -399,11 +400,14 @@ export default function ContaPage() {
           ids={favoritosIds}
           mensagemVazia="Você ainda não favoritou nenhum produto."
           limite={4}
+          verTodosHref="/conta/favoritos"
+          verTodosLabel="Ver todos os favoritos"
         />
         <SecaoProdutos
           titulo="Vistos recentemente"
           ids={historicoIds}
           mensagemVazia="Nenhum produto visitado ainda — suas buscas vão aparecer aqui."
+          limite={5}
         />
       </div>
     </main>
