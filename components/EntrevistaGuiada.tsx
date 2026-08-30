@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Sparkles, RotateCcw } from 'lucide-react'
 import Card from './ui/Card'
 import Button from './ui/Button'
-import ProductCard from './ProductCard'
+import ProductListItem from './ProductListItem'
 import { getPerfil, salvarPerfil } from '@/lib/clientPerfil'
 import { adicionarNotificacao } from '@/lib/clientNotificacoes'
 import type { Perfil, Moradia, Experiencia, Area, Orcamento, SustentabilidadePreferencia, ServicoSugerido } from '@/types/perfil'
@@ -18,6 +18,7 @@ const ORCAMENTOS: Orcamento[] = ['Até R$100', 'R$100–300', 'R$300–600', 'Ac
 const SUSTENTABILIDADES: SustentabilidadePreferencia[] = ['Pouco importante', 'Importante, mas não decisivo', 'Muito importante']
 
 const MAX_AREAS = 3
+const MAX_PRODUTOS_EXIBIDOS = 10
 
 interface ChipProps {
   label: string
@@ -268,9 +269,9 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
       )}
 
       {!erro && produtos.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {produtos.map(({ produto }, i) => (
-            <ProductCard
+        <div className="space-y-2">
+          {produtos.slice(0, MAX_PRODUTOS_EXIBIDOS).map(({ produto }, i) => (
+            <ProductListItem
               key={produto.id}
               produto={produto}
               href={`/produto/${produto.id}`}
