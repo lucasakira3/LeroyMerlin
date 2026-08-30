@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Package, MapPin } from 'lucide-react'
+import { Package, MapPin, CreditCard } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
@@ -68,6 +68,15 @@ export default function PedidoCompartilhadoView() {
             <MapPin size={12} />
             {pedido.metodo === 'retirada' ? `Retirada: ${pedido.loja}` : `Entrega: ${pedido.endereco}`}
           </div>
+
+          {pedido.pagamento && (
+            <div className="flex items-center gap-1.5 text-xs text-gray-500 pt-1.5">
+              <CreditCard size={12} />
+              {pedido.pagamento.metodo === 'cartao'
+                ? `${pedido.pagamento.bandeira} final ${pedido.pagamento.ultimosDigitos}${pedido.pagamento.parcelas && pedido.pagamento.parcelas > 1 ? ` · ${pedido.pagamento.parcelas}x` : ''}`
+                : pedido.pagamento.metodo === 'pix' ? 'Pix' : 'Boleto bancário'}
+            </div>
+          )}
 
           <div className="flex items-center justify-between pt-3 mt-1 border-t border-gray-100">
             <span className="text-sm font-bold text-gray-900">Total</span>

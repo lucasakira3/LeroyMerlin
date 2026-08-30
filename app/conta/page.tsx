@@ -227,6 +227,13 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
                   })}
                 </span>
               </div>
+              {pedido.pagamento && (
+                <p className="text-xs text-gray-500 pt-1.5">
+                  {pedido.pagamento.metodo === "cartao"
+                    ? `${pedido.pagamento.bandeira} final ${pedido.pagamento.ultimosDigitos}${pedido.pagamento.parcelas && pedido.pagamento.parcelas > 1 ? ` · ${pedido.pagamento.parcelas}x` : ""}`
+                    : pedido.pagamento.metodo === "pix" ? "Pix" : "Boleto bancário"}
+                </p>
+              )}
               <div className="flex items-center gap-3 pt-2 mt-2 border-t border-gray-100">
                 <button
                   type="button"

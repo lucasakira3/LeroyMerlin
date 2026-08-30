@@ -11,6 +11,15 @@ export interface ItemPedido {
   quantidade: number
 }
 
+export interface PagamentoInfo {
+  metodo: 'cartao' | 'pix' | 'boleto'
+  parcelas?: number
+  // Só os 4 últimos dígitos — nunca o número completo do cartão, nem aqui nem em
+  // localStorage (ver lib/pagamento.ts).
+  ultimosDigitos?: string
+  bandeira?: string
+}
+
 export interface Pedido {
   numero: string
   data: string
@@ -18,6 +27,7 @@ export interface Pedido {
   metodo: 'retirada' | 'entrega'
   loja?: string
   endereco?: string
+  pagamento?: PagamentoInfo
   total: number
 }
 
