@@ -202,7 +202,7 @@ export default function FavoritosPage() {
                     }
                   }}
                   placeholder="Nome do grupo"
-                  className="text-xs px-3 py-1.5 rounded-full border border-gray-300 focus:border-lm-green outline-none w-32"
+                  className="text-xs px-3 py-1.5 rounded-full border border-gray-300 bg-white text-lm-dark focus:border-lm-green outline-none w-32"
                 />
                 <button
                   type="button"
@@ -254,7 +254,7 @@ export default function FavoritosPage() {
                     <select
                       value={atribuicoes[produto.id] ?? SEM_GRUPO}
                       onChange={(e) => mudarGrupo(produto.id, e.target.value)}
-                      className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 text-gray-600 max-w-[110px] focus:border-lm-green outline-none"
+                      className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-gray-600 max-w-[110px] focus:border-lm-green outline-none"
                     >
                       <option value={SEM_GRUPO}>Sem grupo</option>
                       {grupos.map((g) => (

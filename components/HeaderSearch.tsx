@@ -47,7 +47,7 @@ export default function HeaderSearch() {
         onBlur={() => setTimeout(() => setAberto(false), 150)}
         placeholder="Buscar produtos..."
         aria-label="Buscar produtos"
-        className="w-full h-10 pl-10 pr-4 rounded-xl border-0 bg-white/95 text-sm text-lm-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="w-full h-10 pl-10 pr-4 rounded-xl border-0 bg-white/95 dark:bg-zinc-900 text-sm text-lm-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
       />
       {mostrarSugestoes && (
         <ul className="absolute top-full left-0 right-0 mt-1.5 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-xl shadow-soft-lg overflow-hidden z-50">
