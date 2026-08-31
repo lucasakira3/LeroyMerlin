@@ -51,9 +51,7 @@ function specialToNumeric(slug: string): number | null {
   return Math.round(min + ratio * (max - min))
 }
 
-// Extraído de getPos pra ser reaproveitado por components/MiniMapaCorredor.tsx (miniatura
-// no card de produto) sem precisar do sistema de coordenadas em pixel do mapa completo —
-// só a posição lógica (linha 1 ou 2, índice 0-24 dentro da linha) já basta ali.
+
 export function getCorredorRowIndex(corridorNorm: string): { row: 1 | 2; idx: number } | null {
   const slug = corridorNorm.toLowerCase().trim()
 
@@ -124,6 +122,16 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
   const selPin = selectedId ? pins.find(p => p.produto.id === selectedId) : null
 
   function handlePinClick(pin: typeof pins[0]) {
+    // Quando existe um `onSelect` (ex.: busca, mapa com detalhes habilitados), o clique no
+    // pin já abre o modal de detalhes do produto diretamente — antes era preciso clicar no
+    // pin (selecionar) e depois clicar num botão "Ver detalhes (o que gerava mais cliques para o cliente)" no popup pra só então ver
+    // as informações do produto. 
+    if (onSelect) {
+      trackProductView({ id: pin.produto.id, nome: pin.produto.produto, categoria: pin.produto.categoria })
+      setSelectedId(pin.produto.id)
+      onSelect(pin.produto)
+      return
+    }
     setSelectedId(prev => prev === pin.produto.id ? null : pin.produto.id)
   }
 

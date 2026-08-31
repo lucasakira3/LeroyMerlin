@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot, Heart, ShoppingCart, Scale } from 'lucide-react'
+import {
+  X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot,
+  Heart, ShoppingCart, Scale, Star, ChevronDown, ChevronUp,
+} from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
 import { getGaleriaCategoria } from '@/lib/categoriaImagens'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
@@ -12,8 +15,10 @@ import { addAoHistorico } from '@/lib/clientHistorico'
 import { formatarParcelamento } from '@/lib/parcelamento'
 import { showToast } from '@/lib/toast'
 import { getIconeEspecificacao, parseEspecificacoes } from '@/lib/especificacaoIcones'
+import { getMedia } from '@/lib/clientAvaliacoes'
 import AvaliacoesProduto from './AvaliacoesProduto'
 import BotaoAjudaCorredor from './BotaoAjudaCorredor'
+import StarRating from './ui/StarRating'
 import type { SearchResult } from '@/types/produto'
 
 interface Mensagem {
@@ -44,14 +49,7 @@ const SUST_COR: Record<string, string> = {
 }
 
 export default function ProdutoDrawer({ produto, onClose }: Props) {
-  // createPortal + este `mounted` existem por um motivo específico, não é boilerplate à
-  // toa: components/PageTransition.tsx envolve toda página com uma div `animate-fade-in-up`,
-  // e QUALQUER transform em ancestral (mesmo já "zerado" ao fim da animação) vira o
-  // containing block de todo `position: fixed` descendente — sem o portal, este popup
-  // centralizava relativo à div da animação, não à tela de verdade (achado testando o
-  // popup, não óbvio por leitura de código). `document.body` escapa desse problema.
-  // `mounted` evita o portal tentar acessar `document` durante SSR (Next.js roda esse
-  // componente no servidor antes da primeira renderização no cliente).
+
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -77,13 +75,10 @@ export default function ProdutoDrawer({ produto, onClose }: Props) {
         className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       />
 
-      {/* Popup centralizado (tela cheia no mobile, cartão centralizado a partir de md:) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center md:p-4 pointer-events-none">
-        {/* pointer-events precisa acompanhar `visible`, não só a opacidade: fechado, o
-            cartão só fica opacity-0/scale-95 (não sai da tela fisicamente), então sem
-            isso ele continuava bloqueando cliques em tudo por baixo mesmo invisível. */}
+
         <div
-          className={`bg-white w-full h-full md:h-auto md:max-h-[90vh] md:max-w-4xl md:rounded-card shadow-soft-lg overflow-hidden flex flex-col transition-all duration-300 ease-out ${
+          className={`bg-white w-full h-full md:h-auto md:max-h-[92vh] md:max-w-5xl md:rounded-card shadow-soft-lg overflow-hidden flex flex-col transition-all duration-300 ease-out ${
             visible ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
           }`}
         >
@@ -107,6 +102,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const [adicionado, setAdicionado] = useState(false)
   const [noComparador, setNoComparador] = useState(false)
   const [comparadorMsg, setComparadorMsg] = useState<string | null>(null)
+  const [avaliacoesAbertas, setAvaliacoesAbertas] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -118,6 +114,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     setAdicionado(false)
     setNoComparador(estaNoComparador(produto.id))
     setComparadorMsg(null)
+    setAvaliacoesAbertas(false)
     addAoHistorico(produto.id)
   }, [produto.id])
 
@@ -184,12 +181,11 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     : null
   const parcelamentoStr = preco != null ? formatarParcelamento(Number(preco)) : null
   const galeria = getGaleriaCategoria(produto.categoria, produto.id, 4)
+  const { media: mediaAvaliacoes, total: totalAvaliacoes } = getMedia(produto.id)
 
   return (
     <>
-    {/* Zoom da imagem — portal próprio (não só um filho a mais aqui) porque o cartão do
-        popup já tem `scale-100`/`scale-95` (transform não-nulo), que criaria containing
-        block errado pro `position: fixed` do lightbox se ele ficasse dentro dessa árvore. */}
+
     {zoomAberto && createPortal(
       <div
         className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4"
@@ -211,18 +207,19 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
       </div>,
       document.body
     )}
-    <div className="flex-1 overflow-y-auto">
-      <div className="md:grid md:grid-cols-2 md:gap-x-8 md:items-start md:p-6">
+
+    <div className="flex-1 overflow-y-auto md:overflow-visible">
+      <div className="md:grid md:grid-cols-[minmax(0,42%)_minmax(0,58%)] md:gap-x-6 md:items-start md:p-5">
 
         {/* Coluna esquerda — imagem + chat */}
-        <div>
+        <div className="flex flex-col md:h-full">
           {/* Foto da categoria, com ações flutuantes no canto */}
           <div className="relative flex-shrink-0">
             <img
               src={galeria[fotoAtiva]}
               alt={produto.categoria}
               onClick={() => setZoomAberto(true)}
-              className="w-full h-56 md:h-72 object-cover md:rounded-card cursor-zoom-in"
+              className="w-full h-44 md:h-52 object-cover md:rounded-card cursor-zoom-in"
             />
             {galeria.length > 1 && (
               <div className="absolute bottom-2 left-2 right-16 flex gap-1.5">
@@ -232,7 +229,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                     onClick={() => setFotoAtiva(i)}
                     aria-label={`Ver foto ${i + 1}`}
                     aria-current={fotoAtiva === i}
-                    className={`h-10 w-10 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${
+                    className={`h-9 w-9 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${
                       fotoAtiva === i ? 'border-white shadow-md scale-105' : 'border-white/40 opacity-70 hover:opacity-100'
                     }`}
                   >
@@ -241,6 +238,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 ))}
               </div>
             )}
+            {/* Favoritar / comparar / fechar — canto superior direito*/}
             <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-lm-green/90 backdrop-blur-sm rounded-full p-1.5 shadow-md">
               <button
                 onClick={handleFavorito}
@@ -273,15 +271,16 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             )}
           </div>
 
-          {/* Chat com IA */}
-          <div className="px-5 py-4 md:px-0 md:pt-5">
-            <h3 className="text-xs font-bold text-lm-green uppercase tracking-widest mb-3 flex items-center gap-1.5">
+          {/* Chat com IA — cresce pra preencher o resto da coluna no desktop, mensagens
+              com scroll próprio */}
+          <div className="px-5 py-3 md:px-0 md:pt-3 flex-1 flex flex-col min-h-0">
+            <h3 className="text-xs font-bold text-lm-green uppercase tracking-widest mb-2 flex items-center gap-1.5 flex-shrink-0">
               <Bot size={13} /> Pergunte sobre este produto
             </h3>
 
             {/* Mensagens */}
             {mensagens.length > 0 && (
-              <div className="mb-3 space-y-2 max-h-56 overflow-y-auto pr-1">
+              <div className="mb-2 space-y-2 max-h-40 md:max-h-full md:flex-1 overflow-y-auto pr-1">
                 {mensagens.map((m, i) => (
                   <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-xs leading-relaxed ${
@@ -308,7 +307,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             )}
 
             {/* Input */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-shrink-0 mt-auto">
               <input
                 type="text"
                 value={inputChat}
@@ -329,116 +328,104 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
           </div>
         </div>
 
-        {/* Coluna direita — nome, preço, especificações, avaliações */}
-        <div>
+        {/* Coluna direita — nome, preço, especificações, tags, avaliações — tudo em
+            blocos compactos e agrupados, sem o header "sticky" separado de antes */}
+        <div className="px-5 py-4 md:px-0 md:py-0 space-y-3">
           {/* Nome + id/categoria + marca/unidade */}
-          <div className="px-5 pt-5 pb-3 md:px-0 md:pt-0">
+          <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[10px] font-mono text-gray-400">{produto.id}</span>
               <span className="text-[10px] text-gray-300">·</span>
               <span className="text-[10px] text-gray-400 uppercase tracking-wide">{produto.categoria}</span>
             </div>
-            <h2 className="text-lg font-bold text-lm-dark leading-snug mb-2">{produto.produto}</h2>
+            <h2 className="text-lg font-bold text-lm-dark leading-snug mb-1.5">{produto.produto}</h2>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 bg-lm-green/10 text-lm-green rounded-full px-3 py-1 text-xs font-semibold">
+              <span className="flex items-center gap-1 bg-lm-green/10 text-lm-green rounded-full px-2.5 py-0.5 text-xs font-semibold">
                 <BadgeCheck size={12} /> {marca}
               </span>
-              <span className="bg-gray-100 text-gray-600 rounded-full px-3 py-1 text-xs font-semibold">
+              <span className="bg-gray-100 text-gray-600 rounded-full px-2.5 py-0.5 text-xs font-semibold">
                 {unidade}
               </span>
             </div>
           </div>
 
-          {/* Preço + Localização — sticky pra continuar visível rolando o resto do popup
-              (chat, especificações, avaliações), já que essa coluna pode ficar bem mais
-              alta que a viewport do popup. */}
-          <div className="sticky top-0 z-10 bg-white p-5 md:px-0 border-b border-gray-100 flex items-center justify-between gap-4">
+          {/* Preço + Localização + CTA — um único bloco compacto, não mais "sticky" (a
+              coluna inteira já cabe sem rolar) */}
+          <div className="bg-gray-50 rounded-xl p-3.5 flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs text-gray-400 mb-0.5 uppercase tracking-wide">Preço</p>
+              <p className="text-[10px] text-gray-400 mb-0.5 uppercase tracking-wide">Preço</p>
               {precoStr
-                ? <p className="text-2xl font-black text-lm-green">{precoStr}</p>
+                ? <p className="text-xl font-black text-lm-green leading-none">{precoStr}</p>
                 : <p className="text-sm text-gray-400 italic">Consultar loja</p>
               }
-              {parcelamentoStr && <p className="text-xs text-gray-400 mt-0.5">{parcelamentoStr}</p>}
-              <button
-                onClick={handleAdicionarCarrinho}
-                disabled={produto.estoque === 0}
-                className="mt-2 flex items-center gap-1.5 bg-lm-green text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <ShoppingCart size={13} />
-                {adicionado ? 'Adicionado ✓' : 'Adicionar ao carrinho'}
-              </button>
+              {parcelamentoStr && <p className="text-[11px] text-gray-400 mt-1">{parcelamentoStr}</p>}
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-400 mb-1 uppercase tracking-wide">Localização</p>
+              <p className="text-[10px] text-gray-400 mb-0.5 uppercase tracking-wide">Localização</p>
               <div className="flex items-center gap-1.5 text-lm-green justify-end">
-                <MapPin size={14} strokeWidth={2.5} />
-                <span className="text-base font-bold">{produto.corredor}</span>
+                <MapPin size={13} strokeWidth={2.5} />
+                <span className="text-sm font-bold">{produto.corredor}</span>
               </div>
-              <div className="mt-2 flex justify-end">
+              <div className="mt-1.5 flex justify-end">
                 <BotaoAjudaCorredor produtoId={produto.id} produtoNome={produto.produto} corredor={produto.corredor} />
               </div>
             </div>
           </div>
 
+          <button
+            onClick={handleAdicionarCarrinho}
+            disabled={produto.estoque === 0}
+            className="w-full flex items-center justify-center gap-1.5 bg-lm-green text-white text-sm font-semibold px-3 py-2.5 rounded-xl hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ShoppingCart size={15} />
+            {adicionado ? 'Adicionado ✓' : 'Adicionar ao carrinho'}
+          </button>
+
           {/* Badges — Estoque, Complexidade, Sustentabilidade */}
-          <div className="px-5 py-4 md:px-0 border-b border-gray-100 flex flex-wrap gap-2">
-            {/* Estoque */}
-            <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+          <div className="flex flex-wrap gap-1.5">
+            <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${
               produto.estoque === 0 ? 'bg-gray-100 text-gray-500' :
               produto.estoque < 10 ? 'bg-orange-100 text-orange-700' :
               'bg-green-100 text-green-700'
             }`}>
-              <Package size={12} />
+              <Package size={11} />
               {produto.estoque === 0 ? 'Sem estoque' :
-               produto.estoque < 10 ? `Últimas ${produto.estoque} unidades` :
+               produto.estoque < 10 ? `Últimas ${produto.estoque} un.` :
                `${produto.estoque} em estoque`}
             </span>
 
-            {/* Complexidade */}
-            <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${COMPLEXIDADE_COR[produto.complexidade] ?? 'bg-gray-100 text-gray-600'}`}>
-              <Zap size={12} />
+            <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${COMPLEXIDADE_COR[produto.complexidade] ?? 'bg-gray-100 text-gray-600'}`}>
+              <Zap size={11} />
               {produto.complexidade}
             </span>
 
-            {/* Sustentabilidade */}
             {produto.sustentabilidade !== 'N/A' && (
-              <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${SUST_COR[produto.sustentabilidade] ?? 'bg-gray-100 text-gray-500'}`}>
-                <Leaf size={12} />
+              <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${SUST_COR[produto.sustentabilidade] ?? 'bg-gray-100 text-gray-500'}`}>
+                <Leaf size={11} />
                 {produto.sustentabilidade}
               </span>
             )}
           </div>
 
-          {/* O que o especialista diz */}
-          {produto.resposta_ia && (
-            <div className="px-5 py-4 md:px-0 border-b border-gray-100">
-              <h3 className="text-xs font-bold text-lm-green uppercase tracking-widest mb-2">
-                O que o especialista diz
-              </h3>
-              <p className="text-sm text-gray-700 leading-relaxed">{produto.resposta_ia}</p>
-            </div>
-          )}
-
-          {/* Especificações — ilustradas com ícone por rótulo em vez de texto corrido, ver
-              lib/especificacaoIcones.ts (heurística por palavra-chave, mesmo padrão de
-              lib/comodoIcones.ts) */}
+          {/* Especificações — ilustradas com ícone por rótulo em vez de texto corrido.
+              Limitado a 6 pra não empurrar avaliações pra fora da
+              tela — o modal não tem mais um espaço "solto" pra crescer sem limite. */}
           {produto.especificacoes && (
-            <div className="px-5 py-4 md:px-0 border-b border-gray-100">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-                Especificações técnicas
+            <div>
+              <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                Especificações
               </h3>
-              <div className="grid grid-cols-2 gap-2.5">
-                {parseEspecificacoes(produto.especificacoes).map((item, i) => {
+              <div className="grid grid-cols-2 gap-2">
+                {parseEspecificacoes(produto.especificacoes).slice(0, 6).map((item, i) => {
                   const Icone = getIconeEspecificacao(item.rotulo)
                   return (
-                    <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2">
-                      <div className="w-8 h-8 rounded-lg bg-lm-green/10 text-lm-green flex items-center justify-center flex-shrink-0">
-                        <Icone size={15} />
+                    <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-lg px-2.5 py-1.5">
+                      <div className="w-7 h-7 rounded-lg bg-lm-green/10 text-lm-green flex items-center justify-center flex-shrink-0">
+                        <Icone size={13} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 truncate">{item.rotulo}</p>
-                        <p className="text-xs font-semibold text-gray-800 truncate">{item.valor}</p>
+                        <p className="text-[9px] text-gray-400 truncate leading-tight">{item.rotulo}</p>
+                        <p className="text-[11px] font-semibold text-gray-800 truncate leading-tight">{item.valor}</p>
                       </div>
                     </div>
                   )
@@ -449,21 +436,58 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
 
           {/* Tags */}
           {produto.tags && produto.tags.length > 0 && (
-            <div className="px-5 py-4 md:px-0 border-b border-gray-100">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                <Tag size={11} /> Tags
-              </h3>
-              <div className="flex flex-wrap gap-1.5">
-                {produto.tags.map(tag => (
-                  <span key={tag} className="px-2.5 py-1 bg-gray-100 rounded-full text-xs text-gray-600">
-                    {tag}
-                  </span>
-                ))}
-              </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-0.5">
+                <Tag size={10} /> Tags
+              </span>
+              {produto.tags.slice(0, 6).map(tag => (
+                <span key={tag} className="px-2 py-0.5 bg-gray-100 rounded-full text-[11px] text-gray-600">
+                  {tag}
+                </span>
+              ))}
             </div>
           )}
 
-          <AvaliacoesProduto produtoId={produto.id} />
+          {/* Avaliações — resumo compacto (média + estrelas) a lista
+              completa e o formulário de avaliação só aparecem se a pessoa expandir, economizando espaço */}
+          <div className="border-t border-gray-100 pt-3">
+            <button
+              onClick={() => setAvaliacoesAbertas(v => !v)}
+              className="w-full flex items-center justify-between gap-2"
+              aria-expanded={avaliacoesAbertas}
+            >
+              <span className="flex items-center gap-2">
+                <StarRating value={mediaAvaliacoes} size={16} />
+                {totalAvaliacoes > 0 ? (
+                  <span className="text-xs text-gray-600">
+                    {mediaAvaliacoes.toFixed(1)} · {totalAvaliacoes} avaliaç{totalAvaliacoes > 1 ? 'ões' : 'ão'}
+                  </span>
+                ) : (
+                  <span className="text-xs text-gray-400 italic">Seja o primeiro a avaliar</span>
+                )}
+              </span>
+              <span className="flex items-center gap-1 text-xs font-semibold text-lm-green flex-shrink-0">
+                {avaliacoesAbertas ? 'Fechar' : 'Ver / avaliar'}
+                {avaliacoesAbertas ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              </span>
+            </button>
+
+            {avaliacoesAbertas && (
+              <div className="mt-3 max-h-64 overflow-y-auto pr-1">
+                <AvaliacoesProduto produtoId={produto.id} />
+              </div>
+            )}
+          </div>
+
+          {/* Elemento agora depois das avaliações, para não disputar o espaço diretamente com o preço*/}
+          {produto.resposta_ia && (
+            <div className="bg-lm-green/5 border border-lm-green/10 rounded-xl p-3">
+              <h3 className="text-[10px] font-bold text-lm-green uppercase tracking-widest mb-1 flex items-center gap-1">
+                <Star size={11} className="fill-lm-green text-lm-green" /> O que o especialista diz
+              </h3>
+              <p className="text-xs text-gray-700 leading-relaxed line-clamp-3">{produto.resposta_ia}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

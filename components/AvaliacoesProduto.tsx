@@ -39,12 +39,6 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
     }
   }, [produtoId])
 
-  const { media, total } = (() => {
-    if (avaliacoes.length === 0) return { media: 0, total: 0 }
-    const soma = avaliacoes.reduce((acc, a) => acc + a.nota, 0)
-    return { media: soma / avaliacoes.length, total: avaliacoes.length }
-  })()
-
   const jaAvaliou = usuario ? avaliacoes.some(a => a.email === usuario.email) : false
 
   async function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -65,20 +59,7 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
   const ordenadas = [...avaliacoes].sort((a, b) => b.data.localeCompare(a.data))
 
   return (
-    <div className="px-5 py-4 md:px-0">
-      <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-        Avaliações
-      </h3>
-
-      <div className="flex items-center gap-2 mb-4">
-        <StarRating value={media} size={18} />
-        {total > 0 ? (
-          <span className="text-sm text-gray-600">{media.toFixed(1)} · {total} avaliação{total > 1 ? 'ões' : ''}</span>
-        ) : (
-          <span className="text-sm text-gray-400 italic">Seja o primeiro a avaliar este produto</span>
-        )}
-      </div>
-
+    <div>
       {!usuario && (
         <p className="text-xs text-gray-400 italic mb-4">Faça login para avaliar este produto.</p>
       )}
