@@ -208,6 +208,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
       document.body
     )}
 
+
     <div className="flex-1 overflow-y-auto md:overflow-visible">
       <div className="md:grid md:grid-cols-[minmax(0,42%)_minmax(0,58%)] md:gap-x-6 md:items-start md:p-5">
 
@@ -238,7 +239,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 ))}
               </div>
             )}
-            {/* Favoritar / comparar / fechar — canto superior direito*/}
+            {/* Favoritar / comparar / fechar — canto superior direito, como no modelo */}
             <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-lm-green/90 backdrop-blur-sm rounded-full p-1.5 shadow-md">
               <button
                 onClick={handleFavorito}
@@ -271,43 +272,53 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             )}
           </div>
 
-          {/* Chat com IA — cresce pra preencher o resto da coluna no desktop, mensagens
-              com scroll próprio */}
-          <div className="px-5 py-3 md:px-0 md:pt-3 flex-1 flex flex-col min-h-0">
+          <div className="px-5 py-3 md:px-0 md:pt-3 flex flex-col flex-shrink-0">
             <h3 className="text-xs font-bold text-lm-green uppercase tracking-widest mb-2 flex items-center gap-1.5 flex-shrink-0">
               <Bot size={13} /> Pergunte sobre este produto
             </h3>
 
-            {/* Mensagens */}
-            {mensagens.length > 0 && (
-              <div className="mb-2 space-y-2 max-h-40 md:max-h-full md:flex-1 overflow-y-auto pr-1">
-                {mensagens.map((m, i) => (
-                  <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-xs leading-relaxed ${
-                      m.role === 'user'
-                        ? 'bg-lm-green text-white rounded-br-sm'
-                        : 'bg-gray-100 text-gray-800 rounded-bl-sm'
-                    }`}>
-                      {m.texto}
-                    </div>
+
+            <div className="rounded-xl border border-gray-100 bg-gray-50/70 h-56 md:h-64 flex flex-col overflow-hidden">
+              <div
+                className="flex-1 min-h-0 overflow-y-auto px-3 py-3 space-y-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {mensagens.length === 0 ? (
+                  <div className="h-full flex items-center justify-center px-6 text-center">
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Tire dúvidas técnicas sobre este produto com o especialista virtual — instalação, garantia, compatibilidade e mais.
+                    </p>
                   </div>
-                ))}
-                {loadingChat && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-100 rounded-2xl rounded-bl-sm px-4 py-2.5 flex gap-1">
-                      {[0,1,2].map(i => (
-                        <span key={i} className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                          style={{ animationDelay: `${i * 0.15}s` }} />
-                      ))}
-                    </div>
-                  </div>
+                ) : (
+                  <>
+                    {mensagens.map((m, i) => (
+                      <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-xs leading-relaxed whitespace-pre-wrap ${
+                          m.role === 'user'
+                            ? 'bg-lm-green text-white rounded-br-sm'
+                            : 'bg-white text-gray-800 rounded-bl-sm shadow-sm'
+                        }`}>
+                          {m.texto}
+                        </div>
+                      </div>
+                    ))}
+                    {loadingChat && (
+                      <div className="flex justify-start">
+                        <div className="bg-white shadow-sm rounded-2xl rounded-bl-sm px-4 py-2.5 flex gap-1">
+                          {[0,1,2].map(i => (
+                            <span key={i} className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                              style={{ animationDelay: `${i * 0.15}s` }} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div ref={chatEndRef} />
+                  </>
                 )}
-                <div ref={chatEndRef} />
               </div>
-            )}
+            </div>
 
             {/* Input */}
-            <div className="flex gap-2 flex-shrink-0 mt-auto">
+            <div className="flex gap-2 flex-shrink-0 mt-2">
               <input
                 type="text"
                 value={inputChat}
@@ -329,7 +340,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
         </div>
 
         {/* Coluna direita — nome, preço, especificações, tags, avaliações — tudo em
-            blocos compactos e agrupados, sem o header "sticky" separado de antes */}
+            blocos compactos e agrupados */}
         <div className="px-5 py-4 md:px-0 md:py-0 space-y-3">
           {/* Nome + id/categoria + marca/unidade */}
           <div>
@@ -349,8 +360,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </div>
           </div>
 
-          {/* Preço + Localização + CTA — um único bloco compacto, não mais "sticky" (a
-              coluna inteira já cabe sem rolar) */}
+
           <div className="bg-gray-50 rounded-xl p-3.5 flex items-center justify-between gap-3">
             <div>
               <p className="text-[10px] text-gray-400 mb-0.5 uppercase tracking-wide">Preço</p>
@@ -479,7 +489,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             )}
           </div>
 
-          {/* Elemento agora depois das avaliações, para não disputar o espaço diretamente com o preço*/}
+        {/* Elemento agora depois das avaliações, para não disputar o espaço diretamente com o preço*/}
           {produto.resposta_ia && (
             <div className="bg-lm-green/5 border border-lm-green/10 rounded-xl p-3">
               <h3 className="text-[10px] font-bold text-lm-green uppercase tracking-widest mb-1 flex items-center gap-1">
