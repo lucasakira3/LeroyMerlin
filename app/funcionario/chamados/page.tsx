@@ -1,13 +1,60 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Search, Send, User, Clock, MapPin, MessageSquare } from 'lucide-react'
+import { Search, Send, User, Clock, MapPin, MessageSquare, Bell, Check } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import type { Agendamento } from '@/components/AgendamentosLista'
 import { getEstadoChamado, adicionarNota, marcarAtendido } from '@/lib/chamadosFuncionario'
+import { getPedidosAjuda, marcarAjudaAtendida, type PedidoAjuda } from '@/lib/ajudaCorredor'
 import { parseDataBR } from '@/lib/dataBr'
+
+function tempoRelativo(iso: string): string {
+  const diffMin = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
+  if (diffMin < 1) return 'agora'
+  if (diffMin < 60) return `há ${diffMin}min`
+  return `há ${Math.floor(diffMin / 60)}h`
+}
+
+function PedidosAjudaCorredor() {
+  const [pedidos, setPedidos] = useState<PedidoAjuda[]>([])
+
+  useEffect(() => {
+    const atualizar = () => setPedidos(getPedidosAjuda())
+    atualizar()
+    window.addEventListener('lm-ajuda-corredor-change', atualizar)
+    return () => window.removeEventListener('lm-ajuda-corredor-change', atualizar)
+  }, [])
+
+  const pendentes = pedidos.filter(p => !p.atendido)
+  if (pendentes.length === 0) return null
+
+  return (
+    <div className="mb-4 bg-lm-yellow/10 border border-lm-yellow/40 rounded-2xl p-4">
+      <h3 className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-3 flex items-center gap-1.5">
+        <Bell size={13} /> Pedidos de ajuda no corredor ({pendentes.length})
+      </h3>
+      <div className="flex flex-wrap gap-2">
+        {pendentes.map(p => (
+          <div key={p.id} className="flex items-center gap-3 bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs">
+            <div>
+              <p className="font-bold text-gray-900">{p.corredor} {p.clienteNome ? `· ${p.clienteNome}` : ''}</p>
+              <p className="text-gray-500 truncate max-w-[220px]">{p.produtoNome}</p>
+              <p className="text-gray-400">{tempoRelativo(p.criadoEm)}</p>
+            </div>
+            <button
+              onClick={() => marcarAjudaAtendida(p.id)}
+              className="flex items-center gap-1 bg-lm-green text-white font-semibold px-2.5 py-1.5 rounded-lg hover:bg-green-700 transition-colors flex-shrink-0"
+            >
+              <Check size={12} /> Atender
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function ChamadosPage() {
   const [agendamentos, setAgendamentos] = useState<Agendamento[] | null>(null)
@@ -56,6 +103,8 @@ export default function ChamadosPage() {
         title="Chamados"
         description="Fila de agendamentos de visita pendentes de atendimento."
       />
+
+      <PedidosAjudaCorredor />
 
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-4 lg:gap-6">
         {/* Sidebar de Chamados */}

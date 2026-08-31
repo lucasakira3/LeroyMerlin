@@ -14,6 +14,7 @@ Acesse a jornada principal em `/`
 - **Projeto Guiado** — Descreva o projeto (ex: "quero instalar um chuveiro") e receba uma lista de materiais completa com a localização de cada item.
 - **Timeline do projeto** — Dentro do Projeto Guiado, a IA organiza os materiais em etapas cronológicas (ex: preparo → hidráulica → acabamento → pintura), mostrando a ordem sugerida de execução do projeto.
 - **Tire Dúvidas (Chat com IA)** — Especialista virtual disponível 24h para tirar dúvidas técnicas sobre produtos e materiais.
+- **Botão de Ajuda no Corredor** — Direto na ficha do produto, o cliente avisa um funcionário com um toque — o pedido já chega com o corredor e o produto que ele estava vendo, sem precisar sair procurando alguém pela loja.
 - **Agendamento** — Agende um atendimento presencial com um especialista na loja física.
 
 ### 👔 Painel do Funcionário
@@ -21,7 +22,7 @@ Acesse a área administrativa em `/funcionario/login`
 - **Dashboard Gerencial** — Visão geral com métricas de clientes ativos, alertas de estoque críticos e atividades recentes da loja em tempo real.
 - **Gestão de Clientes** — Tabela detalhada para consulta e controle do status dos clientes e histórico de interações.
 - **Controle de Estoque e Produtos** — Gerenciamento de inventário com botões rápidos de alteração de quantidade, alertas visuais de estoque baixo e adição de novos produtos.
-- **Atendimento de Chamados** — Interface de chat integrada (estilo painel de suporte) para que os funcionários possam assumir e responder rapidamente às dúvidas dos clientes divididos por setores.
+- **Atendimento de Chamados** — Interface de chat integrada (estilo painel de suporte) para que os funcionários possam assumir e responder rapidamente às dúvidas dos clientes divididos por setores. Também reúne, em tempo real, os pedidos de ajuda enviados pelo Botão de Ajuda no Corredor.
 
 ---
 

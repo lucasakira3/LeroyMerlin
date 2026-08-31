@@ -13,6 +13,7 @@ import { formatarParcelamento } from '@/lib/parcelamento'
 import { showToast } from '@/lib/toast'
 import { getIconeEspecificacao, parseEspecificacoes } from '@/lib/especificacaoIcones'
 import AvaliacoesProduto from './AvaliacoesProduto'
+import BotaoAjudaCorredor from './BotaoAjudaCorredor'
 import type { SearchResult } from '@/types/produto'
 
 interface Mensagem {
@@ -373,6 +374,9 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               <div className="flex items-center gap-1.5 text-lm-green justify-end">
                 <MapPin size={14} strokeWidth={2.5} />
                 <span className="text-base font-bold">{produto.corredor}</span>
+              </div>
+              <div className="mt-2 flex justify-end">
+                <BotaoAjudaCorredor produtoId={produto.id} produtoNome={produto.produto} corredor={produto.corredor} />
               </div>
             </div>
           </div>
