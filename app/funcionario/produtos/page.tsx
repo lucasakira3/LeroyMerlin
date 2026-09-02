@@ -1,19 +1,28 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Search, Edit2, Package, ArrowUp, ArrowDown, ArrowUpDown, Check, X } from 'lucide-react'
+import { Search, Edit2, Package, ArrowUp, ArrowDown, ArrowUpDown, Check, X, SlidersHorizontal } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Pagination from '@/components/ui/Pagination'
+import EmptyState from '@/components/ui/EmptyState'
 import { ajustarEstoque, definirPreco, aplicarAjustes } from '@/lib/ajustesFuncionario'
 import type { Produto } from '@/types/produto'
 
 type ProdutoResumo = Pick<Produto, 'id' | 'produto' | 'categoria' | 'preco' | 'estoque'>
 type SortKey = 'produto' | 'categoria' | 'preco' | 'estoque'
 type SortDir = 'asc' | 'desc'
+type EstoqueFiltro = 'todos' | 'em_estoque' | 'baixo' | 'sem_estoque'
 
 const ITENS_POR_PAGINA = 20
+
+const OPCOES_ESTOQUE: { valor: EstoqueFiltro; label: string }[] = [
+  { valor: 'todos', label: 'Todos' },
+  { valor: 'em_estoque', label: 'Em estoque' },
+  { valor: 'baixo', label: 'Baixo (< 10)' },
+  { valor: 'sem_estoque', label: 'Sem estoque' },
+]
 
 function SortIcon({ ativo, dir }: { ativo: boolean; dir: SortDir }) {
   if (!ativo) return <ArrowUpDown size={13} className="text-gray-300" />
@@ -23,6 +32,10 @@ function SortIcon({ ativo, dir }: { ativo: boolean; dir: SortDir }) {
 export default function ProdutosPage() {
   const [produtosBase, setProdutosBase] = useState<ProdutoResumo[] | null>(null)
   const [busca, setBusca] = useState('')
+  const [categoriaFiltro, setCategoriaFiltro] = useState('Todas')
+  const [estoqueFiltro, setEstoqueFiltro] = useState<EstoqueFiltro>('todos')
+  const [precoMin, setPrecoMin] = useState('')
+  const [precoMax, setPrecoMax] = useState('')
   const [sortKey, setSortKey] = useState<SortKey | null>(null)
   const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [pagina, setPagina] = useState(1)
@@ -42,7 +55,7 @@ export default function ProdutosPage() {
 
   useEffect(() => {
     setPagina(1)
-  }, [busca])
+  }, [busca, categoriaFiltro, estoqueFiltro, precoMin, precoMax])
 
   const produtos = useMemo(() => {
     if (!produtosBase) return []
@@ -50,7 +63,37 @@ export default function ProdutosPage() {
     return produtosBase.map(p => aplicarAjustes(p))
   }, [produtosBase, versaoAjustes])
 
-  const filtrados = produtos.filter(p => p.produto.toLowerCase().includes(busca.toLowerCase()))
+  // Categorias vêm do próprio catálogo carregado (não de um enum fixo) — o rótulo
+  // gravado em cada produto pode não bater 1:1 com o agrupamento usado na busca por
+  // texto do cliente (lib/categorias.ts), então listar as opções reais evita um filtro
+  // que promete uma categoria e nunca bate com nenhum produto.
+  const categorias = useMemo(
+    () => ['Todas', ...Array.from(new Set(produtos.map(p => p.categoria))).sort((a, b) => a.localeCompare(b, 'pt-BR'))],
+    [produtos]
+  )
+
+  const min = precoMin ? Number(precoMin) : null
+  const max = precoMax ? Number(precoMax) : null
+
+  const filtrados = produtos.filter(p => {
+    if (!p.produto.toLowerCase().includes(busca.toLowerCase())) return false
+    if (categoriaFiltro !== 'Todas' && p.categoria !== categoriaFiltro) return false
+    if (estoqueFiltro === 'em_estoque' && p.estoque <= 0) return false
+    if (estoqueFiltro === 'baixo' && (p.estoque === 0 || p.estoque >= 10)) return false
+    if (estoqueFiltro === 'sem_estoque' && p.estoque !== 0) return false
+    if (min !== null && p.preco < min) return false
+    if (max !== null && p.preco > max) return false
+    return true
+  })
+
+  const temFiltroAtivo = categoriaFiltro !== 'Todas' || estoqueFiltro !== 'todos' || precoMin !== '' || precoMax !== ''
+
+  function limparFiltros() {
+    setCategoriaFiltro('Todas')
+    setEstoqueFiltro('todos')
+    setPrecoMin('')
+    setPrecoMax('')
+  }
 
   const ordenados = useMemo(() => {
     if (!sortKey) return filtrados
@@ -103,7 +146,7 @@ export default function ProdutosPage() {
       />
 
       <Card padding="none">
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-gray-100 space-y-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -113,6 +156,68 @@ export default function ProdutosPage() {
               onChange={e => setBusca(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
             />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5 text-gray-400">
+              <SlidersHorizontal size={13} />
+              <span className="text-xs font-medium text-gray-500">Filtros:</span>
+            </div>
+
+            <select
+              value={categoriaFiltro}
+              onChange={e => setCategoriaFiltro(e.target.value)}
+              className="h-8 px-2.5 rounded-lg border border-gray-200 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            >
+              {categorias.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min={0}
+                inputMode="numeric"
+                placeholder="Min R$"
+                value={precoMin}
+                onChange={e => setPrecoMin(e.target.value)}
+                className="w-20 h-8 px-2 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+              />
+              <span className="text-xs text-gray-300">—</span>
+              <input
+                type="number"
+                min={0}
+                inputMode="numeric"
+                placeholder="Máx R$"
+                value={precoMax}
+                onChange={e => setPrecoMax(e.target.value)}
+                className="w-20 h-8 px-2 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+              />
+            </div>
+
+            <div className="flex gap-1.5">
+              {OPCOES_ESTOQUE.map(o => (
+                <button
+                  key={o.valor}
+                  type="button"
+                  onClick={() => setEstoqueFiltro(o.valor)}
+                  className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                    estoqueFiltro === o.valor
+                      ? 'bg-lm-green text-white border-lm-green'
+                      : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+
+            {temFiltroAtivo && (
+              <button type="button" onClick={limparFiltros} className="text-xs text-gray-400 hover:text-lm-green ml-auto">
+                Limpar filtros
+              </button>
+            )}
           </div>
         </div>
 
@@ -216,8 +321,12 @@ export default function ProdutosPage() {
               ))}
               {produtosBase && paginados.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-500">
-                    Nenhum produto encontrado.
+                  <td colSpan={5}>
+                    <EmptyState
+                      icon={Search}
+                      title="Nenhum produto encontrado"
+                      description={busca || temFiltroAtivo ? 'Tente ajustar a busca ou os filtros.' : 'Ainda não há produtos no catálogo.'}
+                    />
                   </td>
                 </tr>
               )}
