@@ -461,9 +461,14 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
           {/* Avaliações — resumo compacto (média + estrelas) a lista
               completa e o formulário de avaliação só aparecem se a pessoa expandir, economizando espaço */}
           <div className="border-t border-gray-100 pt-3">
-            <button
+            {/* div (não button) porque o conteúdo já inclui o StarRating, que renderiza
+                seus próprios <button> por estrela — button dentro de button é HTML inválido */}
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setAvaliacoesAbertas(v => !v)}
-              className="w-full flex items-center justify-between gap-2"
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setAvaliacoesAbertas(v => !v)}
+              className="w-full flex items-center justify-between gap-2 cursor-pointer"
               aria-expanded={avaliacoesAbertas}
             >
               <span className="flex items-center gap-2">
@@ -480,7 +485,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 {avaliacoesAbertas ? 'Fechar' : 'Ver / avaliar'}
                 {avaliacoesAbertas ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               </span>
-            </button>
+            </div>
 
             {avaliacoesAbertas && (
               <div className="mt-3 max-h-64 overflow-y-auto pr-1">
