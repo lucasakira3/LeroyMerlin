@@ -6,6 +6,7 @@ import { Users, Package, MessageSquare, TrendingUp, AlertTriangle, BarChart3 } f
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
+import EmptyState from '@/components/ui/EmptyState'
 import GraficoBarras from '@/components/GraficoBarras'
 import { aplicarAjustes } from '@/lib/ajustesFuncionario'
 import { getEstadoChamado } from '@/lib/chamadosFuncionario'
@@ -143,7 +144,11 @@ export default function DashboardPage() {
           </div>
           <div>
             {atividades.length === 0 && (
-              <p className="px-6 pb-6 text-sm text-gray-500">Nenhuma atividade registrada ainda.</p>
+              <EmptyState
+                icon={TrendingUp}
+                title="Nenhuma atividade ainda"
+                description="Pedidos, agendamentos e chamados aparecem aqui conforme acontecem."
+              />
             )}
             {atividades.map((act, i) => (
               <div
