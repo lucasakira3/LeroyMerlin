@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { ShoppingCart, Check } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { ShoppingCart, Check, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { SearchResult } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
+import type { ParadaRota } from '@/lib/rotaLoja'
 
 const VW = 1200
 const VH = 590
@@ -97,11 +98,62 @@ interface Props {
   loja: string
   totalEstimado?: number
   onSelect?: (produto: SearchResult['produto']) => void
+  rota?: ParadaRota[]
 }
 
-export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: Props) {
+export default function StoreMap({ resultados, loja, totalEstimado, onSelect, rota }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
+
+  // Zoom/pan do mapa — permite aproximar de um corredor específico e arrastar pra
+  // navegar, útil quando o carrinho tem muitos itens espalhados pela loja inteira.
+  const ZOOM_MIN = 1
+  const ZOOM_MAX = 5
+  const [zoom, setZoom] = useState(1)
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [arrastando, setArrastando] = useState(false)
+  const arrastoRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null)
+
+  function clampZoom(valor: number) {
+    return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, valor))
+  }
+
+  function aplicarZoom(delta: number) {
+    setZoom(z => {
+      const novo = clampZoom(z + delta)
+      if (novo === 1) setPan({ x: 0, y: 0 })
+      return novo
+    })
+  }
+
+  function handleWheel(e: React.WheelEvent<HTMLDivElement>) {
+    e.preventDefault()
+    aplicarZoom(e.deltaY < 0 ? 0.25 : -0.25)
+  }
+
+  function resetZoom() {
+    setZoom(1)
+    setPan({ x: 0, y: 0 })
+  }
+
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if (zoom <= 1) return
+    setArrastando(true)
+    arrastoRef.current = { x: e.clientX, y: e.clientY, panX: pan.x, panY: pan.y }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!arrastoRef.current) return
+    const { x, y, panX, panY } = arrastoRef.current
+    setPan({ x: panX + (e.clientX - x), y: panY + (e.clientY - y) })
+  }
+
+  function handlePointerUp(e: React.PointerEvent<HTMLDivElement>) {
+    setArrastando(false)
+    arrastoRef.current = null
+    e.currentTarget.releasePointerCapture(e.pointerId)
+  }
 
   function handleAdicionar(produtoId: string, estoque: number, e?: React.MouseEvent) {
     e?.stopPropagation()
@@ -111,13 +163,26 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
     setTimeout(() => setAdicionadoId(prev => prev === produtoId ? null : prev), 1500)
   }
 
+  const ordemPorCorredor = rota
+    ? new Map(rota.map((p, i) => [p.corredorNormalizado, i + 1]))
+    : null
+
   const pins = resultados
     .map((r, i) => {
       const pos = getPos(r.produto.corredor_normalizado)
       if (!pos) return null
-      return { ...r, pos, color: PIN_COLORS[i % PIN_COLORS.length], idx: i + 1 }
+      const idx = ordemPorCorredor?.get(r.produto.corredor_normalizado) ?? i + 1
+      return { ...r, pos, color: PIN_COLORS[i % PIN_COLORS.length], idx }
     })
     .filter(Boolean) as Array<SearchResult & { pos: {x:number;y:number}; color:string; idx:number }>
+
+  // Quando há rota calculada, a legenda abaixo do mapa deve seguir a mesma ordem de
+  // visita (não a ordem em que os produtos entraram na busca/carrinho).
+  if (ordemPorCorredor) pins.sort((a, b) => a.idx - b.idx)
+
+  const pontosRota = rota
+    ? (rota.map(p => getPos(p.corredorNormalizado)).filter(Boolean) as Array<{ x: number; y: number }>)
+    : []
 
   // Vários produtos no mesmo corredor caem exatamente nas mesmas coordenadas — sem isso,
   // o pin desenhado por último cobre os outros por completo e eles somem do mapa. Espalha
@@ -198,7 +263,53 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
         </div>
       </div>
 
-      <div className="border border-gray-100 rounded-card overflow-hidden shadow-soft bg-white relative">
+      <div
+        className="border border-gray-100 rounded-card overflow-hidden shadow-soft bg-white relative select-none"
+        onWheel={handleWheel}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+        style={{ touchAction: 'none', cursor: zoom > 1 ? (arrastando ? 'grabbing' : 'grab') : 'default' }}
+      >
+        {/* Controles de zoom */}
+        <div className="absolute z-30 top-2 right-2 flex flex-col gap-1">
+          <button
+            type="button"
+            onClick={() => aplicarZoom(0.5)}
+            disabled={zoom >= ZOOM_MAX}
+            aria-label="Aumentar zoom"
+            className="w-7 h-7 rounded-lg bg-white border border-gray-200 shadow-soft flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ZoomIn size={14} />
+          </button>
+          <button
+            type="button"
+            onClick={() => aplicarZoom(-0.5)}
+            disabled={zoom <= ZOOM_MIN}
+            aria-label="Diminuir zoom"
+            className="w-7 h-7 rounded-lg bg-white border border-gray-200 shadow-soft flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ZoomOut size={14} />
+          </button>
+          <button
+            type="button"
+            onClick={resetZoom}
+            disabled={zoom === 1}
+            aria-label="Restaurar zoom"
+            className="w-7 h-7 rounded-lg bg-white border border-gray-200 shadow-soft flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Maximize2 size={13} />
+          </button>
+        </div>
+
+        <div
+          style={{
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+            transformOrigin: 'center center',
+            transition: arrastando ? 'none' : 'transform 0.15s ease-out',
+          }}
+        >
         {/* Info box HTML — aparece ao clicar num pin */}
         {selPin && (() => {
           const { pos, produto, color } = selPin
@@ -351,6 +462,20 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
           <text x="600" y={VH-6} textAnchor="middle" fontSize="10" fontWeight="800"
             fill="#475569" fontFamily="Inter,sans-serif" letterSpacing="4">ENTRADA PRINCIPAL</text>
 
+          {/* Rota de compra sugerida */}
+          {pontosRota.length > 1 && (
+            <polyline
+              points={pontosRota.map(p => `${p.x},${p.y}`).join(' ')}
+              fill="none"
+              stroke="#16a34a"
+              strokeWidth="3"
+              strokeDasharray="7 5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.8"
+            />
+          )}
+
           {/* Pins */}
           {pins.map(pin => {
             const isSel = selectedId === pin.produto.id
@@ -374,6 +499,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
             )
           })}
         </svg>
+        </div>
       </div>
 
       {/* Legenda */}
@@ -426,6 +552,31 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* Ordem sugerida da rota */}
+      {rota && rota.length > 0 && (
+        <div className="mt-3 bg-lm-green/5 border border-lm-green/20 rounded-xl p-3">
+          <p className="text-xs font-bold text-gray-700 mb-1.5">🧭 Ordem sugerida da rota</p>
+          <ol className="space-y-1">
+            {rota.map((parada, i) => {
+              const produtosDoCorredor = resultados.filter(
+                r => r.produto.corredor_normalizado === parada.corredorNormalizado
+              )
+              const nomeCorredor = produtosDoCorredor[0]?.produto.corredor ?? parada.corredorNormalizado
+              return (
+                <li key={parada.corredorNormalizado} className="text-xs text-gray-600 flex gap-1.5">
+                  <span className="font-black text-lm-green flex-shrink-0">{i + 1}.</span>
+                  <span>
+                    <span className="font-semibold text-gray-800">{nomeCorredor}</span>
+                    {' — '}
+                    {produtosDoCorredor.map(r => r.produto.produto).join(', ')}
+                  </span>
+                </li>
+              )
+            })}
+          </ol>
         </div>
       )}
     </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Minus, Plus, Trash2, ShoppingCart, MapPin, CheckCircle2, CreditCard, QrCode, Barcode, Loader2, Check } from 'lucide-react'
+import { Minus, Plus, Trash2, ShoppingCart, MapPin, CheckCircle2, CreditCard, QrCode, Barcode, Loader2, Check, Map as MapIcon } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
@@ -15,6 +15,8 @@ import { clearProductHistory } from '@/lib/hooks/useProductTracker'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { formatarParcelamento, getOpcoesParcelamento } from '@/lib/parcelamento'
 import CartItemSkeleton from '@/components/CartItemSkeleton'
+import StoreMap from '@/components/StoreMap'
+import { calcularRota } from '@/lib/rotaLoja'
 import { showToast } from '@/lib/toast'
 import {
   getEnderecos, salvarEndereco, formatarEndereco,
@@ -61,6 +63,7 @@ export default function CarrinhoPage() {
   const [usuario, setUsuario] = useState<{ email: string } | null>(null)
   const [metodo, setMetodo] = useState<'retirada' | 'entrega'>('retirada')
   const [loja, setLoja] = useState(LOJAS[0])
+  const [verRota, setVerRota] = useState(false)
 
   // Endereço de entrega
   const [enderecosSalvos, setEnderecosSalvos] = useState<Endereco[]>([])
@@ -142,6 +145,10 @@ export default function CarrinhoPage() {
     : []
 
   const total = itensResolvidos.reduce((soma, { item, produto }) => soma + (produto.preco ?? 0) * item.quantidade, 0)
+
+  const resultadosMapa = itensResolvidos.map(({ produto }) => ({ produto, score: 1 }))
+  const rotaCalculada = calcularRota(itensResolvidos.map(({ produto }) => produto.corredor_normalizado))
+
   const parcelamentoStr = formatarParcelamento(total)
   const opcoesParcelamento = getOpcoesParcelamento(total)
 
@@ -288,6 +295,20 @@ export default function CarrinhoPage() {
 
         {itensResolvidos.length > 0 && (
           <>
+            <button
+              type="button"
+              onClick={() => setVerRota(v => !v)}
+              className="w-full flex items-center justify-center gap-2 mb-4 h-10 rounded-xl border border-lm-green/30 text-lm-green text-sm font-semibold bg-lm-green/5 hover:bg-lm-green/10 transition-colors"
+            >
+              <MapIcon size={15} /> {verRota ? 'Esconder rota no mapa' : 'Ver rota no mapa'}
+            </button>
+
+            {verRota && (
+              <Card className="mb-6">
+                <StoreMap resultados={resultadosMapa} loja={loja} totalEstimado={total} rota={rotaCalculada} />
+              </Card>
+            )}
+
             <div className="space-y-3 mb-6">
               {itensResolvidos.map(({ item, produto }) => (
                 <Card key={produto.id} padding="sm" className="flex items-center gap-3">
