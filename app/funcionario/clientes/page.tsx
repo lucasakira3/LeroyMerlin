@@ -5,6 +5,7 @@ import { Search, ChevronDown, ChevronUp, Package } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
+import EmptyState from '@/components/ui/EmptyState'
 
 interface ContaCliente {
   nome: string
@@ -190,8 +191,12 @@ export default function ClientesPage() {
               ))}
               {ordenados.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-500">
-                    Nenhum cliente encontrado.
+                  <td colSpan={5}>
+                    <EmptyState
+                      icon={Search}
+                      title="Nenhum cliente encontrado"
+                      description={busca ? 'Tente buscar por outro nome ou e-mail.' : 'Ainda não há contas cadastradas.'}
+                    />
                   </td>
                 </tr>
               )}

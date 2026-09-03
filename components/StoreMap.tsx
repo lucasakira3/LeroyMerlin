@@ -119,6 +119,23 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect }: 
     })
     .filter(Boolean) as Array<SearchResult & { pos: {x:number;y:number}; color:string; idx:number }>
 
+  // Vários produtos no mesmo corredor caem exatamente nas mesmas coordenadas — sem isso,
+  // o pin desenhado por último cobre os outros por completo e eles somem do mapa. Espalha
+  // os pins de um mesmo grupo num pequeno círculo ao redor do ponto original.
+  const gruposPorPosicao = new Map<string, typeof pins>()
+  pins.forEach(p => {
+    const chave = `${p.pos.x},${p.pos.y}`
+    gruposPorPosicao.set(chave, [...(gruposPorPosicao.get(chave) ?? []), p])
+  })
+  gruposPorPosicao.forEach(grupo => {
+    if (grupo.length <= 1) return
+    const raio = 12
+    grupo.forEach((p, gi) => {
+      const angulo = (2 * Math.PI * gi) / grupo.length - Math.PI / 2
+      p.pos = { x: p.pos.x + raio * Math.cos(angulo), y: p.pos.y + raio * Math.sin(angulo) }
+    })
+  })
+
   const selPin = selectedId ? pins.find(p => p.produto.id === selectedId) : null
 
   function handlePinClick(pin: typeof pins[0]) {

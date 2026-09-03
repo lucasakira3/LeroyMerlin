@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Search, Send, User, Clock, MapPin, MessageSquare, Bell, Check } from 'lucide-react'
+import { Search, Send, User, Clock, MapPin, MessageSquare, Bell, Check, CheckCircle2 } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
+import EmptyState from '@/components/ui/EmptyState'
 import type { Agendamento } from '@/components/AgendamentosLista'
 import { getEstadoChamado, adicionarNota, marcarAtendido } from '@/lib/chamadosFuncionario'
 import { getPedidosAjuda, marcarAjudaAtendida, type PedidoAjuda } from '@/lib/ajudaCorredor'
@@ -82,6 +83,7 @@ export default function ChamadosPage() {
 
   const chamadoSelecionado = fila.find(a => a.id === chamadoAtivoId) ?? null
   const estadoSelecionado = chamadoSelecionado ? getEstadoChamado(chamadoSelecionado.id) : null
+  const pendentesCount = fila.filter(ag => !getEstadoChamado(ag.id).atendido).length
 
   function enviarNota() {
     if (!chamadoSelecionado || !mensagem.trim()) return
@@ -102,6 +104,13 @@ export default function ChamadosPage() {
       <PageHeader
         title="Chamados"
         description="Fila de agendamentos de visita pendentes de atendimento."
+        action={
+          pendentesCount > 0 ? (
+            <Badge tone="yellow">{pendentesCount} aguardando</Badge>
+          ) : agendamentos !== null ? (
+            <Badge tone="green">Tudo em dia</Badge>
+          ) : undefined
+        }
       />
 
       <PedidosAjudaCorredor />
@@ -124,7 +133,12 @@ export default function ChamadosPage() {
               <p className="text-sm text-gray-400 text-center py-6">Carregando...</p>
             )}
             {agendamentos !== null && fila.length === 0 && (
-              <p className="text-sm text-gray-400 text-center py-6">Nenhum agendamento pendente.</p>
+              <EmptyState
+                icon={CheckCircle2}
+                tone="green"
+                title="Tudo em dia por aqui"
+                description={busca ? 'Nenhum resultado para essa busca.' : 'Nenhum chamado pendente no momento.'}
+              />
             )}
             {fila.map(ag => {
               const estado = getEstadoChamado(ag.id)
@@ -237,9 +251,13 @@ export default function ChamadosPage() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-400 flex-col gap-3">
-              <MessageSquare size={48} className="opacity-20" />
-              <p>Selecione um chamado para ver os detalhes</p>
+            <div className="flex-1 flex items-center justify-center">
+              <EmptyState
+                icon={MessageSquare}
+                size="md"
+                title="Selecione um chamado para ver os detalhes"
+                description="A conversa e as notas de atendimento aparecem aqui."
+              />
             </div>
           )}
         </Card>

@@ -21,7 +21,7 @@ export default function MiniMapaCorredor({ corredorNormalizado }: { corredorNorm
             return (
               <span
                 key={i}
-                className={`h-1 flex-1 rounded-full ${ativo ? 'bg-lm-green' : 'bg-gray-200'}`}
+                className={`h-1 flex-1 rounded-full ${ativo ? 'bg-lm-green' : 'bg-gray-200 dark:bg-gray-600'}`}
               />
             )
           })}

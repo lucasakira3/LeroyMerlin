@@ -1,7 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { CalendarCheck, CheckCircle2, ChevronRight } from 'lucide-react'
+import {
+  CalendarCheck, CheckCircle2, ChevronRight,
+  Bath, ChefHat, Zap, Droplet, LayoutGrid, Paintbrush, TreePine, HardHat,
+  type LucideIcon,
+} from 'lucide-react'
 import { salvarAgendamento } from './AgendamentosLista'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { adicionarNotificacao } from '@/lib/clientNotificacoes'
@@ -26,15 +30,15 @@ const lojas = [
   'Goiânia — GO',
 ]
 
-const servicos = [
-  { id: 'banheiro', label: 'Projeto de Banheiro', desc: 'Planejamento de renovação completa' },
-  { id: 'cozinha', label: 'Projeto de Cozinha', desc: 'Design e escolha de móveis e revestimentos' },
-  { id: 'eletrica', label: 'Consultoria Elétrica', desc: 'Instalações e dimensionamento' },
-  { id: 'hidraulica', label: 'Consultoria Hidráulica', desc: 'Encanamentos e acabamentos' },
-  { id: 'piso', label: 'Piso e Revestimento', desc: 'Escolha e cálculo de materiais' },
-  { id: 'pintura', label: 'Consultoria de Pintura', desc: 'Cores, texturas e tintas adequadas' },
-  { id: 'jardim', label: 'Paisagismo e Jardim', desc: 'Projeto de áreas externas' },
-  { id: 'geral', label: 'Dúvida Geral de Obra', desc: 'Orientação para reforma em geral' },
+const servicos: Array<{ id: string; label: string; desc: string; icon: LucideIcon }> = [
+  { id: 'banheiro', label: 'Projeto de Banheiro', desc: 'Planejamento de renovação completa', icon: Bath },
+  { id: 'cozinha', label: 'Projeto de Cozinha', desc: 'Design e escolha de móveis e revestimentos', icon: ChefHat },
+  { id: 'eletrica', label: 'Consultoria Elétrica', desc: 'Instalações e dimensionamento', icon: Zap },
+  { id: 'hidraulica', label: 'Consultoria Hidráulica', desc: 'Encanamentos e acabamentos', icon: Droplet },
+  { id: 'piso', label: 'Piso e Revestimento', desc: 'Escolha e cálculo de materiais', icon: LayoutGrid },
+  { id: 'pintura', label: 'Consultoria de Pintura', desc: 'Cores, texturas e tintas adequadas', icon: Paintbrush },
+  { id: 'jardim', label: 'Paisagismo e Jardim', desc: 'Projeto de áreas externas', icon: TreePine },
+  { id: 'geral', label: 'Dúvida Geral de Obra', desc: 'Orientação para reforma em geral', icon: HardHat },
 ]
 
 const horarios = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00']
@@ -124,14 +128,21 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 <button
                   key={s.id}
                   onClick={() => set('servico', s.id)}
-                  className={`text-left p-3 rounded-xl border transition-all ${
+                  className={`flex items-start gap-3 text-left p-3 rounded-xl border transition-all ${
                     form.servico === s.id
                       ? 'border-lm-green bg-lm-green/5 ring-1 ring-lm-green'
                       : 'border-gray-200 bg-white hover:border-lm-green/40'
                   }`}
                 >
-                  <p className="text-sm font-medium text-lm-dark">{s.label}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{s.desc}</p>
+                  <div className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${
+                    form.servico === s.id ? 'bg-lm-green text-white' : 'bg-lm-green/10 text-lm-green'
+                  }`}>
+                    <s.icon size={18} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-lm-dark">{s.label}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{s.desc}</p>
+                  </div>
                 </button>
               ))}
             </div>
