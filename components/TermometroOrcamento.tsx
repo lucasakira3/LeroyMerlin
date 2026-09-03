@@ -141,6 +141,15 @@ export default function TermometroOrcamento() {
     <div className="sticky top-0 z-20 w-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800">
       <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-3">
         <Wallet size={16} className="text-gray-400 dark:text-zinc-500 flex-shrink-0" />
+        {!editando && orcamento !== null && (
+          <button
+            onClick={() => { setValorInput(String(orcamento)); setEditando(true) }}
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
+            aria-label="Editar orçamento"
+          >
+            <Pencil size={14} />
+          </button>
+        )}
 
         {editando || orcamento === null ? (
           <form
@@ -197,13 +206,6 @@ export default function TermometroOrcamento() {
                 {expandido ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </button>
             )}
-            <button
-              onClick={() => { setValorInput(String(orcamento)); setEditando(true) }}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
-              aria-label="Editar orçamento"
-            >
-              <Pencil size={14} />
-            </button>
           </>
         )}
       </div>
