@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
   X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot,
-  Heart, ShoppingCart, Scale, Star, ChevronDown, ChevronUp,
+  Heart, Scale, Star, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
 import { getGaleriaCategoria } from '@/lib/categoriaImagens'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
-import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
+import SeletorQuantidadeCarrinho from './ui/SeletorQuantidadeCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
 import { addAoHistorico } from '@/lib/clientHistorico'
 import { formatarParcelamento } from '@/lib/parcelamento'
@@ -99,7 +99,6 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const [favorito, setFavorito] = useState(false)
   const [zoomAberto, setZoomAberto] = useState(false)
   const [fotoAtiva, setFotoAtiva] = useState(0)
-  const [adicionado, setAdicionado] = useState(false)
   const [noComparador, setNoComparador] = useState(false)
   const [comparadorMsg, setComparadorMsg] = useState<string | null>(null)
   const [avaliacoesAbertas, setAvaliacoesAbertas] = useState(false)
@@ -111,7 +110,6 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     setFavorito(isFavorito(produto.id))
     setZoomAberto(false)
     setFotoAtiva(0)
-    setAdicionado(false)
     setNoComparador(estaNoComparador(produto.id))
     setComparadorMsg(null)
     setAvaliacoesAbertas(false)
@@ -151,12 +149,6 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
       setLoadingChat(false)
     }
   }
-  function handleAdicionarCarrinho() {
-    adicionarAoCarrinho(produto.id)
-    setAdicionado(true)
-    setTimeout(() => setAdicionado(false), 1500)
-  }
-
   function handleFavorito() {
     const novoEstado = toggleFavorito(produto.id)
     setFavorito(novoEstado)
@@ -382,14 +374,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </div>
           </div>
 
-          <button
-            onClick={handleAdicionarCarrinho}
-            disabled={produto.estoque === 0}
-            className="w-full flex items-center justify-center gap-1.5 bg-lm-green text-white text-sm font-semibold px-3 py-2.5 rounded-xl hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <ShoppingCart size={15} />
-            {adicionado ? 'Adicionado ✓' : 'Adicionar ao carrinho'}
-          </button>
+          <SeletorQuantidadeCarrinho produtoId={produto.id} estoque={produto.estoque} size="lg" />
 
           {/* Badges — Estoque, Complexidade, Sustentabilidade */}
           <div className="flex flex-wrap gap-1.5">

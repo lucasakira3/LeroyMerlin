@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { MapPin, ShoppingCart, Check, Square, CheckSquare, Heart } from 'lucide-react'
+import { MapPin, Square, CheckSquare, Heart } from 'lucide-react'
 import StockIndicator from './StockIndicator'
 import SustainabilityBadge from './SustainabilityBadge'
 import StarRating from './ui/StarRating'
+import SeletorQuantidadeCarrinho from './ui/SeletorQuantidadeCarrinho'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
-import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { getMedia } from '@/lib/clientAvaliacoes'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { formatarParcelamento } from '@/lib/parcelamento'
@@ -46,7 +46,6 @@ export default function ProductCard({
   style,
   className = '',
 }: ProductCardProps) {
-  const [adicionado, setAdicionado] = useState(false)
   const [favoritado, setFavoritado] = useState(false)
   const emOferta = produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco
   const { media, total: totalAvaliacoes } = getMedia(produto.id)
@@ -55,15 +54,6 @@ export default function ProductCard({
   useEffect(() => {
     setFavoritado(isFavorito(produto.id))
   }, [produto.id])
-
-  function handleAdicionarCarrinho(e: React.MouseEvent) {
-    e.stopPropagation()
-    e.preventDefault()
-    if (produto.estoque === 0) return
-    adicionarAoCarrinho(produto.id)
-    setAdicionado(true)
-    setTimeout(() => setAdicionado(false), 1500)
-  }
 
   function handleFavorito(e: React.MouseEvent) {
     e.stopPropagation()
@@ -149,24 +139,16 @@ export default function ProductCard({
             {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
         )}
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="flex items-end justify-between gap-2 mb-2">
           <div>
             <p className="text-base font-black text-lm-dark">
               {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </p>
             {parcelamentoStr && <p className="text-[10px] text-gray-400">{parcelamentoStr}</p>}
           </div>
-          <button
-            type="button"
-            onClick={handleAdicionarCarrinho}
-            disabled={produto.estoque === 0}
-            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 text-white ${
-              adicionado ? 'bg-lm-green' : 'bg-lm-dark hover:bg-lm-green'
-            }`}
-          >
-            <ShoppingCart size={13} />
-            {adicionado ? 'Adicionado ✓' : 'Adicionar'}
-          </button>
+          <div className="w-28 flex-shrink-0">
+            <SeletorQuantidadeCarrinho produtoId={produto.id} estoque={produto.estoque} />
+          </div>
         </div>
         <div className="flex items-center justify-between gap-1.5 flex-wrap">
           <StockIndicator estoque={produto.estoque} />
