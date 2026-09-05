@@ -267,7 +267,7 @@ export default function CarrinhoPage() {
 
             <div className="flex gap-3 justify-center">
               <Link href="/conta"><Button variant="secondary">Ver meus pedidos</Button></Link>
-              <Link href="/"><Button variant="primary">Continuar comprando</Button></Link>
+              <Link href="/produtos"><Button variant="primary">Continuar comprando</Button></Link>
             </div>
           </Card>
         </div>
@@ -290,7 +290,7 @@ export default function CarrinhoPage() {
           <Card className="text-center py-10">
             <ShoppingCart size={32} className="text-gray-300 mx-auto mb-3" />
             <p className="text-sm text-gray-500 mb-4">Seu carrinho está vazio.</p>
-            <Link href="/"><Button variant="primary">Ver produtos</Button></Link>
+            <Link href="/produtos"><Button variant="primary">Ver produtos</Button></Link>
           </Card>
         )}
 

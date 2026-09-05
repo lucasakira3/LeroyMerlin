@@ -5,17 +5,13 @@ import Link from 'next/link'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 
-type AcaoSlide =
-  | { tipo: 'link'; href: string }
-  | { tipo: 'categoria'; slug: string; label: string }
-
 interface Slide {
   badge: string
   badgeClasse: string
   titulo: string
   subtitulo: string
   categoria: string
-  acao: AcaoSlide
+  href: string
 }
 
 const SLIDES: Slide[] = [
@@ -25,7 +21,7 @@ const SLIDES: Slide[] = [
     titulo: 'Até 30% off',
     subtitulo: 'em ferramentas elétricas selecionadas',
     categoria: 'Ferramentas',
-    acao: { tipo: 'categoria', slug: 'ferramentas', label: 'Ferramentas' },
+    href: '/produtos?categoria=ferramentas',
   },
   {
     badge: 'NOVIDADE',
@@ -33,7 +29,7 @@ const SLIDES: Slide[] = [
     titulo: 'Projeto Guiado',
     subtitulo: 'Descreva sua reforma, a IA monta a lista completa de materiais',
     categoria: 'Construção',
-    acao: { tipo: 'link', href: '/projeto' },
+    href: '/projeto',
   },
   {
     badge: 'PRA VOCÊ',
@@ -41,7 +37,7 @@ const SLIDES: Slide[] = [
     titulo: 'Entrevista guiada',
     subtitulo: 'Responda 5 perguntas e receba sugestões pensadas pra você',
     categoria: 'Decoração',
-    acao: { tipo: 'link', href: '/conta' },
+    href: '/conta',
   },
   {
     badge: '24H',
@@ -49,17 +45,13 @@ const SLIDES: Slide[] = [
     titulo: 'Tire suas dúvidas',
     subtitulo: 'Pergunte sobre materiais e técnicas antes de comprar, com a IA',
     categoria: 'Jardim',
-    acao: { tipo: 'link', href: '/duvidas' },
+    href: '/duvidas',
   },
 ]
 
 const INTERVALO_MS = 5000
 
-interface BannerCarrosselProps {
-  onCategoriaClick: (categoria: { slug: string; label: string }) => void
-}
-
-export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselProps) {
+export default function BannerCarrossel() {
   const [slide, setSlide] = useState(0)
   const [pausado, setPausado] = useState(false)
 
@@ -72,7 +64,6 @@ export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselPro
   }, [slide, pausado])
 
   const atual = SLIDES[slide]
-  const acao = atual.acao
 
   function irParaAnterior() {
     setSlide(s => (s - 1 + SLIDES.length) % SLIDES.length)
@@ -105,26 +96,9 @@ export default function BannerCarrossel({ onCategoriaClick }: BannerCarrosselPro
         className="pointer-events-none absolute -right-4 -top-2 h-[120%] w-3/5 object-cover"
       />
 
-      {acao.tipo === 'link' ? (
-        <Link href={acao.href} className="block h-full">
-          {conteudo}
-        </Link>
-      ) : (
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => onCategoriaClick({ slug: acao.slug, label: acao.label })}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              onCategoriaClick({ slug: acao.slug, label: acao.label })
-            }
-          }}
-          className="h-full cursor-pointer"
-        >
-          {conteudo}
-        </div>
-      )}
+      <Link href={atual.href} className="block h-full">
+        {conteudo}
+      </Link>
 
       <button
         type="button"

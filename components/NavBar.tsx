@@ -12,7 +12,7 @@ import NotificacoesBell from './NotificacoesBell'
 import HeaderSearch from './HeaderSearch'
 
 const tabs = [
-  { href: '/', label: 'Buscar Produtos', icon: Search },
+  { href: '/produtos', label: 'Produtos', icon: Search },
   { href: '/projeto', label: 'Projeto Guiado', icon: Sparkles },
   { href: '/duvidas', label: 'Tire Dúvidas', icon: MessageCircleQuestion },
   { href: '/agendamento', label: 'Agendar Visita', icon: CalendarCheck },

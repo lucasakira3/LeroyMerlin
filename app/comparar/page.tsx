@@ -76,7 +76,7 @@ function ComparadorContent() {
           <Card className="text-center py-10">
             <Scale size={32} className="text-gray-300 mx-auto mb-3" />
             <p className="text-sm text-gray-500 mb-4">Nenhum produto selecionado pra comparar.</p>
-            <Link href="/"><Button variant="primary">Ver produtos</Button></Link>
+            <Link href="/produtos"><Button variant="primary">Ver produtos</Button></Link>
           </Card>
         </div>
       </main>
