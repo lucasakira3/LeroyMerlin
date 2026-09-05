@@ -72,3 +72,16 @@ export interface DiagnosticoVisualResponse {
   resultados: SearchResult[];       // lista achatada e sem duplicatas, pronta pro mapa da loja
   total: number;
 }
+
+export type CompatibilidadeVeredito = "sim" | "nao" | "talvez";
+
+export interface CompatibilidadeRequest {
+  image: string; // base64 da imagem (sem prefixo data:image/...)
+  mimeType?: string;
+}
+
+export interface CompatibilidadeResponse {
+  imagem_reconhecida: boolean;      // false quando a foto não mostra nada analisável
+  veredito: CompatibilidadeVeredito | null;
+  explicacao: string;               // em linguagem simples, sempre em português
+}

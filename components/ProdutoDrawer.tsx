@@ -18,6 +18,7 @@ import { getIconeEspecificacao, parseEspecificacoes } from '@/lib/especificacaoI
 import { getMedia } from '@/lib/clientAvaliacoes'
 import AvaliacoesProduto from './AvaliacoesProduto'
 import BotaoAjudaCorredor from './BotaoAjudaCorredor'
+import VerificarCompatibilidade from './VerificarCompatibilidade'
 import StarRating from './ui/StarRating'
 import type { SearchResult } from '@/types/produto'
 
@@ -328,6 +329,8 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 <SendHorizonal size={15} />
               </button>
             </div>
+
+            <VerificarCompatibilidade produtoId={produto.id} />
           </div>
         </div>
 
