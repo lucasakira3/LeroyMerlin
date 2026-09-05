@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, MessageCircleQuestion, CalendarCheck, Sparkles, Tag, User, Menu, X } from 'lucide-react'
+import { Search, LayoutGrid, MessageCircleQuestion, CalendarCheck, Sparkles, Tag, User, Menu, X } from 'lucide-react'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import ThemeToggle from './ThemeToggle'
 import CarrinhoIcon from './CarrinhoIcon'
@@ -12,7 +12,8 @@ import NotificacoesBell from './NotificacoesBell'
 import HeaderSearch from './HeaderSearch'
 
 const tabs = [
-  { href: '/produtos', label: 'Produtos', icon: Search },
+  { href: '/buscar', label: 'Buscar', icon: Search },
+  { href: '/produtos', label: 'Produtos', icon: LayoutGrid },
   { href: '/projeto', label: 'Projeto Guiado', icon: Sparkles },
   { href: '/duvidas', label: 'Tire Dúvidas', icon: MessageCircleQuestion },
   { href: '/agendamento', label: 'Agendar Visita', icon: CalendarCheck },

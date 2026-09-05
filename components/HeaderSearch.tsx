@@ -16,7 +16,7 @@ export default function HeaderSearch() {
     if (!termo) return
     registrarBusca(termo)
     setAberto(false)
-    router.push(`/produtos?q=${encodeURIComponent(termo)}`)
+    router.push(`/buscar?q=${encodeURIComponent(termo)}`)
   }
 
   function handleSubmit(e: React.FormEvent) {
