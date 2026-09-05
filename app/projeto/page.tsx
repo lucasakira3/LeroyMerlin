@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Ruler, ChevronRight } from 'lucide-react'
 import ProjetoWizard from '@/components/ProjetoWizard'
 import SugestoesProjetoGuiado from '@/components/SugestoesProjetoGuiado'
+import TermometroOrcamento from '@/components/TermometroOrcamento'
 import PageHeader from '@/components/ui/PageHeader'
 
 export default function ProjetoPage() {
@@ -11,6 +12,10 @@ export default function ProjetoPage() {
         title="Projeto Guiado"
         description="Descreva o que você quer fazer e a IA monta a lista completa de materiais."
       />
+
+      <div className="max-w-2xl">
+        <TermometroOrcamento />
+      </div>
 
       <Link
         href="/medir"

@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
 import { Wallet, Pencil, TrendingDown, X, Check, ChevronDown, ChevronUp, Minus, Plus, ArrowRight } from 'lucide-react'
 import { getCarrinho, removerDoCarrinho, adicionarAoCarrinho, atualizarQuantidade } from '@/lib/clientCarrinho'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
@@ -23,12 +22,13 @@ const PALETA_SEGMENTOS = [
 ]
 
 // Barra viva de orçamento (ver docs/backlog-fluxo-loja-fisica.md, "Termômetro de Orçamento
-// Vivo"): fica sticky no topo de toda página de cliente, escuta os mesmos eventos globais
+// Vivo"): acoplada à tela de Projeto Guiado (app/projeto/page.tsx), não mais uma barra
+// sticky em toda página do cliente — ficava "feia" aparecendo em telas sem relação com
+// planejamento de orçamento (ver histórico de mudança). Escuta os mesmos eventos globais
 // que o carrinho já dispara (lm-carrinho-change) mais um novo (lm-orcamento-change), e
 // quando o total passa de 90% do teto sugere trocar o item mais caro por uma alternativa
 // mais barata da mesma categoria (lib/sugestaoEconomia.ts).
 export default function TermometroOrcamento() {
-  const pathname = usePathname()
   const [itens, setItens] = useState<{ produto: ProdutoResolvido; quantidade: number }[]>([])
   const [orcamento, setOrcamento] = useState<number | null>(null)
   const [editando, setEditando] = useState(false)
@@ -91,8 +91,6 @@ export default function TermometroOrcamento() {
     return () => { cancelado = true }
   }, [orcamento, itens, sugestaoDispensada, percentual])
 
-  if (pathname.startsWith('/funcionario')) return null
-
   function salvarOrcamento() {
     const valor = Number(valorInput.replace(',', '.'))
     if (Number.isFinite(valor) && valor > 0) {
@@ -139,8 +137,8 @@ export default function TermometroOrcamento() {
     percentual >= 1 ? 'text-red-600 dark:text-red-400' : percentual >= 0.7 ? 'text-amber-600 dark:text-amber-400' : 'text-lm-green'
 
   return (
-    <div className="sticky top-0 z-20 w-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800">
-      <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-3">
+    <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-card shadow-soft">
+      <div className="px-4 py-3 flex items-center gap-3">
         <Wallet size={16} className="text-gray-400 dark:text-zinc-500 flex-shrink-0" />
         {!editando && orcamento !== null && (
           <button
@@ -212,7 +210,7 @@ export default function TermometroOrcamento() {
       </div>
 
       {expandido && itens.length > 0 && orcamento !== null && (
-        <div className="max-w-6xl mx-auto px-4 pb-2 space-y-1.5">
+        <div className="px-4 pb-3 space-y-1.5">
           {itens.map((item, i) => {
             const subtotal = item.produto.preco * item.quantidade
             const fatia = (subtotal / orcamento) * 100
@@ -274,7 +272,7 @@ export default function TermometroOrcamento() {
       )}
 
       {sugestao && !sugestaoDispensada && (
-        <div className="max-w-6xl mx-auto px-4 pb-2 flex items-center gap-3 text-xs">
+        <div className="px-4 pb-3 flex items-center gap-3 text-xs">
           <TrendingDown size={14} className={`flex-shrink-0 ${percentual >= 1 ? 'text-red-500' : 'text-lm-green'}`} />
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <img

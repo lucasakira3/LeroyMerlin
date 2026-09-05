@@ -6,7 +6,6 @@ import TourGuiado from "@/components/TourGuiado";
 import PageTransition from "@/components/PageTransition";
 import CompareToast from "@/components/CompareToast";
 import UndoToast from "@/components/UndoToast";
-import TermometroOrcamento from "@/components/TermometroOrcamento";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,7 +40,6 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <NavBar />
-        <TermometroOrcamento />
         <TourGuiado />
         <PageTransition>{children}</PageTransition>
         <CompareToast />
