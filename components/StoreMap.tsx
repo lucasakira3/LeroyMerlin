@@ -272,14 +272,18 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
         onPointerLeave={handlePointerUp}
         style={{ touchAction: 'none', cursor: zoom > 1 ? (arrastando ? 'grabbing' : 'grab') : 'default' }}
       >
-        {/* Controles de zoom */}
-        <div className="absolute z-30 top-2 right-2 flex flex-col gap-1">
+        {/* Controles de zoom — pílula flutuante escura sobre a planta clara (mesmo padrão
+            visual dos ícones de favoritar/comparar sobre a foto do produto em
+            ProdutoDrawer.tsx), em vez de quadrados soltos. Fixo em tom escuro de propósito:
+            o SVG da planta da loja não inverte com o tema (ver [[project-dev-workflow]]),
+            então um controle neutro em cima dela fica legível nos dois modos. */}
+        <div className="absolute z-30 top-2 right-2 flex flex-col gap-0.5 bg-gray-900/80 backdrop-blur-sm rounded-full p-1 shadow-md">
           <button
             type="button"
             onClick={() => aplicarZoom(0.5)}
             disabled={zoom >= ZOOM_MAX}
             aria-label="Aumentar zoom"
-            className="w-7 h-7 rounded-lg bg-white border border-gray-200 shadow-soft flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-7 h-7 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <ZoomIn size={14} />
           </button>
@@ -288,7 +292,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             onClick={() => aplicarZoom(-0.5)}
             disabled={zoom <= ZOOM_MIN}
             aria-label="Diminuir zoom"
-            className="w-7 h-7 rounded-lg bg-white border border-gray-200 shadow-soft flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-7 h-7 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <ZoomOut size={14} />
           </button>
@@ -297,7 +301,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             onClick={resetZoom}
             disabled={zoom === 1}
             aria-label="Restaurar zoom"
-            className="w-7 h-7 rounded-lg bg-white border border-gray-200 shadow-soft flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-7 h-7 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <Maximize2 size={13} />
           </button>
@@ -502,9 +506,16 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
         </div>
       </div>
 
-      {/* Legenda */}
+      {/* Legenda — quando há rota calculada, os cards já vêm na ordem de visita (ver
+          `ordemPorCorredor` acima), então esse título é só um rótulo pro que já está
+          visível ali embaixo, não uma segunda lista repetindo a mesma informação em texto. */}
+      {rota && rota.length > 0 && pins.length > 0 && (
+        <p className="mt-3 text-xs font-bold text-gray-700 dark:text-zinc-300 flex items-center gap-1">
+          🧭 Ordem sugerida da rota
+        </p>
+      )}
       {pins.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className={`${rota && rota.length > 0 ? 'mt-1.5' : 'mt-3'} flex flex-wrap gap-2`}>
           {pins.map((pin, i) => {
             const isSel = selectedId === pin.produto.id
             return (
@@ -555,30 +566,6 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
         </div>
       )}
 
-      {/* Ordem sugerida da rota */}
-      {rota && rota.length > 0 && (
-        <div className="mt-3 bg-lm-green/5 border border-lm-green/20 rounded-xl p-3">
-          <p className="text-xs font-bold text-gray-700 mb-1.5">🧭 Ordem sugerida da rota</p>
-          <ol className="space-y-1">
-            {rota.map((parada, i) => {
-              const produtosDoCorredor = resultados.filter(
-                r => r.produto.corredor_normalizado === parada.corredorNormalizado
-              )
-              const nomeCorredor = produtosDoCorredor[0]?.produto.corredor ?? parada.corredorNormalizado
-              return (
-                <li key={parada.corredorNormalizado} className="text-xs text-gray-600 flex gap-1.5">
-                  <span className="font-black text-lm-green flex-shrink-0">{i + 1}.</span>
-                  <span>
-                    <span className="font-semibold text-gray-800">{nomeCorredor}</span>
-                    {' — '}
-                    {produtosDoCorredor.map(r => r.produto.produto).join(', ')}
-                  </span>
-                </li>
-              )
-            })}
-          </ol>
-        </div>
-      )}
     </div>
   )
 }

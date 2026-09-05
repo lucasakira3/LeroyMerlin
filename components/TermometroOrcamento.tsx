@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { Wallet, Pencil, TrendingDown, X, Check, ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react'
+import { Wallet, Pencil, TrendingDown, X, Check, ChevronDown, ChevronUp, Minus, Plus, ArrowRight } from 'lucide-react'
 import { getCarrinho, removerDoCarrinho, adicionarAoCarrinho, atualizarQuantidade } from '@/lib/clientCarrinho'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { getOrcamento, definirOrcamento } from '@/lib/clientOrcamento'
 import { buscarSugestaoTroca, type SugestaoTroca } from '@/lib/sugestaoEconomia'
+import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { getPerfil } from '@/lib/clientPerfil'
 import { ORCAMENTO_PARA_FAIXA } from '@/lib/perfilSugestoes'
@@ -275,6 +276,19 @@ export default function TermometroOrcamento() {
       {sugestao && !sugestaoDispensada && (
         <div className="max-w-6xl mx-auto px-4 pb-2 flex items-center gap-3 text-xs">
           <TrendingDown size={14} className={`flex-shrink-0 ${percentual >= 1 ? 'text-red-500' : 'text-lm-green'}`} />
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <img
+              src={getImagemCategoria(sugestao.itemAtual.categoria, sugestao.itemAtual.id)}
+              alt=""
+              className="w-8 h-8 rounded-lg object-cover opacity-60"
+            />
+            <ArrowRight size={12} className="text-gray-300 dark:text-zinc-600 flex-shrink-0" />
+            <img
+              src={getImagemCategoria(sugestao.alternativa.categoria, sugestao.alternativa.id)}
+              alt=""
+              className="w-8 h-8 rounded-lg object-cover ring-2 ring-lm-green/40"
+            />
+          </div>
           <p className="flex-1 text-gray-600 dark:text-zinc-300">
             {percentual >= 1 ? 'Você passou do limite do orçamento.' : 'Você está perto do limite.'} Troque <strong className="text-gray-900 dark:text-zinc-50">{sugestao.itemAtual.produto}</strong> por{' '}
             <strong className="text-gray-900 dark:text-zinc-50">{sugestao.alternativa.produto}</strong> e economize{' '}
