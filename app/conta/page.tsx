@@ -9,6 +9,7 @@ import Button from "@/components/ui/Button";
 import ProductListItem from "@/components/ProductListItem";
 import Pagination from "@/components/ui/Pagination";
 import MeusDados from "@/components/MeusDados";
+import PrivacidadeDados from "@/components/PrivacidadeDados";
 import EnderecosSalvos from "@/components/EnderecosSalvos";
 import PedidoTimeline from "@/components/PedidoTimeline";
 import StarRating from "@/components/ui/StarRating";
@@ -409,6 +410,7 @@ export default function ContaPage() {
           mensagemVazia="Nenhum produto visitado ainda — suas buscas vão aparecer aqui."
           limite={5}
         />
+        <PrivacidadeDados email={usuario.email} />
       </div>
     </main>
   );
