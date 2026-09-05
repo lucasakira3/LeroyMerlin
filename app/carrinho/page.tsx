@@ -15,6 +15,7 @@ import { clearProductHistory } from '@/lib/hooks/useProductTracker'
 import { getImagemCategoria } from '@/lib/categoriaImagens'
 import { formatarParcelamento, getOpcoesParcelamento } from '@/lib/parcelamento'
 import CartItemSkeleton from '@/components/CartItemSkeleton'
+import TermometroOrcamento from '@/components/TermometroOrcamento'
 import StoreMap from '@/components/StoreMap'
 import { calcularRota } from '@/lib/rotaLoja'
 import { showToast } from '@/lib/toast'
@@ -295,6 +296,10 @@ export default function CarrinhoPage() {
 
         {itensResolvidos.length > 0 && (
           <>
+            <div className="mb-4">
+              <TermometroOrcamento />
+            </div>
+
             <button
               type="button"
               onClick={() => setVerRota(v => !v)}
