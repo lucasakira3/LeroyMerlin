@@ -1,20 +1,15 @@
 import Link from 'next/link'
 import { Search, LayoutGrid, ArrowRight } from 'lucide-react'
-import BannerCarrossel from '@/components/BannerCarrossel'
-import VitrineOfertas from '@/components/VitrineOfertas'
 import Card from '@/components/ui/Card'
 
-// Antes essa tela também tinha o painel de categorias e a busca inteligente misturados
-// aqui — usuário achou poluído. Agora a home é só a "vitrine" (banner + ofertas + stats) e
-// duas abas próprias no NavBar levam pra cada jeito de achar produto: "Buscar"
-// (components/BuscarView.tsx, texto/foto) e "Produtos" (components/ProdutosView.tsx,
-// categorias).
+// Banner promocional e vitrine de ofertas saíram daqui, foram pra dentro de
+// components/BuscarView.tsx — usuário pediu explicitamente ("é como se fosse a vitrine da
+// loja"), já que esses dois elementos fazem mais sentido no primeiro lugar onde o cliente
+// realmente busca um produto do que numa home cada vez mais enxuta. Home fica só com os
+// dois atalhos de entrada (buscar / navegar por categoria) e a barra de stats.
 export default function HomeView() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
-      {/* Banner promocional */}
-      <BannerCarrossel />
-
       {/* Chamadas pras telas de busca e produtos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <Link
@@ -45,9 +40,6 @@ export default function HomeView() {
           <ArrowRight size={20} className="flex-shrink-0 text-gray-400" />
         </Link>
       </div>
-
-      {/* Ofertas em destaque */}
-      <VitrineOfertas />
 
       {/* Info bar */}
       <div className="grid grid-cols-3 gap-4 text-center text-xs text-gray-500">
