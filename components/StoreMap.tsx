@@ -186,7 +186,11 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
 
   // Vários produtos no mesmo corredor caem exatamente nas mesmas coordenadas — sem isso,
   // o pin desenhado por último cobre os outros por completo e eles somem do mapa. Espalha
-  // os pins de um mesmo grupo num pequeno círculo ao redor do ponto original.
+  // os pins de um mesmo grupo num pequeno círculo ao redor do ponto original. O raio cresce
+  // com o tamanho do grupo (regra: raio tal que a distância entre pins vizinhos no círculo
+  // fique perto do diâmetro do próprio pin) — com raio fixo, grupos de 4-5 produtos no
+  // mesmo corredor (comum quando a busca traz muitas variações do mesmo item) continuavam
+  // se sobrepondo bastante mesmo espalhados.
   const gruposPorPosicao = new Map<string, typeof pins>()
   pins.forEach(p => {
     const chave = `${p.pos.x},${p.pos.y}`
@@ -194,7 +198,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
   })
   gruposPorPosicao.forEach(grupo => {
     if (grupo.length <= 1) return
-    const raio = 12
+    const raio = grupo.length <= 2 ? 12 : Math.min(22, 10 / Math.sin(Math.PI / grupo.length))
     grupo.forEach((p, gi) => {
       const angulo = (2 * Math.PI * gi) / grupo.length - Math.PI / 2
       p.pos = { x: p.pos.x + raio * Math.cos(angulo), y: p.pos.y + raio * Math.sin(angulo) }
@@ -480,8 +484,9 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             />
           )}
 
-          {/* Pins */}
-          {pins.map(pin => {
+          {/* Pins — o selecionado é redesenhado por último (SVG pinta na ordem do DOM) pra
+              nunca ficar escondido embaixo de outros pins do mesmo corredor. */}
+          {[...pins].sort((a, b) => Number(a.produto.id === selectedId) - Number(b.produto.id === selectedId)).map(pin => {
             const isSel = selectedId === pin.produto.id
             return (
               <g key={pin.produto.id}
@@ -520,10 +525,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             const isSel = selectedId === pin.produto.id
             return (
               <div key={pin.produto.id}
-                onClick={() => {
-                  if (onSelect) onSelect(pin.produto)
-                  else handlePinClick(pin)
-                }}
+                onClick={() => handlePinClick(pin)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs cursor-pointer transition-all animate-fade-in-up ${
                   isSel ? 'shadow-md scale-[1.02]' : 'hover:shadow-sm'
                 }`}
