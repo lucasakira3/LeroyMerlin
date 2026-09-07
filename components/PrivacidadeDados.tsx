@@ -10,12 +10,20 @@ import { validarLogin } from '@/lib/clientContas'
 import { logoutUsuario } from '@/lib/clientAuth'
 import { showToast } from '@/lib/toast'
 
+// Seção de LGPD em /conta: exportar e apagar tudo que o app guarda sobre o cliente (a lógica
+// de o que exatamente conta como "meus dados" vive em lib/privacidadeDados.ts). Apagar exige
+// reconfirmar a senha (mesmo padrão de MeusDados.tsx pra trocar senha) porque é uma ação
+// irreversível de um clique só — sem esse gate, um clique acidental no botão errado
+// apagaria a conta na hora.
 export default function PrivacidadeDados({ email }: { email: string }) {
   const router = useRouter()
   const [confirmando, setConfirmando] = useState(false)
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState<string | null>(null)
 
+  // Blob + <a download> clicado via JS é o único jeito de gerar um download de arquivo
+  // client-side sem backend: o navegador não deixa "salvar arquivo" a partir só de uma
+  // string em memória, precisa desse link temporário (criado, clicado e descartado na hora).
   function exportar() {
     const dados = exportarDadosCliente(email)
     const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' })

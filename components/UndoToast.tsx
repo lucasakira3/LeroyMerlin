@@ -19,6 +19,9 @@ export default function UndoToast() {
       return
     }
     clearTimeout(hideTimer.current)
+    // Atraso de 1 tick antes de ativar: se setActive(true) rodasse no mesmo render que
+    // monta o toast, o navegador não teria uma transição CSS de opacity/translate pra
+    // animar (partiria já do estado final), então a entrada apareceria sem fade.
     const show = setTimeout(() => setActive(true), 20)
     hideTimer.current = setTimeout(() => setActive(false), DURACAO_MS)
     return () => {

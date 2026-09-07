@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { flashModel } from "@/lib/gemini";
 import { getObjetoReferencia, type MedicaoResponse } from "@/lib/medir";
 
+// Régua virtual (ver lib/medir.ts pro porquê de precisar de um objeto de referência):
+// recebe uma foto + o id de qual objeto de referência foi usado, devolve uma estimativa
+// de largura/altura/área em cm/m² — nunca uma medida exata, sempre rotulada como
+// aproximação (a UI reforça isso, ver components/ReguaVirtual.tsx).
+
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
@@ -13,6 +18,8 @@ const FALLBACK: MedicaoResponse = {
   explicacao: "Não conseguimos identificar bem a foto. Confirme que o objeto de referência está visível inteiro, ao lado do que você quer medir.",
 };
 
+// Gemini às vezes envolve o JSON pedido em ```json ... ``` mesmo quando o prompt pede
+// "sem markdown" — remove essas cercas antes de tentar parsear.
 function extrairJson(texto: string): Partial<MedicaoResponse> {
   const limpo = texto.replace(/```json\n?|\n?```/g, "").trim();
   return JSON.parse(limpo);
@@ -30,6 +37,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
+    // O id do objeto de referência vem do cliente (components/ReguaVirtual.tsx, um dos 3
+    // botões de lib/medir.ts) — validado aqui de novo porque o prompt abaixo depende do
+    // tamanho real exato desse objeto pra funcionar; um id inválido não pode virar uma
+    // estimativa "no escuro" sem escala nenhuma.
     const referencia = referenciaId ? getObjetoReferencia(referenciaId) : undefined;
     if (!referencia) {
       return NextResponse.json({ error: "Objeto de referência inválido." }, { status: 400 });
@@ -45,6 +56,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const validMime = ALLOWED_MIME_TYPES.includes(mimeType) ? mimeType : "image/jpeg";
 
+    // Prompt injeta o tamanho REAL do objeto de referência escolhido (ex: folha A4 =
+    // 21×29,7cm) como a única "régua" que a IA tem pra converter pixels em centímetros —
+    // sem isso ela não tem nenhuma noção de escala na foto.
     const prompt =
       "Você é um assistente que estima medidas a partir de fotos, pra ajudar clientes de uma loja de " +
       "construção e reforma a saber quanto material comprar. Você NÃO tem acesso a sensor de profundidade " +
@@ -80,10 +94,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
       bruto = extrairJson(texto);
     } catch (parseError) {
+      // JSON malformado da IA não é um erro 500 pro cliente — é tratado igual a "não
+      // conseguimos medir essa foto", devolvendo o mesmo fallback amigável de sempre.
       console.error("[POST /api/medir] Falha ao interpretar resposta da IA:", parseError);
       return NextResponse.json(FALLBACK);
     }
 
+    // Mesmo com JSON válido, a IA pode não ter conseguido achar o objeto de referência na
+    // foto (identificado: false) ou devolver números fora do formato esperado — os dois
+    // casos caem no mesmo "não identificado", nunca em números inventados.
     if (!bruto.identificado || typeof bruto.largura_cm !== "number" || typeof bruto.altura_cm !== "number") {
       return NextResponse.json({
         identificado: false,
@@ -94,6 +113,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       } satisfies MedicaoResponse);
     }
 
+    // Área calculada aqui (não pedida à IA) — cm² pra m² é aritmética simples e determinística,
+    // não faz sentido gastar a resposta da IA com isso nem arriscar ela errar a conta.
     const larguraCm = Math.round(bruto.largura_cm);
     const alturaCm = Math.round(bruto.altura_cm);
     const areaM2 = Math.round(((larguraCm * alturaCm) / 10000) * 100) / 100;

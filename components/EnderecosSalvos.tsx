@@ -19,6 +19,10 @@ const ENDERECO_VAZIO: NovoEndereco = {
   rotulo: '', cep: '', rua: '', numero: '', complemento: '', bairro: '', cidade: '', uf: '',
 }
 
+// Gestão de endereços em /conta: listar, adicionar (com autopreenchimento por CEP via
+// lib/cep.ts), marcar como padrão e remover (com desfazer). Toda a lógica de persistência
+// vive em lib/clientEnderecos.ts — este componente só orquestra o formulário e recarrega a
+// lista depois de cada mudança.
 export default function EnderecosSalvos({ email }: { email: string }) {
   const [enderecos, setEnderecos] = useState<Endereco[]>([])
   const [novoAberto, setNovoAberto] = useState(false)

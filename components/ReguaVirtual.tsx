@@ -7,6 +7,9 @@ import { OBJETOS_REFERENCIA, type MedicaoResponse } from '@/lib/medir'
 
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024
 
+// Wizard de 2 passos (escolher referência → tirar foto) pra /api/medir. A explicação de por
+// que precisa de um objeto de referência conhecido (sem sensor de profundidade, não dá pra
+// medir por foto sozinha) vive em lib/medir.ts — aqui é só a UI do fluxo.
 export default function ReguaVirtual() {
   const [referenciaId, setReferenciaId] = useState(OBJETOS_REFERENCIA[0].id)
   const [preview, setPreview] = useState<string | null>(null)
@@ -30,6 +33,9 @@ export default function ReguaVirtual() {
 
     const reader = new FileReader()
     reader.onload = async () => {
+      // readAsDataURL devolve "data:image/jpeg;base64,AAAA..." — a API só quer o base64
+      // puro (depois do vírgula), então separa isso e extrai o mimeType real do prefixo em
+      // vez de assumir sempre jpeg (a câmera pode devolver png/webp dependendo do aparelho).
       const dataUrl = reader.result as string
       const [prefixo, base64] = dataUrl.split(',')
       const mimeType = prefixo.match(/data:(.*);base64/)?.[1] ?? 'image/jpeg'

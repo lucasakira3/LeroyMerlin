@@ -34,6 +34,7 @@ export default function ComparadorPorFoto() {
 
     const reader = new FileReader()
     reader.onload = async () => {
+      // readAsDataURL devolve "data:image/jpeg;base64,AAAA..." — a API só quer o base64 puro.
       const dataUrl = reader.result as string
       const [prefixo, base64] = dataUrl.split(',')
       const mimeType = prefixo.match(/data:(.*);base64/)?.[1] ?? 'image/jpeg'

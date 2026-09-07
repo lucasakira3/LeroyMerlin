@@ -11,6 +11,9 @@ interface Props {
   corredor: string
 }
 
+// Botão dentro do popup de produto que avisa o funcionário em tempo real (ver
+// lib/ajudaCorredor.ts + app/funcionario/chamados/page.tsx, que escuta o mesmo evento) —
+// o cliente não precisa procurar alguém na loja, o pedido já chega com produto e corredor.
 export default function BotaoAjudaCorredor({ produtoId, produtoNome, corredor }: Props) {
   const [enviado, setEnviado] = useState(false)
 
@@ -23,6 +26,9 @@ export default function BotaoAjudaCorredor({ produtoId, produtoNome, corredor }:
       clienteNome: getUsuarioLogado()?.nome,
     })
     setEnviado(true)
+    // Reabilita depois de um tempo — não é "cancelar o pedido", é só destravar o botão caso
+    // o cliente queira pedir ajuda de novo (ex: trocou de ideia sobre qual produto), já que
+    // o pedido em si não expira nem é removido da fila do funcionário.
     setTimeout(() => setEnviado(false), 8000)
   }
 

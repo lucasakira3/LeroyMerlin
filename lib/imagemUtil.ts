@@ -14,6 +14,8 @@ export function redimensionarImagem(file: File): Promise<string> {
       const img = new Image()
       img.onerror = () => reject(new Error('Falha ao carregar a imagem'))
       img.onload = () => {
+        // Math.min(1, ...) trava a escala em no máx. 1 — uma foto já menor que 480px de
+        // largura não é esticada (ampliar só pioraria a qualidade sem ganhar nada de espaço).
         const escala = Math.min(1, LARGURA_MAX / img.width)
         const canvas = document.createElement('canvas')
         canvas.width = Math.round(img.width * escala)
@@ -23,6 +25,9 @@ export function redimensionarImagem(file: File): Promise<string> {
           reject(new Error('Canvas não suportado'))
           return
         }
+        // Desenhar no canvas e reexportar via toDataURL é o único jeito de recomprimir uma
+        // imagem no navegador sem depender de nenhuma lib — o canvas descarta os metadados
+        // e reencoda como JPEG na qualidade pedida.
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
         resolve(canvas.toDataURL('image/jpeg', QUALIDADE))
       }

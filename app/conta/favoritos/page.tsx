@@ -54,6 +54,10 @@ export default function FavoritosPage() {
     }
     setEmail(usuario.email);
 
+    // "lm-favoritos-change" cobre favoritar/desfavoritar em outra parte da mesma aba
+    // (lib/clientFavoritos.ts dispara esse evento); "storage" cobre outra aba/janela
+    // mexendo no mesmo localStorage. cancelado evita sobrescrever o estado com uma
+    // resposta antiga se o usuário desfavoritar de novo antes do fetch anterior voltar.
     let cancelado = false;
     const atualizar = async () => {
       const ids = getFavoritosIds();

@@ -49,6 +49,8 @@ export function salvarEndereco(email: string, dados: NovoEndereco): Endereco {
     ...dados,
     id: Date.now().toString(36),
     rotulo: dados.rotulo.trim() || 'Endereço',
+    // O primeiro endereço que o cliente salva já nasce padrão — sem isso, o checkout
+    // sempre pediria pra escolher manualmente mesmo quando só existe uma opção.
     padrao: enderecos.length === 0,
   }
   mapa[email] = [...enderecos, novo]

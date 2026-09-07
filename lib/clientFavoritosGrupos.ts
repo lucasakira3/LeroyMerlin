@@ -57,6 +57,9 @@ export function criarGrupo(email: string, nome: string): GrupoFavoritos {
 export function removerGrupo(email: string, id: string): void {
   const dados = ler(email)
   dados.grupos = dados.grupos.filter((g) => g.id !== id)
+  // Sem isso, produtos ficariam com uma atribuição apontando pra um grupoId que não existe
+  // mais — não quebra nada visivelmente (o produto só voltaria a aparecer como "sem grupo"
+  // na prática), mas é lixo acumulando em silêncio no localStorage.
   for (const produtoId of Object.keys(dados.atribuicoes)) {
     if (dados.atribuicoes[produtoId] === id) delete dados.atribuicoes[produtoId]
   }

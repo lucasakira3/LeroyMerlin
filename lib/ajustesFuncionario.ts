@@ -48,6 +48,10 @@ export function definirPreco(produtoId: string, preco: number): void {
   salvarMapa(mapa)
 }
 
+// Mescla o ajuste por cima do produto BASE (do catálogo) toda vez que ele é lido, em vez de
+// gravar o valor final — assim `ajustarEstoque` continua sendo só um delta acumulado (+1/-1
+// por clique), nunca precisa saber o estoque atual pra funcionar. Math.max(0, ...) evita
+// estoque negativo se o funcionário clicar em "-" mais vezes do que o delta permite.
 export function aplicarAjustes<T extends { id: string; preco: number; estoque: number }>(produto: T): T {
   const ajuste = getAjuste(produto.id)
   return {
