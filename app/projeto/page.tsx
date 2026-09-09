@@ -1,12 +1,17 @@
 import Link from 'next/link'
 import {
-  Ruler, ChevronRight, Mic, Sparkles, ListChecks, Bot, MapPin, Clock,
+  Ruler, Scale, Mic, Sparkles, ListChecks, Bot, MapPin, Clock,
   Droplet, Zap, PaintRoller, HardHat, MessageCircle, CalendarCheck,
 } from 'lucide-react'
 import ProjetoWizard from '@/components/ProjetoWizard'
 import TermometroOrcamento from '@/components/TermometroOrcamento'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
+
+const FERRAMENTAS = [
+  { href: '/medir', icone: Ruler, label: 'Régua virtual', texto: 'Estime medidas por foto' },
+  { href: '/comparar', icone: Scale, label: 'Comparador de produtos', texto: 'Compare até 3 produtos lado a lado' },
+]
 
 const COMO_FUNCIONA = [
   { icone: Mic, titulo: 'Descreva ou fale', texto: 'Conte o que quer reformar, em texto ou por voz.' },
@@ -21,12 +26,12 @@ const CATEGORIAS_RAPIDAS = [
   { slug: 'construcao', label: 'Construção', icone: HardHat },
 ]
 
-// Mesmo padrão visual de app/duvidas/page.tsx: chat (2/3 da largura) + coluna de apoio
-// empilhada (1/3) — usuário pediu explicitamente pra deixar essa aba com "estilo de chat
-// bot", já que o Projeto Guiado também é, no fundo, uma conversa guiada com a IA. As 4
-// caixinhas que antes ficavam divididas nos dois lados (2 à esquerda, 2 à direita) agora
-// ficam todas empilhadas numa coluna só, à direita do chat. A lista de sugestões
-// personalizadas saiu daqui a pedido do usuário — ele vai decidir depois onde ela mora.
+// A pedido do usuário: a coluna de apoio virou uma "bancada de ferramentas" ao lado do chat
+// (a "bancada" de trabalho) — sem os rótulos de categoria em maiúsculo que cada caixinha
+// tinha antes (COMO FUNCIONA / NAVEGAR DIRETO / etc.), pra ficar mais limpo, tipo um
+// toolbox. O card de ferramentas (régua virtual, comparador) veio pro topo da coluna — antes
+// a régua virtual só aparecia como um banner solto acima do chat, agora mora junto das
+// outras ferramentas, sem duplicar o mesmo convite em dois lugares.
 export default function ProjetoPage() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
@@ -35,26 +40,12 @@ export default function ProjetoPage() {
         description="Descreva o que você quer fazer e a IA monta a lista completa de materiais."
       />
 
-      <div className="max-w-2xl mb-6 space-y-4">
+      <div className="max-w-2xl mb-6">
         <TermometroOrcamento />
-
-        <Link
-          href="/medir"
-          className="flex items-center gap-4 bg-lm-green/5 border border-lm-green/20 rounded-xl px-5 py-4 hover:bg-lm-green/10 transition-colors"
-        >
-          <div className="w-11 h-11 rounded-lg bg-lm-green/10 flex items-center justify-center text-lm-green flex-shrink-0">
-            <Ruler size={20} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-lm-dark">Não sabe as medidas do espaço?</p>
-            <p className="text-xs text-gray-500 mt-0.5">Use a régua virtual — tire uma foto e a IA estima quanto material comprar.</p>
-          </div>
-          <ChevronRight size={18} className="text-lm-green flex-shrink-0" />
-        </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:items-start">
-        {/* Chat — coluna principal */}
+        {/* Chat — a bancada */}
         <Card padding="none" className="lg:col-span-2 flex flex-col overflow-hidden">
           <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse" />
@@ -67,10 +58,29 @@ export default function ProjetoPage() {
           <ProjetoWizard />
         </Card>
 
-        {/* Coluna de apoio — as 4 caixinhas empilhadas */}
+        {/* Coluna de apoio — as ferramentas, ao lado da bancada */}
         <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
           <Card padding="sm">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Como funciona</h3>
+            <div className="space-y-1">
+              {FERRAMENTAS.map(ferramenta => (
+                <Link
+                  key={ferramenta.href}
+                  href={ferramenta.href}
+                  className="flex items-center gap-3 rounded-lg px-2.5 py-2.5 hover:bg-lm-green/5 transition-colors"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-lm-green/10 flex items-center justify-center text-lm-green flex-shrink-0">
+                    <ferramenta.icone size={17} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-lm-dark">{ferramenta.label}</p>
+                    <p className="text-xs text-gray-500">{ferramenta.texto}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </Card>
+
+          <Card padding="sm">
             <ol className="space-y-4">
               {COMO_FUNCIONA.map((passo, i) => (
                 <li key={passo.titulo} className="flex gap-3">
@@ -87,7 +97,6 @@ export default function ProjetoPage() {
           </Card>
 
           <div className="bg-lm-dark rounded-card p-5">
-            <p className="text-sm font-semibold text-white mb-3">Por que a IA acerta</p>
             <ul className="space-y-2.5">
               <li className="flex items-center gap-2 text-xs text-white/70">
                 <Bot size={14} className="text-lm-green flex-shrink-0" /> Conversa em português, sem termos técnicos
@@ -102,7 +111,6 @@ export default function ProjetoPage() {
           </div>
 
           <Card padding="sm">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Navegar direto</h3>
             <div className="space-y-1">
               {CATEGORIAS_RAPIDAS.map(cat => (
                 <Link
@@ -113,12 +121,7 @@ export default function ProjetoPage() {
                   <cat.icone size={15} className="flex-shrink-0" /> {cat.label}
                 </Link>
               ))}
-            </div>
-          </Card>
-
-          <Card padding="sm">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Prefere conversar?</h3>
-            <div className="space-y-1">
+              <div className="border-t border-gray-100 my-1" />
               <Link
                 href="/duvidas"
                 className="flex items-center gap-2.5 text-sm text-gray-600 hover:text-lm-green hover:bg-lm-green/5 rounded-lg px-2.5 py-2 transition-colors"
