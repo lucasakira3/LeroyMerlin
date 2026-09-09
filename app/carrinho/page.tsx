@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Minus, Plus, Trash2, ShoppingCart, MapPin, CheckCircle2, CreditCard, QrCode, Barcode, Loader2, Check, Map as MapIcon } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
+import PageHeader from '@/components/ui/PageHeader'
 import { getCarrinho, atualizarQuantidade, removerDoCarrinho, limparCarrinho, adicionarAoCarrinho, type CartItem } from '@/lib/clientCarrinho'
 import { salvarPedido, gerarNumeroPedido, type Pedido, type ItemPedido, type PagamentoInfo } from '@/lib/clientPedidos'
 import { adicionarNotificacao } from '@/lib/clientNotificacoes'
@@ -277,6 +278,8 @@ export default function CarrinhoPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-6">
+        <PageHeader title="Carrinho" description={itens.length > 0 ? `${itens.length} ${itens.length === 1 ? 'item' : 'itens'}` : undefined} />
+
         {produtos === null && (
           <div className="space-y-3">
             {[0, 1, 2].map(i => <CartItemSkeleton key={i} />)}
