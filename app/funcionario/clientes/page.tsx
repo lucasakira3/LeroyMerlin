@@ -2,7 +2,6 @@
 
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Search, ChevronDown, ChevronUp, Package } from 'lucide-react'
-import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
@@ -93,11 +92,6 @@ export default function ClientesPage() {
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      <PageHeader
-        title="Clientes"
-        description={`${clientes.length} conta${clientes.length === 1 ? '' : 's'} cadastrada${clientes.length === 1 ? '' : 's'} neste navegador.`}
-      />
-
       <Card padding="none">
         <div className="p-4 border-b border-gray-100 flex gap-4">
           <div className="relative flex-1 max-w-md">

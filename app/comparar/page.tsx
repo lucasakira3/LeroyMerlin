@@ -4,7 +4,6 @@ import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Scale, Trash2, ShoppingCart, MapPin } from 'lucide-react'
-import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import StarRating from '@/components/ui/StarRating'
@@ -58,7 +57,6 @@ function ComparadorContent() {
     return (
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <PageHeader title="Comparar produtos" />
           <div className="overflow-x-auto">
             <div className="flex gap-4 min-w-full">
               {[0, 1, 2].map(i => <ComparadorCardSkeleton key={i} />)}
@@ -98,8 +96,6 @@ function ComparadorContent() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <PageHeader title="Comparar produtos" description={`${produtos.length} de 3 produtos`} />
-
         <div className="overflow-x-auto">
           <div className="flex gap-4 min-w-full" style={{ minWidth: `${produtos.length * 220}px` }}>
             {produtos.map(produto => {
@@ -217,7 +213,6 @@ export default function ComparadorPage() {
     <Suspense fallback={
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <PageHeader title="Comparar produtos" />
           <div className="overflow-x-auto">
             <div className="flex gap-4 min-w-full">
               {[0, 1, 2].map(i => <ComparadorCardSkeleton key={i} />)}

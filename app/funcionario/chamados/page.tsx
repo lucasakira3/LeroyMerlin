@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { Search, Send, User, Clock, MapPin, MessageSquare, Bell, Check, CheckCircle2 } from 'lucide-react'
-import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
@@ -101,18 +100,6 @@ export default function ChamadosPage() {
 
   return (
     <div className="p-4 lg:p-8 max-w-6xl mx-auto h-[calc(100vh-4rem)] flex flex-col">
-      <PageHeader
-        title="Chamados"
-        description="Fila de agendamentos de visita pendentes de atendimento."
-        action={
-          pendentesCount > 0 ? (
-            <Badge tone="yellow">{pendentesCount} aguardando</Badge>
-          ) : agendamentos !== null ? (
-            <Badge tone="green">Tudo em dia</Badge>
-          ) : undefined
-        }
-      />
-
       <PedidosAjudaCorredor />
 
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-4 lg:gap-6">

@@ -4,7 +4,6 @@ import { useState } from 'react'
 import AgendamentoForm from '@/components/AgendamentoForm'
 import AgendamentosLista from '@/components/AgendamentosLista'
 import Card from '@/components/ui/Card'
-import PageHeader from '@/components/ui/PageHeader'
 import { CalendarPlus, CalendarCheck } from 'lucide-react'
 
 export default function AgendamentoPage() {
@@ -12,11 +11,6 @@ export default function AgendamentoPage() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6">
-      <PageHeader
-        title="Agendar Visita à Loja"
-        description="Marque um atendimento presencial com um especialista Leroy Merlin, sem custo e sem compromisso."
-      />
-
       {/* Tabs da página */}
       <div className="flex gap-1 mb-6 bg-white border border-gray-100 rounded-xl p-1 w-fit shadow-soft">
         <button

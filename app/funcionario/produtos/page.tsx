@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { Search, Edit2, Package, ArrowUp, ArrowDown, ArrowUpDown, Check, X, SlidersHorizontal } from 'lucide-react'
-import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Pagination from '@/components/ui/Pagination'
@@ -140,11 +139,6 @@ export default function ProdutosPage() {
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      <PageHeader
-        title="Estoque e Produtos"
-        description={produtosBase ? `${produtosBase.length} produtos no catálogo` : 'Controle o inventário.'}
-      />
-
       <Card padding="none">
         <div className="p-4 border-b border-gray-100 space-y-3">
           <div className="relative flex-1 max-w-md">

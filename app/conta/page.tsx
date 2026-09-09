@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogOut, Package, RotateCcw, Share2 } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
 import ProductListItem from "@/components/ProductListItem";
 import Pagination from "@/components/ui/Pagination";
@@ -378,16 +377,12 @@ export default function ContaPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-8">
-        <PageHeader
-          title="Minha Conta"
-          description={`Olá, ${usuario.nome ?? usuario.email}`}
-          action={
-            <Button variant="ghost" size="sm" onClick={handleSair}>
-              <LogOut size={16} />
-              Sair
-            </Button>
-          }
-        />
+        <div className="flex justify-end">
+          <Button variant="ghost" size="sm" onClick={handleSair}>
+            <LogOut size={16} />
+            Sair
+          </Button>
+        </div>
         <MeusDados
           email={usuario.email}
           nomeAtual={usuario.nome ?? usuario.email}

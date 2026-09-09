@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Sparkles, PlayCircle, Trash2, ArrowRight, Copy, Check } from 'lucide-react'
-import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import { ativarModoDemo, desativarModoDemo, DEMO_EMAIL, DEMO_SENHA } from '@/lib/demoSeed'
@@ -39,11 +38,6 @@ export default function DemoPage() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-2xl mx-auto">
-      <PageHeader
-        title="Modo Demo"
-        description="Popula o app com dados prontos pra gravar o pitch sem digitar nada ao vivo."
-      />
-
       <Card className="mb-4">
         <div className="flex items-start gap-3">
           <div className="w-9 h-9 rounded-lg bg-lm-green/10 flex items-center justify-center text-lm-green flex-shrink-0">

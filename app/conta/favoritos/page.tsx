@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart, Plus, X } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
 import ProductListItem from "@/components/ProductListItem";
 import { getFavoritosIds, toggleFavorito } from "@/lib/clientFavoritos";
 import {
@@ -125,11 +124,6 @@ export default function FavoritosPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 py-6">
-        <PageHeader
-          title="Todos os favoritos"
-          description="Produtos que você guardou para consultar depois. Crie grupos para organizá-los."
-        />
-
         {produtos !== null && produtos.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-4 mb-2">
             <button
