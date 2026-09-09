@@ -122,22 +122,22 @@ export default function ProjetoWizard() {
 
   if (etapaWizard === 'comodos') {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div>
         {/* Hero */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-lm-green/10 text-lm-green border border-lm-green/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
             <Sparkles size={14} /> Powered by Gemini AI
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2.5">
             Quais cômodos você vai reformar?
           </h2>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 text-base">
             Selecione um ou mais cômodos — isso ajuda a IA a organizar sua lista de materiais por área da casa.
           </p>
         </div>
 
-        <Card className="mb-5">
-          <div className="flex flex-wrap gap-2 justify-center">
+        <Card className="mb-6" padding="md">
+          <div className="flex flex-wrap gap-2.5 justify-center">
             {COMODOS_DISPONIVEIS.map(comodo => {
               const Icone = getIconeComodo(comodo)
               const selecionado = comodosSelecionados.has(comodo)
@@ -147,13 +147,13 @@ export default function ProjetoWizard() {
                   type="button"
                   onClick={() => toggleComodo(comodo)}
                   aria-pressed={selecionado}
-                  className={`flex items-center gap-1.5 text-sm px-4 py-2 rounded-full border transition-colors ${
+                  className={`flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-full border transition-colors ${
                     selecionado
                       ? 'bg-lm-green text-white border-lm-green'
                       : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
                   }`}
                 >
-                  <Icone size={15} className="flex-shrink-0" />
+                  <Icone size={17} className="flex-shrink-0" />
                   {comodo}
                 </button>
               )
@@ -164,6 +164,7 @@ export default function ProjetoWizard() {
         <div className="flex justify-center">
           <Button
             variant="primary"
+            size="lg"
             onClick={() => setEtapaWizard('descricao')}
             disabled={comodosSelecionados.size === 0}
           >
@@ -175,16 +176,16 @@ export default function ProjetoWizard() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div>
       {/* Hero */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 bg-lm-green/10 text-lm-green border border-lm-green/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
           <Sparkles size={14} /> Powered by Gemini AI
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2.5">
           Descreva seu projeto
         </h2>
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 text-base">
           A IA analisa o que você precisa e monta a lista completa de materiais com os corredores da loja.
         </p>
       </div>
@@ -217,15 +218,15 @@ export default function ProjetoWizard() {
       </div>
 
       {/* Input principal */}
-      <Card className="mb-5 focus-within:ring-2 focus-within:ring-lm-green/30 transition-shadow">
+      <Card className="mb-5 focus-within:ring-2 focus-within:ring-lm-green/30 transition-shadow" padding="md">
         <textarea
           value={descricao}
           onChange={e => setDescricao(e.target.value)}
           placeholder="Ex: Quero reformar meu banheiro de 4m², trocar o piso, azulejo e torneira. Meu orçamento é de R$ 2.500..."
-          rows={4}
-          className="w-full text-sm text-gray-900 placeholder-gray-400 resize-none focus:outline-none bg-white"
+          rows={5}
+          className="w-full text-base text-gray-900 placeholder-gray-400 resize-none focus:outline-none bg-white"
         />
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-3">
           <button
             onClick={toggleVoz}
             className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${
@@ -239,6 +240,7 @@ export default function ProjetoWizard() {
           </button>
           <Button
             variant="primary"
+            size="lg"
             onClick={() => analisar(descricao)}
             disabled={!descricao.trim() || loading}
           >
