@@ -1,20 +1,28 @@
-import Link from 'next/link'
+'use client'
+
+import { useState } from 'react'
 import { Ruler, Scale } from 'lucide-react'
 import ProjetoWizard from '@/components/ProjetoWizard'
 import TermometroOrcamento from '@/components/TermometroOrcamento'
+import ReguaVirtual from '@/components/ReguaVirtual'
+import ComparadorFerramenta from '@/components/ComparadorFerramenta'
 import Card from '@/components/ui/Card'
+import Modal from '@/components/ui/Modal'
 
 const FERRAMENTAS = [
-  { href: '/medir', icone: Ruler, label: 'Régua virtual', texto: 'Estime medidas por foto', bg: 'bg-lm-green/10', cor: 'text-lm-green' },
-  { href: '/comparar', icone: Scale, label: 'Comparador de produtos', texto: 'Compare até 3 produtos lado a lado', bg: 'bg-lm-yellow/20', cor: 'text-yellow-700' },
-]
+  { id: 'regua', icone: Ruler, label: 'Régua virtual', texto: 'Estime medidas por foto', bg: 'bg-lm-green/10', cor: 'text-lm-green' },
+  { id: 'comparador', icone: Scale, label: 'Comparador de produtos', texto: 'Compare até 3 produtos lado a lado', bg: 'bg-lm-yellow/20', cor: 'text-yellow-700' },
+] as const
 
-// A pedido do usuário: chat expandido (coluna fixa e mais estreita pras ferramentas, em vez
-// de 1/3 da grade, + altura mínima pra parecer uma janela de chat de verdade, não só o
-// tamanho do conteúdo atual) e as ferramentas viraram ícones "soltos" (sem card/borda ao
-// redor), grandes, espaçados e cada um com sua cor — pra parecer uma bancada com ferramentas
-// penduradas do lado, não uma lista de links.
+// A pedido do usuário: as ferramentas abrem num popup por cima do Projeto Guiado (o
+// cliente usa a régua/o comparador e já vê o resultado ali mesmo), em vez de navegar pra
+// /medir ou /comparar — tudo centralizado nesta tela. O comparador ganhou um seletor de
+// produtos dentro do próprio popup (busca na loja inteira, carrinho ou favoritos), ver
+// components/ComparadorFerramenta.tsx — sem isso o popup abriria vazio, já que antes só
+// dava pra montar o comparador escolhendo produtos em telas fora do Projeto Guiado.
 export default function ProjetoPage() {
+  const [ferramentaAberta, setFerramentaAberta] = useState<'regua' | 'comparador' | null>(null)
+
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-2xl mb-6">
@@ -38,9 +46,10 @@ export default function ProjetoPage() {
         {/* Ferramentas — soltas, ao lado da bancada */}
         <div className="flex flex-col items-center gap-10 pt-4 lg:sticky lg:top-6 lg:self-start">
           {FERRAMENTAS.map(ferramenta => (
-            <Link
-              key={ferramenta.href}
-              href={ferramenta.href}
+            <button
+              key={ferramenta.id}
+              type="button"
+              onClick={() => setFerramentaAberta(ferramenta.id)}
               className="group flex flex-col items-center text-center gap-3 w-full"
             >
               <div className={`w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105 group-hover:-rotate-3 ${ferramenta.bg}`}>
@@ -50,10 +59,30 @@ export default function ProjetoPage() {
                 <p className="text-sm font-bold text-lm-dark">{ferramenta.label}</p>
                 <p className="text-xs text-gray-500 mt-0.5 max-w-[160px]">{ferramenta.texto}</p>
               </div>
-            </Link>
+            </button>
           ))}
         </div>
       </div>
+
+      <Modal
+        open={ferramentaAberta === 'regua'}
+        onClose={() => setFerramentaAberta(null)}
+        title="Régua virtual"
+        maxWidthClass="md:max-w-xl"
+      >
+        <div className="p-5">
+          <ReguaVirtual />
+        </div>
+      </Modal>
+
+      <Modal
+        open={ferramentaAberta === 'comparador'}
+        onClose={() => setFerramentaAberta(null)}
+        title="Comparador de produtos"
+        maxWidthClass="md:max-w-4xl"
+      >
+        <ComparadorFerramenta />
+      </Modal>
     </div>
   )
 }
