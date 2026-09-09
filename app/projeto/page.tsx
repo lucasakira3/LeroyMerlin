@@ -68,9 +68,9 @@ export default function ProjetoPage() {
         open={ferramentaAberta === 'regua'}
         onClose={() => setFerramentaAberta(null)}
         title="Régua virtual"
-        maxWidthClass="md:max-w-xl"
+        maxWidthClass="md:max-w-2xl"
       >
-        <div className="p-5">
+        <div className="p-6">
           <ReguaVirtual />
         </div>
       </Modal>
@@ -79,7 +79,8 @@ export default function ProjetoPage() {
         open={ferramentaAberta === 'comparador'}
         onClose={() => setFerramentaAberta(null)}
         title="Comparador de produtos"
-        maxWidthClass="md:max-w-4xl"
+        maxWidthClass="md:max-w-6xl"
+        minHeightClass="md:min-h-[680px]"
       >
         <ComparadorFerramenta />
       </Modal>

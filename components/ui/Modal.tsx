@@ -10,6 +10,7 @@ interface ModalProps {
   title: string
   children: React.ReactNode
   maxWidthClass?: string
+  minHeightClass?: string
 }
 
 // Shell de popup genérico (header + fechar + backdrop), pro app não repetir o mesmo
@@ -19,7 +20,7 @@ interface ModalProps {
 // título + conteúdo. Conteúdo não ganha padding daqui — cada usuário decide o próprio
 // espaçamento interno, já que o conteúdo varia muito de caso pra caso (formulário, lista
 // com sidebar, etc).
-export default function Modal({ open, onClose, title, children, maxWidthClass = 'md:max-w-lg' }: ModalProps) {
+export default function Modal({ open, onClose, title, children, maxWidthClass = 'md:max-w-lg', minHeightClass = '' }: ModalProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function Modal({ open, onClose, title, children, maxWidthClass = 
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center md:p-4">
         <div
-          className={`bg-white dark:bg-zinc-900 w-full h-full md:h-auto md:max-h-[88vh] ${maxWidthClass} md:rounded-card shadow-soft-lg overflow-hidden flex flex-col`}
+          className={`bg-white dark:bg-zinc-900 w-full h-full md:h-auto md:max-h-[92vh] ${maxWidthClass} ${minHeightClass} md:rounded-card shadow-soft-lg overflow-hidden flex flex-col`}
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-zinc-800 flex-shrink-0">
             <h2 className="text-base font-bold text-lm-dark dark:text-zinc-50">{title}</h2>

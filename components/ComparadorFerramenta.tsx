@@ -40,8 +40,16 @@ export default function ComparadorFerramenta() {
   const [itensFavoritos, setItensFavoritos] = useState<ProdutoResolvido[] | null>(null)
 
   useEffect(() => {
+    // Cliques rápidos no picker mudam `ids` várias vezes em sequência, cada uma disparando
+    // seu próprio fetch — sem essa guarda, a resposta de um clique anterior podia chegar
+    // depois da mais recente (rede não garante ordem) e sobrescrever o resultado certo com
+    // um estado velho (às vezes até vazio, se o clique anterior tinha menos produtos).
+    let cancelado = false
     if (ids.length === 0) { setProdutos([]); return }
-    buscarProdutosPorIds(ids).then(setProdutos)
+    buscarProdutosPorIds(ids).then(resultado => {
+      if (!cancelado) setProdutos(resultado)
+    })
+    return () => { cancelado = true }
   }, [ids])
 
   useEffect(() => {
