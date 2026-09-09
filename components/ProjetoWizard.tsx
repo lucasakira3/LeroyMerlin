@@ -142,9 +142,9 @@ export default function ProjetoWizard() {
   const comodosTexto = Array.from(comodosSelecionados).join(', ')
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col flex-1">
       {/* Transcrição da conversa */}
-      <div className="p-4 space-y-4">
+      <div className="flex-1 p-4 space-y-4">
         <BolhaBot>
           <p>Oi! Vou te ajudar a montar a lista de materiais do seu projeto.</p>
           <p className="mt-1.5 font-semibold">Quais cômodos você vai reformar?</p>
