@@ -1,15 +1,10 @@
 import DuvidasChat from '@/components/DuvidasChat'
 import Card from '@/components/ui/Card'
-import PageHeader from '@/components/ui/PageHeader'
 import { Phone, MessageCircle, Clock, ShieldCheck } from 'lucide-react'
 
 export default function DuvidasPage() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6">
-      <PageHeader
-        title="Dúvidas"
-        description="Converse com o assistente especialista ou fale com um consultor humano."
-      />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-220px)]">
 
         {/* Chat — coluna principal */}

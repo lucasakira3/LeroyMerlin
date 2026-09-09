@@ -5,7 +5,6 @@ import {
 } from 'lucide-react'
 import ProjetoWizard from '@/components/ProjetoWizard'
 import TermometroOrcamento from '@/components/TermometroOrcamento'
-import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 
 const FERRAMENTAS = [
@@ -35,11 +34,6 @@ const CATEGORIAS_RAPIDAS = [
 export default function ProjetoPage() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
-      <PageHeader
-        title="Projeto Guiado"
-        description="Descreva o que você quer fazer e a IA monta a lista completa de materiais."
-      />
-
       <div className="max-w-2xl mb-6">
         <TermometroOrcamento />
       </div>
