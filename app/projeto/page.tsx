@@ -4,9 +4,9 @@ import {
   Droplet, Zap, PaintRoller, HardHat, MessageCircle, CalendarCheck,
 } from 'lucide-react'
 import ProjetoWizard from '@/components/ProjetoWizard'
-import SugestoesProjetoGuiado from '@/components/SugestoesProjetoGuiado'
 import TermometroOrcamento from '@/components/TermometroOrcamento'
 import PageHeader from '@/components/ui/PageHeader'
+import Card from '@/components/ui/Card'
 
 const COMO_FUNCIONA = [
   { icone: Mic, titulo: 'Descreva ou fale', texto: 'Conte o que quer reformar, em texto ou por voz.' },
@@ -21,19 +21,55 @@ const CATEGORIAS_RAPIDAS = [
   { slug: 'construcao', label: 'Construção', icone: HardHat },
 ]
 
-// Layout de 3 colunas em telas largas (lg+): as laterais eram puro cinza vazio quando a
-// página só tinha uma coluna central — usuário pediu explicitamente pra preencher esses
-// vãos com conteúdo real, não só alargar o centro. Laterais viram apoio ao fluxo principal
-// (como funciona, atalhos de categoria, canais alternativos de ajuda), nunca o próprio
-// formulário — por isso ficam `hidden` abaixo de `lg`, onde não sobra espaço horizontal pra
-// justificar dividir a tela em 3 colunas.
+// Mesmo padrão visual de app/duvidas/page.tsx: chat (2/3 da largura) + coluna de apoio
+// empilhada (1/3) — usuário pediu explicitamente pra deixar essa aba com "estilo de chat
+// bot", já que o Projeto Guiado também é, no fundo, uma conversa guiada com a IA. As 4
+// caixinhas que antes ficavam divididas nos dois lados (2 à esquerda, 2 à direita) agora
+// ficam todas empilhadas numa coluna só, à direita do chat. A lista de sugestões
+// personalizadas saiu daqui a pedido do usuário — ele vai decidir depois onde ela mora.
 export default function ProjetoPage() {
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-10">
-      <div className="max-w-7xl mx-auto lg:grid lg:grid-cols-[240px_minmax(0,1fr)_240px] lg:gap-8 xl:grid-cols-[280px_minmax(0,1fr)_280px] xl:gap-10">
-        {/* Coluna esquerda — explica o fluxo pra quem chega sem contexto */}
-        <aside className="hidden lg:flex lg:flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
-          <div className="bg-white rounded-card shadow-soft border border-gray-100 p-5">
+    <div className="px-4 sm:px-6 lg:px-8 py-8">
+      <PageHeader
+        title="Projeto Guiado"
+        description="Descreva o que você quer fazer e a IA monta a lista completa de materiais."
+      />
+
+      <div className="max-w-2xl mb-6 space-y-4">
+        <TermometroOrcamento />
+
+        <Link
+          href="/medir"
+          className="flex items-center gap-4 bg-lm-green/5 border border-lm-green/20 rounded-xl px-5 py-4 hover:bg-lm-green/10 transition-colors"
+        >
+          <div className="w-11 h-11 rounded-lg bg-lm-green/10 flex items-center justify-center text-lm-green flex-shrink-0">
+            <Ruler size={20} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-lm-dark">Não sabe as medidas do espaço?</p>
+            <p className="text-xs text-gray-500 mt-0.5">Use a régua virtual — tire uma foto e a IA estima quanto material comprar.</p>
+          </div>
+          <ChevronRight size={18} className="text-lm-green flex-shrink-0" />
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:items-start">
+        {/* Chat — coluna principal */}
+        <Card padding="none" className="lg:col-span-2 flex flex-col overflow-hidden">
+          <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse" />
+            <div>
+              <p className="text-sm font-semibold text-lm-dark">Assistente de Projetos</p>
+              <p className="text-xs text-gray-500">Powered by Gemini · monta sua lista de materiais</p>
+            </div>
+          </div>
+
+          <ProjetoWizard />
+        </Card>
+
+        {/* Coluna de apoio — as 4 caixinhas empilhadas */}
+        <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+          <Card padding="sm">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Como funciona</h3>
             <ol className="space-y-4">
               {COMO_FUNCIONA.map((passo, i) => (
@@ -48,7 +84,7 @@ export default function ProjetoPage() {
                 </li>
               ))}
             </ol>
-          </div>
+          </Card>
 
           <div className="bg-lm-dark rounded-card p-5">
             <p className="text-sm font-semibold text-white mb-3">Por que a IA acerta</p>
@@ -64,38 +100,8 @@ export default function ProjetoPage() {
               </li>
             </ul>
           </div>
-        </aside>
 
-        {/* Coluna central — fluxo principal, inalterado */}
-        <div className="max-w-2xl mx-auto w-full space-y-6">
-          <PageHeader
-            title="Projeto Guiado"
-            description="Descreva o que você quer fazer e a IA monta a lista completa de materiais."
-          />
-
-          <TermometroOrcamento />
-
-          <Link
-            href="/medir"
-            className="flex items-center gap-4 bg-lm-green/5 border border-lm-green/20 rounded-xl px-5 py-4 hover:bg-lm-green/10 transition-colors"
-          >
-            <div className="w-11 h-11 rounded-lg bg-lm-green/10 flex items-center justify-center text-lm-green flex-shrink-0">
-              <Ruler size={20} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-lm-dark">Não sabe as medidas do espaço?</p>
-              <p className="text-xs text-gray-500 mt-0.5">Use a régua virtual — tire uma foto e a IA estima quanto material comprar.</p>
-            </div>
-            <ChevronRight size={18} className="text-lm-green flex-shrink-0" />
-          </Link>
-
-          <ProjetoWizard />
-          <SugestoesProjetoGuiado />
-        </div>
-
-        {/* Coluna direita — atalhos pra quem prefere navegar ou falar com alguém */}
-        <aside className="hidden lg:flex lg:flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
-          <div className="bg-white rounded-card shadow-soft border border-gray-100 p-5">
+          <Card padding="sm">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Navegar direto</h3>
             <div className="space-y-1">
               {CATEGORIAS_RAPIDAS.map(cat => (
@@ -108,9 +114,9 @@ export default function ProjetoPage() {
                 </Link>
               ))}
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-card shadow-soft border border-gray-100 p-5">
+          <Card padding="sm">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Prefere conversar?</h3>
             <div className="space-y-1">
               <Link
@@ -126,8 +132,8 @@ export default function ProjetoPage() {
                 <CalendarCheck size={15} className="flex-shrink-0" /> Agendar visita à loja
               </Link>
             </div>
-          </div>
-        </aside>
+          </Card>
+        </div>
       </div>
     </div>
   )

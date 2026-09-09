@@ -1,10 +1,8 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Mic, MicOff, Sparkles, Send, RotateCcw, ArrowLeft } from 'lucide-react'
+import { Mic, MicOff, Send, RotateCcw, ArrowLeft, Bot, User } from 'lucide-react'
 import ListaDeCompras from './ListaDeCompras'
-import Card from './ui/Card'
-import Button from './ui/Button'
 import { COMODOS_DISPONIVEIS, getIconeComodo } from '@/lib/comodoIcones'
 
 const EXEMPLOS = [
@@ -23,6 +21,35 @@ declare global {
   }
 }
 
+// Bolha de mensagem do bot (avatar verde + balão cinza), no mesmo padrão visual de
+// components/DuvidasChat.tsx — reaproveitado aqui pra dar ao Projeto Guiado a mesma
+// linguagem de "chat" já usada na aba Tire Dúvidas, em vez de um formulário de wizard.
+function BolhaBot({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex gap-3">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-lm-green text-white flex items-center justify-center">
+        <Bot size={16} />
+      </div>
+      <div className="max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 text-sm leading-relaxed text-gray-800">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function BolhaUsuario({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex gap-3 flex-row-reverse">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center">
+        <User size={16} />
+      </div>
+      <div className="max-w-[85%] bg-lm-green text-white rounded-2xl px-4 py-3 text-sm leading-relaxed">
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export default function ProjetoWizard() {
   const [descricao, setDescricao] = useState('')
   const [loading, setLoading] = useState(false)
@@ -33,6 +60,7 @@ export default function ProjetoWizard() {
   const recRef = useRef<SpeechRecognition | null>(null)
   const [etapaWizard, setEtapaWizard] = useState<'comodos' | 'descricao'>('comodos')
   const [comodosSelecionados, setComodosSelecionados] = useState<Set<string>>(new Set())
+  const [descricaoEnviada, setDescricaoEnviada] = useState('')
 
   function toggleComodo(comodo: string) {
     setComodosSelecionados(prev => {
@@ -51,6 +79,8 @@ export default function ProjetoWizard() {
 
   async function analisar(texto: string) {
     if (!texto.trim()) return
+    setDescricaoEnviada(texto)
+    setDescricao('')
     setLoading(true)
     setErro('')
     setResultado(null)
@@ -79,6 +109,15 @@ export default function ProjetoWizard() {
     }
   }
 
+  function novoProjeto() {
+    setResultado(null)
+    setDescricao('')
+    setDescricaoEnviada('')
+    setErro('')
+    setEtapaWizard('comodos')
+    setComodosSelecionados(new Set())
+  }
+
   function toggleVoz() {
     if (ouvindo) {
       recRef.current?.stop()
@@ -99,201 +138,167 @@ export default function ProjetoWizard() {
     setOuvindo(true)
   }
 
-  if (resultado) {
-    return (
-      <div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            setResultado(null)
-            setDescricao('')
-            setEtapaWizard('comodos')
-            setComodosSelecionados(new Set())
-          }}
-          className="mb-5"
-        >
-          <RotateCcw size={14} /> Novo projeto
-        </Button>
-        <ListaDeCompras projeto={resultado} descricaoOriginal={descricao} />
-      </div>
-    )
-  }
-
-  if (etapaWizard === 'comodos') {
-    return (
-      <div>
-        {/* Hero */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-lm-green/10 text-lm-green border border-lm-green/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
-            <Sparkles size={14} /> Powered by Gemini AI
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2.5">
-            Quais cômodos você vai reformar?
-          </h2>
-          <p className="text-gray-500 text-base">
-            Selecione um ou mais cômodos — isso ajuda a IA a organizar sua lista de materiais por área da casa.
-          </p>
-        </div>
-
-        <Card className="mb-6" padding="md">
-          <div className="flex flex-wrap gap-2.5 justify-center">
-            {COMODOS_DISPONIVEIS.map(comodo => {
-              const Icone = getIconeComodo(comodo)
-              const selecionado = comodosSelecionados.has(comodo)
-              return (
-                <button
-                  key={comodo}
-                  type="button"
-                  onClick={() => toggleComodo(comodo)}
-                  aria-pressed={selecionado}
-                  className={`flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-full border transition-colors ${
-                    selecionado
-                      ? 'bg-lm-green text-white border-lm-green'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
-                  }`}
-                >
-                  <Icone size={17} className="flex-shrink-0" />
-                  {comodo}
-                </button>
-              )
-            })}
-          </div>
-        </Card>
-
-        <div className="flex justify-center">
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => setEtapaWizard('descricao')}
-            disabled={comodosSelecionados.size === 0}
-          >
-            Continuar
-          </Button>
-        </div>
-      </div>
-    )
-  }
+  const comodosConfirmados = etapaWizard === 'descricao' || resultado
+  const comodosTexto = Array.from(comodosSelecionados).join(', ')
 
   return (
-    <div>
-      {/* Hero */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 bg-lm-green/10 text-lm-green border border-lm-green/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
-          <Sparkles size={14} /> Powered by Gemini AI
-        </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2.5">
-          Descreva seu projeto
-        </h2>
-        <p className="text-gray-500 text-base">
-          A IA analisa o que você precisa e monta a lista completa de materiais com os corredores da loja.
-        </p>
-      </div>
+    <div className="flex flex-col">
+      {/* Transcrição da conversa */}
+      <div className="p-4 space-y-4">
+        <BolhaBot>
+          <p>Oi! Vou te ajudar a montar a lista de materiais do seu projeto.</p>
+          <p className="mt-1.5 font-semibold">Quais cômodos você vai reformar?</p>
+          {!comodosConfirmados && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {COMODOS_DISPONIVEIS.map(comodo => {
+                const Icone = getIconeComodo(comodo)
+                const selecionado = comodosSelecionados.has(comodo)
+                return (
+                  <button
+                    key={comodo}
+                    type="button"
+                    onClick={() => toggleComodo(comodo)}
+                    aria-pressed={selecionado}
+                    className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+                      selecionado
+                        ? 'bg-lm-green text-white border-lm-green'
+                        : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                    }`}
+                  >
+                    <Icone size={14} className="flex-shrink-0" />
+                    {comodo}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </BolhaBot>
 
-      {/* Recap dos cômodos + voltar */}
-      <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
-        <button
-          onClick={() => setEtapaWizard('comodos')}
-          disabled={loading}
-          className={`flex items-center gap-1 text-xs font-semibold transition-colors flex-shrink-0 ${
-            loading ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:text-lm-green'
-          }`}
-        >
-          <ArrowLeft size={13} /> Voltar
-        </button>
-        <div className="flex flex-wrap gap-1.5 justify-end" aria-label="Cômodos selecionados">
-          {Array.from(comodosSelecionados).map(comodo => {
-            const Icone = getIconeComodo(comodo)
-            return (
-              <span
-                key={comodo}
-                className="flex items-center gap-1 text-[11px] font-semibold text-lm-green bg-lm-green/10 border border-lm-green/20 px-2.5 py-1 rounded-full"
-              >
-                <Icone size={12} className="flex-shrink-0" />
-                {comodo}
-              </span>
-            )
-          })}
-        </div>
-      </div>
+        {comodosConfirmados && (
+          <>
+            <BolhaUsuario>{comodosTexto}</BolhaUsuario>
 
-      {/* Input principal */}
-      <Card className="mb-5 focus-within:ring-2 focus-within:ring-lm-green/30 transition-shadow" padding="md">
-        <textarea
-          value={descricao}
-          onChange={e => setDescricao(e.target.value)}
-          placeholder="Ex: Quero reformar meu banheiro de 4m², trocar o piso, azulejo e torneira. Meu orçamento é de R$ 2.500..."
-          rows={5}
-          className="w-full text-base text-gray-900 placeholder-gray-400 resize-none focus:outline-none bg-white"
-        />
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-3">
-          <button
-            onClick={toggleVoz}
-            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${
-              ouvindo
-                ? 'bg-red-50 text-red-500 border-red-200 animate-pulse'
-                : 'text-gray-500 border-gray-200 hover:border-lm-green/40 hover:text-lm-green'
-            }`}
-          >
-            {ouvindo ? <MicOff size={13} /> : <Mic size={13} />}
-            {ouvindo ? 'Ouvindo...' : 'Falar'}
-          </button>
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => analisar(descricao)}
-            disabled={!descricao.trim() || loading}
-          >
-            <Send size={14} />
-            Analisar projeto
-          </Button>
-        </div>
-      </Card>
+            <BolhaBot>
+              Entendi! Agora descreva o que você quer fazer nesse espaço — pode escrever ou usar o microfone. Quanto mais detalhe (medidas, orçamento), melhor a lista fica.
+            </BolhaBot>
+          </>
+        )}
 
-      {/* Loading */}
-      {loading && (
-        <Card className="text-center mb-5">
-          <div className="flex justify-center mb-4">
-            <div className="relative">
-              <div className="w-14 h-14 border-4 border-lm-green/20 border-t-lm-green rounded-full animate-spin" />
-              <Sparkles size={20} className="text-lm-green absolute inset-0 m-auto" />
+        {descricaoEnviada && <BolhaUsuario>{descricaoEnviada}</BolhaUsuario>}
+
+        {loading && (
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-full bg-lm-green text-white flex items-center justify-center flex-shrink-0">
+              <Bot size={16} />
+            </div>
+            <div className="bg-gray-100 rounded-2xl px-4 py-3">
+              <div className="flex gap-1 mb-1.5">
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+              <p className="text-xs text-gray-500">{etapa}</p>
             </div>
           </div>
-          <p className="text-sm font-semibold text-gray-900 mb-1">{etapa}</p>
-          <div className="flex justify-center gap-1.5 mt-3">
-            {ETAPAS.map((e, i) => (
-              <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${
-                e === etapa ? 'w-6 bg-lm-green' : ETAPAS.indexOf(etapa) > i ? 'w-3 bg-lm-green/40' : 'w-3 bg-gray-200'
-              }`} />
-            ))}
-          </div>
-        </Card>
-      )}
+        )}
 
-      {/* Erro */}
-      {erro && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600 mb-5">
-          {erro}
-        </div>
-      )}
+        {erro && !loading && (
+          <BolhaBot>
+            <span className="text-red-600">{erro}</span>
+          </BolhaBot>
+        )}
 
-      {/* Exemplos */}
-      {!loading && (
-        <Card>
-          <p className="text-xs text-gray-400 font-medium mb-3 text-center">Ou escolha um exemplo:</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {resultado && !loading && (
+          <>
+            <BolhaBot>Pronto! Aqui está sua lista completa de materiais, com os corredores da loja.</BolhaBot>
+            <ListaDeCompras projeto={resultado} descricaoOriginal={descricaoEnviada} />
+          </>
+        )}
+      </div>
+
+      {/* Sugestões rápidas — só antes do primeiro envio, mesmo padrão do DuvidasChat */}
+      {etapaWizard === 'descricao' && !descricaoEnviada && !loading && (
+        <div className="px-4 pb-3">
+          <p className="text-xs text-gray-400 mb-2">Ou escolha um exemplo:</p>
+          <div className="flex flex-wrap gap-2">
             {EXEMPLOS.map(ex => (
               <button
                 key={ex}
                 onClick={() => { setDescricao(ex); analisar(ex) }}
-                className="text-left text-xs text-gray-600 bg-white border border-gray-200 rounded-xl px-4 py-3 hover:border-lm-green hover:text-lm-green hover:bg-lm-green/5 transition-all"
+                className="text-xs px-3 py-1.5 bg-lm-green/10 text-lm-green border border-lm-green/20 rounded-full hover:bg-lm-green/20 transition-colors"
               >
                 {ex}
               </button>
             ))}
           </div>
-        </Card>
+        </div>
       )}
+
+      {/* Barra de ação fixa — muda de controle conforme a etapa, mesma posição do input do DuvidasChat */}
+      <div className="border-t border-gray-100 p-4">
+        {resultado ? (
+          <button
+            onClick={novoProjeto}
+            className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-lm-green transition-colors"
+          >
+            <RotateCcw size={14} /> Começar um novo projeto
+          </button>
+        ) : etapaWizard === 'comodos' ? (
+          <div className="flex justify-end">
+            <button
+              onClick={() => setEtapaWizard('descricao')}
+              disabled={comodosSelecionados.size === 0}
+              className="bg-lm-green text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Continuar
+            </button>
+          </div>
+        ) : (
+          <form
+            onSubmit={e => { e.preventDefault(); analisar(descricao) }}
+            className="flex items-center gap-2"
+          >
+            <button
+              type="button"
+              onClick={() => setEtapaWizard('comodos')}
+              disabled={loading}
+              aria-label="Voltar pros cômodos"
+              className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border border-gray-200 text-gray-400 hover:text-lm-green hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={toggleVoz}
+              disabled={loading}
+              aria-label={ouvindo ? 'Parar de ouvir' : 'Falar'}
+              className={`h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                ouvindo
+                  ? 'bg-red-50 text-red-500 border-red-200 animate-pulse'
+                  : 'text-gray-500 border-gray-200 hover:border-lm-green/40 hover:text-lm-green'
+              }`}
+            >
+              {ouvindo ? <MicOff size={16} /> : <Mic size={16} />}
+            </button>
+            <input
+              type="text"
+              value={descricao}
+              onChange={e => setDescricao(e.target.value)}
+              placeholder="Ex: Quero reformar meu banheiro de 4m², trocar o piso, azulejo e torneira..."
+              disabled={loading}
+              className="flex-1 h-11 px-4 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-50 bg-white"
+            />
+            <button
+              type="submit"
+              disabled={loading || !descricao.trim()}
+              aria-label="Enviar"
+              className="h-11 w-11 flex-shrink-0 bg-lm-green text-white rounded-xl flex items-center justify-center disabled:opacity-50 hover:bg-green-700 transition-colors"
+            >
+              <Send size={16} />
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   )
 }
