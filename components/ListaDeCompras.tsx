@@ -1,17 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPin, CheckCircle2, Circle, Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2, AlertTriangle } from 'lucide-react'
+import { Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2 } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProjetoTimeline from './ProjetoTimeline'
-import { type Projeto } from './ProjetoMosaico'
+import { type Projeto, type ItemProjeto } from './ProjetoMosaico'
 import PlantaCasa from './PlantaCasa'
+import ListaMateriaisCompacta from './ListaMateriaisCompacta'
 import ProdutoDrawer from './ProdutoDrawer'
 import type { SearchResult } from '@/types/produto'
 import Link from 'next/link'
 import Card from './ui/Card'
 import Button from './ui/Button'
-import Badge from './ui/Badge'
 import { codificarLista } from '@/lib/listaCompartilhada'
 
 const LOJAS = [
@@ -20,12 +20,6 @@ const LOJAS = [
   'Alphaville — Barueri/SP', 'Belo Horizonte Norte — BH/MG',
   'Barra da Tijuca — Rio de Janeiro/RJ', 'Curitiba — Curitiba/PR',
 ]
-
-const PRIORIDADE: Record<string, string> = {
-  essencial:   'bg-red-50 text-red-600 border-red-200',
-  recomendado: 'bg-amber-50 text-amber-600 border-amber-200',
-  opcional:    'bg-gray-50 text-gray-500 border-gray-200',
-}
 
 export default function ListaDeCompras({ projeto }: { projeto: Projeto; descricaoOriginal: string }) {
   const [loja, setLoja] = useState(LOJAS[0])
@@ -40,9 +34,17 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
   const [aba, setAba] = useState<'visao-geral' | 'lista-completa'>('visao-geral')
   const [produtoDrawer, setProdutoDrawer] = useState<SearchResult['produto'] | null>(null)
 
-  const toggle = (id: string) => setSelecionados(prev => {
-    const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next
-  })
+  // Troca exclusiva dentro das alternativas do mesmo item — garante no máximo 1 produto
+  // selecionado por item: tira todas as outras opções desse item específico antes de marcar
+  // a nova (diferente de um toggle simples, que deixaria acumular mais de uma selecionada).
+  function trocarAlternativa(item: ItemProjeto, produtoId: string) {
+    setSelecionados(prev => {
+      const next = new Set(prev)
+      for (const r of item.resultados) next.delete(r.produto.id)
+      next.add(produtoId)
+      return next
+    })
+  }
 
   const mapResultados: SearchResult[] = projeto.itens
     .flatMap(i => i.resultados)
@@ -206,80 +208,12 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
 
           <h3 className="text-sm font-bold text-gray-900">Lista de materiais</h3>
 
-          {projeto.itens.map((item, idx) => (
-            <div key={idx} className="space-y-2 animate-fade-in-up" style={{ '--stagger-delay': `${Math.min(idx, 15) * 40}ms` } as React.CSSProperties}>
-              <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-xs font-mono text-gray-400 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>
-                  <span className="font-semibold text-sm text-gray-900 truncate">{item.material}</span>
-                  <span className="text-xs text-gray-400 flex-shrink-0 hidden sm:block">· {item.quantidade}</span>
-                </div>
-                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0 ml-2 ${PRIORIDADE[item.prioridade] || ''}`}>
-                  {item.prioridade}
-                </span>
-              </div>
-
-              {item.resultados.length > 0 && item.resultados[0].produto.estoque === 0 && (
-                <div className="flex items-start gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl">
-                  <AlertTriangle size={14} className="text-red-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-red-700">
-                    {item.resultados.some(r => r.produto.estoque > 0)
-                      ? 'O produto recomendado está sem estoque nessa loja. Veja as alternativas disponíveis abaixo.'
-                      : `Nenhuma opção para este item está em estoque no momento. Peça ajuda ao vendedor da seção ${item.categoria}.`}
-                  </p>
-                </div>
-              )}
-
-              {item.resultados.length > 0 ? (
-                <div className="space-y-2">
-                  {item.resultados.map(r => {
-                    const sel = selecionados.has(r.produto.id)
-                    return (
-                      <button key={r.produto.id} onClick={() => toggle(r.produto.id)} className="w-full text-left block">
-                        <Card
-                          padding="sm"
-                          hoverable
-                          className={`flex items-center gap-3 transition-colors ${sel ? 'ring-2 ring-lm-green/40 bg-lm-green/5' : ''}`}
-                        >
-                          {sel
-                            ? <CheckCircle2 size={17} className="text-lm-green flex-shrink-0" />
-                            : <Circle size={17} className="text-gray-300 flex-shrink-0" />}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{r.produto.produto}</p>
-                            <div className="flex items-center gap-3 mt-0.5">
-                              <span className="flex items-center gap-1 text-xs text-lm-green font-bold">
-                                <MapPin size={10} /> {r.produto.corredor}
-                              </span>
-                              {r.produto.estoque === 0 ? (
-                                <Badge tone="red">Sem estoque</Badge>
-                              ) : r.produto.estoque < 10 ? (
-                                <Badge tone="orange">Últ. {r.produto.estoque}</Badge>
-                              ) : (
-                                <span className="text-xs text-gray-400">{r.produto.estoque} un.</span>
-                              )}
-                            </div>
-                          </div>
-                          {(r.produto as any).preco != null && (
-                            <span className="text-sm font-bold text-gray-900 flex-shrink-0">
-                              {Number((r.produto as any).preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                            </span>
-                          )}
-                        </Card>
-                      </button>
-                    )
-                  })}
-                </div>
-              ) : (
-                <p className="px-1 text-xs text-gray-400 italic">Peça ao vendedor da seção {item.categoria}</p>
-              )}
-
-              {item.observacao && (
-                <div className="px-4 py-2 bg-lm-green/5 border border-lm-green/10 rounded-xl">
-                  <p className="text-xs text-gray-500">💡 {item.observacao}</p>
-                </div>
-              )}
-            </div>
-          ))}
+          <ListaMateriaisCompacta
+            itens={projeto.itens}
+            selecionados={selecionados}
+            onTrocarAlternativa={trocarAlternativa}
+            onSelecionarProduto={setProdutoDrawer}
+          />
 
           {/* CTA Agendamento */}
           <Card className="bg-lm-yellow/10 border-lm-yellow/30 mt-2">
