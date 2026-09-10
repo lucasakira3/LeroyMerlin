@@ -1,10 +1,4 @@
-'use client'
-
 import type { SearchResult } from '@/types/produto'
-import { getImagemCategoria } from '@/lib/categoriaImagens'
-import { getIconeComodo } from '@/lib/comodoIcones'
-import Badge from './ui/Badge'
-import Card from './ui/Card'
 
 export interface ItemProjeto {
   material: string
@@ -32,6 +26,12 @@ export interface GrupoComodo {
   itens: ItemProjeto[]
 }
 
+// Tipos e helpers de agrupamento por cômodo do resultado do Projeto Guiado — usados tanto
+// pela visão geral (PlantaCasa.tsx, a planta baixa fictícia com os itens marcados por
+// cômodo) quanto pela lista completa (ListaDeCompras.tsx). O componente visual que morava
+// neste arquivo (o mosaico de fotos por cômodo) foi substituído pela PlantaCasa a pedido do
+// usuário — esses tipos/funções continuam aqui porque são a base de agrupamento
+// compartilhada, não porque o mosaico ainda existe.
 export function agruparPorComodo(itens: ItemProjeto[]): GrupoComodo[] {
   const ordem: string[] = []
   const grupos = new Map<string, ItemProjeto[]>()
@@ -58,106 +58,4 @@ export function resolverProdutoSelecionado(
   const selecionado = item.resultados.find(r => selecionados.has(r.produto.id))
   if (selecionado) return selecionado.produto
   return item.resultados[0]?.produto ?? null
-}
-
-const PRIORIDADE_ANEL: Record<string, string> = {
-  essencial: 'ring-red-400',
-  recomendado: 'ring-amber-400',
-  opcional: 'ring-gray-300',
-}
-
-const MAX_FOTOS_VISIVEIS = 6
-
-interface ProjetoMosaicoProps {
-  itens: ItemProjeto[]
-  selecionados: Set<string>
-  onSelecionarProduto: (produto: SearchResult['produto']) => void
-  onVerMais: () => void
-}
-
-export default function ProjetoMosaico({ itens, selecionados, onSelecionarProduto, onVerMais }: ProjetoMosaicoProps) {
-  const grupos = agruparPorComodo(itens)
-
-  const gruposComProdutos = grupos
-    .map(grupo => {
-      const produtosDoGrupo = grupo.itens
-        .map(item => ({ item, produto: resolverProdutoSelecionado(item, selecionados) }))
-        .filter((x): x is { item: ItemProjeto; produto: SearchResult['produto'] } => x.produto !== null)
-
-      const produtosUnicos: typeof produtosDoGrupo = []
-      const idsVistos = new Set<string>()
-      for (const entry of produtosDoGrupo) {
-        if (idsVistos.has(entry.produto.id)) continue
-        idsVistos.add(entry.produto.id)
-        produtosUnicos.push(entry)
-      }
-
-      return { comodo: grupo.comodo, produtosUnicos }
-    })
-    .filter(grupo => grupo.produtosUnicos.length > 0)
-
-  if (gruposComProdutos.length === 0) {
-    return (
-      <p className="text-sm text-gray-500">Nenhum produto encontrado para este projeto. Veja a Lista completa.</p>
-    )
-  }
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {gruposComProdutos.map(grupo => {
-        const visiveis = grupo.produtosUnicos.slice(0, MAX_FOTOS_VISIVEIS)
-        const restantes = grupo.produtosUnicos.length - visiveis.length
-        const IconeComodo = getIconeComodo(grupo.comodo)
-
-        return (
-          <Card
-            key={grupo.comodo}
-            padding="sm"
-            className={gruposComProdutos.length === 1 ? 'sm:col-span-2 lg:col-span-3' : ''}
-          >
-            <p className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-1.5">
-              <IconeComodo size={15} className="text-lm-green flex-shrink-0" />
-              {grupo.comodo}
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {visiveis.map(({ item, produto }, idx) => (
-                <button
-                  key={`${grupo.comodo}-${idx}`}
-                  onClick={() => onSelecionarProduto(produto)}
-                  className="text-left"
-                >
-                  <div className={`relative aspect-square rounded-lg overflow-hidden ring-2 ${PRIORIDADE_ANEL[item.prioridade] || 'ring-gray-200'}`}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={getImagemCategoria(produto.categoria, produto.id)}
-                      alt={produto.categoria}
-                      className="w-full h-full object-cover"
-                    />
-                    {produto.estoque === 0 && (
-                      <span className="absolute top-1 right-1">
-                        <Badge tone="red" className="px-1.5 py-0.5 text-[9px]">Sem estoque</Badge>
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] font-semibold text-gray-700 mt-1 truncate">
-                    {produto.preco != null
-                      ? Number(produto.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                      : ''}
-                  </p>
-                </button>
-              ))}
-              {restantes > 0 && (
-                <button
-                  onClick={onVerMais}
-                  className="aspect-square rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center text-xs font-semibold text-gray-400 hover:border-lm-green hover:text-lm-green transition-colors"
-                >
-                  +{restantes}
-                </button>
-              )}
-            </div>
-          </Card>
-        )
-      })}
-    </div>
-  )
 }

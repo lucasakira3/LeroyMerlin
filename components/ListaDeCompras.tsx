@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { MapPin, CheckCircle2, Circle, Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2, AlertTriangle } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProjetoTimeline from './ProjetoTimeline'
-import ProjetoMosaico, { type Projeto } from './ProjetoMosaico'
+import { type Projeto } from './ProjetoMosaico'
+import PlantaCasa from './PlantaCasa'
 import ProdutoDrawer from './ProdutoDrawer'
 import type { SearchResult } from '@/types/produto'
 import Link from 'next/link'
@@ -188,7 +189,7 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
       </div>
 
       {aba === 'visao-geral' && (
-        <ProjetoMosaico
+        <PlantaCasa
           itens={projeto.itens}
           selecionados={selecionados}
           onSelecionarProduto={setProdutoDrawer}
