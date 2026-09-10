@@ -1,17 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { Ruler, Scale } from 'lucide-react'
+import { Ruler, Scale, Calculator } from 'lucide-react'
 import ProjetoWizard from '@/components/ProjetoWizard'
 import TermometroOrcamento from '@/components/TermometroOrcamento'
 import ReguaVirtual from '@/components/ReguaVirtual'
 import ComparadorFerramenta from '@/components/ComparadorFerramenta'
+import CalculadoraMateriais from '@/components/CalculadoraMateriais'
 import Card from '@/components/ui/Card'
 import Modal from '@/components/ui/Modal'
 
 const FERRAMENTAS = [
   { id: 'regua', icone: Ruler, label: 'Régua virtual', texto: 'Estime medidas por foto', bg: 'bg-lm-green/10', cor: 'text-lm-green' },
   { id: 'comparador', icone: Scale, label: 'Comparador de produtos', texto: 'Compare até 3 produtos lado a lado', bg: 'bg-lm-yellow/20', cor: 'text-yellow-700' },
+  { id: 'calculadora', icone: Calculator, label: 'Calculadora de materiais', texto: 'Tinta, piso, cimento e papel de parede', bg: 'bg-blue-500/10', cor: 'text-blue-600' },
 ] as const
 
 // A pedido do usuário: as ferramentas abrem num popup por cima do Projeto Guiado (o
@@ -21,7 +23,7 @@ const FERRAMENTAS = [
 // components/ComparadorFerramenta.tsx — sem isso o popup abriria vazio, já que antes só
 // dava pra montar o comparador escolhendo produtos em telas fora do Projeto Guiado.
 export default function ProjetoPage() {
-  const [ferramentaAberta, setFerramentaAberta] = useState<'regua' | 'comparador' | null>(null)
+  const [ferramentaAberta, setFerramentaAberta] = useState<'regua' | 'comparador' | 'calculadora' | null>(null)
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
@@ -83,6 +85,16 @@ export default function ProjetoPage() {
         minHeightClass="md:min-h-[680px]"
       >
         <ComparadorFerramenta />
+      </Modal>
+
+      <Modal
+        open={ferramentaAberta === 'calculadora'}
+        onClose={() => setFerramentaAberta(null)}
+        title="Calculadora de materiais"
+        maxWidthClass="md:max-w-4xl"
+        minHeightClass="md:min-h-[560px]"
+      >
+        <CalculadoraMateriais />
       </Modal>
     </div>
   )
