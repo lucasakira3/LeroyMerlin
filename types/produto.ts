@@ -14,6 +14,7 @@ export interface Produto {
   id: string;                        // "LM-0042" — id_referencia do CSV
   categoria: string;                  // "Cerâmica"
   produto: string;                    // "Porcelanato Acetinado 60x60cm"
+  imagem: string;                     // URL da foto real do produto, preenchida manualmente; "" cai pro sistema de fotos por categoria (lib/categoriaImagens.ts)
   pergunta: string;                   // pergunta_cliente do CSV
   resposta_ia: string;                // contexto_resposta_ia do CSV
   corredor: string;                   // "Corredor 08" — exibido na UI

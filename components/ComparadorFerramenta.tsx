@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Store, ShoppingCart, Heart, Plus, Check, Search, Loader2, Scale } from 'lucide-react'
 import ComparadorResultado from './ComparadorResultado'
 import ComparadorCardSkeleton from './ComparadorCardSkeleton'
-import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { getImagemProduto } from '@/lib/categoriaImagens'
 import { buscarProdutos } from '@/lib/buscarProdutos'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { getCarrinho } from '@/lib/clientCarrinho'
@@ -157,7 +157,7 @@ export default function ComparadorFerramenta() {
                 }`}
               >
                 <img
-                  src={getImagemCategoria(produto.categoria, produto.id)}
+                  src={getImagemProduto(produto)}
                   alt={produto.categoria}
                   className="w-10 h-10 rounded-md object-cover flex-shrink-0"
                 />

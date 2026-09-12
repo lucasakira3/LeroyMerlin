@@ -13,7 +13,7 @@ import {
 } from '@/lib/clientAvaliacoes'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
-import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { getImagemProduto } from '@/lib/categoriaImagens'
 import { showToast } from '@/lib/toast'
 
 export default function MinhasAvaliacoesPage() {
@@ -76,7 +76,7 @@ export default function MinhasAvaliacoesPage() {
               return (
                 <div key={avaliacao.produtoId} className="flex gap-3 bg-white rounded-card shadow-soft border border-gray-100 p-4">
                   <img
-                    src={getImagemCategoria(produto.categoria, produto.id)}
+                    src={getImagemProduto(produto)}
                     alt={produto.categoria}
                     className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
                   />

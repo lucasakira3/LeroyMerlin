@@ -7,7 +7,7 @@ import {
   Heart, Scale, Star, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
-import { getGaleriaCategoria } from '@/lib/categoriaImagens'
+import { getGaleriaProduto } from '@/lib/categoriaImagens'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import SeletorQuantidadeCarrinho from './ui/SeletorQuantidadeCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
@@ -173,7 +173,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     ? Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     : null
   const parcelamentoStr = preco != null ? formatarParcelamento(Number(preco)) : null
-  const galeria = getGaleriaCategoria(produto.categoria, produto.id, 4)
+  const galeria = getGaleriaProduto(produto, 4)
   const { media: mediaAvaliacoes, total: totalAvaliacoes } = getMedia(produto.id)
 
   return (

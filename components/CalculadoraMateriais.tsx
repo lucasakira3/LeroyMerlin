@@ -7,7 +7,7 @@ import {
   type TipoCalculo, type ResultadoCalculo,
 } from '@/lib/calculadoraMateriais'
 import { buscarProdutos } from '@/lib/buscarProdutos'
-import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { getImagemProduto } from '@/lib/categoriaImagens'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { ProdutoResolvido } from '@/lib/produtosCliente'
 
@@ -197,7 +197,7 @@ export default function CalculadoraMateriais() {
                     className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs"
                   >
                     <img
-                      src={getImagemCategoria(produto.categoria, produto.id)}
+                      src={getImagemProduto(produto)}
                       alt={produto.categoria}
                       className="w-9 h-9 rounded-md object-cover flex-shrink-0"
                     />

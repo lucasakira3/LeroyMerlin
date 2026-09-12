@@ -12,7 +12,7 @@ import { adicionarNotificacao } from '@/lib/clientNotificacoes'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { clearProductHistory } from '@/lib/hooks/useProductTracker'
-import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { getImagemProduto } from '@/lib/categoriaImagens'
 import { formatarParcelamento, getOpcoesParcelamento } from '@/lib/parcelamento'
 import CartItemSkeleton from '@/components/CartItemSkeleton'
 import TermometroOrcamento from '@/components/TermometroOrcamento'
@@ -318,7 +318,7 @@ export default function CarrinhoPage() {
               {itensResolvidos.map(({ item, produto }) => (
                 <Card key={produto.id} padding="sm" className="flex items-center gap-3">
                   <img
-                    src={getImagemCategoria(produto.categoria, produto.id)}
+                    src={getImagemProduto(produto)}
                     alt={produto.categoria}
                     className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
                   />

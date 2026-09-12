@@ -97,6 +97,16 @@ export function getImagemCategoria(categoria: string, seed?: string): string {
   return lista[hash % lista.length]
 }
 
+// Ponto único de "qual foto mostrar pra esse produto" — usa `produto.imagem` (URL real,
+// preenchida manualmente no data/produtos.json) quando existir; enquanto estiver vazia, cai
+// pro sistema de foto-por-categoria acima (mesmo comportamento de antes do campo existir).
+// Renderizada com <img> puro, não next/image, então qualquer URL https:// funciona direto
+// sem precisar configurar domínio nenhum em next.config.js.
+export function getImagemProduto(produto: { imagem?: string; categoria: string; id: string }): string {
+  if (produto.imagem && produto.imagem.trim()) return produto.imagem
+  return getImagemCategoria(produto.categoria, produto.id)
+}
+
 // Galeria pro popup de produto (components/ProdutoDrawer.tsx) — não são fotos reais do
 // produto (o catálogo não tem isso), são as mesmas fotos de categoria já compartilhadas
 // entre produtos, só que exibidas como um conjunto em vez de uma única foto. O índice 0
@@ -108,4 +118,15 @@ export function getGaleriaCategoria(categoria: string, seed: string, quantidade:
   const inicio = hash % lista.length
   const n = Math.min(quantidade, lista.length)
   return Array.from({ length: n }, (_, i) => lista[(inicio + i) % lista.length])
+}
+
+// Mesma ideia de getImagemProduto, mas pra galeria do popup de produto: quando existe uma
+// foto real (`produto.imagem`), ela é a única foto mostrada — misturar 1 foto real com 3
+// fotos genéricas de categoria no mesmo carrossel ficaria pior que mostrar só a real.
+export function getGaleriaProduto(
+  produto: { imagem?: string; categoria: string; id: string },
+  quantidade: number = 3
+): string[] {
+  if (produto.imagem && produto.imagem.trim()) return [produto.imagem]
+  return getGaleriaCategoria(produto.categoria, produto.id, quantidade)
 }

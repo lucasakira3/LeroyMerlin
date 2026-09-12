@@ -24,7 +24,7 @@ import { getPedidos, type Pedido } from "@/lib/clientPedidos";
 import { getStatusPedido } from "@/lib/statusPedido";
 import { getAvaliacoesDoUsuario, type AvaliacaoComProduto } from "@/lib/clientAvaliacoes";
 import { buscarProdutosPorIds } from "@/lib/produtosCliente";
-import { getImagemCategoria } from "@/lib/categoriaImagens";
+import { getImagemProduto } from "@/lib/categoriaImagens";
 import { adicionarAoCarrinho } from "@/lib/clientCarrinho";
 import { codificarPedido } from "@/lib/pedidoCompartilhado";
 import { showToast } from "@/lib/toast";
@@ -310,7 +310,7 @@ function SecaoAvaliacoes({ avaliacoes }: { avaliacoes: AvaliacaoComProduto[] }) 
                 className="flex items-center gap-3 bg-white rounded-card shadow-soft border border-gray-100 p-3"
               >
                 <img
-                  src={getImagemCategoria(produto.categoria, produto.id)}
+                  src={getImagemProduto(produto)}
                   alt={produto.categoria}
                   className="w-11 h-11 rounded-lg object-cover flex-shrink-0"
                 />

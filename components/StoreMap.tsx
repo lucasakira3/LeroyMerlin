@@ -5,7 +5,7 @@ import { ShoppingCart, Check, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { SearchResult } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
-import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { getImagemProduto } from '@/lib/categoriaImagens'
 import type { ParadaRota } from '@/lib/rotaLoja'
 
 const VW = 1200
@@ -533,7 +533,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black flex-shrink-0"
                   style={{ backgroundColor: pin.color }}>{pin.idx}</span>
                 <img
-                  src={getImagemCategoria(pin.produto.categoria, pin.produto.id)}
+                  src={getImagemProduto(pin.produto)}
                   alt={pin.produto.categoria}
                   className="w-9 h-9 rounded-md object-cover flex-shrink-0"
                 />

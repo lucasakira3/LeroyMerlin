@@ -6,7 +6,7 @@ type Complexidade = "Baixa" | "DIY" | "Média" | "Alta" | "Profissional" | "Espe
 type Sustentabilidade = "N/A" | "Bronze" | "Prata" | "Ouro";
 
 interface Produto {
-  id: string; categoria: string; produto: string;
+  id: string; categoria: string; produto: string; imagem: string;
   pergunta: string; resposta_ia: string;
   corredor: string; corredor_normalizado: string;
   complexidade: Complexidade; especificacoes: string;
@@ -29,7 +29,7 @@ function p(
 ): Produto {
   const { corredor, corredor_normalizado } = corrPad(corr);
   return {
-    id: id(), categoria, produto: nome, pergunta, resposta_ia: resposta,
+    id: id(), categoria, produto: nome, imagem: "", pergunta, resposta_ia: resposta,
     corredor, corredor_normalizado, complexidade: compl, especificacoes: specs,
     tags, estoque: num(0, 200), preco: Math.round(preco * 100) / 100, sustentabilidade: sust,
     embedding: [], embedding_text: `${nome} — ${pergunta}`,
@@ -965,7 +965,13 @@ const outPath = path.join(process.cwd(), "data", "produtos.json");
 // Preserva embeddings já calculados: produtos existentes (mesmo id + mesmo
 // embedding_text) não perdem o embedding gerado pela API do Gemini — evita
 // ter que recalcular os 1000 do zero, só os novos ficam com embedding: [].
+// Preserva também `imagem` (URL preenchida manualmente por fora deste script,
+// ver lib/categoriaImagens.ts) por id sozinho — diferente do embedding, a foto
+// não depende do embedding_text ter mudado, só do id continuar sendo o mesmo
+// produto; sem isso, rodar este gerador de novo apagaria todo trabalho manual
+// de vincular fotos reais.
 let reaproveitados = 0;
+let imagensPreservadas = 0;
 try {
   const anterior = JSON.parse(fs.readFileSync(outPath, "utf-8")) as Produto[];
   const porId = new Map(anterior.map((p) => [p.id, p]));
@@ -975,10 +981,14 @@ try {
       produto.embedding = velho.embedding;
       reaproveitados++;
     }
+    if (velho?.imagem) {
+      produto.imagem = velho.imagem;
+      imagensPreservadas++;
+    }
   }
 } catch {
-  // primeira geração, sem arquivo anterior — segue com embedding: [] em tudo
+  // primeira geração, sem arquivo anterior — segue com embedding: [] e imagem: "" em tudo
 }
 
 fs.writeFileSync(outPath, JSON.stringify(todos, null, 2), "utf-8");
-console.log(`✅ ${todos.length} produtos gerados em data/produtos.json (${reaproveitados} embeddings reaproveitados, ${todos.length - reaproveitados} pendentes)`);
+console.log(`✅ ${todos.length} produtos gerados em data/produtos.json (${reaproveitados} embeddings reaproveitados, ${todos.length - reaproveitados} pendentes, ${imagensPreservadas} imagens preservadas)`);

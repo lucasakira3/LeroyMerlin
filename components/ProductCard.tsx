@@ -7,7 +7,7 @@ import StockIndicator from './StockIndicator'
 import SustainabilityBadge from './SustainabilityBadge'
 import StarRating from './ui/StarRating'
 import SeletorQuantidadeCarrinho from './ui/SeletorQuantidadeCarrinho'
-import { getImagemCategoria } from '@/lib/categoriaImagens'
+import { getImagemProduto } from '@/lib/categoriaImagens'
 import { getMedia } from '@/lib/clientAvaliacoes'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { formatarParcelamento } from '@/lib/parcelamento'
@@ -19,6 +19,7 @@ interface ProductCardProduto {
   id: string
   categoria: string
   produto: string
+  imagem?: string
   corredor: string
   corredor_normalizado: string
   preco: number
@@ -79,7 +80,7 @@ export default function ProductCard({
     <>
       <div className="relative">
         <img
-          src={getImagemCategoria(produto.categoria, produto.id)}
+          src={getImagemProduto(produto)}
           alt={produto.categoria}
           className="w-full h-36 object-cover"
         />

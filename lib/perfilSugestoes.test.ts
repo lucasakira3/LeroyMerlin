@@ -8,6 +8,7 @@ function produtoFixture(overrides: Partial<Produto> = {}): Produto {
     id: 'LM-0001',
     categoria: 'Jardim',
     produto: 'Produto de teste',
+    imagem: '',
     pergunta: '',
     resposta_ia: '',
     corredor: 'Corredor 01',
