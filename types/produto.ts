@@ -25,7 +25,7 @@ export interface Produto {
   estoque: number;                    // estoque_num como inteiro
   preco: number;                      // preço em BRL
   sustentabilidade: SustentabilidadeScore;
-  embedding: number[];                // vetor 768 dimensões (text-embedding-004); [] antes de gerar
+  embedding: number[];                // vetor 3072 dimensões (gemini-embedding-2); não vem de data/produtos.json — [] por padrão via carregarProdutos(), só carregarProdutosComEmbeddings() (lib/produtos.ts) preenche de verdade, lendo data/embeddings.json
   embedding_text: string;             // "{produto} — {pergunta} {resposta_ia}"
 }
 

@@ -961,10 +961,15 @@ function extra(): Produto[] {
 
 // garante IDs únicos sequenciais (já foram atribuídos no momento da criação)
 const outPath = path.join(process.cwd(), "data", "produtos.json");
+const embPath = path.join(process.cwd(), "data", "embeddings.json");
 
 // Preserva embeddings já calculados: produtos existentes (mesmo id + mesmo
 // embedding_text) não perdem o embedding gerado pela API do Gemini — evita
-// ter que recalcular os 1000 do zero, só os novos ficam com embedding: [].
+// ter que recalcular os 1000 do zero, só os novos ficam sem embedding (pendente
+// pro `npm run embeddings`). Desde a separação em data/embeddings.json (ver
+// [[project-backlog]] — o vetor sozinho era ~98% do peso do arquivo antigo),
+// o embedding em si vem de lá, não de data/produtos.json; o texto usado pra
+// comparar (embedding_text) continua no catálogo enxuto normalmente.
 // Preserva também `imagem` (URL preenchida manualmente por fora deste script,
 // ver lib/categoriaImagens.ts) por id sozinho — diferente do embedding, a foto
 // não depende do embedding_text ter mudado, só do id continuar sendo o mesmo
@@ -972,13 +977,21 @@ const outPath = path.join(process.cwd(), "data", "produtos.json");
 // de vincular fotos reais.
 let reaproveitados = 0;
 let imagensPreservadas = 0;
+const embeddingsNovos: Record<string, number[]> = {};
 try {
   const anterior = JSON.parse(fs.readFileSync(outPath, "utf-8")) as Produto[];
   const porId = new Map(anterior.map((p) => [p.id, p]));
+  let embeddingsAntigos: Record<string, number[]> = {};
+  try {
+    embeddingsAntigos = JSON.parse(fs.readFileSync(embPath, "utf-8"));
+  } catch {
+    // sem embeddings.json ainda — segue sem nenhum embedding reaproveitado
+  }
   for (const produto of todos) {
     const velho = porId.get(produto.id);
-    if (velho && velho.embedding?.length > 0 && velho.embedding_text === produto.embedding_text) {
-      produto.embedding = velho.embedding;
+    const embeddingAntigo = embeddingsAntigos[produto.id];
+    if (velho && embeddingAntigo?.length > 0 && velho.embedding_text === produto.embedding_text) {
+      embeddingsNovos[produto.id] = embeddingAntigo;
       reaproveitados++;
     }
     if (velho?.imagem) {
@@ -987,8 +1000,14 @@ try {
     }
   }
 } catch {
-  // primeira geração, sem arquivo anterior — segue com embedding: [] e imagem: "" em tudo
+  // primeira geração, sem arquivo anterior — segue sem embedding/imagem em tudo
 }
 
-fs.writeFileSync(outPath, JSON.stringify(todos, null, 2), "utf-8");
-console.log(`✅ ${todos.length} produtos gerados em data/produtos.json (${reaproveitados} embeddings reaproveitados, ${todos.length - reaproveitados} pendentes, ${imagensPreservadas} imagens preservadas)`);
+// `embedding` nunca é escrito em data/produtos.json (vive só em data/embeddings.json,
+// separado — ver lib/produtos.ts) — cada `p(...)` acima sempre gera `embedding: []`, então
+// isso só remove esse placeholder antes de gravar o catálogo enxuto.
+const todosSemEmbedding = todos.map(({ embedding: _embedding, ...resto }) => resto);
+
+fs.writeFileSync(outPath, JSON.stringify(todosSemEmbedding, null, 2), "utf-8");
+fs.writeFileSync(embPath, JSON.stringify(embeddingsNovos), "utf-8");
+console.log(`✅ ${todos.length} produtos gerados em data/produtos.json (${reaproveitados} embeddings reaproveitados em data/embeddings.json, ${todos.length - reaproveitados} pendentes, ${imagensPreservadas} imagens preservadas)`);

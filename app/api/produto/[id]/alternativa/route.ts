@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { carregarProdutos } from "@/lib/produtos";
+import { carregarProdutosComEmbeddings } from "@/lib/produtos";
 import { getInfoOferta } from "@/lib/ofertas";
 import { cosineSimilarity } from "@/lib/embeddings";
 import type { Produto } from "@/types/produto";
@@ -91,7 +91,7 @@ export async function GET(
       );
     }
 
-    const produtos = await carregarProdutos();
+    const produtos = await carregarProdutosComEmbeddings();
     const original = produtos.find((p) => p.id === id);
 
     if (!original) {

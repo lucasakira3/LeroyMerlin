@@ -1,5 +1,5 @@
 import { gerarEmbedding, cosineSimilarity } from "./embeddings";
-import { carregarProdutos } from "./produtos";
+import { carregarProdutosComEmbeddings } from "./produtos";
 import type { Produto, SearchResult } from "@/types/produto";
 
 // Fallback quando não há embeddings (cota da API esgotada, ou produto novo sem
@@ -36,7 +36,10 @@ export async function buscarProdutos(
   query: string,
   limit: number
 ): Promise<SearchResult[]> {
-  const produtos = await carregarProdutos();
+  // carregarProdutosComEmbeddings junta o catálogo enxuto com data/embeddings.json
+  // (arquivo separado, ver lib/produtos.ts) — só a busca semântica precisa do vetor de
+  // verdade, então só ela paga o custo de carregar/juntar os dois arquivos.
+  const produtos = await carregarProdutosComEmbeddings();
   // Nem todo produto tem embedding real (alguns bateram no limite diário da API na geração
   // do catálogo) — filtra pra só considerar os que têm, senão a similaridade de coseno
   // comparando contra um vetor vazio distorceria o ranking.
