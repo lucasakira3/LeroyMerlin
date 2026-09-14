@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, MapPin, Package, SlidersHorizontal, Scale } from 'lucide-react'
+import { ArrowLeft, MapPin, Package, SlidersHorizontal, Scale, Search, X } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
 import ProductCard from './ProductCard'
@@ -49,6 +49,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const [loja, setLoja] = useState(LOJAS[0])
   const [mostrarMapa, setMostrarMapa] = useState(false)
   const mapaRef = useRef<HTMLDivElement>(null)
+  const [filtroTexto, setFiltroTexto] = useState('')
   const [filtroComplexidade, setFiltroComplexidade] = useState<string>('Todos')
   const [filtroEstoque, setFiltroEstoque] = useState(false)
   const [filtroPrecoMin, setFiltroPrecoMin] = useState('')
@@ -70,7 +71,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   // Volta pra primeira página sempre que a categoria ou os filtros mudam
   useEffect(() => {
     setPagina(1)
-  }, [slug, filtroComplexidade, filtroEstoque, filtroPrecoMin, filtroPrecoMax, filtroNotaMinima])
+  }, [slug, filtroTexto, filtroComplexidade, filtroEstoque, filtroPrecoMin, filtroPrecoMax, filtroNotaMinima])
 
   function toggleSelecionado(p: ProdutoSemEmbedding) {
     setSelecionados(prev => {
@@ -84,8 +85,10 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   const complexidades = ['Todos', ...COMPLEXIDADE_ORDER]
   const precoMinNum = filtroPrecoMin ? Number(filtroPrecoMin) : null
   const precoMaxNum = filtroPrecoMax ? Number(filtroPrecoMax) : null
-  const filtrosAtivos = filtroComplexidade !== 'Todos' || filtroEstoque || filtroPrecoMin !== '' || filtroPrecoMax !== '' || filtroNotaMinima > 0
+  const filtrosAtivos = filtroTexto !== '' || filtroComplexidade !== 'Todos' || filtroEstoque || filtroPrecoMin !== '' || filtroPrecoMax !== '' || filtroNotaMinima > 0
+  const textoBusca = filtroTexto.trim().toLowerCase()
   const produtosFiltrados = produtos
+    .filter(p => !textoBusca || p.produto.toLowerCase().includes(textoBusca))
     .filter(p => filtroComplexidade === 'Todos' || p.complexidade === filtroComplexidade)
     .filter(p => !filtroEstoque || p.estoque > 0)
     .filter(p => precoMinNum === null || p.preco >= precoMinNum)
@@ -106,6 +109,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
   }
 
   function limparFiltros() {
+    setFiltroTexto('')
     setFiltroComplexidade('Todos')
     setFiltroEstoque(false)
     setFiltroPrecoMin('')
@@ -134,6 +138,24 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
               {produtosFiltrados.length} produtos
             </span>
+          )}
+        </div>
+
+        {/* Busca por nome dentro da categoria */}
+        <div className="relative flex-1 sm:max-w-sm">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            value={filtroTexto}
+            onChange={e => setFiltroTexto(e.target.value)}
+            placeholder={`Buscar em ${label}...`}
+            className="w-full h-9 pl-9 pr-8 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green"
+          />
+          {filtroTexto !== '' && (
+            <button onClick={() => setFiltroTexto('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <X size={14} />
+            </button>
           )}
         </div>
 
