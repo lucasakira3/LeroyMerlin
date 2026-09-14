@@ -142,7 +142,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
         </div>
 
         {/* Busca por nome dentro da categoria */}
-        <div className="relative flex-1 sm:max-w-sm">
+        <div className="relative w-full sm:flex-1 sm:min-w-0">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
