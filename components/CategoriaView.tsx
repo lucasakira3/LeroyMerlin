@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, MapPin, Package, SlidersHorizontal, Scale } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProdutoDrawer from './ProdutoDrawer'
-import ComparadorBar from './ComparadorBar'
 import ProductCard from './ProductCard'
 import SortSelect from './SortSelect'
 import Skeleton from './ui/Skeleton'
@@ -146,10 +145,6 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
-      </div>
-
-      <div className="mb-5">
-        <ComparadorBar />
       </div>
 
       {/* Mapa — aparece no topo com destaque */}
