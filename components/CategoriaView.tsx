@@ -126,20 +126,11 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
         onClose={() => setProdutoDrawer(null)}
       />
       {/* Header da categoria */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
-        <div className="flex items-center gap-3 flex-wrap">
-          <button onClick={onBack}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-lm-green transition-colors">
-            <ArrowLeft size={16} /> Voltar
-          </button>
-          <span className="text-gray-300">|</span>
-          <h2 className="text-lg font-bold text-lm-dark">{label}</h2>
-          {!loading && (
-            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-              {produtosFiltrados.length} produtos
-            </span>
-          )}
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+        <button onClick={onBack}
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-lm-green transition-colors flex-shrink-0">
+          <ArrowLeft size={16} /> Voltar
+        </button>
 
         {/* Busca por nome dentro da categoria */}
         <div className="relative w-full sm:flex-1 sm:min-w-0">
@@ -157,15 +148,6 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               <X size={14} />
             </button>
           )}
-        </div>
-
-        {/* Seletor de loja */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <MapPin size={14} className="text-lm-green flex-shrink-0" />
-          <select value={loja} onChange={e => setLoja(e.target.value)}
-            className="h-9 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green flex-1 sm:flex-none min-w-0">
-            {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
         </div>
       </div>
 
@@ -247,6 +229,14 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
         </div>
 
         <SortSelect value={ordenacao} onChange={setOrdenacao} />
+
+        <div className="flex items-center gap-1.5">
+          <MapPin size={13} className="text-lm-green flex-shrink-0" />
+          <select value={loja} onChange={e => setLoja(e.target.value)}
+            className="h-7 pl-2 pr-1 rounded-full border border-gray-200 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30 max-w-[160px]">
+            {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
+          </select>
+        </div>
 
         {filtrosAtivos && (
           <button onClick={limparFiltros}
