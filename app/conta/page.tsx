@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LogOut, Package, RotateCcw, Share2 } from "lucide-react";
+import { LogOut, MapPin, Package, RotateCcw, Share2, Store } from "lucide-react";
 import Button from "@/components/ui/Button";
 import PageHeader from "@/components/ui/PageHeader";
 import ProductListItem from "@/components/ProductListItem";
@@ -26,7 +26,7 @@ import { getAvaliacoesDoUsuario, type AvaliacaoComProduto } from "@/lib/clientAv
 import { buscarProdutosPorIds } from "@/lib/produtosCliente";
 import { getImagemProduto } from "@/lib/categoriaImagens";
 import { adicionarAoCarrinho } from "@/lib/clientCarrinho";
-import { codificarPedido } from "@/lib/pedidoCompartilhado";
+import { linkPedidoCompartilhado } from "@/lib/pedidoCompartilhado";
 import { showToast } from "@/lib/toast";
 import type { SearchResult } from "@/types/produto";
 
@@ -168,10 +168,13 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
   }
 
   async function compartilharPedido(pedido: Pedido) {
-    const url = `${window.location.origin}/pedido?d=${encodeURIComponent(codificarPedido(pedido))}`;
-    await navigator.clipboard.writeText(url);
-    setLinkCopiadoId(pedido.numero);
-    setTimeout(() => setLinkCopiadoId(null), 1500);
+    try {
+      await navigator.clipboard.writeText(linkPedidoCompartilhado(pedido));
+      setLinkCopiadoId(pedido.numero);
+      setTimeout(() => setLinkCopiadoId(null), 1500);
+    } catch {
+      showToast("Não foi possível copiar o link. Tente novamente.");
+    }
   }
 
   return (
@@ -215,14 +218,21 @@ function SecaoPedidos({ pedidos }: { pedidos: Pedido[] }) {
                 ))}
               </div>
               <div className="mb-3 px-1">
-                <PedidoTimeline etapas={status.etapas} etapaAtual={status.etapa} />
+                <PedidoTimeline etapas={status.etapas} etapaAtual={status.etapa} previsoes={status.previsoes} />
               </div>
-              <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                <span className="text-xs text-gray-500">
+              <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 mb-2">
+                {pedido.metodo === "retirada" ? (
+                  <Store size={14} className="text-lm-green flex-shrink-0" />
+                ) : (
+                  <MapPin size={14} className="text-lm-green flex-shrink-0" />
+                )}
+                <span className="text-xs text-gray-700 font-medium">
                   {pedido.metodo === "retirada"
                     ? `Retirada: ${pedido.loja}`
                     : `Entrega: ${pedido.endereco}`}
                 </span>
+              </div>
+              <div className="flex items-center justify-end pt-2 border-t border-gray-100">
                 <span className="text-sm font-bold text-gray-900">
                   {pedido.total.toLocaleString("pt-BR", {
                     style: "currency",

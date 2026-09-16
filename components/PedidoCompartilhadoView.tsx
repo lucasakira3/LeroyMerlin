@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Package, MapPin, CreditCard } from 'lucide-react'
+import { Package, MapPin, CreditCard, Store } from 'lucide-react'
 import PageHeader from '@/components/ui/PageHeader'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
@@ -50,7 +50,7 @@ export default function PedidoCompartilhadoView() {
           </div>
 
           <div className="mb-4 px-1">
-            <PedidoTimeline etapas={status.etapas} etapaAtual={status.etapa} />
+            <PedidoTimeline etapas={status.etapas} etapaAtual={status.etapa} previsoes={status.previsoes} />
           </div>
 
           <div className="space-y-1.5 mb-3">
@@ -64,9 +64,15 @@ export default function PedidoCompartilhadoView() {
             ))}
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 pt-3 border-t border-gray-100">
-            <MapPin size={12} />
-            {pedido.metodo === 'retirada' ? `Retirada: ${pedido.loja}` : `Entrega: ${pedido.endereco}`}
+          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 mb-3">
+            {pedido.metodo === 'retirada' ? (
+              <Store size={14} className="text-lm-green flex-shrink-0" />
+            ) : (
+              <MapPin size={14} className="text-lm-green flex-shrink-0" />
+            )}
+            <span className="text-xs text-gray-700 font-medium">
+              {pedido.metodo === 'retirada' ? `Retirada: ${pedido.loja}` : `Entrega: ${pedido.endereco}`}
+            </span>
           </div>
 
           {pedido.pagamento && (

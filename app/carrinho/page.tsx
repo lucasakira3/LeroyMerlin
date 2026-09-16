@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Minus, Plus, Trash2, ShoppingCart, MapPin, CheckCircle2, CreditCard, QrCode, Barcode, Loader2, Check, Map as MapIcon } from 'lucide-react'
+import { Minus, Plus, Trash2, ShoppingCart, MapPin, CheckCircle2, CreditCard, QrCode, Barcode, Loader2, Check, Map as MapIcon, Share2, Store } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import PageHeader from '@/components/ui/PageHeader'
@@ -19,6 +19,9 @@ import TermometroOrcamento from '@/components/TermometroOrcamento'
 import StoreMap from '@/components/StoreMap'
 import { calcularRota } from '@/lib/rotaLoja'
 import { showToast } from '@/lib/toast'
+import PedidoTimeline from '@/components/PedidoTimeline'
+import { getStatusPedido } from '@/lib/statusPedido'
+import { linkPedidoCompartilhado } from '@/lib/pedidoCompartilhado'
 import {
   getEnderecos, salvarEndereco, formatarEndereco,
   type Endereco, type NovoEndereco,
@@ -224,6 +227,19 @@ export default function CarrinhoPage() {
 
   if (pedidoConfirmado) {
     const pag = pedidoConfirmado.pagamento
+    const status = getStatusPedido(pedidoConfirmado)
+
+    async function compartilhar() {
+      // Clipboard pode falhar por permissão negada pelo navegador — não é caso
+      // hipotético, então mostra feedback em vez de deixar o clique não fazer nada.
+      try {
+        await navigator.clipboard.writeText(linkPedidoCompartilhado(pedidoConfirmado!))
+        showToast('Link de rastreio copiado!')
+      } catch {
+        showToast('Não foi possível copiar o link. Tente novamente.')
+      }
+    }
+
     return (
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-xl mx-auto px-4 py-10">
@@ -231,6 +247,10 @@ export default function CarrinhoPage() {
             <CheckCircle2 size={40} className="text-lm-green mx-auto mb-3" />
             <h1 className="text-xl font-bold text-gray-900 mb-1">Pedido confirmado!</h1>
             <p className="text-sm text-gray-500 mb-4">Número do pedido: <span className="font-mono font-semibold text-gray-700">{pedidoConfirmado.numero}</span></p>
+
+            <div className="text-left mb-5 px-1">
+              <PedidoTimeline etapas={status.etapas} etapaAtual={status.etapa} previsoes={status.previsoes} />
+            </div>
 
             <div className="text-left bg-gray-50 rounded-xl p-4 mb-4 space-y-1.5">
               {pedidoConfirmado.itens.map(i => (
@@ -247,12 +267,20 @@ export default function CarrinhoPage() {
               </div>
             </div>
 
-            <div className="text-left space-y-1 mb-6">
-              <p className="text-xs text-gray-500">
+            <div className="text-left flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 mb-2">
+              {pedidoConfirmado.metodo === 'retirada' ? (
+                <Store size={14} className="text-lm-green flex-shrink-0" />
+              ) : (
+                <MapPin size={14} className="text-lm-green flex-shrink-0" />
+              )}
+              <span className="text-xs text-gray-700 font-medium">
                 {pedidoConfirmado.metodo === 'retirada'
                   ? `Retirada em: ${pedidoConfirmado.loja}`
                   : `Entrega em: ${pedidoConfirmado.endereco}`}
-              </p>
+              </span>
+            </div>
+
+            <div className="text-left space-y-1 mb-6">
               {pag && (
                 <p className="text-xs text-gray-500">
                   Pagamento:{' '}
@@ -265,7 +293,14 @@ export default function CarrinhoPage() {
               )}
             </div>
 
-            <div className="flex gap-3 justify-center">
+            <div className="flex flex-wrap gap-3 justify-center">
+              <button
+                type="button"
+                onClick={compartilhar}
+                className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-lm-green transition-colors px-2"
+              >
+                <Share2 size={14} /> Compartilhar rastreio
+              </button>
               <Link href="/conta"><Button variant="secondary">Ver meus pedidos</Button></Link>
               <Link href="/produtos"><Button variant="primary">Continuar comprando</Button></Link>
             </div>

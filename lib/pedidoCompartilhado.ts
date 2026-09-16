@@ -27,3 +27,10 @@ export function decodificarPedido(codificado: string): Pedido | null {
     return null
   }
 }
+
+// Um único lugar pra montar a URL do link compartilhável — usado tanto na confirmação
+// de compra (app/carrinho/page.tsx) quanto em "Meus pedidos" (app/conta/page.tsx), pra
+// não duplicar o formato da rota caso ele mude no futuro.
+export function linkPedidoCompartilhado(pedido: Pedido): string {
+  return `${window.location.origin}/pedido?d=${encodeURIComponent(codificarPedido(pedido))}`
+}
