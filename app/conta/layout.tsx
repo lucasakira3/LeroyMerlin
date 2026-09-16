@@ -24,10 +24,15 @@ export default function ContaLayout({ children }: { children: React.ReactNode })
   if (!usuario) return null
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6 lg:gap-8">
+    <main className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
+      {/* Barra lateral encostada na borda esquerda de verdade, fora do container
+          centralizado — não faz sentido ela ficar boiando no meio da tela em monitor largo. */}
+      <div className="lg:w-64 flex-shrink-0 px-4 sm:px-6 lg:px-8 py-6">
         <ContaSidebar nome={usuario.nome ?? usuario.email} email={usuario.email} />
-        <div className="flex-1 min-w-0">{children}</div>
+      </div>
+      {/* O conteúdo em si (cards, listas) continua centralizado no espaço restante. */}
+      <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6 flex justify-center">
+        <div className="w-full max-w-4xl">{children}</div>
       </div>
     </main>
   )

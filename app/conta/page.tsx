@@ -41,17 +41,17 @@ export default function ContaPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-bold text-gray-900 mb-4">Configurações da conta</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+        <h1 className="text-xl font-bold text-gray-900 mb-5">Configurações da conta</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {CARDS.map(({ href, titulo, descricao, icone: Icone }) => (
             <Link key={href} href={href}>
-              <Card hoverable padding="sm" className="h-full flex items-start gap-3 cursor-pointer">
-                <Icone size={20} className="text-lm-green flex-shrink-0 mt-0.5" />
+              <Card hoverable padding="md" className="h-full flex items-start gap-4 cursor-pointer">
+                <Icone size={26} className="text-lm-green flex-shrink-0 mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-gray-900">{titulo}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{descricao}</p>
+                  <p className="text-base font-semibold text-gray-900">{titulo}</p>
+                  <p className="text-sm text-gray-500 mt-1">{descricao}</p>
                 </div>
-                <ChevronRight size={16} className="text-gray-300 flex-shrink-0 mt-0.5" />
+                <ChevronRight size={18} className="text-gray-300 flex-shrink-0 mt-1" />
               </Card>
             </Link>
           ))}
