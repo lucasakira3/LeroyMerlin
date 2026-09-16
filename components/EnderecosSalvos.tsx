@@ -74,9 +74,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
   }
 
   return (
-    <section>
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Endereços salvos</h2>
-
+    <div>
       {enderecos.length === 0 && !novoAberto && (
         <p className="text-sm text-gray-500 py-2 mb-3">Nenhum endereço salvo ainda.</p>
       )}
@@ -223,6 +221,6 @@ export default function EnderecosSalvos({ email }: { email: string }) {
           </div>
         </form>
       )}
-    </section>
+    </div>
   )
 }

@@ -26,6 +26,7 @@ import {
   getEnderecos, salvarEndereco, formatarEndereco,
   type Endereco, type NovoEndereco,
 } from '@/lib/clientEnderecos'
+import { getCartoes, salvarCartao, type CartaoSalvo } from '@/lib/clientCartoes'
 import { formatarCep, buscarCep } from '@/lib/cep'
 import {
   formatarNumeroCartao, formatarValidade, formatarCvv,
@@ -78,10 +79,13 @@ export default function CarrinhoPage() {
 
   // Pagamento
   const [formaPagamento, setFormaPagamento] = useState<'cartao' | 'pix' | 'boleto'>('cartao')
+  const [cartoesSalvos, setCartoesSalvos] = useState<CartaoSalvo[]>([])
+  const [cartaoSelecionadoId, setCartaoSelecionadoId] = useState<string | null>(null)
   const [numeroCartao, setNumeroCartao] = useState('')
   const [nomeCartao, setNomeCartao] = useState('')
   const [validadeCartao, setValidadeCartao] = useState('')
   const [cvv, setCvv] = useState('')
+  const [salvarNovoCartao, setSalvarNovoCartao] = useState(false)
   const [parcelas, setParcelas] = useState(1)
 
   const [pedidoConfirmado, setPedidoConfirmado] = useState<Pedido | null>(null)
@@ -94,6 +98,11 @@ export default function CarrinhoPage() {
       setEnderecosSalvos(salvos)
       const padrao = salvos.find(e => e.padrao)
       setEnderecoSelecionadoId(padrao ? padrao.id : salvos.length === 0 ? 'novo' : null)
+
+      const cartoes = getCartoes(usuarioLogado.email)
+      setCartoesSalvos(cartoes)
+      const cartaoPadrao = cartoes.find(c => c.padrao)
+      setCartaoSelecionadoId(cartaoPadrao ? cartaoPadrao.id : cartoes.length === 0 ? 'novo' : null)
     }
     const carrinho = getCarrinho()
     setItens(carrinho)
@@ -157,13 +166,15 @@ export default function CarrinhoPage() {
   const opcoesParcelamento = getOpcoesParcelamento(total)
 
   const enderecoSelecionado = enderecosSalvos.find(e => e.id === enderecoSelecionadoId) ?? null
+  const cartaoSelecionado = cartoesSalvos.find(c => c.id === cartaoSelecionadoId) ?? null
 
   const enderecoValido = enderecoSelecionado
     ? true
     : Boolean(enderecoForm.rua.trim() && enderecoForm.numero.trim() && enderecoForm.cidade.trim())
 
   const pagamentoValido =
-    formaPagamento !== 'cartao' || cartaoValido(numeroCartao, validadeCartao, cvv, nomeCartao)
+    formaPagamento !== 'cartao' ||
+    (cartaoSelecionado ? cvv.length >= 3 : cartaoValido(numeroCartao, validadeCartao, cvv, nomeCartao))
 
   const podeConfirmar =
     (metodo === 'retirada' || enderecoValido) && pagamentoValido
@@ -183,15 +194,35 @@ export default function CarrinhoPage() {
       }
     }
 
-    const pagamento: PagamentoInfo =
-      formaPagamento === 'cartao'
-        ? {
-            metodo: 'cartao',
-            parcelas,
-            ultimosDigitos: numeroCartao.replace(/\D/g, '').slice(-4),
+    let pagamento: PagamentoInfo
+    if (formaPagamento === 'cartao') {
+      if (cartaoSelecionado) {
+        pagamento = {
+          metodo: 'cartao',
+          parcelas,
+          ultimosDigitos: cartaoSelecionado.ultimosDigitos,
+          bandeira: cartaoSelecionado.bandeira,
+        }
+      } else {
+        pagamento = {
+          metodo: 'cartao',
+          parcelas,
+          ultimosDigitos: numeroCartao.replace(/\D/g, '').slice(-4),
+          bandeira: detectarBandeira(numeroCartao),
+        }
+        if (salvarNovoCartao) {
+          salvarCartao(usuario.email, {
+            apelido: '',
             bandeira: detectarBandeira(numeroCartao),
-          }
-        : { metodo: formaPagamento }
+            ultimosDigitos: numeroCartao.replace(/\D/g, '').slice(-4),
+            nomeImpresso: nomeCartao.trim(),
+            validade: validadeCartao,
+          })
+        }
+      }
+    } else {
+      pagamento = { metodo: formaPagamento }
+    }
 
     const itensPedido: ItemPedido[] = itensResolvidos.map(({ item, produto }) => ({
       produtoId: produto.id,
@@ -603,51 +634,117 @@ export default function CarrinhoPage() {
 
                   {formaPagamento === 'cartao' && (
                     <div className="space-y-2.5">
-                      <input
-                        type="text"
-                        value={numeroCartao}
-                        onChange={e => setNumeroCartao(formatarNumeroCartao(e.target.value))}
-                        placeholder="Número do cartão"
-                        inputMode="numeric"
-                        className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
-                      />
-                      <input
-                        type="text"
-                        value={nomeCartao}
-                        onChange={e => setNomeCartao(e.target.value)}
-                        placeholder="Nome impresso no cartão"
-                        className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
-                      />
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={validadeCartao}
-                          onChange={e => setValidadeCartao(formatarValidade(e.target.value))}
-                          placeholder="MM/AA"
-                          inputMode="numeric"
-                          className="w-24 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
-                        />
-                        <input
-                          type="text"
-                          value={cvv}
-                          onChange={e => setCvv(formatarCvv(e.target.value))}
-                          placeholder="CVV"
-                          inputMode="numeric"
-                          className="w-20 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
-                        />
-                        <select
-                          value={parcelas}
-                          onChange={e => setParcelas(Number(e.target.value))}
-                          className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
-                        >
-                          {opcoesParcelamento.map(op => (
-                            <option key={op.parcelas} value={op.parcelas}>
-                              {op.parcelas}x de {op.valorParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                              {op.parcelas === 1 ? ' à vista' : ' sem juros'}
-                            </option>
+                      {cartoesSalvos.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-1">
+                          {cartoesSalvos.map(c => (
+                            <button
+                              key={c.id}
+                              type="button"
+                              onClick={() => setCartaoSelecionadoId(c.id)}
+                              className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                                cartaoSelecionadoId === c.id
+                                  ? 'bg-lm-green text-white border-lm-green'
+                                  : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                              }`}
+                            >
+                              {c.bandeira} final {c.ultimosDigitos}
+                            </button>
                           ))}
-                        </select>
-                      </div>
+                          <button
+                            type="button"
+                            onClick={() => setCartaoSelecionadoId('novo')}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                              cartaoSelecionadoId === 'novo'
+                                ? 'bg-lm-green text-white border-lm-green'
+                                : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                            }`}
+                          >
+                            + Novo cartão
+                          </button>
+                        </div>
+                      )}
+
+                      {cartaoSelecionado ? (
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={cvv}
+                            onChange={e => setCvv(formatarCvv(e.target.value))}
+                            placeholder="CVV"
+                            inputMode="numeric"
+                            className="w-20 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                          />
+                          <select
+                            value={parcelas}
+                            onChange={e => setParcelas(Number(e.target.value))}
+                            className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                          >
+                            {opcoesParcelamento.map(op => (
+                              <option key={op.parcelas} value={op.parcelas}>
+                                {op.parcelas}x de {op.valorParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                {op.parcelas === 1 ? ' à vista' : ' sem juros'}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      ) : (
+                        <>
+                          <input
+                            type="text"
+                            value={numeroCartao}
+                            onChange={e => setNumeroCartao(formatarNumeroCartao(e.target.value))}
+                            placeholder="Número do cartão"
+                            inputMode="numeric"
+                            className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                          />
+                          <input
+                            type="text"
+                            value={nomeCartao}
+                            onChange={e => setNomeCartao(e.target.value)}
+                            placeholder="Nome impresso no cartão"
+                            className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={validadeCartao}
+                              onChange={e => setValidadeCartao(formatarValidade(e.target.value))}
+                              placeholder="MM/AA"
+                              inputMode="numeric"
+                              className="w-24 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            />
+                            <input
+                              type="text"
+                              value={cvv}
+                              onChange={e => setCvv(formatarCvv(e.target.value))}
+                              placeholder="CVV"
+                              inputMode="numeric"
+                              className="w-20 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            />
+                            <select
+                              value={parcelas}
+                              onChange={e => setParcelas(Number(e.target.value))}
+                              className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            >
+                              {opcoesParcelamento.map(op => (
+                                <option key={op.parcelas} value={op.parcelas}>
+                                  {op.parcelas}x de {op.valorParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  {op.parcelas === 1 ? ' à vista' : ' sem juros'}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <label className="flex items-center gap-2 text-xs text-gray-500 pt-1">
+                            <input
+                              type="checkbox"
+                              checked={salvarNovoCartao}
+                              onChange={e => setSalvarNovoCartao(e.target.checked)}
+                              className="rounded border-gray-300 text-lm-green focus:ring-lm-green/30"
+                            />
+                            Salvar este cartão pra próxima compra
+                          </label>
+                        </>
+                      )}
                       <p className="text-[11px] text-gray-400">
                         Cartão fictício — nenhum pagamento real é processado neste projeto.
                       </p>

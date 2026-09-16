@@ -16,6 +16,8 @@ import { formatarParcelamento } from '@/lib/parcelamento'
 import { showToast } from '@/lib/toast'
 import { getIconeEspecificacao, parseEspecificacoes } from '@/lib/especificacaoIcones'
 import { getMedia } from '@/lib/clientAvaliacoes'
+import { getUsuarioLogado } from '@/lib/clientAuth'
+import { salvarPergunta } from '@/lib/clientPerguntas'
 import AvaliacoesProduto from './AvaliacoesProduto'
 import BotaoAjudaCorredor from './BotaoAjudaCorredor'
 import VerificarCompatibilidade from './VerificarCompatibilidade'
@@ -144,6 +146,20 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
       })
       const data = await res.json()
       setMensagens(prev => [...prev, { role: 'ai', texto: data.resposta ?? data.error ?? 'Erro ao responder.' }])
+      if (data.resposta) {
+        // Não pode derrubar o chat se falhar — é um efeito colateral, não o fluxo principal.
+        try {
+          const usuario = getUsuarioLogado()
+          if (usuario) {
+            salvarPergunta(usuario.email, {
+              produtoId: produto.id,
+              produtoNome: produto.produto,
+              pergunta,
+              resposta: data.resposta,
+            })
+          }
+        } catch {}
+      }
     } catch {
       setMensagens(prev => [...prev, { role: 'ai', texto: 'Serviço temporariamente indisponível.' }])
     } finally {

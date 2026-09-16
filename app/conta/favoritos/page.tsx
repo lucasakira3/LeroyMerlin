@@ -122,8 +122,9 @@ export default function FavoritosPage() {
   });
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 py-6">
+    <div>
+        <h1 className="text-xl font-bold text-gray-900 mb-1">Meus favoritos</h1>
+        <p className="text-sm text-gray-500">Produtos que você salvou pra ver depois.</p>
         {produtos !== null && produtos.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-4 mb-2">
             <button
@@ -278,7 +279,6 @@ export default function FavoritosPage() {
             )}
           </div>
         )}
-      </div>
-    </main>
+    </div>
   );
 }

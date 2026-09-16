@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import StarRating from '@/components/ui/StarRating'
 import {
   getAvaliacoesDoUsuario,
@@ -52,12 +52,8 @@ export default function MinhasAvaliacoesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        <Link href="/conta" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-lm-green mb-4">
-          <ArrowLeft size={15} /> Voltar pra Minha Conta
-        </Link>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-1">Minhas avaliações</h1>
+    <div>
+        <h1 className="text-xl font-bold text-gray-900 mb-1">Minhas avaliações</h1>
         <p className="text-sm text-gray-500 mb-6">Notas e comentários que você deixou em produtos</p>
 
         {avaliacoes === null && (
@@ -116,7 +112,6 @@ export default function MinhasAvaliacoesPage() {
             })}
           </div>
         )}
-      </div>
-    </main>
+    </div>
   )
 }

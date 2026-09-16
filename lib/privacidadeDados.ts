@@ -12,9 +12,11 @@
 const CHAVES_MAPA_POR_EMAIL = [
   'lm_contas_cliente',
   'lm_enderecos_cliente',
+  'lm_cartoes_cliente',
   'lm_pedidos_cliente',
   'lm_perfil_cliente',
   'lm_notificacoes',
+  'lm_perguntas_cliente',
 ] as const
 
 // Dado que não é por conta — funciona sem login, então uma "conta" não tem um dono
@@ -52,8 +54,10 @@ export interface DadosClienteExportados {
   conta: { nome: string; criadoEm: string } | null
   perfil: unknown
   enderecos: unknown
+  cartoesSalvos: unknown
   pedidos: unknown
   notificacoes: unknown
+  perguntas: unknown
   avaliacoes: Array<{ produtoId: string } & Record<string, unknown>>
   gruposFavoritos: unknown
   favoritos: unknown
@@ -86,8 +90,12 @@ export function exportarDadosCliente(email: string): DadosClienteExportados {
     conta: conta ? { nome: conta.nome, criadoEm: conta.criadoEm } : null,
     perfil: lerJSON<Record<string, unknown>>('lm_perfil_cliente', {})[email] ?? null,
     enderecos: lerJSON<Record<string, unknown>>('lm_enderecos_cliente', {})[email] ?? [],
+    // Só os 4 últimos dígitos + bandeira ficam salvos (nunca o número completo, ver
+    // lib/clientCartoes.ts), então exportar isso direto não vaza nada sensível.
+    cartoesSalvos: lerJSON<Record<string, unknown>>('lm_cartoes_cliente', {})[email] ?? [],
     pedidos: lerJSON<Record<string, unknown>>('lm_pedidos_cliente', {})[email] ?? [],
     notificacoes: lerJSON<Record<string, unknown>>('lm_notificacoes', {})[email] ?? [],
+    perguntas: lerJSON<Record<string, unknown>>('lm_perguntas_cliente', {})[email] ?? [],
     avaliacoes: minhasAvaliacoes,
     gruposFavoritos: lerJSON(`lm_favoritos_grupos_${email}`, null),
     favoritos: lerJSON('lm_favoritos_produtos', []),
