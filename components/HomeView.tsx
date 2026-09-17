@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Search, LayoutGrid, ArrowRight } from 'lucide-react'
-import Card from '@/components/ui/Card'
 import BannerCarrossel from '@/components/BannerCarrossel'
 import VitrineOfertas from '@/components/VitrineOfertas'
 
@@ -42,13 +41,6 @@ export default function HomeView() {
           <ArrowRight size={20} className="flex-shrink-0 text-gray-400" />
         </Link>
       </div>
-
-      {/* "5.000+ produtos" e "45 lojas" foram pro topo da página Buscar (BuscarView.tsx),
-          a pedido do usuário — só esse card fica na home. */}
-      <Card padding="sm" className="text-center text-xs text-gray-500 max-w-xs mx-auto">
-        <p className="font-bold text-lm-dark text-base">IA</p>
-        <p>busca por linguagem natural</p>
-      </Card>
     </div>
   )
 }
