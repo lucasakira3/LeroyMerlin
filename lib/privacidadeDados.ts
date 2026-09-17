@@ -17,6 +17,7 @@ const CHAVES_MAPA_POR_EMAIL = [
   'lm_perfil_cliente',
   'lm_notificacoes',
   'lm_perguntas_cliente',
+  'lm_conversas_especialista',
 ] as const
 
 // Dado que não é por conta — funciona sem login, então uma "conta" não tem um dono
@@ -58,6 +59,7 @@ export interface DadosClienteExportados {
   pedidos: unknown
   notificacoes: unknown
   perguntas: unknown
+  conversaEspecialista: unknown
   avaliacoes: Array<{ produtoId: string } & Record<string, unknown>>
   gruposFavoritos: unknown
   favoritos: unknown
@@ -96,6 +98,7 @@ export function exportarDadosCliente(email: string): DadosClienteExportados {
     pedidos: lerJSON<Record<string, unknown>>('lm_pedidos_cliente', {})[email] ?? [],
     notificacoes: lerJSON<Record<string, unknown>>('lm_notificacoes', {})[email] ?? [],
     perguntas: lerJSON<Record<string, unknown>>('lm_perguntas_cliente', {})[email] ?? [],
+    conversaEspecialista: lerJSON<Record<string, unknown>>('lm_conversas_especialista', {})[email] ?? null,
     avaliacoes: minhasAvaliacoes,
     gruposFavoritos: lerJSON(`lm_favoritos_grupos_${email}`, null),
     favoritos: lerJSON('lm_favoritos_produtos', []),

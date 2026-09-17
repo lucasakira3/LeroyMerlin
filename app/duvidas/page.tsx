@@ -1,24 +1,52 @@
+'use client'
+
+import { useState } from 'react'
+import { ArrowLeft, Bot, Headset, Phone, MessageCircle, Clock, ShieldCheck } from 'lucide-react'
 import DuvidasChat from '@/components/DuvidasChat'
+import DuvidasEscolha from '@/components/DuvidasEscolha'
+import ConversaEspecialista from '@/components/ConversaEspecialista'
 import Card from '@/components/ui/Card'
-import { Phone, MessageCircle, Clock, ShieldCheck } from 'lucide-react'
+
+type Modo = 'escolha' | 'robo' | 'especialista'
+
+const CABECALHOS: Record<Exclude<Modo, 'escolha'>, { titulo: string; descricao: string; icone: typeof Bot }> = {
+  robo: { titulo: 'Assistente Robô', descricao: 'Powered by Gemini · responde em segundos', icone: Bot },
+  especialista: { titulo: 'Especialista', descricao: 'Conversa direto com um funcionário da loja', icone: Headset },
+}
 
 export default function DuvidasPage() {
+  const [modo, setModo] = useState<Modo>('escolha')
+
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-220px)]">
 
         {/* Chat — coluna principal */}
         <Card padding="none" className="lg:col-span-2 flex flex-col overflow-hidden h-[70vh] lg:h-auto">
-          {/* Header */}
-          <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse" />
-            <div>
-              <p className="text-sm font-semibold text-lm-dark">Assistente Especialista</p>
-              <p className="text-xs text-gray-500">Powered by Gemini · responde em segundos</p>
-            </div>
-          </div>
+          {modo === 'escolha' ? (
+            <DuvidasEscolha onEscolher={setModo} />
+          ) : (
+            <>
+              {/* Header */}
+              <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setModo('escolha')}
+                  aria-label="Voltar"
+                  className="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center text-gray-400 hover:text-lm-green hover:bg-gray-50 transition-colors"
+                >
+                  <ArrowLeft size={16} />
+                </button>
+                <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-lm-dark">{CABECALHOS[modo].titulo}</p>
+                  <p className="text-xs text-gray-500">{CABECALHOS[modo].descricao}</p>
+                </div>
+              </div>
 
-          <DuvidasChat />
+              {modo === 'robo' ? <DuvidasChat /> : <ConversaEspecialista />}
+            </>
+          )}
         </Card>
 
         {/* Sidebar — contato humano */}
