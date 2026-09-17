@@ -1,15 +1,17 @@
 import Link from 'next/link'
 import { Search, LayoutGrid, ArrowRight } from 'lucide-react'
 import Card from '@/components/ui/Card'
+import BannerCarrossel from '@/components/BannerCarrossel'
+import VitrineOfertas from '@/components/VitrineOfertas'
 
-// Banner promocional e vitrine de ofertas saíram daqui, foram pra dentro de
-// components/BuscarView.tsx — usuário pediu explicitamente ("é como se fosse a vitrine da
-// loja"), já que esses dois elementos fazem mais sentido no primeiro lugar onde o cliente
-// realmente busca um produto do que numa home cada vez mais enxuta. Home fica só com os
-// dois atalhos de entrada (buscar / navegar por categoria) e a barra de stats.
+// Banner promocional e vitrine de ofertas voltaram pra home — tinham ido pra dentro de
+// components/BuscarView.tsx numa sessão anterior, usuário pediu pra trazer de volta.
 export default function HomeView() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
+      <BannerCarrossel />
+      <VitrineOfertas />
+
       {/* Chamadas pras telas de busca e produtos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <Link
