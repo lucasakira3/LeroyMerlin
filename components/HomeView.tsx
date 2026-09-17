@@ -43,21 +43,12 @@ export default function HomeView() {
         </Link>
       </div>
 
-      {/* Info bar */}
-      <div className="grid grid-cols-3 gap-4 text-center text-xs text-gray-500">
-        <Card padding="sm">
-          <p className="font-bold text-lm-dark text-base">5.000+</p>
-          <p>produtos disponíveis</p>
-        </Card>
-        <Card padding="sm">
-          <p className="font-bold text-lm-dark text-base">45</p>
-          <p>lojas no Brasil</p>
-        </Card>
-        <Card padding="sm">
-          <p className="font-bold text-lm-dark text-base">IA</p>
-          <p>busca por linguagem natural</p>
-        </Card>
-      </div>
+      {/* "5.000+ produtos" e "45 lojas" foram pro topo da página Buscar (BuscarView.tsx),
+          a pedido do usuário — só esse card fica na home. */}
+      <Card padding="sm" className="text-center text-xs text-gray-500 max-w-xs mx-auto">
+        <p className="font-bold text-lm-dark text-base">IA</p>
+        <p>busca por linguagem natural</p>
+      </Card>
     </div>
   )
 }
