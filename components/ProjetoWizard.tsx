@@ -235,7 +235,7 @@ export default function ProjetoWizard() {
       )}
 
       {/* Barra de ação fixa — muda de controle conforme a etapa, mesma posição do input do DuvidasChat */}
-      <div className="border-t border-gray-100 p-4">
+      <div className="border-t border-gray-200 p-4">
         {resultado ? (
           <button
             onClick={novoProjeto}

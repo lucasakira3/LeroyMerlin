@@ -118,7 +118,7 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
       {ordenadas.length > 0 && (
         <div className="space-y-3">
           {ordenadas.map((a, i) => (
-            <div key={i} className="border-t border-gray-100 pt-3 first:border-t-0 first:pt-0">
+            <div key={i} className="border-t border-gray-200 pt-3 first:border-t-0 first:pt-0">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <StarRating value={a.nota} size={13} />
                 <span className="text-[11px] text-gray-400">{new Date(a.data).toLocaleDateString('pt-BR')}</span>

@@ -281,7 +281,7 @@ export default function ChamadosPage() {
         <Card padding="none" className="flex-1 flex flex-col overflow-hidden">
           {modo === 'agendamentos' && chamadoSelecionado && estadoSelecionado ? (
             <>
-              <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white z-10">
+              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white z-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-lm-green/10 flex items-center justify-center text-lm-green">
                     <User size={20} />
@@ -334,7 +334,7 @@ export default function ChamadosPage() {
                 ))}
               </div>
 
-              <div className="p-4 bg-white border-t border-gray-100">
+              <div className="p-4 bg-white border-t border-gray-200">
                 <div className="flex items-center gap-3 bg-gray-50 rounded-2xl p-2 border border-gray-200 focus-within:border-lm-green focus-within:ring-2 focus-within:ring-lm-green/30 transition-all">
                   <input
                     type="text"
@@ -356,7 +356,7 @@ export default function ChamadosPage() {
             </>
           ) : modo === 'conversas' && conversaSelecionada ? (
             <>
-              <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white z-10">
+              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white z-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-lm-green/10 flex items-center justify-center text-lm-green">
                     <User size={20} />
@@ -400,7 +400,7 @@ export default function ChamadosPage() {
                 ))}
               </div>
 
-              <div className="p-4 bg-white border-t border-gray-100">
+              <div className="p-4 bg-white border-t border-gray-200">
                 <div className="flex items-center gap-3 bg-gray-50 rounded-2xl p-2 border border-gray-200 focus-within:border-lm-green focus-within:ring-2 focus-within:ring-lm-green/30 transition-all">
                   <input
                     type="text"

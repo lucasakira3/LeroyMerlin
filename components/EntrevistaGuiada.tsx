@@ -38,7 +38,7 @@ function Chip({ label, selecionado, onClick, disabled }: ChipProps) {
         selecionado
           ? 'bg-lm-green text-white border-lm-green'
           : disabled
-            ? 'bg-white text-gray-300 border-gray-100 cursor-not-allowed'
+            ? 'bg-white text-gray-300 border-gray-200 cursor-not-allowed'
             : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
       }`}
     >

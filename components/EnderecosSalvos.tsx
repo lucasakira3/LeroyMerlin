@@ -84,7 +84,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
           {enderecos.map(end => (
             <div
               key={end.id}
-              className="flex items-center justify-between gap-3 bg-white rounded-card shadow-soft border border-gray-100 p-3"
+              className="flex items-center justify-between gap-3 bg-white rounded-card shadow-soft border border-gray-200 p-3"
             >
               <div className="flex items-start gap-2.5 min-w-0">
                 <MapPin size={16} className="text-lm-green flex-shrink-0 mt-0.5" />
@@ -134,7 +134,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
           <Plus size={14} /> Adicionar endereço
         </button>
       ) : (
-        <form onSubmit={adicionar} className="bg-white rounded-card shadow-soft border border-gray-100 p-4 space-y-2.5">
+        <form onSubmit={adicionar} className="bg-white rounded-card shadow-soft border border-gray-200 p-4 space-y-2.5">
           <input
             type="text"
             value={form.rotulo}

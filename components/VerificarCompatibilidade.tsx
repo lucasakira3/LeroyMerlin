@@ -72,7 +72,7 @@ export default function VerificarCompatibilidade({ produtoId }: { produtoId: str
   const info = resultado?.veredito ? VEREDITO_INFO[resultado.veredito] : null
 
   return (
-    <div className="mt-2 border-t border-gray-100 pt-3">
+    <div className="mt-2 border-t border-gray-200 pt-3">
       <button
         type="button"
         onClick={() => setAberto(v => !v)}

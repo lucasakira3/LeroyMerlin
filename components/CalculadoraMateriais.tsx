@@ -93,7 +93,7 @@ export default function CalculadoraMateriais() {
   return (
     <div className="flex flex-col md:flex-row h-full min-h-0">
       {/* Formulário */}
-      <div className="md:w-72 flex-shrink-0 flex flex-col border-b md:border-b-0 md:border-r border-gray-100 dark:border-zinc-800 p-4 gap-3">
+      <div className="md:w-72 flex-shrink-0 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-zinc-800 p-4 gap-3">
         <div className="grid grid-cols-2 gap-1 bg-gray-100 dark:bg-zinc-800 rounded-lg p-1">
           {TIPOS.map(({ valor, label, icone: Icone }) => (
             <button
@@ -194,7 +194,7 @@ export default function CalculadoraMateriais() {
                 {produtos?.map(produto => (
                   <div
                     key={produto.id}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs"
                   >
                     <img
                       src={getImagemProduto(produto)}

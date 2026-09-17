@@ -117,7 +117,7 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
       {/* Loading */}
       {loading && (
         <div className="space-y-4 animate-fade-in">
-          <div className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-soft">
+          <div className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-xl shadow-soft">
             <Skeleton className="w-16 h-6 rounded-lg" />
             <Skeleton className="w-24 h-6 rounded-lg" />
             <Skeleton className="w-24 h-6 rounded-lg" />
@@ -176,7 +176,7 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
           </p>
           <div className="flex flex-wrap gap-2.5 justify-center">
             {['Torneira banheiro', 'Tinta branca', 'Disjuntor 20A', 'Piso laminado', 'Mangueira jardim'].map((s) => (
-              <span key={s} className="px-3 py-1.5 bg-white border border-gray-100 shadow-soft rounded-full text-sm text-gray-600">
+              <span key={s} className="px-3 py-1.5 bg-white border border-gray-200 shadow-soft rounded-full text-sm text-gray-600">
                 {s}
               </span>
             ))}

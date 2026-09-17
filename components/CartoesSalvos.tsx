@@ -78,7 +78,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
           {cartoes.map(c => (
             <div
               key={c.id}
-              className="flex items-center justify-between gap-3 bg-white rounded-card shadow-soft border border-gray-100 p-3"
+              className="flex items-center justify-between gap-3 bg-white rounded-card shadow-soft border border-gray-200 p-3"
             >
               <div className="flex items-start gap-2.5 min-w-0">
                 <CreditCard size={16} className="text-lm-green flex-shrink-0 mt-0.5" />
@@ -130,7 +130,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
           <Plus size={14} /> Adicionar cartão
         </button>
       ) : (
-        <form onSubmit={adicionar} className="bg-white rounded-card shadow-soft border border-gray-100 p-4 space-y-2.5">
+        <form onSubmit={adicionar} className="bg-white rounded-card shadow-soft border border-gray-200 p-4 space-y-2.5">
           <input
             type="text"
             value={form.apelido}

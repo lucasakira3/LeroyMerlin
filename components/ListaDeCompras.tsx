@@ -270,7 +270,7 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 pt-3 border-t border-gray-100">
+                <div className="mt-3 pt-3 border-t border-gray-200">
                   <Link href="/agendamento"
                     className="flex items-center justify-center gap-1.5 w-full text-xs font-semibold text-lm-green border border-lm-green/30 py-2 rounded-lg hover:bg-lm-green/5 transition-colors">
                     <CalendarCheck size={13} /> Agendar visita presencial

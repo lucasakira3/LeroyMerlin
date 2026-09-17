@@ -74,7 +74,7 @@ export default function AgendamentosLista() {
             className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
               filtro === f
                 ? 'bg-lm-green text-white border-lm-green'
-                : 'bg-white text-gray-500 border-gray-100 hover:border-lm-green/40'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
             }`}
           >
             {f === 'todos' ? 'Todos' : f === 'confirmado' ? 'Confirmados' : 'Cancelados'}
@@ -147,7 +147,7 @@ export default function AgendamentosLista() {
             </div>
 
             {ag.observacao && (
-              <p className="mt-2.5 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
+              <p className="mt-2.5 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2 border border-gray-200">
                 <span className="font-medium">Obs:</span> {ag.observacao}
               </p>
             )}

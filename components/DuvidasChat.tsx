@@ -127,7 +127,7 @@ export default function DuvidasChat() {
       )}
 
       {/* Input */}
-      <div className="border-t border-gray-100 p-4">
+      <div className="border-t border-gray-200 p-4">
         <form
           onSubmit={(e) => { e.preventDefault(); enviar(input) }}
           className="flex gap-2"

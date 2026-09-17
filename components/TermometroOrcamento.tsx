@@ -137,7 +137,7 @@ export default function TermometroOrcamento() {
     percentual >= 1 ? 'text-red-600 dark:text-red-400' : percentual >= 0.7 ? 'text-amber-600 dark:text-amber-400' : 'text-lm-green'
 
   return (
-    <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-card shadow-soft">
+    <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-card shadow-soft">
       <div className="px-4 py-3 flex items-center gap-3">
         <Wallet size={16} className="text-gray-400 dark:text-zinc-500 flex-shrink-0" />
         {!editando && orcamento !== null && (

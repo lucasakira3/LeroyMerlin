@@ -100,7 +100,7 @@ export default function ComparadorFerramenta() {
   return (
     <div className="flex flex-col md:flex-row h-full min-h-0">
       {/* Seletor de produtos */}
-      <div className="md:w-72 flex-shrink-0 flex flex-col border-b md:border-b-0 md:border-r border-gray-100 dark:border-zinc-800 p-4 gap-3 max-h-[45vh] md:max-h-none">
+      <div className="md:w-72 flex-shrink-0 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-zinc-800 p-4 gap-3 max-h-[45vh] md:max-h-none">
         <div className="flex gap-1 bg-gray-100 dark:bg-zinc-800 rounded-lg p-1 flex-shrink-0">
           {ABAS.map(({ valor, label, icone: Icone }) => (
             <button

@@ -62,7 +62,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
   const categorias = ['Todas', ...Array.from(new Set(resultados.map((r) => r.produto.categoria))).sort()]
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-3 bg-white border border-gray-100 rounded-xl shadow-soft">
+    <div className="flex flex-wrap items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl shadow-soft">
       <div className="flex items-center gap-1.5 text-gray-400">
         <SlidersHorizontal size={13} />
         <span className="text-xs font-medium text-gray-500">Filtros:</span>

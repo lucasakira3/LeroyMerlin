@@ -140,7 +140,7 @@ export default function ProdutosPage() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <Card padding="none">
-        <div className="p-4 border-b border-gray-100 space-y-3">
+        <div className="p-4 border-b border-gray-200 space-y-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -329,7 +329,7 @@ export default function ProdutosPage() {
         </div>
 
         {produtosBase && (
-          <div className="p-4 border-t border-gray-100">
+          <div className="p-4 border-t border-gray-200">
             <Pagination page={pagina} totalPages={totalPaginas} onChange={setPagina} />
           </div>
         )}

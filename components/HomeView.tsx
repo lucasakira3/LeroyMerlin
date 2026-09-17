@@ -29,7 +29,7 @@ export default function HomeView() {
 
         <Link
           href="/produtos"
-          className="flex items-center gap-4 bg-white text-lm-dark rounded-card px-6 py-5 hover:bg-gray-50 transition-colors shadow-soft border border-gray-100"
+          className="flex items-center gap-4 bg-white text-lm-dark rounded-card px-6 py-5 hover:bg-gray-50 transition-colors shadow-soft border border-gray-200"
         >
           <div className="w-11 h-11 rounded-xl bg-lm-green/10 text-lm-green flex items-center justify-center flex-shrink-0">
             <LayoutGrid size={20} />

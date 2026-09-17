@@ -62,11 +62,11 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
       )}
 
       <aside
-        className={`w-64 bg-white border-r border-gray-100 flex flex-col shadow-sm z-40 fixed inset-y-0 left-0 transition-transform duration-300 ease-out lg:static lg:translate-x-0 lg:shadow-sm ${
+        className={`w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm z-40 fixed inset-y-0 left-0 transition-transform duration-300 ease-out lg:static lg:translate-x-0 lg:shadow-sm ${
           sidebarAberta ? 'translate-x-0 shadow-soft-lg' : '-translate-x-full'
         }`}
       >
-        <div className="p-6 flex items-center justify-between border-b border-gray-100 bg-white">
+        <div className="p-6 flex items-center justify-between border-b border-gray-200 bg-white">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/leroy-logo.png" alt="Leroy Merlin" className="h-10 w-auto object-contain" />
           <button
@@ -104,7 +104,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
             )
           })}
         </nav>
-        <div className="p-4 border-t border-gray-100 bg-gray-50">
+        <div className="p-4 border-t border-gray-200 bg-gray-50">
           <button
             type="button"
             onClick={handleSair}
@@ -118,7 +118,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
 
       <div className="flex-1 flex flex-col min-w-0">
         {/* Barra superior — mobile */}
-        <div className="lg:hidden flex items-center justify-between px-4 h-14 bg-white border-b border-gray-100 flex-shrink-0 z-20">
+        <div className="lg:hidden flex items-center justify-between px-4 h-14 bg-white border-b border-gray-200 flex-shrink-0 z-20">
           <button
             type="button"
             onClick={() => setSidebarAberta(true)}
