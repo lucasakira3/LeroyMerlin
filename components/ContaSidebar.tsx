@@ -47,13 +47,13 @@ export default function ContaSidebar({ nome, email }: Props) {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm whitespace-nowrap transition-colors ${
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-base whitespace-nowrap transition-colors ${
                 ativo
                   ? 'bg-lm-green/10 text-lm-green font-semibold'
                   : 'text-gray-600 font-medium hover:bg-gray-100'
               }`}
             >
-              <Icone size={16} />
+              <Icone size={20} />
               {label}
             </Link>
           )
@@ -63,9 +63,9 @@ export default function ContaSidebar({ nome, email }: Props) {
       <button
         type="button"
         onClick={sair}
-        className="flex items-center gap-2.5 px-3 py-2 mt-4 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 transition-colors w-full"
+        className="flex items-center gap-3 px-3.5 py-2.5 mt-4 rounded-xl text-base font-medium text-gray-500 hover:bg-gray-100 transition-colors w-full"
       >
-        <LogOut size={16} /> Sair
+        <LogOut size={20} /> Sair
       </button>
     </aside>
   )
