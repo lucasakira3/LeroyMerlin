@@ -140,7 +140,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             value={filtroTexto}
             onChange={e => setFiltroTexto(e.target.value)}
             placeholder={`Buscar em ${label}...`}
-            className="w-full h-9 pl-9 pr-8 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green"
+            className="w-full h-9 pl-9 pr-8 rounded-lg border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green"
           />
           {filtroTexto !== '' && (
             <button onClick={() => setFiltroTexto('')}
@@ -162,7 +162,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               </h3>
             </div>
             <button onClick={() => setMostrarMapa(false)}
-              className="text-xs text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg px-3 py-1 hover:bg-gray-50 transition-colors">
+              className="text-xs text-gray-400 hover:text-gray-600 border border-gray-400 rounded-lg px-3 py-1 hover:bg-gray-50 transition-colors">
               Fechar mapa
             </button>
           </div>
@@ -182,7 +182,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 filtroComplexidade === c
                   ? 'bg-lm-green text-white border-lm-green'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+                  : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
               }`}>{c}</button>
           ))}
         </div>
@@ -194,7 +194,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             placeholder="Min R$"
             value={filtroPrecoMin}
             onChange={e => setFiltroPrecoMin(e.target.value)}
-            className="w-20 h-7 px-2 rounded-full border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+            className="w-20 h-7 px-2 rounded-full border border-gray-400 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
           />
           <span className="text-xs text-gray-300">—</span>
           <input
@@ -204,7 +204,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             placeholder="Máx R$"
             value={filtroPrecoMax}
             onChange={e => setFiltroPrecoMax(e.target.value)}
-            className="w-20 h-7 px-2 rounded-full border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+            className="w-20 h-7 px-2 rounded-full border border-gray-400 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
           />
         </div>
 
@@ -212,7 +212,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
           className={`text-xs px-3 py-1 rounded-full border transition-colors ${
             filtroEstoque
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+              : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
           }`}>
           ✓ Só disponíveis
         </button>
@@ -223,7 +223,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 filtroNotaMinima === o.valor
                   ? 'bg-lm-green text-white border-lm-green'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+                  : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
               }`}>{o.label}</button>
           ))}
         </div>
@@ -233,7 +233,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
         <div className="flex items-center gap-1.5">
           <MapPin size={13} className="text-lm-green flex-shrink-0" />
           <select value={loja} onChange={e => setLoja(e.target.value)}
-            className="h-7 pl-2 pr-1 rounded-full border border-gray-200 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30 max-w-[160px]">
+            className="h-7 pl-2 pr-1 rounded-full border border-gray-400 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30 max-w-[160px]">
             {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
@@ -250,7 +250,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-xl border-2 border-gray-200 bg-white space-y-2">
+            <div key={i} className="p-4 rounded-xl border-2 border-gray-400 bg-white space-y-2">
               <div className="flex items-center justify-between">
                 <Skeleton className="w-14 h-2" />
                 <Skeleton className="w-10 h-2" />
@@ -305,7 +305,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             </div>
             <div className="flex gap-2">
               <button onClick={() => setSelecionados([])}
-                className="text-xs px-3 py-2 border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
+                className="text-xs px-3 py-2 border border-gray-400 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
                 Limpar
               </button>
               <button

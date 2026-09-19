@@ -38,8 +38,8 @@ function Chip({ label, selecionado, onClick, disabled }: ChipProps) {
         selecionado
           ? 'bg-lm-green text-white border-lm-green'
           : disabled
-            ? 'bg-white text-gray-300 border-gray-200 cursor-not-allowed'
-            : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+            ? 'bg-white text-gray-300 border-gray-400 cursor-not-allowed'
+            : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
       }`}
     >
       {label}
@@ -253,7 +253,7 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
             <Link
               key={s.href}
               href={s.href}
-              className="block bg-white border border-gray-200 rounded-xl p-4 hover:border-lm-green/40 transition-colors"
+              className="block bg-white border border-gray-400 rounded-xl p-4 hover:border-lm-green/40 transition-colors"
             >
               <p className="text-sm font-semibold text-gray-900">{s.titulo}</p>
               <p className="text-xs text-gray-500 mt-1">{s.descricao}</p>

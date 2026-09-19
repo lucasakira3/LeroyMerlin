@@ -84,7 +84,7 @@ export default function PedidoCompartilhadoView() {
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-3 mt-1 border-t border-gray-200">
+          <div className="flex items-center justify-between pt-3 mt-1 border-t border-gray-400">
             <span className="text-sm font-bold text-gray-900">Total</span>
             <span className="text-lg font-black text-lm-green">
               {pedido.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}

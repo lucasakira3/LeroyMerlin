@@ -15,7 +15,7 @@ export default function SortSelect({ value, onChange }: Props) {
       <select
         value={value}
         onChange={e => onChange(e.target.value as CriterioOrdenacao)}
-        className="h-7 px-2 rounded-full border border-gray-200 text-xs text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+        className="h-7 px-2 rounded-full border border-gray-400 text-xs text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
       >
         {OPCOES_ORDENACAO.map(o => (
           <option key={o.valor} value={o.valor}>{o.label}</option>

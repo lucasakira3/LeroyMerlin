@@ -66,7 +66,7 @@ export default function SegurancaConta({ email }: { email: string }) {
               value={senhaAtual}
               onChange={e => { setSenhaAtual(e.target.value); setErro(null) }}
               autoFocus
-              className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
           </div>
           <div>
@@ -75,7 +75,7 @@ export default function SegurancaConta({ email }: { email: string }) {
               type="password"
               value={novaSenha}
               onChange={e => setNovaSenha(e.target.value)}
-              className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
           </div>
           {erro && <p className="text-xs text-red-600">{erro}</p>}

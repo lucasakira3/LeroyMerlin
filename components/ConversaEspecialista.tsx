@@ -106,14 +106,14 @@ export default function ConversaEspecialista() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-400 p-4">
         <form onSubmit={e => { e.preventDefault(); enviar() }} className="flex gap-2">
           <input
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="Digite sua dúvida..."
-            className="flex-1 h-11 px-4 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent bg-white"
+            className="flex-1 h-11 px-4 rounded-xl border border-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent bg-white"
           />
           <button
             type="submit"

@@ -50,7 +50,7 @@ export default function HeaderSearch() {
         className="w-full h-10 pl-10 pr-4 rounded-xl border-0 bg-white/95 dark:bg-zinc-900 text-sm text-lm-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
       />
       {mostrarSugestoes && (
-        <ul className="absolute top-full left-0 right-0 mt-1.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl shadow-soft-lg overflow-hidden z-50">
+        <ul className="absolute top-full left-0 right-0 mt-1.5 bg-white dark:bg-zinc-900 border border-gray-400 dark:border-zinc-800 rounded-xl shadow-soft-lg overflow-hidden z-50">
           {sugestoes.map(termo => (
             <li key={termo}>
               <button

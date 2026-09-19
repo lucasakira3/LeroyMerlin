@@ -93,7 +93,7 @@ export default function ClientesPage() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <Card padding="none">
-        <div className="p-4 border-b border-gray-200 flex gap-4">
+        <div className="p-4 border-b border-gray-400 flex gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -101,7 +101,7 @@ export default function ClientesPage() {
               placeholder="Buscar por nome ou e-mail..."
               value={busca}
               onChange={e => setBusca(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-400 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
             />
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function ClientesPage() {
                 <Fragment key={cliente.email}>
                   <tr
                     onClick={() => setExpandidoEmail(e => (e === cliente.email ? null : cliente.email))}
-                    className="hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-0 cursor-pointer"
+                    className="hover:bg-gray-50 transition-colors border-b border-gray-400 last:border-0 cursor-pointer"
                   >
                     <td className="p-4">
                       <p className="font-bold text-lm-dark">{cliente.nome}</p>
@@ -157,13 +157,13 @@ export default function ClientesPage() {
                   </tr>
                   {expandidoEmail === cliente.email && (
                     <tr key={`${cliente.email}-detalhe`}>
-                      <td colSpan={5} className="p-4 bg-gray-50 border-b border-gray-200">
+                      <td colSpan={5} className="p-4 bg-gray-50 border-b border-gray-400">
                         {cliente.pedidos.length === 0 ? (
                           <p className="text-sm text-gray-500">Nenhum pedido ainda.</p>
                         ) : (
                           <div className="space-y-2">
                             {cliente.pedidos.map(pedido => (
-                              <div key={pedido.numero} className="flex items-center justify-between bg-white rounded-xl border border-gray-200 px-4 py-2.5">
+                              <div key={pedido.numero} className="flex items-center justify-between bg-white rounded-xl border border-gray-400 px-4 py-2.5">
                                 <div className="flex items-center gap-2">
                                   <Package size={14} className="text-lm-green" />
                                   <span className="font-mono text-xs font-semibold text-gray-700">{pedido.numero}</span>

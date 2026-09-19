@@ -73,7 +73,7 @@ export default function PedidosPage() {
           {pedidosPaginados.map(pedido => {
             const status = getStatusPedido(pedido)
             return (
-              <div key={pedido.numero} className="bg-white rounded-card shadow-soft border border-gray-200 p-4">
+              <div key={pedido.numero} className="bg-white rounded-card shadow-soft border border-gray-400 p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <Package size={15} className="text-lm-green" />
@@ -102,7 +102,7 @@ export default function PedidosPage() {
                     {pedido.metodo === 'retirada' ? `Retirada: ${pedido.loja}` : `Entrega: ${pedido.endereco}`}
                   </span>
                 </div>
-                <div className="flex items-center justify-end pt-2 border-t border-gray-200">
+                <div className="flex items-center justify-end pt-2 border-t border-gray-400">
                   <span className="text-sm font-bold text-gray-900">
                     {pedido.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </span>
@@ -114,7 +114,7 @@ export default function PedidosPage() {
                       : pedido.pagamento.metodo === 'pix' ? 'Pix' : 'Boleto bancário'}
                   </p>
                 )}
-                <div className="flex items-center gap-3 pt-2 mt-2 border-t border-gray-200">
+                <div className="flex items-center gap-3 pt-2 mt-2 border-t border-gray-400">
                   <button
                     type="button"
                     onClick={() => comprarDeNovo(pedido)}

@@ -40,7 +40,7 @@ export default function Pagination({ page, totalPages, onChange, className = '' 
         onClick={() => onChange(page - 1)}
         disabled={page === 1}
         aria-label="Página anterior"
-        className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+        className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-400 text-gray-500 hover:bg-gray-50 hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
       >
         <ChevronLeft size={16} />
       </button>
@@ -59,7 +59,7 @@ export default function Pagination({ page, totalPages, onChange, className = '' 
             className={`w-9 h-9 rounded-lg text-sm font-semibold transition-colors ${
               p === page
                 ? 'bg-lm-green text-white'
-                : 'text-gray-600 border border-gray-200 hover:bg-gray-50 hover:border-lm-green/40'
+                : 'text-gray-600 border border-gray-400 hover:bg-gray-50 hover:border-lm-green/40'
             }`}
           >
             {p}
@@ -72,7 +72,7 @@ export default function Pagination({ page, totalPages, onChange, className = '' 
         onClick={() => onChange(page + 1)}
         disabled={page === totalPages}
         aria-label="Próxima página"
-        className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+        className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-400 text-gray-500 hover:bg-gray-50 hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
       >
         <ChevronRight size={16} />
       </button>

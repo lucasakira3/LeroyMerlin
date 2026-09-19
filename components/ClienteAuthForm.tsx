@@ -91,7 +91,7 @@ export default function ClienteAuthForm() {
                 required
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-400 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
                 placeholder="Seu nome"
               />
             </div>
@@ -109,7 +109,7 @@ export default function ClienteAuthForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
+              className="block w-full pl-10 pr-3 py-3 border border-gray-400 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
               placeholder="seuemail@exemplo.com"
             />
           </div>
@@ -126,7 +126,7 @@ export default function ClienteAuthForm() {
               required
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
+              className="block w-full pl-10 pr-3 py-3 border border-gray-400 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
               placeholder="••••••••"
             />
           </div>
@@ -144,7 +144,7 @@ export default function ClienteAuthForm() {
                 required
                 value={confirmarSenha}
                 onChange={(e) => setConfirmarSenha(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-400 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
                 placeholder="••••••••"
               />
             </div>

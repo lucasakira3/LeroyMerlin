@@ -34,7 +34,7 @@ export default function ProjetoPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-8 lg:items-start">
         {/* Chat — a bancada, expandida */}
         <Card padding="none" className="flex flex-col overflow-hidden lg:min-h-[640px]">
-          <div className="border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+          <div className="border-b border-gray-400 px-4 py-3 flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse" />
             <div>
               <p className="text-sm font-semibold text-lm-dark">Assistente de Projetos</p>

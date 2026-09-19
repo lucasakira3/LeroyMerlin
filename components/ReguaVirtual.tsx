@@ -84,7 +84,7 @@ export default function ReguaVirtual() {
               className={`text-xs font-semibold px-3 py-2 rounded-xl border transition-colors ${
                 referenciaId === o.id
                   ? 'bg-lm-green text-white border-lm-green'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                  : 'bg-white text-gray-600 border-gray-400 hover:border-lm-green/40'
               }`}
             >
               {o.label}
@@ -115,7 +115,7 @@ export default function ReguaVirtual() {
             />
           </div>
         ) : (
-          <div className="relative rounded-xl overflow-hidden border border-gray-200">
+          <div className="relative rounded-xl overflow-hidden border border-gray-400">
             <img src={preview} alt="Prévia da foto" className="w-full max-h-72 object-contain bg-gray-50" />
             {loading && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

@@ -73,7 +73,7 @@ export default function ProductCard({
   }
 
   const wrapperClass = `group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white transition-all hover:shadow-md ${
-    selected ? 'border-lm-green shadow-sm' : 'border-gray-200 hover:border-lm-green/40'
+    selected ? 'border-lm-green shadow-sm' : 'border-gray-400 hover:border-lm-green/40'
   } ${className}`
 
   const conteudo = (

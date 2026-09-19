@@ -78,7 +78,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
           {cartoes.map(c => (
             <div
               key={c.id}
-              className="flex items-center justify-between gap-3 bg-white rounded-card shadow-soft border border-gray-200 p-3"
+              className="flex items-center justify-between gap-3 bg-white rounded-card shadow-soft border border-gray-400 p-3"
             >
               <div className="flex items-start gap-2.5 min-w-0">
                 <CreditCard size={16} className="text-lm-green flex-shrink-0 mt-0.5" />
@@ -130,13 +130,13 @@ export default function CartoesSalvos({ email }: { email: string }) {
           <Plus size={14} /> Adicionar cartão
         </button>
       ) : (
-        <form onSubmit={adicionar} className="bg-white rounded-card shadow-soft border border-gray-200 p-4 space-y-2.5">
+        <form onSubmit={adicionar} className="bg-white rounded-card shadow-soft border border-gray-400 p-4 space-y-2.5">
           <input
             type="text"
             value={form.apelido}
             onChange={e => setForm(f => ({ ...f, apelido: e.target.value }))}
             placeholder="Apelido (opcional, ex: Cartão do trabalho)"
-            className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
           <input
             type="text"
@@ -144,14 +144,14 @@ export default function CartoesSalvos({ email }: { email: string }) {
             onChange={e => setForm(f => ({ ...f, numero: formatarNumeroCartao(e.target.value) }))}
             placeholder="Número do cartão"
             inputMode="numeric"
-            className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
           <input
             type="text"
             value={form.nomeImpresso}
             onChange={e => setForm(f => ({ ...f, nomeImpresso: e.target.value }))}
             placeholder="Nome impresso no cartão"
-            className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
           <input
             type="text"
@@ -159,7 +159,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
             onChange={e => setForm(f => ({ ...f, validade: formatarValidade(e.target.value) }))}
             placeholder="MM/AA"
             inputMode="numeric"
-            className="w-24 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="w-24 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
           <p className="text-[11px] text-gray-400">
             Cartão fictício — só os 4 últimos dígitos ficam salvos, nunca o número completo.

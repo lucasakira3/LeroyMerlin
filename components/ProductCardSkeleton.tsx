@@ -2,7 +2,7 @@ import Skeleton from './ui/Skeleton'
 
 export default function ProductCardSkeleton() {
   return (
-    <div className="rounded-card overflow-hidden border-2 border-gray-200 bg-white">
+    <div className="rounded-card overflow-hidden border-2 border-gray-400 bg-white">
       <Skeleton className="w-full h-36" />
       <div className="p-3 space-y-2">
         <Skeleton className="w-full h-3.5" />

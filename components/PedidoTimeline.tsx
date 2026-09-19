@@ -46,7 +46,7 @@ export default function PedidoTimeline({ etapas, etapaAtual, previsoes }: Props)
                 className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                   concluida || atual
                     ? 'bg-lm-green text-white'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200'
+                    : 'bg-gray-100 text-gray-400 border border-gray-400'
                 } ${atual ? 'ring-4 ring-lm-green/20' : ''}`}
               >
                 <Icone size={15} />

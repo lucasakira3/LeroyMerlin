@@ -292,7 +292,7 @@ export default function CarrinhoPage() {
                   </span>
                 </div>
               ))}
-              <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between font-bold text-sm">
+              <div className="border-t border-gray-400 pt-2 mt-2 flex justify-between font-bold text-sm">
                 <span>Total</span>
                 <span>{pedidoConfirmado.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
               </div>
@@ -401,7 +401,7 @@ export default function CarrinhoPage() {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => mudarQuantidade(produto.id, -1)}
-                      className="w-6 h-6 rounded-md border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50"
+                      className="w-6 h-6 rounded-md border border-gray-400 flex items-center justify-center text-gray-500 hover:bg-gray-50"
                       aria-label="Diminuir quantidade"
                     >
                       <Minus size={12} />
@@ -410,7 +410,7 @@ export default function CarrinhoPage() {
                     <button
                       onClick={() => mudarQuantidade(produto.id, 1)}
                       disabled={item.quantidade >= produto.estoque}
-                      className="w-6 h-6 rounded-md border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-6 h-6 rounded-md border border-gray-400 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label="Aumentar quantidade"
                     >
                       <Plus size={12} />
@@ -484,7 +484,7 @@ export default function CarrinhoPage() {
                     <select
                       value={loja}
                       onChange={e => setLoja(e.target.value)}
-                      className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+                      className="w-full h-11 px-3 rounded-xl border border-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
                     >
                       {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
                     </select>
@@ -500,7 +500,7 @@ export default function CarrinhoPage() {
                               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                                 enderecoSelecionadoId === end.id
                                   ? 'bg-lm-green text-white border-lm-green'
-                                  : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                                  : 'bg-white text-gray-600 border-gray-400 hover:border-lm-green/40'
                               }`}
                             >
                               {end.rotulo}
@@ -512,7 +512,7 @@ export default function CarrinhoPage() {
                             className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                               enderecoSelecionadoId === 'novo'
                                 ? 'bg-lm-green text-white border-lm-green'
-                                : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                                : 'bg-white text-gray-600 border-gray-400 hover:border-lm-green/40'
                             }`}
                           >
                             + Novo endereço
@@ -533,7 +533,7 @@ export default function CarrinhoPage() {
                               onChange={e => handleCepChange(e.target.value)}
                               placeholder="CEP"
                               inputMode="numeric"
-                              className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                             {buscandoCep && <Loader2 size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />}
                           </div>
@@ -543,14 +543,14 @@ export default function CarrinhoPage() {
                               value={enderecoForm.rua}
                               onChange={e => setEnderecoForm(f => ({ ...f, rua: e.target.value }))}
                               placeholder="Rua"
-                              className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="flex-1 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                             <input
                               type="text"
                               value={enderecoForm.numero}
                               onChange={e => setEnderecoForm(f => ({ ...f, numero: e.target.value }))}
                               placeholder="Número"
-                              className="w-24 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="w-24 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                           </div>
                           <input
@@ -558,7 +558,7 @@ export default function CarrinhoPage() {
                             value={enderecoForm.complemento}
                             onChange={e => setEnderecoForm(f => ({ ...f, complemento: e.target.value }))}
                             placeholder="Complemento (opcional)"
-                            className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                           />
                           <div className="flex gap-2">
                             <input
@@ -566,21 +566,21 @@ export default function CarrinhoPage() {
                               value={enderecoForm.bairro}
                               onChange={e => setEnderecoForm(f => ({ ...f, bairro: e.target.value }))}
                               placeholder="Bairro"
-                              className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="flex-1 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                             <input
                               type="text"
                               value={enderecoForm.cidade}
                               onChange={e => setEnderecoForm(f => ({ ...f, cidade: e.target.value }))}
                               placeholder="Cidade"
-                              className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="flex-1 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                             <input
                               type="text"
                               value={enderecoForm.uf}
                               onChange={e => setEnderecoForm(f => ({ ...f, uf: e.target.value.toUpperCase().slice(0, 2) }))}
                               placeholder="UF"
-                              className="w-14 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="w-14 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                           </div>
                           <label className="flex items-center gap-2 text-xs text-gray-500 pt-1">
@@ -644,7 +644,7 @@ export default function CarrinhoPage() {
                               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                                 cartaoSelecionadoId === c.id
                                   ? 'bg-lm-green text-white border-lm-green'
-                                  : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                                  : 'bg-white text-gray-600 border-gray-400 hover:border-lm-green/40'
                               }`}
                             >
                               {c.bandeira} final {c.ultimosDigitos}
@@ -656,7 +656,7 @@ export default function CarrinhoPage() {
                             className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                               cartaoSelecionadoId === 'novo'
                                 ? 'bg-lm-green text-white border-lm-green'
-                                : 'bg-white text-gray-600 border-gray-200 hover:border-lm-green/40'
+                                : 'bg-white text-gray-600 border-gray-400 hover:border-lm-green/40'
                             }`}
                           >
                             + Novo cartão
@@ -672,12 +672,12 @@ export default function CarrinhoPage() {
                             onChange={e => setCvv(formatarCvv(e.target.value))}
                             placeholder="CVV"
                             inputMode="numeric"
-                            className="w-20 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            className="w-20 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                           />
                           <select
                             value={parcelas}
                             onChange={e => setParcelas(Number(e.target.value))}
-                            className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            className="flex-1 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                           >
                             {opcoesParcelamento.map(op => (
                               <option key={op.parcelas} value={op.parcelas}>
@@ -695,14 +695,14 @@ export default function CarrinhoPage() {
                             onChange={e => setNumeroCartao(formatarNumeroCartao(e.target.value))}
                             placeholder="Número do cartão"
                             inputMode="numeric"
-                            className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                           />
                           <input
                             type="text"
                             value={nomeCartao}
                             onChange={e => setNomeCartao(e.target.value)}
                             placeholder="Nome impresso no cartão"
-                            className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                           />
                           <div className="flex gap-2">
                             <input
@@ -711,7 +711,7 @@ export default function CarrinhoPage() {
                               onChange={e => setValidadeCartao(formatarValidade(e.target.value))}
                               placeholder="MM/AA"
                               inputMode="numeric"
-                              className="w-24 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="w-24 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                             <input
                               type="text"
@@ -719,12 +719,12 @@ export default function CarrinhoPage() {
                               onChange={e => setCvv(formatarCvv(e.target.value))}
                               placeholder="CVV"
                               inputMode="numeric"
-                              className="w-20 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="w-20 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                             <select
                               value={parcelas}
                               onChange={e => setParcelas(Number(e.target.value))}
-                              className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="flex-1 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             >
                               {opcoesParcelamento.map(op => (
                                 <option key={op.parcelas} value={op.parcelas}>

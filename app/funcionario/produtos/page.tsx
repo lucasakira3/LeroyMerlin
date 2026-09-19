@@ -140,7 +140,7 @@ export default function ProdutosPage() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <Card padding="none">
-        <div className="p-4 border-b border-gray-200 space-y-3">
+        <div className="p-4 border-b border-gray-400 space-y-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -148,7 +148,7 @@ export default function ProdutosPage() {
               placeholder="Buscar produto por nome..."
               value={busca}
               onChange={e => setBusca(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-400 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
             />
           </div>
 
@@ -161,7 +161,7 @@ export default function ProdutosPage() {
             <select
               value={categoriaFiltro}
               onChange={e => setCategoriaFiltro(e.target.value)}
-              className="h-8 px-2.5 rounded-lg border border-gray-200 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="h-8 px-2.5 rounded-lg border border-gray-400 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             >
               {categorias.map(c => (
                 <option key={c} value={c}>{c}</option>
@@ -176,7 +176,7 @@ export default function ProdutosPage() {
                 placeholder="Min R$"
                 value={precoMin}
                 onChange={e => setPrecoMin(e.target.value)}
-                className="w-20 h-8 px-2 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+                className="w-20 h-8 px-2 rounded-lg border border-gray-400 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
               />
               <span className="text-xs text-gray-300">—</span>
               <input
@@ -186,7 +186,7 @@ export default function ProdutosPage() {
                 placeholder="Máx R$"
                 value={precoMax}
                 onChange={e => setPrecoMax(e.target.value)}
-                className="w-20 h-8 px-2 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+                className="w-20 h-8 px-2 rounded-lg border border-gray-400 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
               />
             </div>
 
@@ -199,7 +199,7 @@ export default function ProdutosPage() {
                   className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                     estoqueFiltro === o.valor
                       ? 'bg-lm-green text-white border-lm-green'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+                      : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
                   }`}
                 >
                   {o.label}
@@ -271,7 +271,7 @@ export default function ProdutosPage() {
                           type="text"
                           value={precoForm}
                           onChange={e => setPrecoForm(e.target.value)}
-                          className="w-20 px-2 py-1 border border-gray-200 rounded-lg text-sm text-right bg-white focus:outline-none focus:ring-1 focus:ring-lm-green"
+                          className="w-20 px-2 py-1 border border-gray-400 rounded-lg text-sm text-right bg-white focus:outline-none focus:ring-1 focus:ring-lm-green"
                           autoFocus
                         />
                         <button onClick={() => salvarPreco(produto.id)} aria-label="Salvar preço" className="text-lm-green hover:bg-green-50 p-1 rounded">
@@ -289,7 +289,7 @@ export default function ProdutosPage() {
                     <div className="flex items-center justify-center gap-3">
                       <button
                         onClick={() => handleAjustarEstoque(produto.id, -1)}
-                        className="w-7 h-7 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors"
+                        className="w-7 h-7 rounded-full border border-gray-400 hover:bg-gray-50 text-gray-600 transition-colors"
                       >-</button>
                       {produto.estoque < 10 ? (
                         <Badge tone="red" className="font-bold w-10 justify-center">{produto.estoque}</Badge>
@@ -298,7 +298,7 @@ export default function ProdutosPage() {
                       )}
                       <button
                         onClick={() => handleAjustarEstoque(produto.id, 1)}
-                        className="w-7 h-7 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors"
+                        className="w-7 h-7 rounded-full border border-gray-400 hover:bg-gray-50 text-gray-600 transition-colors"
                       >+</button>
                     </div>
                   </td>
@@ -329,7 +329,7 @@ export default function ProdutosPage() {
         </div>
 
         {produtosBase && (
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-400">
             <Pagination page={pagina} totalPages={totalPaginas} onChange={setPagina} />
           </div>
         )}

@@ -91,7 +91,7 @@ export default function ComparadorPorFoto() {
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-zinc-700 px-3 py-1.5 rounded-full hover:border-lm-green/40 hover:text-lm-green transition-colors flex-shrink-0"
+        className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-zinc-400 border border-gray-400 dark:border-zinc-700 px-3 py-1.5 rounded-full hover:border-lm-green/40 hover:text-lm-green transition-colors flex-shrink-0"
       >
         <Camera size={13} /> Comparar por foto
       </button>
@@ -99,7 +99,7 @@ export default function ComparadorPorFoto() {
   }
 
   return (
-    <div className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl p-3 animate-fade-in">
+    <div className="w-full bg-white dark:bg-zinc-900 border border-gray-400 dark:border-zinc-700 rounded-xl p-3 animate-fade-in">
       <div className="flex items-center justify-between mb-2">
         <p className="text-xs font-semibold text-gray-600 dark:text-zinc-300">Aponte a câmera pro produto</p>
         <button onClick={fechar} aria-label="Fechar" className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200">
@@ -125,7 +125,7 @@ export default function ComparadorPorFoto() {
           />
         </div>
       ) : (
-        <div className="relative rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700 mb-2">
+        <div className="relative rounded-lg overflow-hidden border border-gray-400 dark:border-zinc-700 mb-2">
           <img src={preview} alt="Prévia da foto" className="w-full max-h-40 object-contain bg-gray-50 dark:bg-zinc-800" />
           {loading && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

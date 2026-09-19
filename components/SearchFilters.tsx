@@ -62,7 +62,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
   const categorias = ['Todas', ...Array.from(new Set(resultados.map((r) => r.produto.categoria))).sort()]
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl shadow-soft">
+    <div className="flex flex-wrap items-center gap-3 p-3 bg-white border border-gray-400 rounded-xl shadow-soft">
       <div className="flex items-center gap-1.5 text-gray-400">
         <SlidersHorizontal size={13} />
         <span className="text-xs font-medium text-gray-500">Filtros:</span>
@@ -71,7 +71,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
       <select
         value={filtros.categoria}
         onChange={(e) => onChange({ ...filtros, categoria: e.target.value })}
-        className="h-8 px-2.5 rounded-lg border border-gray-200 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+        className="h-8 px-2.5 rounded-lg border border-gray-400 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
       >
         {categorias.map((c) => (
           <option key={c} value={c}>{c}</option>
@@ -86,7 +86,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
           placeholder="Min R$"
           value={filtros.precoMin}
           onChange={(e) => onChange({ ...filtros, precoMin: e.target.value })}
-          className="w-20 h-8 px-2 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+          className="w-20 h-8 px-2 rounded-lg border border-gray-400 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
         />
         <span className="text-xs text-gray-300">—</span>
         <input
@@ -96,7 +96,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
           placeholder="Máx R$"
           value={filtros.precoMax}
           onChange={(e) => onChange({ ...filtros, precoMax: e.target.value })}
-          className="w-20 h-8 px-2 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+          className="w-20 h-8 px-2 rounded-lg border border-gray-400 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
         />
       </div>
 
@@ -109,7 +109,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
             className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
               filtros.notaMinima === o.valor
                 ? 'bg-lm-green text-white border-lm-green'
-                : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+                : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
             }`}
           >
             {o.label}
@@ -123,7 +123,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
         className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
           filtros.apenasDisponiveis
             ? 'bg-lm-green text-white border-lm-green'
-            : 'bg-white text-gray-500 border-gray-200 hover:border-lm-green/40'
+            : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
         }`}
       >
         ✓ Só disponíveis

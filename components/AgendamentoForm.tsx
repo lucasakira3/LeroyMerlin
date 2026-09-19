@@ -131,7 +131,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                   className={`flex items-start gap-3 text-left p-3 rounded-xl border transition-all ${
                     form.servico === s.id
                       ? 'border-lm-green bg-lm-green/5 ring-1 ring-lm-green'
-                      : 'border-gray-200 bg-white hover:border-lm-green/40'
+                      : 'border-gray-400 bg-white hover:border-lm-green/40'
                   }`}
                 >
                   <div className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${
@@ -153,7 +153,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
             <select
               value={form.loja}
               onChange={(e) => set('loja', e.target.value)}
-              className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+              className="w-full h-11 px-3 rounded-xl border border-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
             >
               <option value="">Selecione uma loja...</option>
               {lojas.map((l) => <option key={l} value={l}>{l}</option>)}
@@ -186,7 +186,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                     className={`p-2 rounded-xl border text-center text-xs transition-all ${
                       form.data === label
                         ? 'border-lm-green bg-lm-green/10 text-lm-green font-semibold ring-1 ring-lm-green'
-                        : 'border-gray-200 bg-white hover:border-lm-green/40'
+                        : 'border-gray-400 bg-white hover:border-lm-green/40'
                     }`}
                   >
                     {label.replace(',', '')}
@@ -206,7 +206,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                   className={`py-2.5 rounded-xl border text-sm font-medium transition-all ${
                     form.horario === h
                       ? 'border-lm-green bg-lm-green text-white'
-                      : 'border-gray-200 bg-white hover:border-lm-green/40'
+                      : 'border-gray-400 bg-white hover:border-lm-green/40'
                   }`}
                 >
                   {h}
@@ -216,7 +216,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
           </div>
 
           <div className="flex gap-3">
-            <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 h-12 border border-gray-200">
+            <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 h-12 border border-gray-400">
               Voltar
             </Button>
             <Button
@@ -242,7 +242,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
               value={form.nome}
               onChange={(e) => set('nome', e.target.value)}
               placeholder="João da Silva"
-              className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+              className="w-full h-11 px-3 rounded-xl border border-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
             />
           </div>
 
@@ -254,7 +254,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 value={form.telefone}
                 onChange={(e) => set('telefone', e.target.value)}
                 placeholder="(11) 99999-9999"
-                className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+                className="w-full h-11 px-3 rounded-xl border border-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
               />
             </div>
             <div>
@@ -264,7 +264,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 value={form.email}
                 onChange={(e) => set('email', e.target.value)}
                 placeholder="joao@email.com"
-                className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
+                className="w-full h-11 px-3 rounded-xl border border-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
               />
             </div>
           </div>
@@ -276,7 +276,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
               onChange={(e) => set('observacao', e.target.value)}
               placeholder="Descreva brevemente o que precisa..."
               rows={3}
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 resize-none bg-white"
+              className="w-full px-3 py-2 rounded-xl border border-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green/30 resize-none bg-white"
             />
           </div>
 
@@ -289,7 +289,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
           </div>
 
           <div className="flex gap-3">
-            <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 h-12 border border-gray-200">
+            <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 h-12 border border-gray-400">
               Voltar
             </Button>
             <Button
