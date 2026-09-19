@@ -13,6 +13,7 @@ import SeletorQuantidadeCarrinho from './ui/SeletorQuantidadeCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
 import { addAoHistorico } from '@/lib/clientHistorico'
 import { formatarParcelamento } from '@/lib/parcelamento'
+import FormattedText from './ui/FormattedText'
 import { showToast } from '@/lib/toast'
 import { getIconeEspecificacao, parseEspecificacoes } from '@/lib/especificacaoIcones'
 import { getMedia } from '@/lib/clientAvaliacoes'
@@ -306,7 +307,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                             ? 'bg-lm-green text-white rounded-br-sm'
                             : 'bg-white text-gray-800 rounded-bl-sm shadow-sm'
                         }`}>
-                          {m.texto}
+                          {m.role === 'ai' ? <FormattedText text={m.texto} /> : m.texto}
                         </div>
                       </div>
                     ))}
