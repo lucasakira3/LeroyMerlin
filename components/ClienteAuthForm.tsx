@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { KeyRound, Mail, User, ArrowRight } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import { contaExiste, criarConta, validarLogin, getConta } from '@/lib/clientContas'
@@ -9,6 +10,11 @@ import { loginUsuario } from '@/lib/clientAuth'
 type Modo = 'login' | 'cadastro'
 
 export default function ClienteAuthForm() {
+  const searchParams = useSearchParams()
+  // ?next=/carrinho, por ex — volta pra onde o usuário estava tentando ir antes do
+  // login pedir a conta (checkout, chat com especialista, etc), em vez de mandar
+  // sempre pra home e obrigar a navegar de novo.
+  const destino = searchParams.get('next') || '/'
   const [modo, setModo] = useState<Modo>('login')
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
@@ -39,7 +45,7 @@ export default function ClienteAuthForm() {
       }
       const conta = getConta(email)
       loginUsuario(email, conta?.nome)
-      window.location.href = '/'
+      window.location.href = destino
     }, 1000)
   }
 
@@ -57,7 +63,7 @@ export default function ClienteAuthForm() {
     setTimeout(() => {
       criarConta(nome, email, senha)
       loginUsuario(email, nome)
-      window.location.href = '/'
+      window.location.href = destino
     }, 1000)
   }
 

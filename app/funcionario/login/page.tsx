@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { KeyRound, Mail, ArrowRight } from 'lucide-react'
@@ -87,7 +87,9 @@ export default function LoginFuncionario() {
           </div>
 
           {tipo === 'cliente' ? (
-            <ClienteAuthForm />
+            <Suspense fallback={null}>
+              <ClienteAuthForm />
+            </Suspense>
           ) : (
             <>
               <div className="text-center mb-8">

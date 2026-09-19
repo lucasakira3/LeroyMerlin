@@ -449,7 +449,7 @@ export default function CarrinhoPage() {
             {!usuario && (
               <Card className="text-center">
                 <p className="text-sm text-gray-600 mb-3">Faça login para finalizar o pedido.</p>
-                <Link href="/funcionario/login"><Button variant="primary">Fazer login</Button></Link>
+                <Link href="/funcionario/login?next=/carrinho"><Button variant="primary">Fazer login</Button></Link>
               </Card>
             )}
 

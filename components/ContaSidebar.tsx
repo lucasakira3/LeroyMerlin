@@ -40,7 +40,7 @@ export default function ContaSidebar({ nome, email }: Props) {
         </div>
       </div>
 
-      <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
+      <nav className="flex flex-wrap lg:flex-col gap-1">
         {ITENS.map(({ href, label, icone: Icone }) => {
           const ativo = pathname === href || pathname.startsWith(href + '/')
           return (
