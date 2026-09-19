@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, type GenerativeModel } from "@google/generative-ai";
+import { GoogleGenerativeAI, GoogleGenerativeAIFetchError, type GenerativeModel } from "@google/generative-ai";
 
 let cliente: GoogleGenerativeAI | null = null;
 const modelosCache = new Map<string, GenerativeModel>();
@@ -28,16 +28,56 @@ function getModelo(nome: string): GenerativeModel {
   return modelo;
 }
 
+// O tier gratuito da API do Gemini devolve erro transitório (503 "model overloaded", 429
+// rate limit, 500) com alguma frequência — visto na prática 2026-09-18 durante uma sessão de
+// testes (3 chamadas seguidas a /api/projeto falharam, a 4ª passou sem nenhuma mudança de
+// código). Sem retry, isso aparece pro usuário como "não foi possível processar", inclusive
+// ao vivo numa demonstração. Detecta só os códigos/mensagens conhecidos como transitórios —
+// um erro de verdade (prompt inválido, chave errada) continua falhando na hora, sem esperar.
+export function ehErroTransitorio(erro: unknown): boolean {
+  // GoogleGenerativeAIFetchError expõe o status HTTP direto (ver node_modules/@google/
+  // generative-ai/dist/src/errors.d.ts) — mais confiável que caçar número na mensagem.
+  if (erro instanceof GoogleGenerativeAIFetchError && erro.status != null) {
+    return erro.status === 429 || erro.status === 500 || erro.status === 503;
+  }
+  const msg = erro instanceof Error ? erro.message : String(erro);
+  return /\[(429|500|503)\s/.test(msg) || /overloaded|rate limit|unavailable|deadline exceeded/i.test(msg);
+}
+
+export async function comRetry<T>(chamada: () => Promise<T>, esperaBaseMs = 700): Promise<T> {
+  const MAX_TENTATIVAS = 3;
+  const ESPERA_BASE_MS = esperaBaseMs;
+  let ultimoErro: unknown;
+  for (let tentativa = 0; tentativa < MAX_TENTATIVAS; tentativa++) {
+    try {
+      return await chamada();
+    } catch (erro) {
+      ultimoErro = erro;
+      if (!ehErroTransitorio(erro) || tentativa === MAX_TENTATIVAS - 1) throw erro;
+      // Espera crescente (700ms, 1400ms) — dá tempo real pro problema passageiro se resolver
+      // sem deixar o usuário esperando demais numa rota que já tem timeout do Vercel.
+      await new Promise(resolve => setTimeout(resolve, ESPERA_BASE_MS * (tentativa + 1)));
+    }
+  }
+  throw ultimoErro;
+}
+
 // Proxy preserva a mesma API pública de antes (flashModel.generateContent(...) continua
 // funcionando idêntico em todo call site existente) sem precisar de nenhuma mudança nas
 // 6 rotas que já importam flashModel — só adia a inicialização de "no import" pra "no
-// primeiro uso real".
+// primeiro uso real". generateContent (o único método de fato chamado pelas rotas hoje)
+// ganha retry automático nesse mesmo ponto central, sem precisar tocar em cada rota.
 function criarModeloPreguicoso(nome: string): GenerativeModel {
   return new Proxy({} as GenerativeModel, {
     get(_target, prop, receiver) {
       const modelo = getModelo(nome);
       const valor = Reflect.get(modelo, prop, receiver);
-      return typeof valor === "function" ? valor.bind(modelo) : valor;
+      if (typeof valor !== "function") return valor;
+      const funcaoLigada = valor.bind(modelo);
+      if (prop === "generateContent") {
+        return (...args: Parameters<GenerativeModel["generateContent"]>) => comRetry(() => funcaoLigada(...args));
+      }
+      return funcaoLigada;
     },
   });
 }
