@@ -160,11 +160,12 @@ export default function ProdutosPage() {
 
             <select
               value={categoriaFiltro}
+              aria-label="Filtrar por categoria"
               onChange={e => setCategoriaFiltro(e.target.value)}
-              className="h-8 px-2.5 rounded-lg border border-gray-500 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className={`h-8 px-2.5 rounded-lg border text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30 ${categoriaFiltro !== 'Todas' ? 'border-lm-green font-semibold' : 'border-gray-500'}`}
             >
               {categorias.map(c => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>{c === 'Todas' ? 'Todas as categorias' : c}</option>
               ))}
             </select>
 
