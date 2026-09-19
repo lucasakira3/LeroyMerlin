@@ -41,6 +41,17 @@ Regras:
 // no texto do produto), usada aqui em vez da busca semântica porque a IA já devolveu o
 // "material" como texto curto e específico (ex: "Rejunte Branco 1kg") — não precisa de
 // embedding pra isso, e evita uma chamada de API por item da lista gerada.
+//
+// Corte de score mínimo (2026-09-18): sem ele, um item cujo catálogo não tem nada parecido
+// ainda assim recebia "o menos pior" resultado — ex.: "Desempenadeira Dentada Aço 8x8mm"
+// batendo em "Vaso Retangular 60cm para Varanda" a score 0.25, numa reforma de cozinha.
+// Calibrado contra o catálogo real (`node -e` sobre alguns projetos de teste): scores
+// ≥0.34 seguem sendo o mesmo produto/categoria pedido; abaixo disso vira coincidência de
+// palavra solta. Quando nada bate, `resultados` fica vazio e a UI já sabe lidar com isso —
+// `resolverProdutoSelecionado` (ProjetoMosaico.tsx) retorna null e `ListaMateriaisCompacta`/
+// `PlantaCasa` mostram "peça ao vendedor da seção X" em vez de um produto errado.
+const SCORE_MINIMO = 0.34;
+
 function buscaTextoSimples(produtos: Awaited<ReturnType<typeof carregarProdutos>>, query: string, limit = 1) {
   const termos = query.toLowerCase().split(/\s+/).filter(t => t.length > 2);
   return produtos
@@ -49,7 +60,7 @@ function buscaTextoSimples(produtos: Awaited<ReturnType<typeof carregarProdutos>
       const score = termos.filter(t => hay.includes(t)).length / termos.length;
       return { produto: p, score };
     })
-    .filter(r => r.score > 0)
+    .filter(r => r.score >= SCORE_MINIMO)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return (b.produto.estoque > 0 ? 1 : 0) - (a.produto.estoque > 0 ? 1 : 0);
