@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Users, Package, MessageSquare, TrendingUp, AlertTriangle, BarChart3 } from 'lucide-react'
+import { Users, Package, MessageSquare, TrendingUp, AlertTriangle, BarChart3, Download } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
+import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import GraficoBarras from '@/components/GraficoBarras'
 import { aplicarAjustes } from '@/lib/ajustesFuncionario'
@@ -29,6 +30,18 @@ interface AlertaEstoque {
   nome: string
   categoria: string
   estoque: number
+}
+
+// Um valor com vírgula, ponto-e-vírgula ou aspas quebraria o CSV se fosse escrito cru —
+// entre aspas e com aspas internas duplicadas é o jeito padrão (RFC 4180) de evitar isso.
+function csvCampo(valor: string | number): string {
+  const texto = String(valor)
+  if (/[",;\n]/.test(texto)) return `"${texto.replace(/"/g, '""')}"`
+  return texto
+}
+
+function csvLinha(campos: (string | number)[]): string {
+  return campos.map(csvCampo).join(',')
 }
 
 function tempoRelativo(data: Date): string {
@@ -108,8 +121,53 @@ export default function DashboardPage() {
     { label: 'Produtos no catálogo', value: totalProdutos !== null ? totalProdutos.toLocaleString('pt-BR') : '…', icon: Package, color: 'bg-lm-green', href: '/funcionario/produtos' },
   ]
 
+  // Mesmo padrão de download client-side já usado em components/PrivacidadeDados.tsx
+  // (Blob + <a download> temporário) — sem backend, é o único jeito de gerar um arquivo.
+  // Várias "tabelas" (resumo / estoque por categoria / alertas / atividades) concatenadas
+  // com uma linha em branco entre elas — Excel/Sheets abrem isso normalmente.
+  function exportarCSV() {
+    const linhas: string[] = []
+
+    linhas.push('Resumo do dashboard')
+    linhas.push(csvLinha(['Métrica', 'Valor']))
+    for (const s of stats) linhas.push(csvLinha([s.label, s.value]))
+    linhas.push('')
+
+    linhas.push('Estoque por categoria')
+    linhas.push(csvLinha(['Categoria', 'Estoque total']))
+    for (const c of estoquePorCategoria) linhas.push(csvLinha([c.label, c.valor]))
+    linhas.push('')
+
+    linhas.push('Alertas de estoque')
+    linhas.push(csvLinha(['Produto', 'Categoria', 'Estoque']))
+    for (const a of alertasEstoque) linhas.push(csvLinha([a.nome, a.categoria, a.estoque]))
+    linhas.push('')
+
+    linhas.push('Atividades recentes')
+    linhas.push(csvLinha(['Descrição', 'Quando']))
+    for (const at of atividades) linhas.push(csvLinha([at.texto, at.quando.toLocaleString('pt-BR')]))
+
+    // BOM (﻿) na frente pro Excel reconhecer UTF-8 e não estragar os acentos.
+    const blob = new Blob(['﻿' + linhas.join('\n')], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `dashboard-leroymerlin-${new Date().toISOString().slice(0, 10)}.csv`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="p-8 max-w-6xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-xl font-bold text-lm-dark">Dashboard</h1>
+        <Button variant="secondary" onClick={exportarCSV} className="flex items-center gap-2">
+          <Download size={16} /> Exportar CSV
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, i) => (
           <Link key={i} href={stat.href}>
