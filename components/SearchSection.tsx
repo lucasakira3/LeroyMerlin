@@ -12,24 +12,7 @@ import { MapPin } from 'lucide-react'
 import { buscarProdutos } from '@/lib/buscarProdutos'
 import { ordenarProdutos, type CriterioOrdenacao } from '@/lib/ordenarProdutos'
 import type { SearchResult } from '@/types/produto'
-
-const LOJAS = [
-  'Interlagos — São Paulo/SP',
-  'Osasco — Osasco/SP',
-  'Aricanduva — São Paulo/SP',
-  'Santo André — Santo André/SP',
-  'Guarulhos — Guarulhos/SP',
-  'Campinas — Campinas/SP',
-  'Alphaville — Barueri/SP',
-  'São Bernardo do Campo — SBC/SP',
-  'Sorocaba — Sorocaba/SP',
-  'Belo Horizonte Norte — BH/MG',
-  'Barra da Tijuca — Rio de Janeiro/RJ',
-  'Curitiba — Curitiba/PR',
-  'Porto Alegre — Porto Alegre/RS',
-  'Brasília — DF',
-  'Goiânia — Goiânia/GO',
-]
+import { LOJAS } from '@/lib/lojas'
 
 interface SearchSectionProps {
   initialQuery?: string

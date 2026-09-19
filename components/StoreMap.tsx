@@ -99,9 +99,11 @@ interface Props {
   totalEstimado?: number
   onSelect?: (produto: SearchResult['produto']) => void
   rota?: ParadaRota[]
+  /** Esconde o botão de carrinho (uso do funcionário, que não compra pelo mapa). */
+  semCarrinho?: boolean
 }
 
-export default function StoreMap({ resultados, loja, totalEstimado, onSelect, rota }: Props) {
+export default function StoreMap({ resultados, loja, totalEstimado, onSelect, rota, semCarrinho }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
 
@@ -353,7 +355,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                   {produto.estoque > 0 ? `${produto.estoque} un. em estoque` : 'Sem estoque'}
                 </p>
                 <div className="mt-2 flex gap-1.5">
-                  <button
+                  {!semCarrinho && <button
                     onClick={(e) => handleAdicionar(produto.id, produto.estoque, e)}
                     disabled={produto.estoque === 0}
                     aria-label="Adicionar ao carrinho"
@@ -361,7 +363,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                     style={{ backgroundColor: color }}
                   >
                     {adicionadoId === produto.id ? <Check size={14} /> : <ShoppingCart size={14} />}
-                  </button>
+                  </button>}
                   {onSelect && (
                     <button
                       onClick={() => {
@@ -547,7 +549,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                   )}
                 </div>
                 <div className="ml-auto flex items-center gap-2 flex-shrink-0">
-                  <button
+                  {!semCarrinho && <button
                     onClick={(e) => handleAdicionar(pin.produto.id, pin.produto.estoque, e)}
                     disabled={pin.produto.estoque === 0}
                     aria-label="Adicionar ao carrinho"
@@ -555,7 +557,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                     style={{ backgroundColor: pin.color }}
                   >
                     {adicionadoId === pin.produto.id ? <Check size={13} /> : <ShoppingCart size={13} />}
-                  </button>
+                  </button>}
                   {onSelect && (
                     <span className="text-[10px] font-bold shrink-0" style={{ color: pin.color }}>
                       Ver →

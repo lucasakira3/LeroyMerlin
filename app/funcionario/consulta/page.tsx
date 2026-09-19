@@ -1,9 +1,12 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Search, MapPin, Copy, Check, Tag, Lightbulb, Repeat } from 'lucide-react'
+import { Search, MapPin, Copy, Check, Tag, Lightbulb, Repeat, Map as MapaIcone, X } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import EmptyState from '@/components/ui/EmptyState'
+import StoreMap from '@/components/StoreMap'
+import { calcularRota } from '@/lib/rotaLoja'
+import { LOJAS, getLojaFuncionario, salvarLojaFuncionario } from '@/lib/lojas'
 import { aplicarAjustes } from '@/lib/ajustesFuncionario'
 import { getInfoOferta } from '@/lib/ofertas'
 import { getImagemProduto, ajusteFoto, fundoFoto } from '@/lib/categoriaImagens'
@@ -24,7 +27,11 @@ export default function ConsultaRapidaPage() {
   const [busca, setBusca] = useState('')
   const [selecionadoId, setSelecionadoId] = useState<string | null>(null)
   const [copiado, setCopiado] = useState<string | null>(null)
+  const [loja, setLoja] = useState(LOJAS[0])
+  // Produtos que o funcionário colocou no mapa pra mostrar ao cliente (pode ser mais de um).
+  const [noMapaIds, setNoMapaIds] = useState<string[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
+  const mapaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetch('/api/funcionario/produtos')
@@ -32,6 +39,7 @@ export default function ConsultaRapidaPage() {
       .then((lista: Produto[]) => setCatalogo(lista))
       .catch(() => setCatalogo([]))
     inputRef.current?.focus()
+    setLoja(getLojaFuncionario())
   }, [])
 
   // Índice de busca pré-normalizado (nome + código + categoria + tags) — 1000 itens, então
@@ -87,6 +95,30 @@ export default function ConsultaRapidaPage() {
     return { atual, oferta, alternativas }
   }, [selecionado, catalogo])
 
+  // Produtos no mapa já com preço/estoque atuais (ajustes do funcionário aplicados). A rota só
+  // aparece com 2+ corredores diferentes — com um só, não há caminho a sugerir.
+  const mapa = useMemo(() => {
+    if (!catalogo) return { resultados: [], rota: undefined }
+    const produtos = noMapaIds.map(id => catalogo.find(p => p.id === id)).filter((p): p is Produto => !!p)
+    const corredores = Array.from(new Set(produtos.map(p => p.corredor_normalizado)))
+    return {
+      resultados: produtos.map(p => ({ produto: aplicarAjustes(p), score: 1 })),
+      rota: corredores.length > 1 ? calcularRota(corredores) : undefined,
+    }
+  }, [catalogo, noMapaIds])
+
+  function alternarNoMapa(id: string) {
+    const adicionando = !noMapaIds.includes(id)
+    setNoMapaIds(ids => (ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id]))
+    // O mapa fica abaixo da busca; ao adicionar, leva a tela até ele pra não passar despercebido.
+    if (adicionando) setTimeout(() => mapaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80)
+  }
+
+  function mudarLoja(nova: string) {
+    setLoja(nova)
+    salvarLojaFuncionario(nova)
+  }
+
   async function copiar(chave: string, texto: string) {
     try {
       await navigator.clipboard.writeText(texto)
@@ -98,7 +130,23 @@ export default function ConsultaRapidaPage() {
   }
 
   return (
-    <div className="p-4 sm:p-8 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 items-start">
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-4">
+      <Card padding="sm" className="flex flex-wrap items-center gap-3">
+        <label htmlFor="loja-funcionario" className="text-sm font-medium text-gray-700 inline-flex items-center gap-1.5">
+          <MapPin size={15} className="text-lm-green" /> Loja onde você está
+        </label>
+        <select
+          id="loja-funcionario"
+          value={loja}
+          onChange={e => mudarLoja(e.target.value)}
+          className="h-9 px-2.5 rounded-lg border border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+        >
+          {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
+        </select>
+        <span className="text-xs text-gray-500">Fica salva neste navegador.</span>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 items-start">
       <Card padding="none">
         <div className="p-4 border-b border-gray-500">
           <div className="relative">
@@ -198,6 +246,20 @@ export default function ConsultaRapidaPage() {
                 </div>
               </div>
 
+              <button
+                type="button"
+                onClick={() => alternarNoMapa(selecionado.id)}
+                aria-pressed={noMapaIds.includes(selecionado.id)}
+                className={`w-full inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  noMapaIds.includes(selecionado.id)
+                    ? 'bg-lm-green/10 text-lm-green border border-lm-green/40'
+                    : 'bg-lm-green text-white hover:bg-lm-green/90'
+                }`}
+              >
+                <MapaIcone size={16} />
+                {noMapaIds.includes(selecionado.id) ? 'No mapa — clique para tirar' : 'Mostrar no mapa da loja'}
+              </button>
+
               {detalhe.oferta.emOferta && (
                 <p className="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 rounded-full px-3 py-1">
                   <Tag size={13} /> Em oferta: -{detalhe.oferta.percentualDesconto}% para o cliente
@@ -256,6 +318,55 @@ export default function ConsultaRapidaPage() {
           </div>
         )}
       </Card>
+      </div>
+
+      <div ref={mapaRef} className="scroll-mt-4">
+      <Card padding="none">
+        <div className="flex flex-wrap items-center gap-2 p-4 border-b border-gray-500">
+          <span className="inline-flex items-center gap-2 font-bold text-gray-900">
+            <MapaIcone size={17} className="text-lm-green" /> Mapa da loja
+          </span>
+          <span className="text-xs text-gray-500">{loja}</span>
+          {mapa.resultados.length > 0 && (
+            <button type="button" onClick={() => setNoMapaIds([])} className="ml-auto text-xs text-gray-400 hover:text-lm-green">
+              Limpar mapa
+            </button>
+          )}
+        </div>
+        {mapa.resultados.length === 0 ? (
+          <EmptyState
+            icon={MapaIcone}
+            title="Nenhum produto no mapa"
+            description="Escolha um produto e clique em “Mostrar no mapa da loja”. Dá para colocar vários e ver a ordem do caminho."
+          />
+        ) : (
+          <div className="p-4 space-y-3">
+            <div className="flex flex-wrap gap-2">
+              {mapa.resultados.map(({ produto }) => (
+                <span key={produto.id} className="inline-flex items-center gap-1.5 rounded-full border border-gray-500 pl-3 pr-1.5 py-1 text-xs text-gray-700">
+                  {produto.produto}
+                  <button
+                    type="button"
+                    onClick={() => alternarNoMapa(produto.id)}
+                    aria-label={`Tirar ${produto.produto} do mapa`}
+                    className="w-5 h-5 rounded-full flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <StoreMap
+              resultados={mapa.resultados}
+              loja={loja}
+              rota={mapa.rota}
+              semCarrinho
+              onSelect={p => setSelecionadoId(p.id)}
+            />
+          </div>
+        )}
+      </Card>
+      </div>
     </div>
   )
 }
