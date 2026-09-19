@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { getUsuarioLogado, type UsuarioLogado } from '@/lib/clientAuth'
 import ContaSidebar from '@/components/ContaSidebar'
 
@@ -10,16 +10,17 @@ import ContaSidebar from '@/components/ContaSidebar'
 // login uma vez só. Cada page.tsx embaixo cuida só do próprio conteúdo.
 export default function ContaLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [usuario, setUsuario] = useState<UsuarioLogado | null>(null)
 
   useEffect(() => {
     const u = getUsuarioLogado()
     if (!u) {
-      router.push('/funcionario/login')
+      router.push(`/funcionario/login?next=${encodeURIComponent(pathname)}`)
       return
     }
     setUsuario(u)
-  }, [router])
+  }, [router, pathname])
 
   if (!usuario) return null
 

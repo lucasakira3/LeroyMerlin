@@ -58,7 +58,7 @@ export default function ConversaEspecialista() {
           Assim o funcionário sabe quem está perguntando e consegue te responder depois, mesmo que você saia da página.
         </p>
         <Link
-          href="/funcionario/login"
+          href="/funcionario/login?next=/duvidas"
           className="flex items-center gap-2 bg-lm-green text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-green-700 transition-colors mt-1"
         >
           <LogIn size={15} /> Entrar
