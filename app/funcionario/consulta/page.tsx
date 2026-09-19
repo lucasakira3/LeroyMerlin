@@ -143,7 +143,6 @@ export default function ConsultaRapidaPage() {
         >
           {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
         </select>
-        <span className="text-xs text-gray-500">Fica salva neste navegador.</span>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 items-start">
