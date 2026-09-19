@@ -38,6 +38,15 @@ export default async function ProdutoPage({ params }: PageProps) {
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        <nav aria-label="Breadcrumb">
+          <ol className="flex items-center gap-1.5 text-xs text-gray-500 flex-wrap">
+            <li><Link href="/produtos" className="hover:text-lm-green hover:underline transition-colors">Produtos</Link></li>
+            <li aria-hidden="true">/</li>
+            <li>{produto.categoria}</li>
+            <li aria-hidden="true">/</li>
+            <li className="text-gray-700 font-medium truncate max-w-[200px]" aria-current="page">{produto.produto}</li>
+          </ol>
+        </nav>
         <PageHeader
           title={produto.produto}
           description={produto.categoria}

@@ -125,6 +125,19 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
         produto={produtoDrawer as any}
         onClose={() => setProdutoDrawer(null)}
       />
+      {/* Breadcrumb — orientação de "onde estou" na navegação por categoria; o botão
+          "Voltar" abaixo continua sendo a ação principal de volta, isso é só o rótulo. */}
+      <nav aria-label="Breadcrumb" className="mb-2">
+        <ol className="flex items-center gap-1.5 text-xs text-gray-500">
+          <li>
+            <button onClick={onBack} className="hover:text-lm-green hover:underline transition-colors">
+              Produtos
+            </button>
+          </li>
+          <li aria-hidden="true">/</li>
+          <li className="text-gray-700 font-medium truncate max-w-[200px]" aria-current="page">{label}</li>
+        </ol>
+      </nav>
       {/* Header da categoria */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
         <button onClick={onBack}
