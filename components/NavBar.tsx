@@ -40,14 +40,15 @@ export default function NavBar() {
       ? 'bg-white/15 text-white'
       : 'text-white/80 hover:text-white hover:bg-white/10'
   }`
+  const loginHref = logado ? '/conta' : `/funcionario/login?next=${encodeURIComponent(pathname)}`
 
   return (
     <header className="bg-lm-green shadow-md relative z-30">
       {/* Linha 1 — logo, busca, ícones */}
-      <div className="px-4 md:px-6 flex md:grid md:grid-cols-[1fr_min(42rem,100%)_1fr] items-center gap-3 md:gap-4 h-16">
+      <div className="px-4 md:px-6 flex lg:grid lg:grid-cols-[1fr_min(42rem,100%)_1fr] items-center gap-3 md:gap-4 h-16">
 
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0 md:justify-self-start">
+        <Link href="/" className="flex-shrink-0 lg:justify-self-start">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/leroy-logo.png"
@@ -60,30 +61,30 @@ export default function NavBar() {
         <HeaderSearch />
 
         {/* Ícones — desktop */}
-        <div className="hidden md:flex items-center gap-1 flex-shrink-0 md:justify-self-end">
+        <div className="hidden lg:flex items-center gap-1 flex-shrink-0 lg:justify-self-end">
           {logado && <NotificacoesBell />}
           <ThemeToggle />
           <FavoritosIcon />
-          <Link href={logado ? '/conta' : '/funcionario/login'} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>
+          <Link href={loginHref} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>
             <User size={19} />
           </Link>
           <CarrinhoIcon />
         </div>
 
-        {/* Botão hambúrguer — mobile */}
+        {/* Botão hambúrguer — mobile/tablet (abaixo de lg:, faixa em que a linha de abas não cabe inteira) */}
         <button
           type="button"
           onClick={() => setMenuAberto((v) => !v)}
           aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'}
           aria-expanded={menuAberto}
-          className="md:hidden flex items-center justify-center w-10 h-10 -mr-2 text-white flex-shrink-0"
+          className="lg:hidden flex items-center justify-center w-10 h-10 -mr-2 text-white flex-shrink-0"
         >
           {menuAberto ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
       {/* Linha 2 — abas de navegação (desktop) */}
-      <div className="hidden md:block border-t border-white/10">
+      <div className="hidden lg:block border-t border-white/10">
         <nav className="px-4 md:px-6 flex items-center gap-1 py-2">
           {tabs.map(({ href, label, icon: Icon }) => {
             const active = pathname === href
@@ -105,9 +106,9 @@ export default function NavBar() {
         </nav>
       </div>
 
-      {/* Menu mobile */}
+      {/* Menu mobile/tablet */}
       {menuAberto && (
-        <div className="md:hidden bg-lm-green border-t border-white/15 px-4 py-3 space-y-1 animate-fade-in">
+        <div className="lg:hidden bg-lm-green border-t border-white/15 px-4 py-3 space-y-1 animate-fade-in">
           {tabs.map(({ href, label, icon: Icon }) => {
             const active = pathname === href
             return (
@@ -131,7 +132,7 @@ export default function NavBar() {
               <FavoritosIcon />
               <CarrinhoIcon />
             </div>
-            <Link href={logado ? '/conta' : '/funcionario/login'} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>
+            <Link href={loginHref} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>
               <User size={19} />
             </Link>
           </div>
