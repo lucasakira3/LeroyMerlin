@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { ChevronDown, ShoppingCart, Check } from 'lucide-react'
 import type { SearchResult } from '@/types/produto'
-import { getImagemProduto } from '@/lib/categoriaImagens'
+import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { resolverProdutoSelecionado, type ItemProjeto } from './ProjetoMosaico'
 
@@ -66,7 +66,7 @@ export default function ListaMateriaisCompacta({ itens, selecionados, onTrocarAl
               <img
                 src={getImagemProduto(produto)}
                 alt={produto.categoria}
-                className="w-9 h-9 rounded-md object-cover flex-shrink-0"
+                className={`w-9 h-9 rounded-md ${ajusteFoto(produto, 'p-0.5')} flex-shrink-0`}
               />
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-gray-800 dark:text-zinc-100 truncate">{produto.produto}</p>

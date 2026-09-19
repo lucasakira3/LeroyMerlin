@@ -101,7 +101,7 @@ export default function ProdutosView() {
             <img
               src={getImagemCategoria(label)}
               alt={label}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-125"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent transition-opacity duration-300 group-hover:from-lm-green/85 group-hover:via-black/20" />
             <span className="absolute bottom-1.5 left-0 right-0 text-center text-white text-[11px] font-bold leading-tight px-1">

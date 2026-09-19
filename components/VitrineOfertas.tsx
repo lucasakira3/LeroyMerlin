@@ -55,15 +55,15 @@ export default function VitrineOfertas() {
           <Link
             key={slug}
             href={`/ofertas?categoria=${slug}`}
-            className="group relative rounded-card overflow-hidden h-32 hover:shadow-soft transition-shadow"
+            className="group relative rounded-card overflow-hidden h-32 bg-gray-800 hover:shadow-soft transition-shadow"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={getImagemCategoria(label)}
               alt={label}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="absolute right-0 top-0 h-full w-3/5 max-w-[380px] object-cover [mask-image:linear-gradient(to_right,transparent,black_40%)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_40%)] group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
             <div className="relative h-full flex flex-col justify-center px-6">
               <span className="text-white text-lg font-black leading-tight">{label}</span>
               <span className="text-lm-yellow text-sm font-bold">até {maxDesconto}% de desconto</span>

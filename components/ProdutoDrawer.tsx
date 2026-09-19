@@ -7,7 +7,7 @@ import {
   Heart, Scale, Star, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { getMarca, getUnidade } from '@/lib/marcas'
-import { getGaleriaProduto } from '@/lib/categoriaImagens'
+import { getGaleriaProduto, ajusteFoto, fundoFoto } from '@/lib/categoriaImagens'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import SeletorQuantidadeCarrinho from './ui/SeletorQuantidadeCarrinho'
 import { estaNoComparador, toggleComparador } from '@/lib/clientComparador'
@@ -225,12 +225,12 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
         {/* Coluna esquerda — imagem + chat */}
         <div className="flex flex-col md:h-full">
           {/* Foto da categoria, com ações flutuantes no canto */}
-          <div className="relative flex-shrink-0">
+          <div className={`relative flex-shrink-0 md:rounded-card ${fundoFoto(produto)}`}>
             <img
               src={galeria[fotoAtiva]}
               alt={produto.categoria}
               onClick={() => setZoomAberto(true)}
-              className="w-full h-44 md:h-52 object-cover md:rounded-card cursor-zoom-in"
+              className={`w-full h-44 md:h-52 ${ajusteFoto(produto, 'p-3')} md:rounded-card cursor-zoom-in`}
             />
             {galeria.length > 1 && (
               <div className="absolute bottom-2 left-2 right-16 flex gap-1.5">

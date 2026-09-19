@@ -7,7 +7,7 @@ import StockIndicator from './StockIndicator'
 import SustainabilityBadge from './SustainabilityBadge'
 import StarRating from './ui/StarRating'
 import SeletorQuantidadeCarrinho from './ui/SeletorQuantidadeCarrinho'
-import { getImagemProduto } from '@/lib/categoriaImagens'
+import { getImagemProduto, ajusteFoto, fundoFoto } from '@/lib/categoriaImagens'
 import { getMedia } from '@/lib/clientAvaliacoes'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { formatarParcelamento } from '@/lib/parcelamento'
@@ -78,11 +78,11 @@ export default function ProductCard({
 
   const conteudo = (
     <>
-      <div className="relative">
+      <div className={`relative ${fundoFoto(produto)}`}>
         <img
           src={getImagemProduto(produto)}
           alt={produto.categoria}
-          className="w-full h-36 object-cover"
+          className={`w-full h-36 ${ajusteFoto(produto, 'p-2')}`}
         />
         {emOferta && (
           <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-md">

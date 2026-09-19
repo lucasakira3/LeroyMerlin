@@ -12,7 +12,7 @@ import { adicionarNotificacao } from '@/lib/clientNotificacoes'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { clearProductHistory } from '@/lib/hooks/useProductTracker'
-import { getImagemProduto } from '@/lib/categoriaImagens'
+import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import { formatarParcelamento, getOpcoesParcelamento } from '@/lib/parcelamento'
 import CartItemSkeleton from '@/components/CartItemSkeleton'
 import TermometroOrcamento from '@/components/TermometroOrcamento'
@@ -386,7 +386,7 @@ export default function CarrinhoPage() {
                   <img
                     src={getImagemProduto(produto)}
                     alt={produto.categoria}
-                    className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+                    className={`w-14 h-14 rounded-lg ${ajusteFoto(produto, 'p-1')} flex-shrink-0`}
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-900 truncate">{produto.produto}</p>

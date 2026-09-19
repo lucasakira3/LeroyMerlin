@@ -7,7 +7,7 @@ import {
   type TipoCalculo, type ResultadoCalculo,
 } from '@/lib/calculadoraMateriais'
 import { buscarProdutos } from '@/lib/buscarProdutos'
-import { getImagemProduto } from '@/lib/categoriaImagens'
+import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { ProdutoResolvido } from '@/lib/produtosCliente'
 
@@ -199,7 +199,7 @@ export default function CalculadoraMateriais() {
                     <img
                       src={getImagemProduto(produto)}
                       alt={produto.categoria}
-                      className="w-9 h-9 rounded-md object-cover flex-shrink-0"
+                      className={`w-9 h-9 rounded-md ${ajusteFoto(produto, 'p-0.5')} flex-shrink-0`}
                     />
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-gray-800 dark:text-zinc-100 truncate">{produto.produto}</p>

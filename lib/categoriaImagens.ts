@@ -130,3 +130,19 @@ export function getGaleriaProduto(
   if (produto.imagem && produto.imagem.trim()) return [produto.imagem]
   return getGaleriaCategoria(produto.categoria, produto.id, quantidade)
 }
+
+// Como encaixar a foto no quadro. Foto real de loja é um produto recortado sobre fundo
+// branco: `object-cover` corta e amplia (parece "zoom demais", produto some pra fora do
+// quadro). Pra essas usa `object-contain` com margem e fundo branco fixo (`bg-[#ffffff]`
+// e não `bg-white` de propósito: o modo escuro reescreve `.bg-white` pra cinza-escuro e a
+// foto ficaria com uma moldura escura em volta do fundo branco dela). Já a foto de categoria
+// (paisagem/ambiente, sem fundo branco) continua em `object-cover`, que preenche melhor.
+export function ajusteFoto(produto: { imagem?: string }, margem: string = 'p-1'): string {
+  return produto.imagem && produto.imagem.trim() ? `object-contain bg-[#ffffff] ${margem}` : 'object-cover'
+}
+
+// Fundo da faixa inteira onde a foto fica (o quadro é mais largo que a foto contida): branco
+// fixo pra foto real, pra ela não parecer um quadrado solto sobre o card escuro no modo escuro.
+export function fundoFoto(produto: { imagem?: string }): string {
+  return produto.imagem && produto.imagem.trim() ? 'bg-[#ffffff]' : ''
+}

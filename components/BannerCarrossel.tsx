@@ -93,7 +93,7 @@ export default function BannerCarrossel() {
       <img
         src={getImagemCategoria(atual.categoria)}
         alt=""
-        className="pointer-events-none absolute -right-4 -top-2 h-[120%] w-3/5 object-cover"
+        className="pointer-events-none absolute right-0 top-0 h-full w-3/5 max-w-[460px] object-cover [mask-image:linear-gradient(to_right,transparent,black_35%)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_35%)]"
       />
 
       <Link href={atual.href} className="block h-full">

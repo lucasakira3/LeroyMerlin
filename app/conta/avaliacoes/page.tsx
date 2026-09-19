@@ -13,7 +13,7 @@ import {
 } from '@/lib/clientAvaliacoes'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
-import { getImagemProduto } from '@/lib/categoriaImagens'
+import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import { showToast } from '@/lib/toast'
 
 export default function MinhasAvaliacoesPage() {
@@ -74,7 +74,7 @@ export default function MinhasAvaliacoesPage() {
                   <img
                     src={getImagemProduto(produto)}
                     alt={produto.categoria}
-                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                    className={`w-16 h-16 rounded-lg ${ajusteFoto(produto, 'p-1')} flex-shrink-0`}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">

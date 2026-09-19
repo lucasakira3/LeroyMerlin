@@ -6,7 +6,7 @@ import { getCarrinho, removerDoCarrinho, adicionarAoCarrinho, atualizarQuantidad
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
 import { getOrcamento, definirOrcamento } from '@/lib/clientOrcamento'
 import { buscarSugestaoTroca, type SugestaoTroca } from '@/lib/sugestaoEconomia'
-import { getImagemProduto } from '@/lib/categoriaImagens'
+import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { getPerfil } from '@/lib/clientPerfil'
 import { ORCAMENTO_PARA_FAIXA } from '@/lib/perfilSugestoes'
@@ -278,13 +278,13 @@ export default function TermometroOrcamento() {
             <img
               src={getImagemProduto(sugestao.itemAtual)}
               alt=""
-              className="w-8 h-8 rounded-lg object-cover opacity-60"
+              className={`w-8 h-8 rounded-lg ${ajusteFoto(sugestao.itemAtual, 'p-0.5')} opacity-60`}
             />
             <ArrowRight size={12} className="text-gray-300 dark:text-zinc-600 flex-shrink-0" />
             <img
               src={getImagemProduto(sugestao.alternativa)}
               alt=""
-              className="w-8 h-8 rounded-lg object-cover ring-2 ring-lm-green/40"
+              className={`w-8 h-8 rounded-lg ${ajusteFoto(sugestao.alternativa, 'p-0.5')} ring-2 ring-lm-green/40`}
             />
           </div>
           <p className="flex-1 text-gray-600 dark:text-zinc-300">

@@ -6,7 +6,7 @@ import StarRating from '@/components/ui/StarRating'
 import StockIndicator from '@/components/StockIndicator'
 import SustainabilityBadge from '@/components/SustainabilityBadge'
 import { getMedia } from '@/lib/clientAvaliacoes'
-import { getImagemProduto } from '@/lib/categoriaImagens'
+import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import type { ProdutoResolvido } from '@/lib/produtosCliente'
 
 const RANK_SUSTENTABILIDADE: Record<string, number> = { 'Ouro': 3, 'Prata': 2, 'Bronze': 1, 'N/A': 0 }
@@ -52,7 +52,7 @@ export default function ComparadorResultado({ produtos, onRemover, onAdicionarCa
               <img
                 src={getImagemProduto(produto)}
                 alt={produto.categoria}
-                className="w-full h-28 object-cover rounded-lg mb-3"
+                className={`w-full h-28 ${ajusteFoto(produto, 'p-2')} rounded-lg mb-3`}
               />
 
               <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{produto.categoria}</p>

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { getImagemProduto } from '@/lib/categoriaImagens'
+import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 
 interface ProductListItemProduto {
   id: string
@@ -29,7 +29,7 @@ export default function ProductListItem({ produto, href, style, className = '', 
         <img
           src={getImagemProduto(produto)}
           alt={produto.categoria}
-          className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          className={`w-16 h-16 rounded-lg ${ajusteFoto(produto, 'p-1')} flex-shrink-0`}
         />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-lm-dark truncate">{produto.produto}</p>
