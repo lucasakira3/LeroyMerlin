@@ -110,6 +110,10 @@ export default function ComparadorPorFoto() {
       {!preview ? (
         <div
           onClick={() => inputRef.current?.click()}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inputRef.current?.click() } }}
+          role="button"
+          tabIndex={0}
+          aria-label="Selecionar foto do produto pra comparar"
           className="flex flex-col items-center justify-center gap-2 p-5 border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 dark:hover:bg-zinc-800/50 transition-colors"
         >
           <Camera size={22} className="text-gray-400" />

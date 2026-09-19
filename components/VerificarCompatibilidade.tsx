@@ -94,6 +94,10 @@ export default function VerificarCompatibilidade({ produtoId }: { produtoId: str
           {!preview ? (
             <div
               onClick={() => inputRef.current?.click()}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inputRef.current?.click() } }}
+              role="button"
+              tabIndex={0}
+              aria-label="Selecionar foto pra verificar compatibilidade"
               className="flex flex-col items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 transition-colors"
             >
               <Camera size={20} className="text-gray-400" />

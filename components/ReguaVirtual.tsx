@@ -100,6 +100,10 @@ export default function ReguaVirtual() {
         {!preview ? (
           <div
             onClick={() => inputRef.current?.click()}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inputRef.current?.click() } }}
+            role="button"
+            tabIndex={0}
+            aria-label="Selecionar foto pra medir"
             className="flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 transition-colors"
           >
             <Camera size={28} className="text-gray-400" />

@@ -148,9 +148,13 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
       {!preview ? (
         <div
           onClick={() => inputRef.current?.click()}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inputRef.current?.click() } }}
           onDrop={handleDrop}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
           onDragLeave={() => setDragOver(false)}
+          role="button"
+          tabIndex={0}
+          aria-label={modo === 'produto' ? 'Selecionar imagem do produto' : 'Selecionar imagem do problema'}
           className={`relative flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
             dragOver
               ? 'border-lm-green bg-green-50'
