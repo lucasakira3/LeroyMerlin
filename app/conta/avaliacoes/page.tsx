@@ -70,7 +70,7 @@ export default function MinhasAvaliacoesPage() {
               const produto = produtos[avaliacao.produtoId]
               if (!produto) return null
               return (
-                <div key={avaliacao.produtoId} className="flex gap-3 bg-white rounded-card shadow-soft border border-gray-400 p-4">
+                <div key={avaliacao.produtoId} className="flex gap-3 bg-white rounded-card shadow-soft border border-gray-500 p-4">
                   <img
                     src={getImagemProduto(produto)}
                     alt={produto.categoria}

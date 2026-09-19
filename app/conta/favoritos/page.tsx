@@ -133,7 +133,7 @@ export default function FavoritosPage() {
               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                 filtro === "todos"
                   ? "bg-lm-dark text-white border-lm-dark"
-                  : "bg-white text-gray-600 border-gray-400 hover:border-lm-green/40"
+                  : "bg-white text-gray-600 border-gray-500 hover:border-lm-green/40"
               }`}
             >
               Todos ({produtos.length})
@@ -149,7 +149,7 @@ export default function FavoritosPage() {
                   className={`flex items-center rounded-full border transition-colors ${
                     filtro === g.id
                       ? "bg-lm-green text-white border-lm-green"
-                      : "bg-white text-gray-600 border-gray-400 hover:border-lm-green/40"
+                      : "bg-white text-gray-600 border-gray-500 hover:border-lm-green/40"
                   }`}
                 >
                   <button
@@ -181,7 +181,7 @@ export default function FavoritosPage() {
               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                 filtro === SEM_GRUPO
                   ? "bg-lm-dark text-white border-lm-dark"
-                  : "bg-white text-gray-600 border-gray-400 hover:border-lm-green/40"
+                  : "bg-white text-gray-600 border-gray-500 hover:border-lm-green/40"
               }`}
             >
               Sem grupo
@@ -253,7 +253,7 @@ export default function FavoritosPage() {
                     <select
                       value={atribuicoes[produto.id] ?? SEM_GRUPO}
                       onChange={(e) => mudarGrupo(produto.id, e.target.value)}
-                      className="text-xs border border-gray-400 rounded-lg px-2 py-1.5 bg-white text-gray-600 max-w-[110px] focus:border-lm-green outline-none"
+                      className="text-xs border border-gray-500 rounded-lg px-2 py-1.5 bg-white text-gray-600 max-w-[110px] focus:border-lm-green outline-none"
                     >
                       <option value={SEM_GRUPO}>Sem grupo</option>
                       {grupos.map((g) => (

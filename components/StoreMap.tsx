@@ -268,7 +268,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
       </div>
 
       <div
-        className="border border-gray-400 rounded-card overflow-hidden shadow-soft bg-white relative select-none"
+        className="border border-gray-500 rounded-card overflow-hidden shadow-soft bg-white relative select-none"
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}

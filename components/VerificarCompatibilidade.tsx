@@ -72,7 +72,7 @@ export default function VerificarCompatibilidade({ produtoId }: { produtoId: str
   const info = resultado?.veredito ? VEREDITO_INFO[resultado.veredito] : null
 
   return (
-    <div className="mt-2 border-t border-gray-400 pt-3">
+    <div className="mt-2 border-t border-gray-500 pt-3">
       <button
         type="button"
         onClick={() => setAberto(v => !v)}
@@ -109,7 +109,7 @@ export default function VerificarCompatibilidade({ produtoId }: { produtoId: str
               />
             </div>
           ) : (
-            <div className="relative rounded-lg overflow-hidden border border-gray-400 mb-2">
+            <div className="relative rounded-lg overflow-hidden border border-gray-500 mb-2">
               <img src={preview} alt="Prévia da foto" className="w-full max-h-40 object-contain bg-gray-50" />
               {loading && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

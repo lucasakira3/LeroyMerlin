@@ -44,7 +44,7 @@ export default function ListaMateriaisCompacta({ itens, selecionados, onTrocarAl
         const produto = resolverProdutoSelecionado(item, selecionados)
         if (!produto) {
           return (
-            <div key={idx} className="px-3 py-2.5 rounded-lg border border-dashed border-gray-400 dark:border-zinc-700">
+            <div key={idx} className="px-3 py-2.5 rounded-lg border border-dashed border-gray-500 dark:border-zinc-700">
               <p className="text-xs text-gray-400 italic">{item.material} — peça ao vendedor da seção {item.categoria}</p>
             </div>
           )
@@ -57,7 +57,7 @@ export default function ListaMateriaisCompacta({ itens, selecionados, onTrocarAl
           <div key={idx}>
             <div
               onClick={() => onSelecionarProduto(produto)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-400 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs cursor-pointer hover:shadow-sm transition-shadow"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-500 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs cursor-pointer hover:shadow-sm transition-shadow"
             >
               <span
                 title={item.prioridade}

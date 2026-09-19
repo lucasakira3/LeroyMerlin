@@ -148,7 +148,7 @@ export default function ChamadosPage() {
         <button
           onClick={() => { setModo('agendamentos'); setBusca('') }}
           className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl transition-colors ${
-            modo === 'agendamentos' ? 'bg-lm-green text-white' : 'bg-white text-gray-600 border border-gray-400 hover:border-lm-green/40'
+            modo === 'agendamentos' ? 'bg-lm-green text-white' : 'bg-white text-gray-600 border border-gray-500 hover:border-lm-green/40'
           }`}
         >
           <CalendarClock size={14} /> Agendamentos
@@ -161,7 +161,7 @@ export default function ChamadosPage() {
         <button
           onClick={() => { setModo('conversas'); setBusca('') }}
           className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl transition-colors ${
-            modo === 'conversas' ? 'bg-lm-green text-white' : 'bg-white text-gray-600 border border-gray-400 hover:border-lm-green/40'
+            modo === 'conversas' ? 'bg-lm-green text-white' : 'bg-white text-gray-600 border border-gray-500 hover:border-lm-green/40'
           }`}
         >
           <Headset size={14} /> Conversas com especialista
@@ -183,7 +183,7 @@ export default function ChamadosPage() {
               placeholder={modo === 'agendamentos' ? 'Buscar por nome, serviço ou loja...' : 'Buscar por nome ou e-mail...'}
               value={busca}
               onChange={e => setBusca(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-400 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-2 focus:ring-lm-green/30 transition-all"
+              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-500 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-2 focus:ring-lm-green/30 transition-all"
             />
           </div>
           <div className="flex-1 overflow-auto space-y-2 pr-1">
@@ -281,7 +281,7 @@ export default function ChamadosPage() {
         <Card padding="none" className="flex-1 flex flex-col overflow-hidden">
           {modo === 'agendamentos' && chamadoSelecionado && estadoSelecionado ? (
             <>
-              <div className="px-6 py-4 border-b border-gray-400 flex justify-between items-center bg-white z-10">
+              <div className="px-6 py-4 border-b border-gray-500 flex justify-between items-center bg-white z-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-lm-green/10 flex items-center justify-center text-lm-green">
                     <User size={20} />
@@ -334,8 +334,8 @@ export default function ChamadosPage() {
                 ))}
               </div>
 
-              <div className="p-4 bg-white border-t border-gray-400">
-                <div className="flex items-center gap-3 bg-gray-50 rounded-2xl p-2 border border-gray-400 focus-within:border-lm-green focus-within:ring-2 focus-within:ring-lm-green/30 transition-all">
+              <div className="p-4 bg-white border-t border-gray-500">
+                <div className="flex items-center gap-3 bg-gray-50 rounded-2xl p-2 border border-gray-500 focus-within:border-lm-green focus-within:ring-2 focus-within:ring-lm-green/30 transition-all">
                   <input
                     type="text"
                     value={mensagem}
@@ -356,7 +356,7 @@ export default function ChamadosPage() {
             </>
           ) : modo === 'conversas' && conversaSelecionada ? (
             <>
-              <div className="px-6 py-4 border-b border-gray-400 flex justify-between items-center bg-white z-10">
+              <div className="px-6 py-4 border-b border-gray-500 flex justify-between items-center bg-white z-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-lm-green/10 flex items-center justify-center text-lm-green">
                     <User size={20} />
@@ -400,8 +400,8 @@ export default function ChamadosPage() {
                 ))}
               </div>
 
-              <div className="p-4 bg-white border-t border-gray-400">
-                <div className="flex items-center gap-3 bg-gray-50 rounded-2xl p-2 border border-gray-400 focus-within:border-lm-green focus-within:ring-2 focus-within:ring-lm-green/30 transition-all">
+              <div className="p-4 bg-white border-t border-gray-500">
+                <div className="flex items-center gap-3 bg-gray-50 rounded-2xl p-2 border border-gray-500 focus-within:border-lm-green focus-within:ring-2 focus-within:ring-lm-green/30 transition-all">
                   <input
                     type="text"
                     value={respostaConversa}

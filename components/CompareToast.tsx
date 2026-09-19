@@ -43,7 +43,7 @@ export default function CompareToast() {
           : 'translate-y-12 opacity-0 scale-95 pointer-events-none'
       }`}
     >
-      <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-400 dark:border-zinc-800 shadow-soft-lg rounded-2xl p-5 relative overflow-hidden" style={{ boxShadow: '0 12px 40px -4px rgba(0, 0, 0, 0.12)' }}>
+      <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-500 dark:border-zinc-800 shadow-soft-lg rounded-2xl p-5 relative overflow-hidden" style={{ boxShadow: '0 12px 40px -4px rgba(0, 0, 0, 0.12)' }}>
         <div className="absolute top-0 left-0 right-0 h-1 bg-lm-green" />
 
         <button

@@ -89,8 +89,8 @@ export default function NotificacoesBell() {
       </button>
 
       {aberto && (
-        <div className="absolute left-0 md:left-auto md:right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto bg-white rounded-xl shadow-lg border border-gray-400 z-50">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-400">
+        <div className="absolute left-0 md:left-auto md:right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto bg-white rounded-xl shadow-lg border border-gray-500 z-50">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-500">
             <span className="text-sm font-bold text-lm-dark">Notificações</span>
             {quantidade > 0 && (
               <button
@@ -112,7 +112,7 @@ export default function NotificacoesBell() {
                   <Link
                     href={n.href?.startsWith('/') ? n.href : '/conta'}
                     onClick={() => abrirNotificacao(n)}
-                    className={`flex items-start gap-2 px-4 py-3 border-b border-gray-400 last:border-b-0 hover:bg-gray-50 transition-colors ${
+                    className={`flex items-start gap-2 px-4 py-3 border-b border-gray-500 last:border-b-0 hover:bg-gray-50 transition-colors ${
                       n.lida ? 'bg-white' : 'bg-lm-green/5'
                     }`}
                   >

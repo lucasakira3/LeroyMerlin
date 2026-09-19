@@ -41,7 +41,7 @@ export default function PerguntasPage() {
       {perguntas !== null && perguntas.length > 0 && (
         <div className="space-y-3">
           {perguntas.map(p => (
-            <div key={p.id} className="bg-white rounded-card shadow-soft border border-gray-400 p-4">
+            <div key={p.id} className="bg-white rounded-card shadow-soft border border-gray-500 p-4">
               <div className="flex items-center justify-between mb-2">
                 <Link href={`/produto/${p.produtoId}`} className="text-sm font-semibold text-gray-900 hover:text-lm-green truncate">
                   {p.produtoNome}

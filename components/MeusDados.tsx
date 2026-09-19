@@ -63,7 +63,7 @@ export default function MeusDados({ email, nomeAtual, onNomeAtualizado }: Props)
             value={nome}
             onChange={e => setNome(e.target.value)}
             autoFocus
-            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="w-full h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
         </div>
         <div>
@@ -72,7 +72,7 @@ export default function MeusDados({ email, nomeAtual, onNomeAtualizado }: Props)
             type="text"
             value={email}
             disabled
-            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-gray-50 text-gray-400"
+            className="w-full h-10 px-3 rounded-xl border border-gray-500 text-sm bg-gray-50 text-gray-400"
           />
         </div>
 

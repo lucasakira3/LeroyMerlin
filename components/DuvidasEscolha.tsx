@@ -37,7 +37,7 @@ export default function DuvidasEscolha({ onEscolher }: Props) {
               key={modo}
               type="button"
               onClick={() => onEscolher(modo)}
-              className="flex flex-col items-start gap-4 bg-white border-2 border-gray-400 rounded-3xl p-10 text-left hover:border-lm-green/40 hover:shadow-soft-lg transition-all"
+              className="flex flex-col items-start gap-4 bg-white border-2 border-gray-500 rounded-3xl p-10 text-left hover:border-lm-green/40 hover:shadow-soft-lg transition-all"
             >
               <div className="w-20 h-20 rounded-2xl bg-lm-green/10 text-lm-green flex items-center justify-center">
                 <Icone size={40} />

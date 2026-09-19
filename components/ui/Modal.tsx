@@ -46,7 +46,7 @@ export default function Modal({ open, onClose, title, children, maxWidthClass = 
         <div
           className={`bg-white dark:bg-zinc-900 w-full h-full md:h-auto md:max-h-[92vh] ${maxWidthClass} ${minHeightClass} md:rounded-card shadow-soft-lg overflow-hidden flex flex-col`}
         >
-          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-400 dark:border-zinc-800 flex-shrink-0">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-500 dark:border-zinc-800 flex-shrink-0">
             <h2 className="text-base font-bold text-lm-dark dark:text-zinc-50">{title}</h2>
             <button
               onClick={onClose}

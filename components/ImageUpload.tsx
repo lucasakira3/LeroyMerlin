@@ -126,7 +126,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           className={`flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg border transition-colors ${
             modo === 'produto'
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
+              : 'bg-white text-gray-500 border-gray-500 hover:border-lm-green/40'
           }`}
         >
           <PackageSearch size={14} /> Já sei o produto
@@ -138,7 +138,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           className={`flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg border transition-colors ${
             modo === 'problema'
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-gray-500 border-gray-400 hover:border-lm-green/40'
+              : 'bg-white text-gray-500 border-gray-500 hover:border-lm-green/40'
           }`}
         >
           <Wrench size={14} /> Solucionar problema
@@ -173,7 +173,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           />
         </div>
       ) : (
-        <div className="relative rounded-xl overflow-hidden border border-gray-400">
+        <div className="relative rounded-xl overflow-hidden border border-gray-500">
           <img
             src={preview}
             alt={modo === 'produto' ? 'Prévia da imagem do produto' : 'Prévia da imagem do problema'}

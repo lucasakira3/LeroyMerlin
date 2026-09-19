@@ -98,7 +98,7 @@ export default async function ProdutoPage({ params }: PageProps) {
               {produto.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 bg-gray-50 border border-gray-400 rounded-full text-xs text-gray-600"
+                  className="px-3 py-1 bg-gray-50 border border-gray-500 rounded-full text-xs text-gray-600"
                 >
                   {tag}
                 </span>

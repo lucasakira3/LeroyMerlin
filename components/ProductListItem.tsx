@@ -23,7 +23,7 @@ export default function ProductListItem({ produto, href, style, className = '', 
   return (
     <div
       style={style}
-      className={`flex items-center gap-2 bg-white border border-gray-400 rounded-xl p-2 hover:border-lm-green/40 hover:shadow-sm transition-all ${className}`}
+      className={`flex items-center gap-2 bg-white border border-gray-500 rounded-xl p-2 hover:border-lm-green/40 hover:shadow-sm transition-all ${className}`}
     >
       <Link href={href} className="flex items-center gap-3 flex-1 min-w-0">
         <img

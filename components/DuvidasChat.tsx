@@ -127,7 +127,7 @@ export default function DuvidasChat() {
       )}
 
       {/* Input */}
-      <div className="border-t border-gray-400 p-4">
+      <div className="border-t border-gray-500 p-4">
         <form
           onSubmit={(e) => { e.preventDefault(); enviar(input) }}
           className="flex gap-2"
@@ -138,7 +138,7 @@ export default function DuvidasChat() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Digite sua dúvida..."
             disabled={loading}
-            className="flex-1 h-11 px-4 rounded-xl border border-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-50 bg-white"
+            className="flex-1 h-11 px-4 rounded-xl border border-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-50 bg-white"
           />
           <button
             type="submit"

@@ -23,7 +23,7 @@ export default function ProdutoAcoesCliente({ produtoId }: ProdutoAcoesClientePr
       onClick={() => setFavorito(toggleFavorito(produtoId))}
       aria-label={favorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
       aria-pressed={favorito}
-      className="shrink-0 p-2.5 rounded-xl border border-gray-400 hover:bg-gray-50 transition-colors"
+      className="shrink-0 p-2.5 rounded-xl border border-gray-500 hover:bg-gray-50 transition-colors"
     >
       <Heart size={20} className={favorito ? 'fill-red-500 text-red-500' : 'text-gray-400'} />
     </button>

@@ -151,7 +151,7 @@ export default function DashboardPage() {
               <div
                 key={i}
                 className={`flex justify-between items-start gap-4 px-6 py-4 ${
-                  i < atividades.length - 1 ? 'border-b border-gray-400' : ''
+                  i < atividades.length - 1 ? 'border-b border-gray-500' : ''
                 }`}
               >
                 <p className="text-sm text-gray-700">{act.texto}</p>

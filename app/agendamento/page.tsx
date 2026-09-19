@@ -12,7 +12,7 @@ export default function AgendamentoPage() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6">
       {/* Tabs da página */}
-      <div className="flex gap-1 mb-6 bg-white border border-gray-400 rounded-xl p-1 w-fit shadow-soft">
+      <div className="flex gap-1 mb-6 bg-white border border-gray-500 rounded-xl p-1 w-fit shadow-soft">
         <button
           onClick={() => setAba('novo')}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${

@@ -84,7 +84,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
           {enderecos.map(end => (
             <div
               key={end.id}
-              className="flex items-center justify-between gap-3 bg-white rounded-card shadow-soft border border-gray-400 p-3"
+              className="flex items-center justify-between gap-3 bg-white rounded-card shadow-soft border border-gray-500 p-3"
             >
               <div className="flex items-start gap-2.5 min-w-0">
                 <MapPin size={16} className="text-lm-green flex-shrink-0 mt-0.5" />
@@ -134,13 +134,13 @@ export default function EnderecosSalvos({ email }: { email: string }) {
           <Plus size={14} /> Adicionar endereço
         </button>
       ) : (
-        <form onSubmit={adicionar} className="bg-white rounded-card shadow-soft border border-gray-400 p-4 space-y-2.5">
+        <form onSubmit={adicionar} className="bg-white rounded-card shadow-soft border border-gray-500 p-4 space-y-2.5">
           <input
             type="text"
             value={form.rotulo}
             onChange={e => setForm(f => ({ ...f, rotulo: e.target.value }))}
             placeholder="Rótulo (ex: Casa, Trabalho)"
-            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="w-full h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
 
           <div className="relative w-32">
@@ -150,7 +150,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
               onChange={e => handleCepChange(e.target.value)}
               placeholder="CEP"
               inputMode="numeric"
-              className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="w-full h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
             {buscandoCep && <Loader2 size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />}
           </div>
@@ -161,14 +161,14 @@ export default function EnderecosSalvos({ email }: { email: string }) {
               value={form.rua}
               onChange={e => setForm(f => ({ ...f, rua: e.target.value }))}
               placeholder="Rua"
-              className="flex-1 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="flex-1 h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
             <input
               type="text"
               value={form.numero}
               onChange={e => setForm(f => ({ ...f, numero: e.target.value }))}
               placeholder="Número"
-              className="w-24 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="w-24 h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
           </div>
 
@@ -177,7 +177,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
             value={form.complemento}
             onChange={e => setForm(f => ({ ...f, complemento: e.target.value }))}
             placeholder="Complemento (opcional)"
-            className="w-full h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="w-full h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
 
           <div className="flex gap-2">
@@ -186,21 +186,21 @@ export default function EnderecosSalvos({ email }: { email: string }) {
               value={form.bairro}
               onChange={e => setForm(f => ({ ...f, bairro: e.target.value }))}
               placeholder="Bairro"
-              className="flex-1 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="flex-1 h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
             <input
               type="text"
               value={form.cidade}
               onChange={e => setForm(f => ({ ...f, cidade: e.target.value }))}
               placeholder="Cidade"
-              className="flex-1 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="flex-1 h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
             <input
               type="text"
               value={form.uf}
               onChange={e => setForm(f => ({ ...f, uf: e.target.value.toUpperCase().slice(0, 2) }))}
               placeholder="UF"
-              className="w-14 h-10 px-3 rounded-xl border border-gray-400 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+              className="w-14 h-10 px-3 rounded-xl border border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
           </div>
 
