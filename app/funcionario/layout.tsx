@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Users, Package, MessageSquare, LogOut, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Users, Package, MessageSquare, LogOut, Menu, X, Search, ClipboardList, PackagePlus } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import { getFuncionarioLogado, logoutFuncionario } from '@/lib/funcionarioAuth'
 
@@ -46,6 +46,9 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
 
   const menuItems = [
     { href: '/funcionario/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/funcionario/consulta', icon: Search, label: 'Consulta rápida' },
+    { href: '/funcionario/pedidos', icon: ClipboardList, label: 'Pedidos' },
+    { href: '/funcionario/reposicao', icon: PackagePlus, label: 'Reposição' },
     { href: '/funcionario/clientes', icon: Users, label: 'Clientes' },
     { href: '/funcionario/produtos', icon: Package, label: 'Estoque / Produtos' },
     { href: '/funcionario/chamados', icon: MessageSquare, label: 'Chamados Chat' },

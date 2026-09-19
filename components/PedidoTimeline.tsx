@@ -16,6 +16,8 @@ const ICONES: Record<string, LucideIcon> = {
   'Enviado': Truck,
   'Entregue': PackageCheck,
   'Pronto para retirada': Store,
+  'Em separação': PackageSearch,
+  'Retirado': PackageCheck,
 }
 
 function formatarPrevisao(data: Date, ehPassado: boolean): string {
