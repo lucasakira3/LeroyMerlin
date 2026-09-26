@@ -14,6 +14,7 @@ import { getMedia } from '@/lib/clientAvaliacoes'
 import { ordenarProdutos, type CriterioOrdenacao } from '@/lib/ordenarProdutos'
 import type { Produto, SustentabilidadeScore } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
+import { getImagemCategoria } from '@/lib/categoriaImagens'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP',
@@ -138,6 +139,22 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
           <li className="text-gray-700 font-medium truncate max-w-[200px]" aria-current="page">{label}</li>
         </ol>
       </nav>
+      {/* Faixa da categoria com foto de fundo e contagem de itens */}
+      <div className="relative overflow-hidden rounded-card bg-gray-800 h-32 sm:h-40 mb-5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={getImagemCategoria(label)}
+          alt=""
+          className="absolute right-0 top-0 h-full w-3/5 max-w-[520px] object-cover [mask-image:linear-gradient(to_right,transparent,black_45%)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_45%)]"
+        />
+        <div className="relative h-full flex flex-col justify-center px-6 sm:px-8">
+          <h1 className="text-white text-2xl sm:text-3xl font-black leading-tight">{label}</h1>
+          <p className="text-lm-yellow text-sm font-bold mt-1">
+            {loading ? 'Carregando produtos...' : `${produtos.length} produtos`}
+          </p>
+        </div>
+      </div>
+
       {/* Header da categoria */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
         <button onClick={onBack}
