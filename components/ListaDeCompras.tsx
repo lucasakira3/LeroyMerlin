@@ -313,6 +313,7 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
             itensConcluidos={itensConcluidos}
             onAlternarItem={alternarItem}
             onSelecionarProduto={setProdutoDrawer}
+            etapasInfo={projeto.etapas}
           />
 
           {/* CTA Agendamento */}

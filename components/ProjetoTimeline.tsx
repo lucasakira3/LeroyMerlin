@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import {
   Route, Hammer, PaintRoller, Zap, Droplets, Layers, Sparkles, Ruler, ListOrdered,
-  Check, ChevronRight, MapPin, ShoppingCart, type LucideIcon,
+  Check, ChevronRight, MapPin, ShoppingCart, BookOpenText, type LucideIcon,
 } from 'lucide-react'
 import Card from './ui/Card'
 import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { showToast } from '@/lib/toast'
-import type { ItemProjeto } from './ProjetoMosaico'
+import type { ItemProjeto, EtapaProjeto } from './ProjetoMosaico'
 import type { SearchResult } from '@/types/produto'
 
 // O nome da etapa vem de texto livre da IA ("Preparação da parede", "Pintura"...), então o
@@ -51,6 +51,9 @@ interface Props {
   itensConcluidos: Set<number>
   onAlternarItem: (indice: number) => void
   onSelecionarProduto: (produto: SearchResult['produto']) => void
+  // Instruções gerais por fase (lib/projetoGuiado.ts) — ausente em projetos salvos antes
+  // dessa mudança, aí o quadro de instruções simplesmente não aparece.
+  etapasInfo?: EtapaProjeto[]
 }
 
 const moeda = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -67,7 +70,7 @@ function quantidadeDoItem(quantidade: string | undefined): number {
 // um botão de carrinho e um check. O progresso é POR ITEM: a etapa fica concluída sozinha
 // quando todos os itens dela estão marcados. Só persiste se o projeto foi salvo (Minha
 // Conta > Projetos).
-export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, onAlternarItem, onSelecionarProduto }: Props) {
+export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, onAlternarItem, onSelecionarProduto, etapasInfo }: Props) {
   const [ativa, setAtiva] = useState<number | null>(null)
 
   const etapasMap = new Map<number, Etapa>()
@@ -87,6 +90,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
 
   const ordemAtiva = ativa ?? etapas[0].ordem
   const etapaAtiva = etapas.find(e => e.ordem === ordemAtiva) ?? etapas[0]
+  const instrucoesAtiva = etapasInfo?.find(e => e.ordem === etapaAtiva.ordem)?.instrucoes
   const totalItens = etapas.reduce((s, e) => s + e.itens.length, 0)
   const totalFeitos = etapas.reduce((s, e) => s + feitosDaEtapa(e), 0)
   const etapasFeitas = etapas.filter(etapaCompleta).length
@@ -178,6 +182,21 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
           </p>
           <h4 className="text-base font-black text-lm-dark">{etapaAtiva.nome}</h4>
         </div>
+
+        {/* Instruções gerais da fase — o objetivo é dar segurança pra fechar o projeto: como
+            fazer, na ordem certa, o que não errar e quando chamar um profissional. Some
+            quando a IA não devolveu esse campo (projetos salvos antes desta mudança). */}
+        {instrucoesAtiva && (
+          <div className="flex items-start gap-3 rounded-xl border border-sky-200 bg-sky-50 dark:border-sky-900 dark:bg-sky-950/30 p-3.5 mb-4">
+            <span className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/60 text-sky-600 dark:text-sky-300 flex items-center justify-center flex-shrink-0">
+              <BookOpenText size={16} />
+            </span>
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-wide text-sky-700 dark:text-sky-300 mb-1">Como executar essa etapa</p>
+              <p className="text-sm text-sky-900 dark:text-sky-100 leading-relaxed">{instrucoesAtiva}</p>
+            </div>
+          </div>
+        )}
 
         {/* Etapas com muitos itens rolam dentro da própria caixa, sem esticar a página */}
         <ol className="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">

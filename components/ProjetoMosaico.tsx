@@ -12,6 +12,14 @@ export interface ItemProjeto {
   etapa_nome?: string
 }
 
+// Instruções gerais de uma fase do road map (não de um item) — ver lib/projetoGuiado.ts.
+// Opcional: projetos salvos antes desta mudança não têm esse campo.
+export interface EtapaProjeto {
+  ordem: number
+  nome: string
+  instrucoes: string
+}
+
 export interface Projeto {
   titulo: string
   resumo: string
@@ -23,6 +31,7 @@ export interface Projeto {
   // Projeto antes deste campo existir; não exibido na UI ainda, só informativo por ora.
   escopo?: string
   itens: ItemProjeto[]
+  etapas?: EtapaProjeto[]
 }
 
 export interface GrupoComodo {
