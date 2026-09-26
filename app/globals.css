@@ -159,3 +159,12 @@ body {
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 32px 32px;
 }
+
+/* Trilha de cartões do road map (ProjetoTimeline): centraliza quando os cartões cabem na
+   largura, e cai pro alinhamento normal (começa do primeiro cartão) quando não cabem, em vez
+   de centralizar o meio da trilha e cortar as pontas dos dois lados. `justify-content: safe
+   center` faz exatamente isso, mas a classe arbitrária do Tailwind (`justify-[safe_center]`)
+   não gera essa regra — por isso está em CSS puro aqui, não como utility class. */
+.roadmap-trilha {
+  justify-content: safe center;
+}

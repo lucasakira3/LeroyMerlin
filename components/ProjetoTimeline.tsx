@@ -118,10 +118,10 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
       </div>
 
       {/* Trilha de cartões — rola na horizontal quando não cabe */}
-      {/* justify-[safe_center]: centraliza quando os cartões cabem na largura; quando não
-          cabem, cai pro alinhamento normal (começa do primeiro cartão) em vez de centralizar
-          o meio da trilha e cortar as pontas — "safe center" existe exatamente pra isso. */}
-      <div className="flex items-stretch justify-[safe_center] gap-0 overflow-x-auto px-4 py-4 snap-x">
+      {/* .roadmap-trilha (globals.css) centraliza quando os cartões cabem na largura e cai
+          pro alinhamento normal (começa do primeiro cartão) quando não cabem — ver o
+          comentário lá pra saber por que não é uma classe utilitária do Tailwind. */}
+      <div className="roadmap-trilha flex items-stretch gap-0 overflow-x-auto px-4 py-4 snap-x">
         {etapas.map((etapa, i) => {
           const Icone = iconeDaEtapa(etapa.nome)
           const selecionada = etapa.ordem === etapaAtiva.ordem
