@@ -12,6 +12,7 @@ import { getMedia } from '@/lib/clientAvaliacoes'
 import { isFavorito, toggleFavorito } from '@/lib/clientFavoritos'
 import { formatarParcelamento } from '@/lib/parcelamento'
 import { showToast } from '@/lib/toast'
+import { shelfColor, numeroDoCorredor } from '@/lib/corredorCores'
 import MiniMapaCorredor from './MiniMapaCorredor'
 import type { SustentabilidadeScore } from '@/types/produto'
 
@@ -51,6 +52,8 @@ export default function ProductCard({
   const emOferta = produto.precoOriginal !== undefined && produto.precoOriginal > produto.preco
   const { media, total: totalAvaliacoes } = getMedia(produto.id)
   const parcelamentoStr = formatarParcelamento(produto.preco)
+  const numCorredor = numeroDoCorredor(produto.corredor_normalizado)
+  const corCorredor = numCorredor !== null ? shelfColor(numCorredor) : null
 
   useEffect(() => {
     setFavoritado(isFavorito(produto.id))
@@ -72,17 +75,17 @@ export default function ProductCard({
     onSelect?.()
   }
 
-  const wrapperClass = `group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white transition-all hover:shadow-md ${
+  const wrapperClass = `group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white transition-all hover:shadow-md hover:-translate-y-0.5 ${
     selected ? 'border-lm-green shadow-sm' : 'border-gray-500 hover:border-lm-green/40'
   } ${className}`
 
   const conteudo = (
     <>
-      <div className={`relative ${fundoFoto(produto)}`}>
+      <div className={`relative overflow-hidden ${fundoFoto(produto)}`}>
         <img
           src={getImagemProduto(produto)}
           alt={produto.categoria}
-          className={`w-full h-36 ${ajusteFoto(produto, 'p-2')}`}
+          className={`w-full h-36 ${ajusteFoto(produto, 'p-2')} transition-transform duration-300 group-hover:scale-105`}
         />
         {emOferta && (
           <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-md">
@@ -119,7 +122,11 @@ export default function ProductCard({
 
       <div className="p-3">
         <div className="flex items-center gap-2 mb-1.5">
-          <div className="flex items-center gap-1 text-[10px] font-bold text-lm-green flex-shrink-0">
+          {/* Selo com a cor da faixa do corredor no mapa da loja (lib/corredorCores.ts) */}
+          <div
+            className={`flex items-center gap-1 text-[10px] font-bold flex-shrink-0 px-1.5 py-0.5 rounded-md border ${corCorredor ? '' : 'text-lm-green border-transparent'}`}
+            style={corCorredor ? { backgroundColor: corCorredor.fill, borderColor: corCorredor.stroke, color: corCorredor.stroke } : undefined}
+          >
             <MapPin size={10} strokeWidth={2.5} /> {produto.corredor}
           </div>
           <div className="w-14 flex-shrink-0">

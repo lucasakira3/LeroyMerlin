@@ -7,6 +7,7 @@ import type { SearchResult } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
 import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import type { ParadaRota } from '@/lib/rotaLoja'
+import { shelfColor } from '@/lib/corredorCores'
 
 const VW = 1200
 const VH = 590
@@ -18,17 +19,6 @@ const SHELF_H = 118
 
 const ROW1_Y = 118
 const ROW2_Y = 340
-
-function shelfColor(n: number): { fill: string; stroke: string } {
-  if (n <= 8)  return { fill: '#fef3c7', stroke: '#d97706' }
-  if (n <= 15) return { fill: '#fef9c3', stroke: '#ca8a04' }
-  if (n <= 22) return { fill: '#dbeafe', stroke: '#2563eb' }
-  if (n <= 28) return { fill: '#fff7ed', stroke: '#ea580c' }
-  if (n <= 35) return { fill: '#dcfce7', stroke: '#16a34a' }
-  if (n <= 43) return { fill: '#f1f5f9', stroke: '#64748b' }
-  if (n <= 47) return { fill: '#e0f2fe', stroke: '#0284c7' }
-  return               { fill: '#fdf4ff', stroke: '#9333ea' }
-}
 
 // Mapeia lettered corredores para corredores numéricos próximos (para exibir no mapa principal)
 function specialToNumeric(slug: string): number | null {

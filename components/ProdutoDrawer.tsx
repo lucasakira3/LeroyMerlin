@@ -46,6 +46,13 @@ const COMPLEXIDADE_COR: Record<string, string> = {
   'Especialista': 'bg-purple-100 text-purple-700',
 }
 
+const PERGUNTAS_PRONTAS = [
+  'Como instalar?',
+  'Qual a garantia?',
+  'Serve para uso externo?',
+  'Preciso de algo mais para usar?',
+]
+
 const SUST_COR: Record<string, string> = {
   'Bronze': 'bg-amber-100 text-amber-700',
   'Prata':  'bg-gray-100 text-gray-600',
@@ -124,8 +131,9 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [mensagens])
 
-  async function enviarPergunta() {
-    const pergunta = inputChat.trim()
+  // `texto` vem dos chips de pergunta pronta; sem ele, usa o que foi digitado no input.
+  async function enviarPergunta(texto?: string) {
+    const pergunta = (texto ?? inputChat).trim()
     if (!pergunta || loadingChat) return
 
     setMensagens(prev => [...prev, { role: 'user', texto: pergunta }])
@@ -293,10 +301,25 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 className="flex-1 min-h-0 overflow-y-auto px-3 py-3 space-y-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
                 {mensagens.length === 0 ? (
-                  <div className="h-full flex items-center justify-center px-6 text-center">
-                    <p className="text-xs text-gray-400 leading-relaxed">
-                      Tire dúvidas técnicas sobre este produto com o especialista virtual — instalação, garantia, compatibilidade e mais.
+                  <div className="h-full flex flex-col items-center justify-center gap-3 px-4 text-center">
+                    <div className="w-10 h-10 rounded-full bg-lm-green/10 text-lm-green flex items-center justify-center">
+                      <Bot size={20} />
+                    </div>
+                    <p className="text-xs text-gray-700 leading-relaxed">
+                      Toque numa pergunta ou escreva a sua:
                     </p>
+                    <div className="flex flex-wrap justify-center gap-1.5">
+                      {PERGUNTAS_PRONTAS.map(p => (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => enviarPergunta(p)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-lm-green/40 bg-white text-lm-green font-medium hover:bg-lm-green hover:text-white transition-colors"
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -339,7 +362,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 className="flex-1 text-sm px-3 py-2 rounded-xl border border-gray-500 focus:outline-none focus:ring-2 focus:ring-lm-green/40 disabled:opacity-50 bg-white"
               />
               <button
-                onClick={enviarPergunta}
+                onClick={() => enviarPergunta()}
                 disabled={!inputChat.trim() || loadingChat}
                 className="w-9 h-9 rounded-xl bg-lm-green text-white flex items-center justify-center hover:bg-green-700 transition-colors disabled:opacity-40 flex-shrink-0"
               >

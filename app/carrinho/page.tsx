@@ -353,11 +353,17 @@ export default function CarrinhoPage() {
         )}
 
         {produtos !== null && itensResolvidos.length === 0 && (
-          <Card className="text-center py-10">
-            <ShoppingCart size={32} className="text-gray-300 mx-auto mb-3" />
-            <p className="text-sm text-gray-500 mb-4">Seu carrinho está vazio.</p>
-            <Link href="/produtos"><Button variant="primary">Ver produtos</Button></Link>
-          </Card>
+          <div className="text-center py-12 rounded-card border-2 border-zinc-700 bg-blueprint">
+            <div className="w-14 h-14 rounded-full bg-lm-green text-white flex items-center justify-center mx-auto mb-4 ring-4 ring-[#161b22]">
+              <ShoppingCart size={26} />
+            </div>
+            <p className="font-bold text-white mb-1">Seu carrinho está vazio</p>
+            <p className="text-sm text-white/60 mb-5">Explore as ofertas ou navegue pelas categorias da loja.</p>
+            <div className="flex justify-center gap-3">
+              <Link href="/ofertas"><Button variant="primary">Ver ofertas</Button></Link>
+              <Link href="/produtos"><Button variant="secondary">Ver produtos</Button></Link>
+            </div>
+          </div>
         )}
 
         {itensResolvidos.length > 0 && (

@@ -27,6 +27,12 @@ const TEXTOS: Record<TipoLogin, { titulo: string; descricao: string; labelEmail:
   },
 }
 
+const DESTAQUES = [
+  { titulo: 'IA conversacional', texto: 'Tire dúvidas e monte projetos falando do seu jeito' },
+  { titulo: 'Mapa da loja', texto: 'Ache o corredor certo de cada produto' },
+  { titulo: 'Sua conta', texto: 'Favoritos, pedidos e sugestões feitas pra você' },
+]
+
 export default function LoginFuncionario() {
   const router = useRouter()
   const [tipo, setTipo] = useState<TipoLogin>('cliente')
@@ -52,9 +58,25 @@ export default function LoginFuncionario() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 relative overflow-hidden">
-      {/* Background Decorativo */}
-      <div className="absolute top-0 left-0 w-full h-1/2 bg-lm-green -skew-y-6 transform origin-top-left -z-10" />
+    <div className="min-h-screen flex items-center justify-center gap-16 bg-blueprint p-4 relative overflow-hidden">
+      {/* Painel lateral no estilo planta baixa — só em telas largas */}
+      <div className="hidden lg:flex flex-col max-w-sm text-white">
+        <p className="text-xs font-bold tracking-widest text-lm-yellow mb-3">FIAP CHALLENGE 2026</p>
+        <h2 className="text-4xl font-black leading-tight mb-8">A loja que entende você</h2>
+        <ul className="space-y-5">
+          {DESTAQUES.map((d, i) => (
+            <li key={d.titulo} className="flex items-start gap-4">
+              <span className="w-9 h-9 rounded-full bg-lm-green text-white text-xs font-black flex items-center justify-center flex-shrink-0 ring-2 ring-[#161b22]">
+                {i + 1}
+              </span>
+              <div>
+                <p className="font-bold">{d.titulo}</p>
+                <p className="text-sm text-white/60">{d.texto}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <Card className="w-full max-w-md relative z-10" padding="none">
         <div className="p-8">

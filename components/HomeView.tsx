@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Search, LayoutGrid, ArrowRight } from 'lucide-react'
 import BannerCarrossel from '@/components/BannerCarrossel'
 import VitrineOfertas from '@/components/VitrineOfertas'
+import VitrineProdutos from '@/components/VitrineProdutos'
 
 // Banner promocional e vitrine de ofertas voltaram pra home — tinham ido pra dentro de
 // components/BuscarView.tsx numa sessão anterior, usuário pediu pra trazer de volta.
@@ -10,6 +11,7 @@ export default function HomeView() {
     <div className="px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
       <BannerCarrossel />
       <VitrineOfertas />
+      <VitrineProdutos />
 
       {/* Chamadas pras telas de busca e produtos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
