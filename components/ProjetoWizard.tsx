@@ -3,20 +3,9 @@
 import { useState, useRef } from 'react'
 import {
   Mic, MicOff, Send, RotateCcw, ArrowLeft, Bot, User, Check, Loader2,
-  Bath, ChefHat, PaintRoller, Sprout, Briefcase, Zap, type LucideIcon,
 } from 'lucide-react'
 import ListaDeCompras from './ListaDeCompras'
 import { COMODOS_DISPONIVEIS, getIconeComodo } from '@/lib/comodoIcones'
-
-// Cartões de exemplo do passo 2: `texto` é exatamente o que vai pro campo de descrição.
-const EXEMPLOS: { icone: LucideIcon; titulo: string; texto: string }[] = [
-  { icone: Bath, titulo: 'Banheiro pequeno', texto: 'Quero reformar meu banheiro pequeno com orçamento de R$ 3.000' },
-  { icone: PaintRoller, titulo: 'Pintar a casa', texto: 'Preciso pintar sala e dois quartos, apartamento de 70m²' },
-  { icone: Sprout, titulo: 'Jardim vertical', texto: 'Quero instalar um jardim vertical na varanda' },
-  { icone: ChefHat, titulo: 'Cozinha completa', texto: 'Reforma completa da cozinha, troca de piso e azulejo' },
-  { icone: Briefcase, titulo: 'Home office', texto: 'Quero montar um home office com iluminação profissional' },
-  { icone: Zap, titulo: 'Parte elétrica', texto: 'Preciso trocar toda a parte elétrica de uma casa de 80m²' },
-]
 
 const ETAPAS = [
   'Lendo seu projeto...',
@@ -95,7 +84,6 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
   const [erro, setErro] = useState('')
   const [ouvindo, setOuvindo] = useState(false)
   const recRef = useRef<SpeechRecognition | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
   const [etapaWizard, setEtapaWizard] = useState<'comodos' | 'descricao'>('comodos')
   const [comodosSelecionados, setComodosSelecionados] = useState<Set<string>>(new Set())
   const [descricaoEnviada, setDescricaoEnviada] = useState('')
@@ -287,32 +275,6 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
         )}
       </div>
 
-      {/* Exemplos — só antes do primeiro envio. Clicar preenche o campo (não envia direto):
-          o cliente pode ajustar o texto, e não gasta cota da IA por clique acidental. */}
-      {etapaWizard === 'descricao' && !descricaoEnviada && !loading && (
-        <div className="px-4 pb-4">
-          <p className="text-xs font-semibold text-gray-500 mb-2">Ou comece por um exemplo:</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            {EXEMPLOS.map(({ icone: Icone, titulo, texto }) => (
-              <button
-                key={titulo}
-                type="button"
-                onClick={() => { setDescricao(texto); inputRef.current?.focus() }}
-                className="group flex items-start gap-3 text-left p-3 rounded-xl border border-gray-500 bg-white hover:border-lm-green/60 hover:shadow-sm transition-all"
-              >
-                <span className="w-9 h-9 rounded-lg bg-lm-green/10 text-lm-green flex items-center justify-center flex-shrink-0 group-hover:bg-lm-green group-hover:text-white transition-colors">
-                  <Icone size={18} />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-bold text-lm-dark">{titulo}</span>
-                  <span className="block text-[11px] text-gray-500 leading-snug line-clamp-2">{texto}</span>
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Barra de ação fixa — muda de controle conforme a etapa, mesma posição do input do DuvidasChat */}
       <div className="border-t border-gray-500 p-4">
         {resultado ? (
@@ -360,7 +322,6 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
               {ouvindo ? <MicOff size={16} /> : <Mic size={16} />}
             </button>
             <input
-              ref={inputRef}
               type="text"
               value={descricao}
               onChange={e => setDescricao(e.target.value)}
