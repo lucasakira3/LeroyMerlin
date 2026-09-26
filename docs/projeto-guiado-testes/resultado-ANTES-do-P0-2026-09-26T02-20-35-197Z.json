@@ -1,0 +1,1460 @@
+[
+  {
+    "descricao": "Quero reformar meu banheiro, ele está bem antigo e quero trocar tudo",
+    "ok": true,
+    "quantidadeItens": 14,
+    "categoriasDistintas": [
+      "Segurança e Ferramentas",
+      "Descarte e Limpeza",
+      "Impermeabilização",
+      "Hidráulica",
+      "Revestimentos",
+      "Louças Sanitárias",
+      "Móveis e Louças",
+      "Metais Sanitários",
+      "Metais e Aquecimento",
+      "Vedação e Acabamento"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Reforma Completa de Banheiro Antigo",
+      "resumo": "Este projeto visa uma reforma completa do banheiro, incluindo a remoção total de elementos existentes, atualização da hidráulica, troca de revestimentos, louças e metais, modernizando o ambiente.",
+      "orcamento_estimado": "R$ 8.000 – R$ 18.000",
+      "complexidade": "Profissional",
+      "dica_especialista": "Não subestime a importância da impermeabilização, especialmente na área do box. Uma aplicação correta com manta líquida de qualidade previne infiltrações e protege a estrutura, evitando retrabalhos caros no futuro. Invista nesse passo crucial!",
+      "itens": [
+        {
+          "material": "Kit EPI para Demolição (Luvas, Óculos, Máscara)",
+          "categoria": "Segurança e Ferramentas",
+          "comodo": "Geral",
+          "quantidade": "1 kit",
+          "prioridade": "essencial",
+          "observacao": "Fundamental para a proteção individual durante a fase de remoção.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Descarte"
+        },
+        {
+          "material": "Saco para Entulho Reforçado 100L",
+          "categoria": "Descarte e Limpeza",
+          "comodo": "Banheiro",
+          "quantidade": "10 un.",
+          "prioridade": "essencial",
+          "observacao": "Escolha sacos resistentes para o descarte de cerâmica e alvenaria.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Descarte"
+        },
+        {
+          "material": "Manta Líquida Impermeabilizante Acrílica 3,6L",
+          "categoria": "Impermeabilização",
+          "comodo": "Banheiro",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Aplicar nas áreas molhadas (box e rodapé) antes da argamassa do contrapiso e revestimento.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Hidráulica e Impermeabilização"
+        },
+        {
+          "material": "Cano PVC Soldável 25mm (3/4\")",
+          "categoria": "Hidráulica",
+          "comodo": "Banheiro",
+          "quantidade": "2 barras (6m cada)",
+          "prioridade": "essencial",
+          "observacao": "Verificar a necessidade para água quente e fria, e se a bitola é adequada.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Hidráulica e Impermeabilização"
+        },
+        {
+          "material": "Cano PVC Esgoto 40mm",
+          "categoria": "Hidráulica",
+          "comodo": "Banheiro",
+          "quantidade": "1 barra (3m)",
+          "prioridade": "essencial",
+          "observacao": "Para ralo e sifão da pia. Adequar diâmetro conforme projeto.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Hidráulica e Impermeabilização"
+        },
+        {
+          "material": "Argamassa ACIII Piso sobre Piso 20kg",
+          "categoria": "Revestimentos",
+          "comodo": "Banheiro",
+          "quantidade": "3 un.",
+          "prioridade": "essencial",
+          "observacao": "Ideal para assentar porcelanatos e cerâmicas em áreas úmidas, com alta aderência.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Instalação de Revestimentos"
+        },
+        {
+          "material": "Porcelanato Retificado para Banheiro 60x60cm",
+          "categoria": "Revestimentos",
+          "comodo": "Banheiro",
+          "quantidade": "12 m²",
+          "prioridade": "essencial",
+          "observacao": "Escolha um modelo antiderrapante para o piso e considere o rendimento da caixa.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Instalação de Revestimentos"
+        },
+        {
+          "material": "Rejunte Acrílico Antimofo Branco 1kg",
+          "categoria": "Revestimentos",
+          "comodo": "Banheiro",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Fácil de limpar, resistente à umidade e ao surgimento de fungos.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Instalação de Revestimentos"
+        },
+        {
+          "material": "Vaso Sanitário com Caixa Acoplada Branca",
+          "categoria": "Louças Sanitárias",
+          "comodo": "Banheiro",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Prefira modelos com duplo acionamento para economia de água.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Gabinete para Banheiro com Cuba e Espelho 60cm",
+          "categoria": "Móveis e Louças",
+          "comodo": "Banheiro",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Meça o espaço disponível para garantir o encaixe perfeito e funcionalidade.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Misturador Monocomando para Pia de Banheiro Cromado",
+          "categoria": "Metais Sanitários",
+          "comodo": "Banheiro",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Oferece praticidade e um toque moderno ao ambiente.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Chuveiro Elétrico Multitemperaturas (ou Ducha)",
+          "categoria": "Metais e Aquecimento",
+          "comodo": "Banheiro",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Verificar a tensão (127V ou 220V) e a potência adequada para o seu sistema elétrico.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Ducha Higiênica Cromada com Acionamento por Botão",
+          "categoria": "Metais Sanitários",
+          "comodo": "Banheiro",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Um item de conforto e higiene que agrega valor ao banheiro.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Silicone Anti-mofo Branco 280g",
+          "categoria": "Vedação e Acabamento",
+          "comodo": "Banheiro",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Utilizar para vedar o box, rodapés e junções de louças para evitar infiltrações e mofo.",
+          "etapa_ordem": 5,
+          "etapa_nome": "Acabamentos Finais"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Preciso trocar a torneira da cozinha que está pingando",
+    "ok": true,
+    "quantidadeItens": 10,
+    "categoriasDistintas": [
+      "Ferramentas Manuais",
+      "Utilidades Domésticas",
+      "Limpeza",
+      "Hidráulica",
+      "Selantes e Vedantes",
+      "Segurança"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Troca de Torneira da Cozinha",
+      "resumo": "Remoção da torneira antiga da cozinha que está pingando e instalação de uma nova torneira, garantindo vedação e funcionalidade.",
+      "orcamento_estimado": "R$ 150 – R$ 700",
+      "complexidade": "DIY",
+      "dica_especialista": "Antes de iniciar qualquer desinstalação, certifique-se de fechar o registro geral de água da sua casa e o registro da cozinha (se houver um específico). Tenha um balde e panos por perto para coletar a água residual que pode estar na tubulação.",
+      "itens": [
+        {
+          "material": "Chave Grifo Ajustável 10 polegadas",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Ferramenta versátil para soltar e apertar porcas e conexões hidráulicas.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Preparo"
+        },
+        {
+          "material": "Balde Plástico 10 Litros",
+          "categoria": "Utilidades Domésticas",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para coletar a água que pode sair das tubulações após o fechamento do registro.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Preparo"
+        },
+        {
+          "material": "Pano de Limpeza Multiuso Microfibra (kit com 3)",
+          "categoria": "Limpeza",
+          "comodo": "Cozinha",
+          "quantidade": "1 kit",
+          "prioridade": "essencial",
+          "observacao": "Para secar e limpar a área de trabalho, essencial para vedação adequada.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Preparo"
+        },
+        {
+          "material": "Torneira para Cozinha (modelo a escolher)",
+          "categoria": "Hidráulica",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Escolha um modelo compatível com a furação da sua bancada e o tipo de água (fria ou quente/fria).",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação e Finalização"
+        },
+        {
+          "material": "Engate Flexível para Torneira 40cm (par)",
+          "categoria": "Hidráulica",
+          "comodo": "Cozinha",
+          "quantidade": "1 par",
+          "prioridade": "essencial",
+          "observacao": "Verifique o comprimento e o diâmetro da rosca necessários. Geralmente vendidos separadamente da torneira.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação e Finalização"
+        },
+        {
+          "material": "Fita Veda Rosca PTFE 18mm x 10m",
+          "categoria": "Hidráulica",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Indispensável para vedar as roscas das conexões e evitar vazamentos futuros.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação e Finalização"
+        },
+        {
+          "material": "Alicate Bomba D'Água 10 polegadas",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Ideal para apertar porcas em locais de difícil acesso, com boa pegada e ajuste.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação e Finalização"
+        },
+        {
+          "material": "Silicone Acético Incolor 280g",
+          "categoria": "Selantes e Vedantes",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Para vedar a base da torneira com a bancada, prevenindo a infiltração de água e danos ao móvel.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação e Finalização"
+        },
+        {
+          "material": "Pistola Aplicadora de Silicone",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Necessária para aplicar o silicone de forma uniforme e controlada.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação e Finalização"
+        },
+        {
+          "material": "Luvas de Proteção Multiuso (par)",
+          "categoria": "Segurança",
+          "comodo": "Geral",
+          "quantidade": "1 par",
+          "prioridade": "recomendado",
+          "observacao": "Protege as mãos contra cortes, sujeira e produtos químicos.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação e Finalização"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Quero pintar meu quarto de 12 metros quadrados, cor clara",
+    "ok": true,
+    "quantidadeItens": 12,
+    "categoriasDistintas": [
+      "Pintura",
+      "Ferramentas"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Pintura de Quarto 12m² - Cor Clara",
+      "resumo": "Projeto para renovar um quarto de 12 metros quadrados com uma nova pintura em cor clara, visando um ambiente mais luminoso e acolhedor.",
+      "orcamento_estimado": "R$ 300 – R$ 700",
+      "complexidade": "DIY",
+      "dica_especialista": "Antes de escolher a cor final, pinte um pequeno trecho em uma área menos visível e observe como ela se comporta com a iluminação natural e artificial ao longo do dia. As cores podem parecer muito diferentes na parede do que na amostra, evite surpresas!",
+      "itens": [
+        {
+          "material": "Lona Plástica Transparente 3x4m",
+          "categoria": "Pintura",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Protege o chão e os móveis contra respingos de tinta e poeira.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Proteção"
+        },
+        {
+          "material": "Fita Crepe Azul Automotiva 24mmx50m",
+          "categoria": "Pintura",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Ideal para proteger rodapés, batentes, interruptores e garantir um acabamento reto.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Proteção"
+        },
+        {
+          "material": "Massa Corrida PVA Coral 1,5kg",
+          "categoria": "Pintura",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para corrigir pequenos furos, trincas e imperfeições na parede antes da pintura.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Proteção"
+        },
+        {
+          "material": "Espátula de Aço Inox Atlas 8cm",
+          "categoria": "Ferramentas",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Ferramenta para aplicação precisa da massa corrida.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Proteção"
+        },
+        {
+          "material": "Lixa para Massa e Parede Grão 150",
+          "categoria": "Pintura",
+          "comodo": "Quarto",
+          "quantidade": "3 un.",
+          "prioridade": "essencial",
+          "observacao": "Essencial para lixar a massa corrida e deixar a superfície lisa para a tinta.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Proteção"
+        },
+        {
+          "material": "Selador Acrílico para Parede Suvinil 3,6L",
+          "categoria": "Pintura",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Prepara a parede, uniformiza a absorção e melhora o rendimento da tinta.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Proteção"
+        },
+        {
+          "material": "Tinta Acrílica Fosca Premium Suvinil Branco Neve 3,6L",
+          "categoria": "Pintura",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Escolha uma cor clara para ampliar e iluminar o ambiente. A fosca disfarça imperfeições.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Aplicação da Tinta"
+        },
+        {
+          "material": "Rolo de Lã Sintética para Acrílica e Látex Atlas 23cm",
+          "categoria": "Ferramentas",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para aplicação rápida e uniforme da tinta em grandes superfícies.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Aplicação da Tinta"
+        },
+        {
+          "material": "Bandeja Plástica para Pintura Atlas",
+          "categoria": "Ferramentas",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Facilita o carregamento do rolo com tinta e evita desperdício.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Aplicação da Tinta"
+        },
+        {
+          "material": "Pincel Trincha Cerda Branca 2 Polegadas Atlas",
+          "categoria": "Ferramentas",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Essencial para recortes precisos nos cantos, rodapés e ao redor de interruptores.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Aplicação da Tinta"
+        },
+        {
+          "material": "Caçamba Plástica para Tinta 12 Litros",
+          "categoria": "Pintura",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Útil para diluir a tinta ou misturar grandes volumes, garantindo homogeneidade.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Aplicação da Tinta"
+        },
+        {
+          "material": "Mexedor de Tinta Plástico Tigre",
+          "categoria": "Ferramentas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Garanta que a tinta esteja completamente homogeneizada antes de começar a pintar.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Aplicação da Tinta"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Vou trocar o piso da sala, hoje é cerâmica e quero porcelanato",
+    "ok": true,
+    "quantidadeItens": 13,
+    "categoriasDistintas": [
+      "Ferramentas Elétricas",
+      "Acessórios para Ferramentas",
+      "Construção Básica",
+      "Materiais Básicos",
+      "EPIs",
+      "Pisos e Revestimentos",
+      "Ferramentas Manuais",
+      "Limpeza"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Troca de Piso Cerâmico por Porcelanato na Sala",
+      "resumo": "Remoção do piso cerâmico existente e instalação de novo porcelanato retificado na sala, incluindo preparação do contrapiso e rejuntamento.",
+      "orcamento_estimado": "R$ 2.500 – R$ 7.000",
+      "complexidade": "Profissional",
+      "dica_especialista": "Após a remoção do piso antigo, é crucial verificar e, se necessário, nivelar o contrapiso com massa niveladora. Um contrapiso perfeitamente nivelado é a chave para um assentamento impecável do porcelanato, evitando trincas, descolamentos e garantindo a durabilidade do seu novo piso. Use uma régua de alumínio de pelo menos 2 metros para checar a planicidade.",
+      "itens": [
+        {
+          "material": "Martelete Demolidor SDS Plus 800W",
+          "categoria": "Ferramentas Elétricas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para remoção eficiente do piso cerâmico existente e argamassa antiga.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Preparo"
+        },
+        {
+          "material": "Talhadeira SDS Plus para Martelete",
+          "categoria": "Acessórios para Ferramentas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Acoplamento ao martelete para remoção de revestimento.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Preparo"
+        },
+        {
+          "material": "Saco para Entulho Reforçado 100 Litros",
+          "categoria": "Construção Básica",
+          "comodo": "Geral",
+          "quantidade": "10 un.",
+          "prioridade": "essencial",
+          "observacao": "Para descarte correto dos resíduos da demolição.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Preparo"
+        },
+        {
+          "material": "Massa Niveladora de Piso Uso Interno 20kg",
+          "categoria": "Materiais Básicos",
+          "comodo": "Sala",
+          "quantidade": "2 un. (calcular conforme área e desnível)",
+          "prioridade": "essencial",
+          "observacao": "Fundamental para corrigir imperfeições e garantir superfície plana.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Preparo"
+        },
+        {
+          "material": "Óculos de Proteção Transparente",
+          "categoria": "EPIs",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Proteja seus olhos durante todo o processo.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Remoção e Preparo"
+        },
+        {
+          "material": "Porcelanato Retificado 60x60cm Acetinado",
+          "categoria": "Pisos e Revestimentos",
+          "comodo": "Sala",
+          "quantidade": "XX m² (calcular área + 10% de perda)",
+          "prioridade": "essencial",
+          "observacao": "Escolha o modelo de sua preferência. Verifique o PEI adequado se for de alto tráfego.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Assentamento"
+        },
+        {
+          "material": "Argamassa ACIII para Porcelanato Interno 20kg",
+          "categoria": "Materiais Básicos",
+          "comodo": "Sala",
+          "quantidade": "5 un. (calcular ~5kg/m²)",
+          "prioridade": "essencial",
+          "observacao": "Argamassa específica para garantir a aderência do porcelanato. Considere sacos de 20kg.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Assentamento"
+        },
+        {
+          "material": "Espaçador e Cunha Niveladora para Porcelanato",
+          "categoria": "Pisos e Revestimentos",
+          "comodo": "Sala",
+          "quantidade": "1 kit com 100 peças",
+          "prioridade": "essencial",
+          "observacao": "Para garantir nivelamento perfeito e alinhamento das peças. Escolha a espessura do espaçador.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Assentamento"
+        },
+        {
+          "material": "Desempenadeira Dentada Aço 10mm",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Sala",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para aplicação uniforme da argamassa no contrapiso e na peça (dupla colagem).",
+          "etapa_ordem": 2,
+          "etapa_nome": "Assentamento"
+        },
+        {
+          "material": "Cortador de Porcelanato Manual 90cm",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Sala",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Essencial para cortes retos e precisos do porcelanato.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Assentamento"
+        },
+        {
+          "material": "Martelo de Borracha Branco",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Sala",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para assentar e ajustar as peças de porcelanato sem danificá-las.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Assentamento"
+        },
+        {
+          "material": "Rejunte Acrílico para Porcelanato 1kg",
+          "categoria": "Pisos e Revestimentos",
+          "comodo": "Sala",
+          "quantidade": "10 un. (calcular ~0.5kg/m²)",
+          "prioridade": "essencial",
+          "observacao": "Escolha a cor que harmonize com seu porcelanato. O acrílico oferece melhor acabamento e limpeza.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Rejuntamento e Limpeza"
+        },
+        {
+          "material": "Limpa Pós-Obra Concentrado 1 Litro",
+          "categoria": "Limpeza",
+          "comodo": "Sala",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para remover resíduos de argamassa e rejunte após a secagem, sem agredir o porcelanato.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Rejuntamento e Limpeza"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Preciso instalar um ponto de tomada novo e trocar o disjuntor do quarto",
+    "ok": true,
+    "quantidadeItens": 12,
+    "categoriasDistintas": [
+      "EPIs",
+      "Ferramentas Elétricas",
+      "Ferramentas Manuais",
+      "Elétrica",
+      "Construção e Acabamento"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Instalação de Tomada e Troca de Disjuntor",
+      "resumo": "Este projeto consiste na instalação de um novo ponto de tomada no quarto e a substituição do disjuntor correspondente no quadro de distribuição, visando otimizar o uso elétrico e garantir a segurança do circuito.",
+      "orcamento_estimado": "R$ 350 – R$ 850",
+      "complexidade": "Profissional",
+      "dica_especialista": "A segurança elétrica é primordial. Antes de qualquer intervenção, desligue o disjuntor geral no quadro. Utilize sempre um multímetro ou chave teste para confirmar a ausência de tensão nos fios e verifique a compatibilidade do novo disjuntor com a capacidade dos cabos existentes. Em caso de qualquer incerteza, chame um eletricista profissional certificado.",
+      "itens": [
+        {
+          "material": "Luva de Segurança Isolante 1000V",
+          "categoria": "EPIs",
+          "comodo": "Geral",
+          "quantidade": "1 par",
+          "prioridade": "essencial",
+          "observacao": "Proteção indispensável contra choques elétricos.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparação e Segurança"
+        },
+        {
+          "material": "Óculos de Proteção Transparente",
+          "categoria": "EPIs",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Protege os olhos contra estilhaços e fagulhas.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparação e Segurança"
+        },
+        {
+          "material": "Multímetro Digital Minipa ou Chave Teste Digital",
+          "categoria": "Ferramentas Elétricas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Fundamental para verificar a ausência de tensão e continuidade.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparação e Segurança"
+        },
+        {
+          "material": "Kit Alicates Isolados (Corte, Bico, Universal)",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Geral",
+          "quantidade": "1 kit",
+          "prioridade": "essencial",
+          "observacao": "Para cortar, dobrar e segurar fios com segurança.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparação e Segurança"
+        },
+        {
+          "material": "Fita Isolante Anti-chama 19mm x 20m",
+          "categoria": "Elétrica",
+          "comodo": "Geral",
+          "quantidade": "1 rolo",
+          "prioridade": "essencial",
+          "observacao": "Para isolar emendas e conexões elétricas.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparação e Segurança"
+        },
+        {
+          "material": "Cabo Flexível Antichama 2,5mm² (nas cores fase, neutro, terra)",
+          "categoria": "Elétrica",
+          "comodo": "Quarto",
+          "quantidade": "15 m",
+          "prioridade": "essencial",
+          "observacao": "Estimativa para a nova instalação. Verifique a metragem exata para seu ambiente.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação da Tomada"
+        },
+        {
+          "material": "Conduíte Corrugado PVC 3/4 (25mm) Amarelo",
+          "categoria": "Elétrica",
+          "comodo": "Quarto",
+          "quantidade": "10 m",
+          "prioridade": "essencial",
+          "observacao": "Protege os cabos dentro da parede. Adapte a medida ao trajeto.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação da Tomada"
+        },
+        {
+          "material": "Caixa de Passagem Elétrica 4x2 PVC para Alvenaria",
+          "categoria": "Elétrica",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Base para a nova tomada, embutida na parede.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação da Tomada"
+        },
+        {
+          "material": "Tomada Módulo Placa 2P+T (10A ou 20A, conforme necessidade)",
+          "categoria": "Elétrica",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Escolha a amperagem adequada para os equipamentos a serem conectados. Não esqueça do espelho e suporte.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalação da Tomada"
+        },
+        {
+          "material": "Disjuntor Miniatura (MDM) Monopolar ou Bipolar (Amperagem específica)",
+          "categoria": "Elétrica",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Substitua por um de mesma amperagem ou recalcule a necessidade, respeitando a bitola do cabo existente e a carga do circuito.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Conexões Finais e Acabamento"
+        },
+        {
+          "material": "Gesso em Pó para Pequenos Reparos 1kg",
+          "categoria": "Construção e Acabamento",
+          "comodo": "Quarto",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Para fechar eventuais aberturas na parede após a instalação da caixa.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Conexões Finais e Acabamento"
+        },
+        {
+          "material": "Identificador de Cabos ou Caneta Marcadora Permanente",
+          "categoria": "Elétrica",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "opcional",
+          "observacao": "Para etiquetar o novo disjuntor e circuito no quadro, facilitando futuras manutenções.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Conexões Finais e Acabamento"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Quero montar uma horta pequena no quintal de casa",
+    "ok": true,
+    "quantidadeItens": 12,
+    "categoriasDistintas": [
+      "Ferramentas de Jardim",
+      "Jardim e Paisagismo"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Horta Pequena no Quintal",
+      "resumo": "Criação de uma pequena horta orgânica no quintal, utilizando um canteiro elevado para o plantio de hortaliças e temperos frescos, promovendo o cultivo sustentável em casa.",
+      "orcamento_estimado": "R$ 300 – R$ 800",
+      "complexidade": "DIY",
+      "dica_especialista": "Acompanhe de perto as necessidades de água de suas plantas nos primeiros dias após o plantio; a umidade constante do solo é crucial para o enraizamento. Além disso, verifique a exposição solar do local escolhido – a maioria das hortaliças precisa de pelo menos 5-6 horas de sol direto por dia.",
+      "itens": [
+        {
+          "material": "Pá de Jardinagem com Cabo Curto",
+          "categoria": "Ferramentas de Jardim",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Ferramenta básica para revolver a terra e auxiliar no manuseio do substrato.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Montagem da Estrutura"
+        },
+        {
+          "material": "Kit Canteiro Elevado de Madeira 80x40x30cm",
+          "categoria": "Jardim e Paisagismo",
+          "comodo": "Quintal",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Escolha um tamanho que se ajuste bem ao espaço disponível no seu quintal.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Montagem da Estrutura"
+        },
+        {
+          "material": "Manta Geotêxtil para Drenagem 1x2m",
+          "categoria": "Jardim e Paisagismo",
+          "comodo": "Quintal",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Essencial para forrar o canteiro, evitando a perda de solo e melhorando a drenagem.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Montagem da Estrutura"
+        },
+        {
+          "material": "Substrato Orgânico para Hortas 25L",
+          "categoria": "Jardim e Paisagismo",
+          "comodo": "Quintal",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Base fértil para o crescimento das plantas, já vem pronto para uso.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Montagem da Estrutura"
+        },
+        {
+          "material": "Húmus de Minhoca Orgânico 5kg",
+          "categoria": "Jardim e Paisagismo",
+          "comodo": "Quintal",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Enriquecedor de solo natural que melhora a aeração e a retenção de nutrientes.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Montagem da Estrutura"
+        },
+        {
+          "material": "Luvas de Jardinagem com Palma Emborrachada",
+          "categoria": "Ferramentas de Jardim",
+          "comodo": "Geral",
+          "quantidade": "1 par",
+          "prioridade": "essencial",
+          "observacao": "Proteja suas mãos durante todo o processo de plantio e manutenção.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Montagem da Estrutura"
+        },
+        {
+          "material": "Kit de Sementes Hortaliças Variadas (Alface, Rúcula, Coentro)",
+          "categoria": "Jardim e Paisagismo",
+          "comodo": "Quintal",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Comece com sementes de fácil cultivo e adapte a escolha ao clima da sua região.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Plantio e Rega Inicial"
+        },
+        {
+          "material": "Regador de Plástico 5 Litros",
+          "categoria": "Ferramentas de Jardim",
+          "comodo": "Quintal",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Fundamental para regar delicadamente as sementes e mudas, sem enxarcar o solo.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Plantio e Rega Inicial"
+        },
+        {
+          "material": "Placas de Identificação para Plantas (10 un.)",
+          "categoria": "Jardim e Paisagismo",
+          "comodo": "Quintal",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Ajuda a organizar sua horta e identificar facilmente o que foi plantado em cada local.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Organização e Identificação"
+        },
+        {
+          "material": "Tesoura de Poda Profissional",
+          "categoria": "Ferramentas de Jardim",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Indispensável para colher as folhas e para remover partes secas ou danificadas das plantas.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Manutenção Contínua"
+        },
+        {
+          "material": "Adubo Líquido Concentrado para Hortaliças 500ml",
+          "categoria": "Jardim e Paisagismo",
+          "comodo": "Quintal",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Use para fornecer nutrientes adicionais conforme as plantas crescem, diluindo conforme a embalagem.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Manutenção Contínua"
+        },
+        {
+          "material": "Pulverizador Manual 1 Litro",
+          "categoria": "Ferramentas de Jardim",
+          "comodo": "Quintal",
+          "quantidade": "1 un.",
+          "prioridade": "opcional",
+          "observacao": "Útil para aplicar água nas folhas em dias quentes ou para defensivos naturais, se houver pragas.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Manutenção Contínua"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Minha pia está vazando embaixo, o cano parece rachado",
+    "ok": true,
+    "quantidadeItens": 10,
+    "categoriasDistintas": [
+      "Utilidades Domésticas",
+      "Limpeza",
+      "Ferramentas",
+      "Segurança",
+      "Hidráulica",
+      "Vedação e Calafetação"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Reparo de Vazamento na Pia",
+      "resumo": "Conserto de vazamento sob a pia, com substituição de tubulação danificada para restaurar a funcionalidade e evitar danos maiores na área da cozinha.",
+      "orcamento_estimado": "R$ 80 – R$ 250",
+      "complexidade": "DIY",
+      "dica_especialista": "Sempre feche o registro geral de água (ou o registro do ambiente, se disponível) antes de iniciar qualquer reparo hidráulico para evitar inundações acidentais. Tenha um balde e panos por perto para lidar com a água remanescente na tubulação.",
+      "itens": [
+        {
+          "material": "Balde Plástico 10L",
+          "categoria": "Utilidades Domésticas",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para coletar a água do vazamento e da tubulação durante o reparo.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Segurança"
+        },
+        {
+          "material": "Pano de Limpeza Microfibra",
+          "categoria": "Limpeza",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Manter a área seca para identificar melhor o vazamento e trabalhar com mais higiene.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Segurança"
+        },
+        {
+          "material": "Chave de Grifo Ajustável 10 polegadas",
+          "categoria": "Ferramentas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Indispensável para soltar e apertar porcas e conexões hidráulicas.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Segurança"
+        },
+        {
+          "material": "Luvas de Segurança Nitrílica Tamanho M",
+          "categoria": "Segurança",
+          "comodo": "Geral",
+          "quantidade": "1 par",
+          "prioridade": "recomendado",
+          "observacao": "Proteja suas mãos de sujeira, bactérias e possíveis produtos de limpeza.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Preparo e Segurança"
+        },
+        {
+          "material": "Sifão Copo Universal para Pia",
+          "categoria": "Hidráulica",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Ideal para substituir o sifão existente, geralmente o ponto de vazamento mais comum. Verifique o diâmetro compatível.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Substituição e Conexão"
+        },
+        {
+          "material": "Fita Veda Rosca PTFE 18mm x 50m",
+          "categoria": "Hidráulica",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Garanta a vedação perfeita nas conexões roscadas do novo sifão ou tubulação.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Substituição e Conexão"
+        },
+        {
+          "material": "Serra para PVC 12 polegadas",
+          "categoria": "Ferramentas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Pode ser necessária para ajustar o comprimento do tubo de PVC que conecta o sifão ao esgoto da parede.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Substituição e Conexão"
+        },
+        {
+          "material": "Lixa para PVC Grão 100",
+          "categoria": "Ferramentas",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Essencial para preparar as superfícies do PVC antes de aplicar a cola, garantindo uma união forte e estanque.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Substituição e Conexão"
+        },
+        {
+          "material": "Cola Adesivo para Tubos e Conexões de PVC 175g",
+          "categoria": "Hidráulica",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Use para unir tubos e conexões de PVC, caso o reparo envolva segmentos rígidos de tubulação.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Substituição e Conexão"
+        },
+        {
+          "material": "Silicone Acético Vedante Transparente 280g",
+          "categoria": "Vedação e Calafetação",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Para reforçar a vedação em pontos críticos, como a junção da válvula da pia com a cuba, se houver necessidade.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Vedação e Teste Final"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Vou reformar a cozinha inteira: piso, pintura, elétrica e hidráulica",
+    "ok": true,
+    "quantidadeItens": 14,
+    "categoriasDistintas": [
+      "Descarte e Proteção",
+      "Ferramentas Manuais",
+      "Hidráulica",
+      "Elétrica",
+      "Piso e Revestimento",
+      "Ferramentas Elétricas e Manuais",
+      "Pintura e Tratamento",
+      "Ferramentas para Pintura"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Reforma Completa de Cozinha",
+      "resumo": "Este projeto abrange a remodelação total da cozinha, incluindo a troca do piso, nova pintura de paredes e a modernização completa das instalações elétricas e hidráulicas.",
+      "orcamento_estimado": "R$ 8.000 – R$ 25.000",
+      "complexidade": "Profissional",
+      "dica_especialista": "Antes de iniciar qualquer demolição, planeje cuidadosamente o novo layout da cozinha, principalmente a localização exata dos pontos elétricos e hidráulicos. Considere a impermeabilização da área molhada sob o piso e nas paredes, especialmente se houver banheiros ou áreas de serviço adjacentes, para evitar futuros problemas com umidade.",
+      "itens": [
+        {
+          "material": "Sacos para Entulho Reforçados 100L",
+          "categoria": "Descarte e Proteção",
+          "comodo": "Cozinha",
+          "quantidade": "10 un.",
+          "prioridade": "essencial",
+          "observacao": "Para descarte seguro do entulho gerado na demolição.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Demolição e Preparação"
+        },
+        {
+          "material": "Kit Ferramentas Manuais Essenciais",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Geral",
+          "quantidade": "1 kit",
+          "prioridade": "essencial",
+          "observacao": "Inclui martelo, talhadeira, chaves de fenda/phillips para remoção e pequenos ajustes.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Demolição e Preparação"
+        },
+        {
+          "material": "Tubos e Conexões PVC Água Fria 25mm",
+          "categoria": "Hidráulica",
+          "comodo": "Cozinha",
+          "quantidade": "1 kit (aprox. 12m)",
+          "prioridade": "essencial",
+          "observacao": "Para refazer ou adaptar a rede de água fria (pia, máquina de lavar louça).",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalações Hidráulicas e Elétricas"
+        },
+        {
+          "material": "Fio Cabo Flexível Antichama 2,5mm² Vermelho",
+          "categoria": "Elétrica",
+          "comodo": "Cozinha",
+          "quantidade": "20m",
+          "prioridade": "essencial",
+          "observacao": "Para circuitos de tomadas e iluminação, conforme norma NBR 5410.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalações Hidráulicas e Elétricas"
+        },
+        {
+          "material": "Tomada 2P+T Modular 10A Branca",
+          "categoria": "Elétrica",
+          "comodo": "Cozinha",
+          "quantidade": "6 un.",
+          "prioridade": "essencial",
+          "observacao": "Para pontos de uso geral; verificar necessidade de tomadas 20A para eletrodomésticos específicos.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Instalações Hidráulicas e Elétricas"
+        },
+        {
+          "material": "Porcelanato Retificado Acetinado 60x60cm",
+          "categoria": "Piso e Revestimento",
+          "comodo": "Cozinha",
+          "quantidade": "15m²",
+          "prioridade": "essencial",
+          "observacao": "Quantidade estimada para uma cozinha média. Adicionar 10% para recortes.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Piso e Revestimento"
+        },
+        {
+          "material": "Argamassa ACIII Uso Interno para Porcelanato",
+          "categoria": "Piso e Revestimento",
+          "comodo": "Cozinha",
+          "quantidade": "3 sacos (20kg)",
+          "prioridade": "essencial",
+          "observacao": "Tipo de argamassa de alta aderência, ideal para porcelanatos.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Piso e Revestimento"
+        },
+        {
+          "material": "Rejunte Acrílico Flexível Branco 1kg",
+          "categoria": "Piso e Revestimento",
+          "comodo": "Cozinha",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Fácil aplicação e limpeza, resistente a manchas e fungos.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Piso e Revestimento"
+        },
+        {
+          "material": "Cortador de Piso Manual 60cm",
+          "categoria": "Ferramentas Elétricas e Manuais",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Fundamental para cortes precisos e agilidade na instalação do piso.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Piso e Revestimento"
+        },
+        {
+          "material": "Desempenadeira de Aço Lisa 25cm",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Utilizada para aplicação de argamassa e massa corrida.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Piso e Revestimento"
+        },
+        {
+          "material": "Massa Corrida PVA para Interiores 5kg",
+          "categoria": "Pintura e Tratamento",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para nivelar e alisar as paredes antes da pintura.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Acabamento e Pintura"
+        },
+        {
+          "material": "Tinta Acrílica Lavável Branca Fosca 3,6L",
+          "categoria": "Pintura e Tratamento",
+          "comodo": "Cozinha",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Tinta ideal para cozinhas pela facilidade de limpeza e resistência.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Acabamento e Pintura"
+        },
+        {
+          "material": "Kit Pintura Completo (Rolo, Trincha, Bandeja)",
+          "categoria": "Ferramentas para Pintura",
+          "comodo": "Cozinha",
+          "quantidade": "1 kit",
+          "prioridade": "essencial",
+          "observacao": "Contém os itens básicos para a aplicação da massa e tinta.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Acabamento e Pintura"
+        },
+        {
+          "material": "Torneira de Cozinha Monocomando Cromada de Mesa",
+          "categoria": "Hidráulica",
+          "comodo": "Cozinha",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Escolha um modelo funcional e que harmonize com o estilo da cozinha.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Acabamento e Pintura"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Quero instalar prateleiras na sala de estar",
+    "ok": true,
+    "quantidadeItens": 11,
+    "categoriasDistintas": [
+      "Ferramentas Manuais",
+      "Ferramentas Elétricas",
+      "Acessórios para Ferramentas",
+      "EPIs",
+      "Fixadores",
+      "Organização e Prateleiras",
+      "Eletrodomésticos"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Instalação de Prateleiras na Sala",
+      "resumo": "Este projeto consiste na instalação de prateleiras decorativas e funcionais na sala de estar, para organização e exposição de itens, utilizando suportes aparentes.",
+      "orcamento_estimado": "R$ 250 – R$ 850",
+      "complexidade": "DIY",
+      "dica_especialista": "Antes de realizar furos na parede, utilize um detector de metais ou mapeador de tubulações/fiação para identificar a presença de instalações elétricas ou hidráulicas ocultas. Isso evita acidentes e danos à infraestrutura da sua casa.",
+      "itens": [
+        {
+          "material": "Trena de Aço 5 Metros",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Sala de Estar",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para medições precisas da altura e espaçamento das prateleiras.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Planejamento e Marcação"
+        },
+        {
+          "material": "Lápis de Carpinteiro",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Sala de Estar",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para marcar os pontos de furação e o alinhamento da prateleira.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Planejamento e Marcação"
+        },
+        {
+          "material": "Nível de Bolha 40 cm",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Sala de Estar",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Garanta que suas prateleiras fiquem perfeitamente retas e niveladas.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Planejamento e Marcação"
+        },
+        {
+          "material": "Furadeira de Impacto 550W",
+          "categoria": "Ferramentas Elétricas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Ideal para perfurar alvenaria e concreto com eficiência.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Furação e Fixação"
+        },
+        {
+          "material": "Jogo de Brocas para Alvenaria 5 Peças",
+          "categoria": "Acessórios para Ferramentas",
+          "comodo": "Geral",
+          "quantidade": "1 kit",
+          "prioridade": "essencial",
+          "observacao": "Escolha a broca de diâmetro correto para as buchas que serão utilizadas.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Furação e Fixação"
+        },
+        {
+          "material": "Óculos de Segurança Transparente",
+          "categoria": "EPIs",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Proteja seus olhos de poeira e detritos durante a furação.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Furação e Fixação"
+        },
+        {
+          "material": "Kit Buchas e Parafusos para Alvenaria S8 (20 conjuntos)",
+          "categoria": "Fixadores",
+          "comodo": "Sala de Estar",
+          "quantidade": "1 caixa",
+          "prioridade": "essencial",
+          "observacao": "Bucha S8 é comum para suportes leves a médios em paredes de alvenaria. Verifique o peso que a prateleira irá suportar.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Furação e Fixação"
+        },
+        {
+          "material": "Prateleira de Madeira Pinus Natural 60x20cm",
+          "categoria": "Organização e Prateleiras",
+          "comodo": "Sala de Estar",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Material versátil e fácil de personalizar (pintar ou envernizar).",
+          "etapa_ordem": 2,
+          "etapa_nome": "Furação e Fixação"
+        },
+        {
+          "material": "Suporte Mão Francesa Branca 20cm (Par)",
+          "categoria": "Organização e Prateleiras",
+          "comodo": "Sala de Estar",
+          "quantidade": "2 pares",
+          "prioridade": "essencial",
+          "observacao": "Escolha o suporte adequado ao estilo da sua decoração e ao peso que a prateleira irá suportar.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Furação e Fixação"
+        },
+        {
+          "material": "Parafusadeira a Bateria 12V",
+          "categoria": "Ferramentas Elétricas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Agiliza a fixação dos parafusos nos suportes e na prateleira.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Furação e Fixação"
+        },
+        {
+          "material": "Aspirador de Pó Compacto 1000W",
+          "categoria": "Eletrodomésticos",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "recomendado",
+          "observacao": "Mantenha a área de trabalho limpa removendo o pó da furação.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Limpeza Final"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Preciso fazer uma reforma completa de dois banheiros e da área de serviço",
+    "ok": true,
+    "quantidadeItens": 14,
+    "categoriasDistintas": [
+      "Descarte e Proteção",
+      "Ferramentas Elétricas",
+      "Impermeabilização",
+      "Hidráulica",
+      "Elétrica",
+      "Assentamento",
+      "Revestimentos",
+      "Acabamento",
+      "Ferramentas Manuais",
+      "Louças Sanitárias",
+      "Móveis de Banheiro",
+      "Metais Sanitários",
+      "Louças de Serviço",
+      "Metais e Elétrica"
+    ],
+    "cobreFerramentas": true,
+    "projeto": {
+      "titulo": "Reforma Completa: Dois Banheiros e Área de Serviço",
+      "resumo": "Este projeto abrange a reforma completa de dois banheiros e uma área de serviço, desde a remoção de estruturas antigas até a instalação de novos revestimentos, louças, metais e equipamentos, modernizando e otimizando os espaços.",
+      "orcamento_estimado": "R$ 15.000 – R$ 45.000",
+      "complexidade": "Profissional",
+      "dica_especialista": "A etapa de impermeabilização é crucial para evitar futuros problemas com umidade e infiltrações. Invista em produtos de qualidade para esta fase, especialmente nas áreas de box de banheiro e pisos da área de serviço, e certifique-se de que a aplicação seja feita corretamente antes de assentar qualquer revestimento.",
+      "itens": [
+        {
+          "material": "Saco para Entulho Reforçado 100 Litros",
+          "categoria": "Descarte e Proteção",
+          "comodo": "Geral",
+          "quantidade": "10 un.",
+          "prioridade": "essencial",
+          "observacao": "Para descarte seguro dos resíduos de demolição.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Demolição e Descarte"
+        },
+        {
+          "material": "Martelo Demolidor Elétrico SDS-MAX 110V/220V",
+          "categoria": "Ferramentas Elétricas",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Fundamental para remoção de revestimentos e alvenaria antiga de forma eficiente.",
+          "etapa_ordem": 1,
+          "etapa_nome": "Demolição e Descarte"
+        },
+        {
+          "material": "Impermeabilizante Manta Líquida Acrílica Cinza 3,6 Litros",
+          "categoria": "Impermeabilização",
+          "comodo": "Banheiro 1, Banheiro 2, Área de Serviço",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Aplique em todas as áreas molhadas (piso, paredes do box) antes do contrapiso e assentamento.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Infraestrutura e Impermeabilização"
+        },
+        {
+          "material": "Tubos e Conexões PVC Esgoto 50mm e 100mm",
+          "categoria": "Hidráulica",
+          "comodo": "Banheiro 1, Banheiro 2, Área de Serviço",
+          "quantidade": "Variável (consultar projeto)",
+          "prioridade": "essencial",
+          "observacao": "Para toda a nova rede de esgoto e pontos de água.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Infraestrutura e Impermeabilização"
+        },
+        {
+          "material": "Fio Elétrico Flexível 2,5mm² e 4mm² Rolo 100m",
+          "categoria": "Elétrica",
+          "comodo": "Geral",
+          "quantidade": "3 rolos (cores diversas)",
+          "prioridade": "essencial",
+          "observacao": "Para novas instalações de tomadas, iluminação e chuveiros.",
+          "etapa_ordem": 2,
+          "etapa_nome": "Infraestrutura e Impermeabilização"
+        },
+        {
+          "material": "Argamassa Cimentcola ACIII Externo e Interno 20kg",
+          "categoria": "Assentamento",
+          "comodo": "Banheiro 1, Banheiro 2, Área de Serviço",
+          "quantidade": "15 sacos",
+          "prioridade": "essencial",
+          "observacao": "Indicada para assentamento de porcelanatos e revestimentos de grandes formatos.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Assentamento de Revestimentos"
+        },
+        {
+          "material": "Porcelanato Retificado Esmaltado 60x60cm Acabamento Fosco",
+          "categoria": "Revestimentos",
+          "comodo": "Banheiro 1, Banheiro 2, Área de Serviço",
+          "quantidade": "50m²",
+          "prioridade": "essencial",
+          "observacao": "Escolha um modelo antiderrapante para o piso, garantindo segurança.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Assentamento de Revestimentos"
+        },
+        {
+          "material": "Rejunte Acrílico Flexível Branco Gelo 1kg",
+          "categoria": "Acabamento",
+          "comodo": "Banheiro 1, Banheiro 2, Área de Serviço",
+          "quantidade": "5 un.",
+          "prioridade": "essencial",
+          "observacao": "Ideal para áreas úmidas, resistente a mofo e de fácil limpeza.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Assentamento de Revestimentos"
+        },
+        {
+          "material": "Cortador de Porcelanato Manual Profissional",
+          "categoria": "Ferramentas Manuais",
+          "comodo": "Geral",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Para cortes precisos e eficientes do revestimento.",
+          "etapa_ordem": 3,
+          "etapa_nome": "Assentamento de Revestimentos"
+        },
+        {
+          "material": "Bacia Sanitária com Caixa Acoplada Branca - Linha Tradicional",
+          "categoria": "Louças Sanitárias",
+          "comodo": "Banheiro 1, Banheiro 2",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Escolha modelos com sistema de descarga de baixo consumo de água.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Gabinete para Banheiro com Cuba de Apoio e Espelho 60cm",
+          "categoria": "Móveis de Banheiro",
+          "comodo": "Banheiro 1, Banheiro 2",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Verifique as medidas para garantir que se encaixe no espaço disponível.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Torneira Monocomando para Lavatório Bancada Cromada",
+          "categoria": "Metais Sanitários",
+          "comodo": "Banheiro 1, Banheiro 2",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Proporciona praticidade no controle de temperatura e vazão da água.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Tanque de Louça 30 Litros com Coluna Branco",
+          "categoria": "Louças de Serviço",
+          "comodo": "Área de Serviço",
+          "quantidade": "1 un.",
+          "prioridade": "essencial",
+          "observacao": "Opte por modelos com design funcional e resistente.",
+          "etapa_ordem": 4,
+          "etapa_nome": "Instalação de Louças e Metais"
+        },
+        {
+          "material": "Chuveiro Elétrico Multitemperaturas 220V 6800W",
+          "categoria": "Metais e Elétrica",
+          "comodo": "Banheiro 1, Banheiro 2",
+          "quantidade": "2 un.",
+          "prioridade": "essencial",
+          "observacao": "Certifique-se de que a fiação elétrica suporte a potência do chuveiro.",
+          "etapa_ordem": 5,
+          "etapa_nome": "Acabamentos Finais"
+        }
+      ]
+    }
+  }
+]

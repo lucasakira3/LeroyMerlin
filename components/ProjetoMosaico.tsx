@@ -18,6 +18,10 @@ export interface Projeto {
   orcamento_estimado: string
   complexidade: string
   dica_especialista: string
+  // Declarado pela IA desde 2026-09-25 (correção do P0 pós-banca) — reparo / projeto_medio /
+  // projeto_amplo, ver lib/projetoGuiado.ts. Opcional pra não quebrar nada que já lia
+  // Projeto antes deste campo existir; não exibido na UI ainda, só informativo por ora.
+  escopo?: string
   itens: ItemProjeto[]
 }
 

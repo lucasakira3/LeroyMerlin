@@ -9,6 +9,7 @@
     "lint": "next lint",
     "embeddings": "tsx scripts/gerar-embeddings.ts",
     "processar-csv": "tsx scripts/processar-csv.ts",
+    "testar-projeto": "tsx scripts/testar-projeto-guiado.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
