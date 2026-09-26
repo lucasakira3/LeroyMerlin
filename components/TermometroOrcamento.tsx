@@ -28,7 +28,10 @@ const PALETA_SEGMENTOS = [
 // que o carrinho já dispara (lm-carrinho-change) mais um novo (lm-orcamento-change), e
 // quando o total passa de 90% do teto sugere trocar o item mais caro por uma alternativa
 // mais barata da mesma categoria (lib/sugestaoEconomia.ts).
-export default function TermometroOrcamento() {
+// `totalProjeto`: quando o Projeto Guiado já gerou uma lista, a barra passa a medir o total
+// dessa lista (o que o cliente quer saber ali) em vez do carrinho; sem lista, comportamento
+// original de carrinho (que é o que /carrinho usa).
+export default function TermometroOrcamento({ totalProjeto = null }: { totalProjeto?: number | null }) {
   const [itens, setItens] = useState<{ produto: ProdutoResolvido; quantidade: number }[]>([])
   const [orcamento, setOrcamento] = useState<number | null>(null)
   const [editando, setEditando] = useState(false)
@@ -76,11 +79,12 @@ export default function TermometroOrcamento() {
     }
   }, [recarregar])
 
-  const total = itens.reduce((soma, i) => soma + i.produto.preco * i.quantidade, 0)
+  const modoProjeto = totalProjeto !== null && totalProjeto > 0
+  const total = modoProjeto ? totalProjeto : itens.reduce((soma, i) => soma + i.produto.preco * i.quantidade, 0)
   const percentual = orcamento ? total / orcamento : 0
 
   useEffect(() => {
-    if (!orcamento || percentual < 0.9 || itens.length === 0 || sugestaoDispensada) {
+    if (modoProjeto || !orcamento || percentual < 0.9 || itens.length === 0 || sugestaoDispensada) {
       setSugestao(null)
       return
     }
@@ -89,7 +93,7 @@ export default function TermometroOrcamento() {
       if (!cancelado) setSugestao(resultado)
     })
     return () => { cancelado = true }
-  }, [orcamento, itens, sugestaoDispensada, percentual])
+  }, [orcamento, itens, sugestaoDispensada, percentual, modoProjeto])
 
   function salvarOrcamento() {
     const valor = Number(valorInput.replace(',', '.'))
@@ -177,7 +181,7 @@ export default function TermometroOrcamento() {
         ) : (
           <>
             <div className="flex-1 h-2.5 rounded-full bg-gray-100 dark:bg-zinc-800 overflow-hidden flex">
-              {itens.length === 0 ? (
+              {modoProjeto || itens.length === 0 ? (
                 <div className={`h-full transition-all duration-500 ${corBarra}`} style={{ width: `${Math.min(percentual * 100, 100)}%` }} />
               ) : (
                 itens.map((item, i) => {
@@ -194,9 +198,9 @@ export default function TermometroOrcamento() {
               )}
             </div>
             <span className={`text-xs font-semibold whitespace-nowrap ${corTexto}`}>
-              {formatarMoeda(total)} de {formatarMoeda(orcamento)}
+              {modoProjeto && 'Lista do projeto: '}{formatarMoeda(total)} de {formatarMoeda(orcamento)}
             </span>
-            {itens.length > 0 && (
+            {!modoProjeto && itens.length > 0 && (
               <button
                 onClick={() => setExpandido(v => !v)}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
@@ -209,7 +213,7 @@ export default function TermometroOrcamento() {
         )}
       </div>
 
-      {expandido && itens.length > 0 && orcamento !== null && (
+      {!modoProjeto && expandido && itens.length > 0 && orcamento !== null && (
         <div className="px-4 pb-3 space-y-1.5">
           {itens.map((item, i) => {
             const subtotal = item.produto.preco * item.quantidade

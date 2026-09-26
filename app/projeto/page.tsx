@@ -23,12 +23,14 @@ const FERRAMENTAS = [
 // components/ComparadorFerramenta.tsx — sem isso o popup abriria vazio, já que antes só
 // dava pra montar o comparador escolhendo produtos em telas fora do Projeto Guiado.
 export default function ProjetoPage() {
+  // Total da lista gerada pelo assistente, pra barra de orçamento acompanhar o projeto
+  const [totalProjeto, setTotalProjeto] = useState<number | null>(null)
   const [ferramentaAberta, setFerramentaAberta] = useState<'regua' | 'comparador' | 'calculadora' | null>(null)
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Orçamento faz parte do fluxo: fica na mesma largura do assistente, logo acima */}
-      <TermometroOrcamento />
+      <TermometroOrcamento totalProjeto={totalProjeto} />
 
       <Card padding="none" className="flex flex-col overflow-hidden lg:min-h-[640px]">
         <div className="border-b border-gray-500 px-4 py-3 flex items-center gap-3">
@@ -39,7 +41,7 @@ export default function ProjetoPage() {
           </div>
         </div>
 
-        <ProjetoWizard />
+        <ProjetoWizard onTotalChange={setTotalProjeto} />
       </Card>
 
       {/* Ferramentas de apoio — linha de atalhos abaixo do assistente (antes eram uma coluna

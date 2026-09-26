@@ -87,7 +87,7 @@ function BolhaUsuario({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default function ProjetoWizard() {
+export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (total: number | null) => void }) {
   const [descricao, setDescricao] = useState('')
   const [loading, setLoading] = useState(false)
   const [etapa, setEtapa] = useState('')
@@ -282,7 +282,7 @@ export default function ProjetoWizard() {
         {resultado && !loading && (
           <>
             <BolhaBot>Pronto! Aqui está sua lista completa de materiais, com os corredores da loja.</BolhaBot>
-            <ListaDeCompras projeto={resultado} descricaoOriginal={descricaoEnviada} />
+            <ListaDeCompras projeto={resultado} descricaoOriginal={descricaoEnviada} onTotalChange={onTotalChange} />
           </>
         )}
       </div>

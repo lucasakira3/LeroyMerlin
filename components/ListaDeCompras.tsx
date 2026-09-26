@@ -22,7 +22,7 @@ const LOJAS = [
   'Barra da Tijuca — Rio de Janeiro/RJ', 'Curitiba — Curitiba/PR',
 ]
 
-export default function ListaDeCompras({ projeto }: { projeto: Projeto; descricaoOriginal: string }) {
+export default function ListaDeCompras({ projeto, onTotalChange }: { projeto: Projeto; descricaoOriginal: string; onTotalChange?: (total: number | null) => void }) {
   const [loja, setLoja] = useState(LOJAS[0])
   const [selecionados, setSelecionados] = useState<Set<string>>(
     () => new Set(projeto.itens.flatMap(i => {
@@ -62,6 +62,13 @@ export default function ListaDeCompras({ projeto }: { projeto: Projeto; descrica
     .reduce((acc, r) => acc.find(a => a.produto.id === r.produto.id) ? acc : [...acc, r], [] as SearchResult[])
 
   const totalEstimado = mapResultados.reduce((sum, r) => sum + ((r.produto as any).preco ?? 0), 0)
+
+  // Avisa a página pra barra de orçamento do topo acompanhar este total; ao sair (novo
+  // projeto), volta a null e a barra retorna ao modo carrinho.
+  useEffect(() => {
+    onTotalChange?.(totalEstimado)
+    return () => onTotalChange?.(null)
+  }, [totalEstimado, onTotalChange])
 
   function compartilharWhatsApp() {
     const linhas: string[] = []
