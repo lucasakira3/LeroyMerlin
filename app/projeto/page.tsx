@@ -26,45 +26,47 @@ export default function ProjetoPage() {
   const [ferramentaAberta, setFerramentaAberta] = useState<'regua' | 'comparador' | 'calculadora' | null>(null)
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-8">
-      <div className="max-w-2xl mb-6">
-        <TermometroOrcamento />
-      </div>
+    <div className="px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      {/* Orçamento faz parte do fluxo: fica na mesma largura do assistente, logo acima */}
+      <TermometroOrcamento />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-8 lg:items-start">
-        {/* Chat — a bancada, expandida */}
-        <Card padding="none" className="flex flex-col overflow-hidden lg:min-h-[640px]">
-          <div className="border-b border-gray-500 px-4 py-3 flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse" />
-            <div>
-              <p className="text-sm font-semibold text-lm-dark">Assistente de Projetos</p>
-              <p className="text-xs text-gray-500">Powered by Gemini · monta sua lista de materiais</p>
-            </div>
+      <Card padding="none" className="flex flex-col overflow-hidden lg:min-h-[640px]">
+        <div className="border-b border-gray-500 px-4 py-3 flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse" />
+          <div>
+            <p className="text-sm font-semibold text-lm-dark">Assistente de Projetos</p>
+            <p className="text-xs text-gray-500">Powered by Gemini · monta sua lista de materiais</p>
           </div>
+        </div>
 
-          <ProjetoWizard />
-        </Card>
+        <ProjetoWizard />
+      </Card>
 
-        {/* Ferramentas — soltas, ao lado da bancada */}
-        <div className="flex flex-col items-center gap-10 pt-4 lg:sticky lg:top-6 lg:self-start">
+      {/* Ferramentas de apoio — linha de atalhos abaixo do assistente (antes eram uma coluna
+          solta e pequena ao lado, que sobrava vazia e apertava o resultado) */}
+      <section>
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+          Ferramentas para o seu projeto
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {FERRAMENTAS.map(ferramenta => (
             <button
               key={ferramenta.id}
               type="button"
               onClick={() => setFerramentaAberta(ferramenta.id)}
-              className="group flex flex-col items-center text-center gap-3 w-full"
+              className="group flex items-center gap-4 text-left rounded-card border border-gray-500 bg-white p-4 hover:border-lm-green/50 hover:shadow-soft transition-all"
             >
-              <div className={`w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105 group-hover:-rotate-3 ${ferramenta.bg}`}>
-                <ferramenta.icone size={36} className={ferramenta.cor} strokeWidth={1.75} />
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105 group-hover:-rotate-3 ${ferramenta.bg}`}>
+                <ferramenta.icone size={28} className={ferramenta.cor} strokeWidth={1.75} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-bold text-lm-dark">{ferramenta.label}</p>
-                <p className="text-xs text-gray-500 mt-0.5 max-w-[160px]">{ferramenta.texto}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{ferramenta.texto}</p>
               </div>
             </button>
           ))}
         </div>
-      </div>
+      </section>
 
       <Modal
         open={ferramentaAberta === 'regua'}
