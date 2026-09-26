@@ -249,12 +249,19 @@ export default function ListaDeCompras({ projeto, onTotalChange }: { projeto: Pr
       )}
 
       {aba === 'lista-completa' && (
+      <>
+      {/* Road map em largura total, acima da lista: a trilha de cartões precisa de espaço */}
+      <div className="mb-5">
+        <ProjetoTimeline
+          itens={projeto.itens}
+          selecionados={selecionados}
+          onSelecionarProduto={setProdutoDrawer}
+        />
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
 
         {/* ── Coluna esquerda: lista ────────────────────── */}
         <div className="lg:col-span-3 space-y-3">
-          <ProjetoTimeline itens={projeto.itens} />
-
           <h3 className="text-sm font-bold text-gray-900">Lista de materiais</h3>
 
           <ListaMateriaisCompacta
@@ -306,6 +313,7 @@ export default function ListaDeCompras({ projeto, onTotalChange }: { projeto: Pr
           </div>
         </div>
       </div>
+      </>
       )}
 
       <ProdutoDrawer produto={produtoDrawer} onClose={() => setProdutoDrawer(null)} />
