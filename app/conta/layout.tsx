@@ -24,6 +24,12 @@ export default function ContaLayout({ children }: { children: React.ReactNode })
 
   if (!usuario) return null
 
+  // Projetos guiados (lista e o projeto aberto, com o road map de cartões) precisam de mais
+  // espaço que um formulário — o `max-w-4xl` padrão deixava o road map apertado, forçando
+  // scroll horizontal com poucas etapas visíveis. Nas outras seções (pedidos, dados,
+  // segurança etc.) a largura de leitura estreita continua fazendo sentido.
+  const largo = pathname.startsWith('/conta/projetos')
+
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
       {/* Barra lateral encostada na borda esquerda de verdade, fora do container
@@ -32,8 +38,8 @@ export default function ContaLayout({ children }: { children: React.ReactNode })
         <ContaSidebar nome={usuario.nome ?? usuario.email} email={usuario.email} />
       </div>
       {/* O conteúdo em si (cards, listas) continua centralizado no espaço restante. */}
-      <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6 flex justify-center">
-        <div className="w-full max-w-4xl">{children}</div>
+      <div className={`flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6 flex ${largo ? '' : 'justify-center'}`}>
+        <div className={`w-full ${largo ? '' : 'max-w-4xl'}`}>{children}</div>
       </div>
     </main>
   )
