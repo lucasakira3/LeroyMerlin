@@ -240,14 +240,14 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
           {salvoId ? (
             <Link
               href="/conta/projetos"
-              className="flex items-center gap-2 bg-lm-yellow text-lm-dark text-sm font-bold px-4 py-2.5 rounded-xl"
+              className="flex items-center gap-2 bg-lm-yellow text-black text-sm font-bold px-4 py-2.5 rounded-xl"
             >
               <BookmarkCheck size={15} /> Projeto salvo · ver meus projetos
             </Link>
           ) : emailUsuario ? (
             <button
               onClick={salvarNaConta}
-              className="flex items-center gap-2 bg-lm-yellow hover:brightness-95 text-lm-dark text-sm font-bold px-4 py-2.5 rounded-xl transition-all"
+              className="flex items-center gap-2 bg-lm-yellow hover:brightness-95 text-black text-sm font-bold px-4 py-2.5 rounded-xl transition-all"
             >
               <Bookmark size={15} /> Salvar projeto
             </button>
@@ -264,7 +264,7 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
 
       {projeto.dica_especialista && (
         <div className="mb-5 flex items-start gap-3 rounded-2xl border border-lm-yellow/50 bg-lm-yellow/10 p-4">
-          <span className="w-9 h-9 rounded-xl bg-lm-yellow text-lm-dark flex items-center justify-center flex-shrink-0">
+          <span className="w-9 h-9 rounded-xl bg-lm-yellow text-black flex items-center justify-center flex-shrink-0">
             <Lightbulb size={18} />
           </span>
           <div>

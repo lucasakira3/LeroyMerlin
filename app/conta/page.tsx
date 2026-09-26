@@ -106,7 +106,7 @@ export default function ContaPage() {
                       feito ? 'bg-white/10 text-white/70' : 'bg-white/15 hover:bg-white/25'
                     }`}
                   >
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${feito ? 'bg-lm-yellow text-lm-dark' : 'bg-white/20'}`}>
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${feito ? 'bg-lm-yellow text-black' : 'bg-white/20'}`}>
                       {feito ? <Check size={14} strokeWidth={3} /> : <Icone size={13} />}
                     </span>
                     <span className={feito ? 'line-through decoration-white/40' : ''}>{rotulo}</span>

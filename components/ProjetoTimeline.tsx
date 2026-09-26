@@ -137,7 +137,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                 }`}
               >
                 <span className={`absolute -top-2 -left-2 w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${
-                  feita ? 'bg-lm-yellow text-lm-dark' : 'bg-lm-green text-white'
+                  feita ? 'bg-lm-yellow text-black' : 'bg-lm-green text-white'
                 }`}>
                   {feita ? <Check size={13} strokeWidth={3} /> : etapa.ordem}
                 </span>
@@ -187,7 +187,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
             return (
               <li key={`${item.material}-${indice}`} className="flex gap-3">
                 <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center flex-shrink-0 mt-1 ${
-                  feito ? 'bg-lm-yellow text-lm-dark' : 'bg-lm-green text-white'
+                  feito ? 'bg-lm-yellow text-black' : 'bg-lm-green text-white'
                 }`}>
                   {feito ? <Check size={13} strokeWidth={3} /> : idx + 1}
                 </span>
@@ -249,7 +249,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                       title={feito ? 'Desmarcar' : 'Marcar como feito'}
                       className={`w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-colors ${
                         feito
-                          ? 'bg-lm-yellow border-lm-yellow text-lm-dark'
+                          ? 'bg-lm-yellow border-lm-yellow text-black'
                           : 'border-gray-500 text-gray-400 hover:border-lm-green hover:text-lm-green'
                       }`}
                     >
