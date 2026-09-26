@@ -77,11 +77,13 @@ export function salvarProjeto(
   return salvarMapa(mapa) ? novo : null
 }
 
-// Chamado a cada mudança de escolha/etapa concluída na tela do projeto salvo.
+// Chamado a cada mudança de escolha/etapa concluída na tela do projeto salvo — e também
+// quando o cliente pede uma mudança pelo chat do projeto (components/ProjetoChat.tsx), aí
+// `projeto` vem junto com a lista já atualizada pela IA.
 export function atualizarProgresso(
   email: string,
   id: string,
-  dados: Partial<Pick<ProjetoSalvo, 'selecionados' | 'itensConcluidos' | 'loja'>>
+  dados: Partial<Pick<ProjetoSalvo, 'selecionados' | 'itensConcluidos' | 'loja' | 'projeto'>>
 ): void {
   const mapa = lerMapa()
   const chave = normalizar(email)

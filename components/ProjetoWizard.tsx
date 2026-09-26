@@ -6,15 +6,23 @@ import {
 } from 'lucide-react'
 import ListaDeCompras from './ListaDeCompras'
 import { COMODOS_DISPONIVEIS, getIconeComodo } from '@/lib/comodoIcones'
+import type { Projeto } from './ProjetoMosaico'
 
+// Etapas do indicador de "carregando" — genéricas de propósito: nesta fase (antes do
+// resultado existir) a IA pode devolver uma pergunta de esclarecimento OU a lista pronta, e
+// só se sabe qual das duas ao final da chamada. Ver lib/projetoGuiado.ts (conversarProjetoIA).
 const ETAPAS = [
-  'Lendo seu projeto...',
-  'Identificando materiais necessários...',
-  'Buscando produtos no estoque...',
-  'Montando sua lista de compras...',
+  'Lendo sua mensagem...',
+  'Consultando o catálogo da loja...',
+  'Preparando a resposta...',
 ]
 
 const PASSOS = ['Cômodos', 'Descrição', 'Resultado']
+
+interface Mensagem {
+  role: 'user' | 'ia'
+  texto: string
+}
 
 declare global {
   interface Window {
@@ -76,17 +84,24 @@ function BolhaUsuario({ children }: { children: React.ReactNode }) {
   )
 }
 
+// Assistente do Projeto Guiado — desde 2026-09-27 é uma CONVERSA de verdade, não mais
+// "descreve uma vez, recebe a lista": a IA pode fazer até 2 perguntas de esclarecimento
+// (m², o que trocar/manter etc., ver lib/projetoGuiado.ts) antes de gerar a lista. `mensagens`
+// guarda essa troca; a rota /api/projeto/conversar decide a cada chamada se a resposta é uma
+// pergunta ou o resultado final. Depois de pronta, a conversa continua dentro de
+// ListaDeCompras (components/ProjetoChat.tsx) — lá o cliente já vê a lista e pode pedir
+// mudanças nela.
 export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (total: number | null) => void }) {
-  const [descricao, setDescricao] = useState('')
+  const [inputTexto, setInputTexto] = useState('')
   const [loading, setLoading] = useState(false)
   const [etapa, setEtapa] = useState('')
-  const [resultado, setResultado] = useState<any>(null)
+  const [mensagens, setMensagens] = useState<Mensagem[]>([])
+  const [resultado, setResultado] = useState<Projeto | null>(null)
   const [erro, setErro] = useState('')
   const [ouvindo, setOuvindo] = useState(false)
   const recRef = useRef<SpeechRecognition | null>(null)
   const [etapaWizard, setEtapaWizard] = useState<'comodos' | 'descricao'>('comodos')
   const [comodosSelecionados, setComodosSelecionados] = useState<Set<string>>(new Set())
-  const [descricaoEnviada, setDescricaoEnviada] = useState('')
 
   function toggleComodo(comodo: string) {
     setComodosSelecionados(prev => {
@@ -96,15 +111,15 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
     })
   }
 
-  async function analisar(texto: string) {
-    if (!texto.trim()) return
-    setDescricaoEnviada(texto)
-    setDescricao('')
+  async function enviarMensagem(texto: string) {
+    if (!texto.trim() || loading) return
+    const novoHistorico: Mensagem[] = [...mensagens, { role: 'user', texto }]
+    setMensagens(novoHistorico)
+    setInputTexto('')
     setLoading(true)
     setErro('')
-    setResultado(null)
 
-    // Simula etapas progressivas para feedback visual
+    // Simula etapas progressivas para feedback visual — ver comentário no array ETAPAS.
     for (let i = 0; i < ETAPAS.length - 1; i++) {
       setEtapa(ETAPAS[i])
       await new Promise(r => setTimeout(r, 900))
@@ -112,16 +127,24 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
     setEtapa(ETAPAS[ETAPAS.length - 1])
 
     try {
-      const res = await fetch('/api/projeto', {
+      const res = await fetch('/api/projeto/conversar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ descricao: texto, comodos: Array.from(comodosSelecionados) }),
+        body: JSON.stringify({ historico: novoHistorico, comodos: Array.from(comodosSelecionados) }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
-      setResultado(data)
+
+      if (data.tipo === 'pergunta') {
+        setMensagens(prev => [...prev, { role: 'ia', texto: data.pergunta }])
+      } else {
+        // tipo "resultado" (ou qualquer outra coisa inesperada — trata como resultado final,
+        // nunca deixa o cliente preso sem resposta nenhuma).
+        const { tipo: _tipo, ...projeto } = data
+        setResultado(projeto as Projeto)
+      }
     } catch (e: any) {
-      setErro(e.message || 'Erro ao analisar o projeto.')
+      setErro(e.message || 'Erro ao processar sua mensagem.')
     } finally {
       setLoading(false)
       setEtapa('')
@@ -130,11 +153,17 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
 
   function novoProjeto() {
     setResultado(null)
-    setDescricao('')
-    setDescricaoEnviada('')
+    setMensagens([])
+    setInputTexto('')
     setErro('')
     setEtapaWizard('comodos')
     setComodosSelecionados(new Set())
+  }
+
+  function voltarParaComodos() {
+    setEtapaWizard('comodos')
+    setMensagens([])
+    setErro('')
   }
 
   function toggleVoz() {
@@ -148,7 +177,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
     const rec = new API()
     rec.lang = 'pt-BR'
     rec.onresult = (e: SpeechRecognitionEvent) => {
-      setDescricao(e.results[0][0].transcript)
+      setInputTexto(e.results[0][0].transcript)
       setOuvindo(false)
     }
     rec.onend = () => setOuvindo(false)
@@ -157,9 +186,9 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
     setOuvindo(true)
   }
 
-  const comodosConfirmados = etapaWizard === 'descricao' || resultado
+  const comodosConfirmados = etapaWizard === 'descricao' || resultado !== null
   const comodosTexto = Array.from(comodosSelecionados).join(', ')
-  // Progresso do indicador do topo: 1 cômodos, 2 descrição, 3 gerando/resultado
+  // Progresso do indicador do topo: 1 cômodos, 2 descrição/conversa, 3 gerando/resultado
   const passoAtual = resultado || loading ? 3 : etapaWizard === 'comodos' ? 1 : 2
   const etapaIdx = Math.max(0, ETAPAS.indexOf(etapa))
 
@@ -218,7 +247,13 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
           </>
         )}
 
-        {descricaoEnviada && <BolhaUsuario>{descricaoEnviada}</BolhaUsuario>}
+        {/* Toda a troca de mensagens desta fase — pode ter idas e vindas se a IA pedir mais
+            detalhe antes de montar a lista. */}
+        {mensagens.map((m, i) => (
+          m.role === 'user'
+            ? <BolhaUsuario key={i}>{m.texto}</BolhaUsuario>
+            : <BolhaBot key={i}>{m.texto}</BolhaBot>
+        ))}
 
         {loading && (
           <div className="flex gap-3">
@@ -270,7 +305,11 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
         {resultado && !loading && (
           <>
             <BolhaBot>Pronto! Aqui está sua lista completa de materiais, com os corredores da loja.</BolhaBot>
-            <ListaDeCompras projeto={resultado} descricaoOriginal={descricaoEnviada} onTotalChange={onTotalChange} />
+            <ListaDeCompras
+              projeto={resultado}
+              descricaoOriginal={mensagens.filter(m => m.role === 'user').map(m => m.texto).join(' ')}
+              onTotalChange={onTotalChange}
+            />
           </>
         )}
       </div>
@@ -296,12 +335,12 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
           </div>
         ) : (
           <form
-            onSubmit={e => { e.preventDefault(); analisar(descricao) }}
+            onSubmit={e => { e.preventDefault(); enviarMensagem(inputTexto) }}
             className="flex items-center gap-2"
           >
             <button
               type="button"
-              onClick={() => setEtapaWizard('comodos')}
+              onClick={voltarParaComodos}
               disabled={loading}
               aria-label="Voltar pros cômodos"
               className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border border-gray-500 text-gray-400 hover:text-lm-green hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
@@ -323,15 +362,15 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
             </button>
             <input
               type="text"
-              value={descricao}
-              onChange={e => setDescricao(e.target.value)}
-              placeholder="Ex: Quero reformar meu banheiro de 4m², trocar o piso, azulejo e torneira..."
+              value={inputTexto}
+              onChange={e => setInputTexto(e.target.value)}
+              placeholder={mensagens.length === 0 ? 'Ex: Quero reformar meu banheiro de 4m², trocar o piso, azulejo e torneira...' : 'Responda ou dê mais detalhes...'}
               disabled={loading}
               className="flex-1 h-11 px-4 rounded-xl border border-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-50 bg-white"
             />
             <button
               type="submit"
-              disabled={loading || !descricao.trim()}
+              disabled={loading || !inputTexto.trim()}
               aria-label="Enviar"
               className="h-11 w-11 flex-shrink-0 bg-lm-green text-white rounded-xl flex items-center justify-center disabled:opacity-50 hover:bg-green-700 transition-colors"
             >

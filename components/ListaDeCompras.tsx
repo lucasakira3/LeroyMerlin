@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { ShoppingBag, Lightbulb, CalendarCheck, Share2, Wallet, Package, Wrench, Bookmark, BookmarkCheck } from 'lucide-react'
 import ProjetoTimeline from './ProjetoTimeline'
-import { type Projeto } from './ProjetoMosaico'
+import { type Projeto, type ItemProjeto } from './ProjetoMosaico'
+import ProjetoChat from './ProjetoChat'
 import PlantaCasa from './PlantaCasa'
 import ProdutoDrawer from './ProdutoDrawer'
 import type { SearchResult } from '@/types/produto'
@@ -23,16 +24,55 @@ const LOJAS = [
   'Barra da Tijuca — Rio de Janeiro/RJ', 'Curitiba — Curitiba/PR',
 ]
 
+// Chave estável de um item entre duas versões da lista (antes/depois de um pedido de
+// mudança pelo chat) — usada só pra tentar preservar progresso do cliente, não pra nada
+// visível. Não é perfeita (a IA pode reescrever o texto de um item que não devia mudar),
+// mas cobre o caso comum de "só um item mudou, o resto ficou igual".
+function chaveDoItem(item: ItemProjeto): string {
+  return `${item.etapa_ordem ?? 0}::${item.material}`
+}
+
+// Depois de um pedido de mudança no chat, os PRODUTOS escolhidos (selecionados, um Set de
+// ids) sobrevivem sozinhos pra itens que não mudaram — buscaTextoSimples é determinística
+// contra o mesmo texto de material, então resolve pro mesmo produto. Só precisa de ajuda
+// pra itens novos (escolhe o preferido, mesma regra da primeira geração).
+function preencherSelecaoPadrao(itens: ItemProjeto[], selecionadosAtuais: Set<string>): Set<string> {
+  const proximo = new Set(selecionadosAtuais)
+  for (const item of itens) {
+    const jaTemEscolha = item.resultados.some(r => proximo.has(r.produto.id))
+    if (jaTemEscolha) continue
+    const preferido = item.resultados.find(r => r.produto.estoque > 0) ?? item.resultados[0]
+    if (preferido) proximo.add(preferido.produto.id)
+  }
+  return proximo
+}
+
+// Itens concluídos são guardados por ÍNDICE no array — se a IA reordenar ou adicionar itens
+// no meio da lista, os índices antigos apontam pra itens errados. Remapeia pela chave
+// (etapa + material): item que continua com o mesmo texto mantém o check; o resto perde.
+function remapearConcluidos(itensAntigos: ItemProjeto[], itensNovos: ItemProjeto[], concluidosAntigos: Set<number>): Set<number> {
+  const indiceAntigoPorChave = new Map(itensAntigos.map((item, i) => [chaveDoItem(item), i]))
+  const novo = new Set<number>()
+  itensNovos.forEach((item, novoIndice) => {
+    const indiceAntigo = indiceAntigoPorChave.get(chaveDoItem(item))
+    if (indiceAntigo !== undefined && concluidosAntigos.has(indiceAntigo)) novo.add(novoIndice)
+  })
+  return novo
+}
+
 // `projetoSalvo`: quando vem de Minha Conta > Projetos, começa do progresso guardado
 // (produtos escolhidos, etapas concluídas, loja) e grava de volta cada mudança.
-export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChange, projetoSalvo }: {
+export default function ListaDeCompras({ projeto: projetoInicial, descricaoOriginal, onTotalChange, projetoSalvo }: {
   projeto: Projeto
   descricaoOriginal: string
   onTotalChange?: (total: number | null) => void
   projetoSalvo?: ProjetoSalvo
 }) {
+  // Estado, não só prop: o chat do projeto (components/ProjetoChat.tsx) pode substituir a
+  // lista inteira depois de um pedido de mudança do cliente.
+  const [projeto, setProjeto] = useState<Projeto>(projetoInicial)
   const [loja, setLoja] = useState(projetoSalvo?.loja ?? LOJAS[0])
-  const [selecionados] = useState<Set<string>>(
+  const [selecionados, setSelecionados] = useState<Set<string>>(
     () => projetoSalvo ? new Set(projetoSalvo.selecionados) : new Set(projeto.itens.flatMap(i => {
       const preferido = i.resultados.find(r => r.produto.estoque > 0) ?? i.resultados[0]
       return preferido ? [preferido.produto.id] : []
@@ -45,15 +85,17 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
   const [emailUsuario, setEmailUsuario] = useState<string | null>(null)
   useEffect(() => { setEmailUsuario(getUsuarioLogado()?.email ?? null) }, [])
 
-  // Com o projeto salvo, todo progresso (troca de produto, etapa concluída, loja) é gravado
+  // Com o projeto salvo, todo progresso (troca de produto, etapa concluída, loja, e a lista
+  // em si depois de um pedido de mudança pelo chat) é gravado.
   useEffect(() => {
     if (!salvoId || !emailUsuario) return
     atualizarProgresso(emailUsuario, salvoId, {
       selecionados: Array.from(selecionados),
       itensConcluidos: Array.from(itensConcluidos),
       loja,
+      projeto,
     })
-  }, [salvoId, emailUsuario, selecionados, itensConcluidos, loja])
+  }, [salvoId, emailUsuario, selecionados, itensConcluidos, loja, projeto])
 
   function alternarItem(indice: number) {
     setItensConcluidos(prev => {
@@ -61,6 +103,17 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
       next.has(indice) ? next.delete(indice) : next.add(indice)
       return next
     })
+  }
+
+  // Chamado pelo chat (ProjetoChat) quando a IA devolve a lista já atualizada. Tenta
+  // preservar o progresso do cliente pros itens que continuam iguais — ver as duas funções
+  // de mesclagem no topo do arquivo.
+  function handleProjetoAtualizado(novoProjeto: Projeto) {
+    const novosSelecionados = preencherSelecaoPadrao(novoProjeto.itens, selecionados)
+    const novosConcluidos = remapearConcluidos(projeto.itens, novoProjeto.itens, itensConcluidos)
+    setProjeto(novoProjeto)
+    setSelecionados(novosSelecionados)
+    setItensConcluidos(novosConcluidos)
   }
 
   function salvarNaConta() {
@@ -330,6 +383,11 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
           </Card>
         </div>
       )}
+
+      {/* Continuação da conversa — visível nas duas abas, não só na "Lista completa" */}
+      <div className="mt-5">
+        <ProjetoChat projeto={projeto} onProjetoAtualizado={handleProjetoAtualizado} />
+      </div>
 
       <ProdutoDrawer produto={produtoDrawer} onClose={() => setProdutoDrawer(null)} />
     </div>
