@@ -40,7 +40,7 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
   )
   const [linkCopiado, setLinkCopiado] = useState(false)
   const [aba, setAba] = useState<'visao-geral' | 'lista-completa'>(projetoSalvo ? 'lista-completa' : 'visao-geral')
-  const [concluidas, setConcluidas] = useState<Set<number>>(() => new Set(projetoSalvo?.etapasConcluidas ?? []))
+  const [itensConcluidos, setItensConcluidos] = useState<Set<number>>(() => new Set(projetoSalvo?.itensConcluidos ?? []))
   const [salvoId, setSalvoId] = useState<string | null>(projetoSalvo?.id ?? null)
   const [emailUsuario, setEmailUsuario] = useState<string | null>(null)
   useEffect(() => { setEmailUsuario(getUsuarioLogado()?.email ?? null) }, [])
@@ -50,15 +50,15 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
     if (!salvoId || !emailUsuario) return
     atualizarProgresso(emailUsuario, salvoId, {
       selecionados: Array.from(selecionados),
-      etapasConcluidas: Array.from(concluidas),
+      itensConcluidos: Array.from(itensConcluidos),
       loja,
     })
-  }, [salvoId, emailUsuario, selecionados, concluidas, loja])
+  }, [salvoId, emailUsuario, selecionados, itensConcluidos, loja])
 
-  function alternarConcluida(ordem: number) {
-    setConcluidas(prev => {
+  function alternarItem(indice: number) {
+    setItensConcluidos(prev => {
       const next = new Set(prev)
-      next.has(ordem) ? next.delete(ordem) : next.add(ordem)
+      next.has(indice) ? next.delete(indice) : next.add(indice)
       return next
     })
   }
@@ -71,7 +71,7 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
       loja,
       projeto,
       selecionados: Array.from(selecionados),
-      etapasConcluidas: Array.from(concluidas),
+      itensConcluidos: Array.from(itensConcluidos),
     })
     if (!salvo) {
       showToast('Não foi possível salvar: o armazenamento do navegador está cheio.')
@@ -310,8 +310,8 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
           <ProjetoTimeline
             itens={projeto.itens}
             selecionados={selecionados}
-            concluidas={concluidas}
-            onAlternarConcluida={alternarConcluida}
+            itensConcluidos={itensConcluidos}
+            onAlternarItem={alternarItem}
             onSelecionarProduto={setProdutoDrawer}
           />
 

@@ -17,7 +17,10 @@ export interface ProjetoSalvo {
   loja: string
   projeto: Projeto
   selecionados: string[]
-  etapasConcluidas: number[]
+  // Progresso POR ITEM: posições em projeto.itens já marcadas como feitas. A etapa do road
+  // map fica concluída quando todos os itens dela estão aqui. (Projetos salvos antes desta
+  // versão guardavam `etapasConcluidas`; sem `itensConcluidos` eles abrem sem progresso.)
+  itensConcluidos?: number[]
 }
 
 type Mapa = Record<string, ProjetoSalvo[]>
@@ -63,7 +66,7 @@ export function getProjeto(email: string, id: string): ProjetoSalvo | null {
 
 export function salvarProjeto(
   email: string,
-  dados: Pick<ProjetoSalvo, 'titulo' | 'descricao' | 'loja' | 'projeto' | 'selecionados' | 'etapasConcluidas'>
+  dados: Pick<ProjetoSalvo, 'titulo' | 'descricao' | 'loja' | 'projeto' | 'selecionados' | 'itensConcluidos'>
 ): ProjetoSalvo | null {
   const mapa = lerMapa()
   const chave = normalizar(email)
@@ -78,7 +81,7 @@ export function salvarProjeto(
 export function atualizarProgresso(
   email: string,
   id: string,
-  dados: Partial<Pick<ProjetoSalvo, 'selecionados' | 'etapasConcluidas' | 'loja'>>
+  dados: Partial<Pick<ProjetoSalvo, 'selecionados' | 'itensConcluidos' | 'loja'>>
 ): void {
   const mapa = lerMapa()
   const chave = normalizar(email)
@@ -97,15 +100,27 @@ export function removerProjeto(email: string, id: string): void {
   salvarMapa(mapa)
 }
 
-// Números do cartão na lista: etapas (com nome) do road map, quantas concluídas, e o total
-// dos produtos escolhidos.
+// Números do cartão na lista: itens e etapas do road map (uma etapa está concluída quando
+// todos os itens dela estão feitos) e o total dos produtos escolhidos.
 export function resumoProjeto(p: ProjetoSalvo) {
-  const etapas = new Set(p.projeto.itens.filter(i => i.etapa_nome).map(i => i.etapa_ordem ?? 1))
-  const concluidas = p.etapasConcluidas.filter(o => etapas.has(o)).length
+  const feitos = new Set(p.itensConcluidos ?? [])
+  const porEtapa = new Map<number, { total: number; feitos: number }>()
+  p.projeto.itens.forEach((item, indice) => {
+    if (!item.etapa_nome) return
+    const ordem = item.etapa_ordem ?? 1
+    const e = porEtapa.get(ordem) ?? { total: 0, feitos: 0 }
+    e.total += 1
+    if (feitos.has(indice)) e.feitos += 1
+    porEtapa.set(ordem, e)
+  })
+  const etapas = Array.from(porEtapa.values())
+  const concluidas = etapas.filter(e => e.feitos === e.total).length
+  const itensTotal = etapas.reduce((s, e) => s + e.total, 0)
+  const itensFeitos = etapas.reduce((s, e) => s + e.feitos, 0)
   const escolhidos = new Set(p.selecionados)
   const total = p.projeto.itens
     .flatMap(i => i.resultados)
     .filter((r, idx, arr) => escolhidos.has(r.produto.id) && arr.findIndex(x => x.produto.id === r.produto.id) === idx)
     .reduce((soma, r) => soma + (((r.produto as any).preco as number | undefined) ?? 0), 0)
-  return { totalEtapas: etapas.size, concluidas, materiais: p.projeto.itens.length, total }
+  return { totalEtapas: etapas.length, concluidas, itensTotal, itensFeitos, materiais: p.projeto.itens.length, total }
 }

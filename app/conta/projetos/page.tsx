@@ -59,10 +59,11 @@ export default function ProjetosPage() {
           <Link href="/projeto"><Button variant="primary">Começar um projeto</Button></Link>
         </div>
       ) : (
-        <div className="space-y-3">
+        // Muitos projetos rolam dentro da própria caixa em vez de esticar a página
+        <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-1">
           {projetos.map(p => {
             const r = resumoProjeto(p)
-            const pct = r.totalEtapas > 0 ? Math.round((r.concluidas / r.totalEtapas) * 100) : 0
+            const pct = r.itensTotal > 0 ? Math.round((r.itensFeitos / r.itensTotal) * 100) : 0
             return (
               <Card key={p.id} padding="md" className="flex flex-col gap-3">
                 <div className="flex items-start justify-between gap-3">
@@ -92,11 +93,11 @@ export default function ProjetosPage() {
                   </div>
                 </div>
 
-                {r.totalEtapas > 0 && (
+                {r.itensTotal > 0 && (
                   <div>
                     <div className="flex items-center justify-between text-[11px] mb-1">
                       <span className="font-semibold text-gray-600">Road map</span>
-                      <span className="text-gray-500">{r.concluidas} de {r.totalEtapas} etapas concluídas</span>
+                      <span className="text-gray-500">{r.itensFeitos} de {r.itensTotal} itens · {r.concluidas} de {r.totalEtapas} etapas</span>
                     </div>
                     <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
                       <div className="h-full rounded-full bg-lm-green transition-all duration-500" style={{ width: `${pct}%` }} />
