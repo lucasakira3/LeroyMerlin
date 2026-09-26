@@ -17,7 +17,7 @@ export default function PedidoCompartilhadoView() {
 
   if (!pedido) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="flex-1 bg-gray-50">
         <div className="max-w-xl mx-auto px-4 py-10">
           <Card className="text-center">
             <p className="text-sm text-gray-600 mb-4">Este link parece inválido ou incompleto.</p>
@@ -31,7 +31,7 @@ export default function PedidoCompartilhadoView() {
   const status = getStatusPedido(pedido)
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="flex-1 bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-6">
         <PageHeader
           title="Pedido compartilhado"

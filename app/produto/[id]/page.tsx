@@ -23,7 +23,7 @@ export default async function ProdutoPage({ params }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="flex-1 bg-gray-50">
       <TrackProduct id={produto.id} nome={produto.produto} categoria={produto.categoria} />
       {/* Header */}
       <header className="bg-lm-green text-white px-4 py-5 shadow-md">

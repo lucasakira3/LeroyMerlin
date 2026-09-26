@@ -11,7 +11,9 @@ import FavoritosIcon from './FavoritosIcon'
 import NotificacoesBell from './NotificacoesBell'
 import HeaderSearch from './HeaderSearch'
 
-const tabs = [
+// Exportado pro Footer.tsx reaproveitar os mesmos links/rótulos — evita os dois listarem as
+// páginas do site de forma divergente se uma nova aba for adicionada aqui.
+export const tabs = [
   { href: '/buscar', label: 'Buscar', icon: Search },
   { href: '/produtos', label: 'Produtos', icon: LayoutGrid },
   { href: '/projeto', label: 'Projeto Guiado', icon: Sparkles },

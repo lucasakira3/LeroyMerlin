@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 import TourGuiado from "@/components/TourGuiado";
 import PageTransition from "@/components/PageTransition";
 import CompareToast from "@/components/CompareToast";
@@ -36,12 +37,18 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body
-        className={`${inter.className} bg-lm-light min-h-screen`}
+        className={`${inter.className} bg-lm-light min-h-screen flex flex-col`}
         suppressHydrationWarning
       >
         <NavBar />
         <TourGuiado />
-        <PageTransition>{children}</PageTransition>
+        {/* flex-1 empurra o Footer pro fim real da viewport mesmo em páginas com pouco
+            conteúdo (ex: Comparador/Régua virtual vazios) — sem isso o rodapé ficaria colado
+            logo abaixo do conteúdo curto, sobrando vazio depois dele em vez de antes. */}
+        <div className="flex-1 flex flex-col">
+          <PageTransition>{children}</PageTransition>
+        </div>
+        <Footer />
         <CompareToast />
         <UndoToast />
       </body>

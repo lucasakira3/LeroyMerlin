@@ -34,7 +34,7 @@ export default function ListaCompartilhadaView() {
 
   if (!dados) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="flex-1 bg-gray-50">
         <div className="max-w-xl mx-auto px-4 py-10">
           <Card className="text-center">
             <p className="text-sm text-gray-600 mb-4">Este link parece inválido ou incompleto.</p>
@@ -48,7 +48,7 @@ export default function ListaCompartilhadaView() {
   const totalEstimado = resultados.reduce((soma, r) => soma + r.produto.preco, 0)
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="flex-1 bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 py-6">
         <PageHeader title={dados.titulo} description={dados.loja} />
 

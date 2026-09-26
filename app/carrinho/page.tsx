@@ -272,7 +272,7 @@ export default function CarrinhoPage() {
     }
 
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="flex-1 bg-gray-50">
         <div className="max-w-xl mx-auto px-4 py-10">
           <Card className="text-center">
             <CheckCircle2 size={40} className="text-lm-green mx-auto mb-3" />
@@ -342,7 +342,7 @@ export default function CarrinhoPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="flex-1 bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-6">
         <PageHeader title="Carrinho" description={itens.length > 0 ? `${itens.length} ${itens.length === 1 ? 'item' : 'itens'}` : undefined} />
 

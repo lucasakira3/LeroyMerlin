@@ -51,7 +51,7 @@ function ComparadorContent() {
 
   if (produtos === null) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="flex-1 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="overflow-x-auto">
             <div className="flex gap-4 min-w-full">
@@ -65,7 +65,7 @@ function ComparadorContent() {
 
   if (produtos.length === 0) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="flex-1 bg-gray-50">
         <div className="max-w-xl mx-auto px-4 py-10">
           <Card className="text-center py-10">
             <Scale size={32} className="text-gray-300 mx-auto mb-3" />
@@ -78,7 +78,7 @@ function ComparadorContent() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="flex-1 bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-6">
         <ComparadorResultado
           produtos={produtos}
@@ -94,7 +94,7 @@ function ComparadorContent() {
 export default function ComparadorPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gray-50">
+      <main className="flex-1 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="overflow-x-auto">
             <div className="flex gap-4 min-w-full">
