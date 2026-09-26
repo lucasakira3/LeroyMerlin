@@ -303,30 +303,6 @@ export default function ListaDeCompras({ projeto, onTotalChange }: { projeto: Pr
                 <StoreMap resultados={mapResultados} loja={loja} totalEstimado={totalEstimado} />
               </div>
             )}
-
-            {/* Roteiro na loja */}
-            {mapResultados.length > 0 && (
-              <div className="bg-white border border-gray-500 rounded-xl p-4">
-                <p className="text-xs font-bold text-gray-600 mb-3">📍 Roteiro sugerido</p>
-                <div className="space-y-2">
-                  {mapResultados.map((r, i) => (
-                    <div key={r.produto.id} className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-white bg-lm-green rounded px-1.5 py-0.5 flex-shrink-0 font-mono">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <span className="text-xs font-bold text-lm-green flex-shrink-0 w-20">{r.produto.corredor}</span>
-                      <span className="text-xs text-gray-600 truncate">{r.produto.produto}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-3 pt-3 border-t border-gray-500">
-                  <Link href="/agendamento"
-                    className="flex items-center justify-center gap-1.5 w-full text-xs font-semibold text-lm-green border border-lm-green/30 py-2 rounded-lg hover:bg-lm-green/5 transition-colors">
-                    <CalendarCheck size={13} /> Agendar visita presencial
-                  </Link>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
