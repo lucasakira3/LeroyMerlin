@@ -4,10 +4,10 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { KeyRound, Mail, User, ArrowRight } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import { contaExiste, criarConta, validarLogin, getConta } from '@/lib/clientContas'
+import { contaExiste, criarConta, validarLogin, getConta, atualizarConta } from '@/lib/clientContas'
 import { loginUsuario } from '@/lib/clientAuth'
 
-type Modo = 'login' | 'cadastro'
+type Modo = 'login' | 'cadastro' | 'recuperar'
 
 export default function ClienteAuthForm() {
   const searchParams = useSearchParams()
@@ -21,11 +21,15 @@ export default function ClienteAuthForm() {
   const [senha, setSenha] = useState('')
   const [confirmarSenha, setConfirmarSenha] = useState('')
   const [erro, setErro] = useState<string | null>(null)
+  const [sucesso, setSucesso] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   function trocarModo(novoModo: Modo) {
     setModo(novoModo)
     setErro(null)
+    setSucesso(null)
+    setSenha('')
+    setConfirmarSenha('')
   }
 
   function handleLogin(e: React.FormEvent) {
@@ -47,6 +51,26 @@ export default function ClienteAuthForm() {
       loginUsuario(email, conta?.nome)
       window.location.href = destino
     }, 1000)
+  }
+
+  // Sem backend não há e-mail de verificação: quem sabe o e-mail cadastrado pode redefinir
+  // a senha. Aceitável só porque o projeto é um MVP local (ver lib/clientContas.ts).
+  function handleRecuperar(e: React.FormEvent) {
+    e.preventDefault()
+    if (senha !== confirmarSenha) {
+      setErro('As senhas não coincidem.')
+      return
+    }
+    if (!contaExiste(email)) {
+      setErro('Não encontramos uma conta com esse email.')
+      return
+    }
+    atualizarConta(email, { senha })
+    setModo('login')
+    setErro(null)
+    setSenha('')
+    setConfirmarSenha('')
+    setSucesso('Senha alterada! Entre com a nova senha.')
   }
 
   function handleCadastro(e: React.FormEvent) {
@@ -71,14 +95,18 @@ export default function ClienteAuthForm() {
     <>
       <div className="text-center mb-8">
         <h1 className="text-2xl font-black text-gray-900">
-          {modo === 'login' ? 'Entrar como Cliente' : 'Criar conta'}
+          {modo === 'login' ? 'Entrar como Cliente' : modo === 'cadastro' ? 'Criar conta' : 'Redefinir senha'}
         </h1>
         <p className="text-gray-500 text-sm mt-2">
-          {modo === 'login' ? 'Acesse para favoritar produtos e ver seu histórico' : 'Leva menos de um minuto'}
+          {modo === 'login'
+            ? 'Acesse para favoritar produtos e ver seu histórico'
+            : modo === 'cadastro'
+              ? 'Leva menos de um minuto'
+              : 'Informe o e-mail da conta e escolha uma nova senha'}
         </p>
       </div>
 
-      <form onSubmit={modo === 'login' ? handleLogin : handleCadastro} className="space-y-5">
+      <form onSubmit={modo === 'login' ? handleLogin : modo === 'cadastro' ? handleCadastro : handleRecuperar} className="space-y-5">
         {modo === 'cadastro' && (
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1.5">Nome</label>
@@ -116,7 +144,7 @@ export default function ClienteAuthForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1.5">Senha</label>
+          <label className="block text-sm font-bold text-gray-700 mb-1.5">{modo === 'recuperar' ? 'Nova senha' : 'Senha'}</label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <KeyRound size={18} className="text-gray-400" />
@@ -132,7 +160,7 @@ export default function ClienteAuthForm() {
           </div>
         </div>
 
-        {modo === 'cadastro' && (
+        {(modo === 'cadastro' || modo === 'recuperar') && (
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1.5">Confirmar senha</label>
             <div className="relative">
@@ -151,6 +179,8 @@ export default function ClienteAuthForm() {
           </div>
         )}
 
+        {sucesso && <p className="text-sm text-lm-green text-center font-medium">{sucesso}</p>}
+
         {erro && (
           <p className="text-sm text-red-600 text-center">
             {erro}
@@ -166,19 +196,24 @@ export default function ClienteAuthForm() {
         )}
 
         <Button type="submit" variant="primary" disabled={loading} className="w-full mt-2">
-          {loading ? 'Enviando...' : modo === 'login' ? 'Entrar no Sistema' : 'Criar conta'}
+          {loading ? 'Enviando...' : modo === 'login' ? 'Entrar no Sistema' : modo === 'cadastro' ? 'Criar conta' : 'Salvar nova senha'}
           {!loading && <ArrowRight size={18} />}
         </Button>
       </form>
 
       <div className="mt-6 text-center">
         {modo === 'login' ? (
-          <button type="button" onClick={() => trocarModo('cadastro')} className="text-sm font-medium text-lm-green hover:underline">
-            Não tem conta? Cadastre-se
-          </button>
+          <div className="space-y-2">
+            <button type="button" onClick={() => trocarModo('recuperar')} className="block mx-auto text-sm font-medium text-lm-green hover:underline">
+              Esqueci minha senha
+            </button>
+            <button type="button" onClick={() => trocarModo('cadastro')} className="block mx-auto text-sm font-medium text-lm-green hover:underline">
+              Não tem conta? Cadastre-se
+            </button>
+          </div>
         ) : (
           <button type="button" onClick={() => trocarModo('login')} className="text-sm font-medium text-lm-green hover:underline">
-            Já tem conta? Entrar
+            {modo === 'recuperar' ? 'Voltar ao login' : 'Já tem conta? Entrar'}
           </button>
         )}
       </div>
