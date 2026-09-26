@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
-  UserCircle, Lock, CreditCard, MapPin, ShieldAlert, ChevronRight, Clock, Check, Heart, ShoppingBag,
+  UserCircle, Lock, CreditCard, MapPin, ShieldAlert, ChevronRight, Clock, Check, Heart, ShoppingBag, ClipboardList,
 } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import ProductListItem from '@/components/ProductListItem'
@@ -12,6 +12,8 @@ import { getCartoes } from '@/lib/clientCartoes'
 import { getFavoritosIds } from '@/lib/clientFavoritos'
 import { getPedidos } from '@/lib/clientPedidos'
 import { getConta } from '@/lib/clientContas'
+import { getPerfil } from '@/lib/clientPerfil'
+import EntrevistaGuiada from '@/components/EntrevistaGuiada'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { getHistoricoIds } from '@/lib/clientHistorico'
 import { buscarProdutosPorIds } from '@/lib/produtosCliente'
@@ -32,19 +34,35 @@ interface PassoPerfil { chave: string; rotulo: string; href: string; feito: bool
 export default function ContaPage() {
   const [passos, setPassos] = useState<PassoPerfil[]>([])
   const [nomeBoasVindas, setNomeBoasVindas] = useState('')
+  const [email, setEmail] = useState<string | null>(null)
   const [historicoIds, setHistoricoIds] = useState<string[]>([])
   const [historico, setHistorico] = useState<SearchResult[] | null>(null)
+
+  // Progresso do perfil: recalcula quando a entrevista é respondida/refeita ou um favorito
+  // muda, sem precisar recarregar a página.
+  useEffect(() => {
+    if (!email) return
+    const recalcular = () => setPassos([
+      { chave: 'perfil', rotulo: 'Responder a entrevista de perfil', href: '#entrevista', feito: getPerfil(email) !== null, icone: ClipboardList },
+      { chave: 'endereco', rotulo: 'Salvar um endereço', href: '/conta/enderecos', feito: getEnderecos(email).length > 0, icone: MapPin },
+      { chave: 'cartao', rotulo: 'Salvar um cartão', href: '/conta/cartoes', feito: getCartoes(email).length > 0, icone: CreditCard },
+      { chave: 'favorito', rotulo: 'Favoritar um produto', href: '/produtos', feito: getFavoritosIds().length > 0, icone: Heart },
+      { chave: 'pedido', rotulo: 'Fazer o primeiro pedido', href: '/ofertas', feito: getPedidos(email).length > 0, icone: ShoppingBag },
+    ])
+    recalcular()
+    window.addEventListener('lm-perfil-change', recalcular)
+    window.addEventListener('lm-favoritos-change', recalcular)
+    return () => {
+      window.removeEventListener('lm-perfil-change', recalcular)
+      window.removeEventListener('lm-favoritos-change', recalcular)
+    }
+  }, [email])
 
   useEffect(() => {
     const usuario = getUsuarioLogado()
     if (!usuario) return
+    setEmail(usuario.email)
     setNomeBoasVindas((getConta(usuario.email)?.nome ?? usuario.nome ?? usuario.email).split(' ')[0])
-    setPassos([
-      { chave: 'endereco', rotulo: 'Salvar um endereço', href: '/conta/enderecos', feito: getEnderecos(usuario.email).length > 0, icone: MapPin },
-      { chave: 'cartao', rotulo: 'Salvar um cartão', href: '/conta/cartoes', feito: getCartoes(usuario.email).length > 0, icone: CreditCard },
-      { chave: 'favorito', rotulo: 'Favoritar um produto', href: '/produtos', feito: getFavoritosIds().length > 0, icone: Heart },
-      { chave: 'pedido', rotulo: 'Fazer o primeiro pedido', href: '/ofertas', feito: getPedidos(usuario.email).length > 0, icone: ShoppingBag },
-    ])
     const ids = getHistoricoIds().slice(0, 5)
     setHistoricoIds(ids)
     if (ids.length === 0) {
@@ -141,6 +159,13 @@ export default function ContaPage() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Entrevista de perfil — sugestões de produtos e serviços; alimenta o passo 1 do progresso */}
+      {email && (
+        <div id="entrevista" className="scroll-mt-24">
+          <EntrevistaGuiada email={email} />
         </div>
       )}
     </div>

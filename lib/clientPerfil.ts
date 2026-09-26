@@ -32,6 +32,8 @@ export function salvarPerfil(email: string, perfil: Perfil): void {
   const mapa = lerMapa()
   mapa[normalizar(email)] = perfil
   salvarMapa(mapa)
+  // Minha Conta escuta pra atualizar o progresso do perfil sem precisar recarregar
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('lm-perfil-change'))
 }
 
 export function getPerfil(email: string): Perfil | null {
@@ -42,4 +44,5 @@ export function limparPerfil(email: string): void {
   const mapa = lerMapa()
   delete mapa[normalizar(email)]
   salvarMapa(mapa)
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('lm-perfil-change'))
 }
