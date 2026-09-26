@@ -1,12 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2, Wallet, Package, Wrench, Bookmark, BookmarkCheck } from 'lucide-react'
-import StoreMap from './StoreMap'
+import { ShoppingBag, Lightbulb, CalendarCheck, Share2, Wallet, Package, Wrench, Bookmark, BookmarkCheck } from 'lucide-react'
 import ProjetoTimeline from './ProjetoTimeline'
-import { type Projeto, type ItemProjeto } from './ProjetoMosaico'
+import { type Projeto } from './ProjetoMosaico'
 import PlantaCasa from './PlantaCasa'
-import ListaMateriaisCompacta from './ListaMateriaisCompacta'
 import ProdutoDrawer from './ProdutoDrawer'
 import type { SearchResult } from '@/types/produto'
 import Link from 'next/link'
@@ -34,13 +32,12 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
   projetoSalvo?: ProjetoSalvo
 }) {
   const [loja, setLoja] = useState(projetoSalvo?.loja ?? LOJAS[0])
-  const [selecionados, setSelecionados] = useState<Set<string>>(
+  const [selecionados] = useState<Set<string>>(
     () => projetoSalvo ? new Set(projetoSalvo.selecionados) : new Set(projeto.itens.flatMap(i => {
       const preferido = i.resultados.find(r => r.produto.estoque > 0) ?? i.resultados[0]
       return preferido ? [preferido.produto.id] : []
     }))
   )
-  const [mapaAberto, setMapaAberto] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
   const [aba, setAba] = useState<'visao-geral' | 'lista-completa'>(projetoSalvo ? 'lista-completa' : 'visao-geral')
   const [concluidas, setConcluidas] = useState<Set<number>>(() => new Set(projetoSalvo?.etapasConcluidas ?? []))
@@ -93,18 +90,6 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
     window.addEventListener('lm-orcamento-change', ler)
     return () => window.removeEventListener('lm-orcamento-change', ler)
   }, [])
-
-  // Troca exclusiva dentro das alternativas do mesmo item — garante no máximo 1 produto
-  // selecionado por item: tira todas as outras opções desse item específico antes de marcar
-  // a nova (diferente de um toggle simples, que deixaria acumular mais de uma selecionada).
-  function trocarAlternativa(item: ItemProjeto, produtoId: string) {
-    setSelecionados(prev => {
-      const next = new Set(prev)
-      for (const r of item.resultados) next.delete(r.produto.id)
-      next.add(produtoId)
-      return next
-    })
-  }
 
   const mapResultados: SearchResult[] = projeto.itens
     .flatMap(i => i.resultados)
@@ -321,32 +306,17 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
       )}
 
       {aba === 'lista-completa' && (
-      <>
-      {/* Road map em largura total, acima da lista: a trilha de cartões precisa de espaço */}
-      <div className="mb-5">
-        <ProjetoTimeline
-          itens={projeto.itens}
-          selecionados={selecionados}
-          concluidas={concluidas}
-          onAlternarConcluida={alternarConcluida}
-          onSelecionarProduto={setProdutoDrawer}
-        />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-
-        {/* ── Coluna esquerda: lista ────────────────────── */}
-        <div className="lg:col-span-3 space-y-3">
-          <h3 className="text-sm font-bold text-gray-900">Lista de materiais</h3>
-
-          <ListaMateriaisCompacta
+        <div className="space-y-5">
+          <ProjetoTimeline
             itens={projeto.itens}
             selecionados={selecionados}
-            onTrocarAlternativa={trocarAlternativa}
+            concluidas={concluidas}
+            onAlternarConcluida={alternarConcluida}
             onSelecionarProduto={setProdutoDrawer}
           />
 
           {/* CTA Agendamento */}
-          <Card className="bg-lm-yellow/10 border-lm-yellow/30 mt-2">
+          <Card className="bg-lm-yellow/10 border-lm-yellow/30">
             <p className="text-sm font-bold text-gray-900 mb-1">Quer ajuda especializada?</p>
             <p className="text-xs text-gray-500 mb-4">
               Nossos consultores avaliam seu projeto na loja, sem custo e sem compromisso.
@@ -358,36 +328,6 @@ export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChan
             </Link>
           </Card>
         </div>
-
-        {/* ── Coluna direita: mapa (sticky) ─────────────── */}
-        <div className="lg:col-span-2">
-          <div className="lg:sticky lg:top-4 space-y-3">
-
-            {/* Botão toggle mapa */}
-            <button onClick={() => setMapaAberto(v => !v)}
-              className="w-full flex items-center justify-between bg-lm-green text-white px-4 py-3 rounded-xl font-semibold text-sm hover:bg-green-700 transition-colors shadow-sm">
-              <div className="flex items-center gap-2">
-                <Map size={16} />
-                {mapaAberto ? 'Fechar mapa' : `Ver no mapa · ${mapResultados.length} produtos`}
-              </div>
-              {mapaAberto ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
-
-            {mapaAberto && (
-              <div className="bg-white border-2 border-lm-green rounded-2xl p-3 shadow-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-gray-900">{loja.split(' — ')[0]}</span>
-                  <button onClick={() => setMapaAberto(false)}>
-                    <X size={14} className="text-gray-400 hover:text-gray-600" />
-                  </button>
-                </div>
-                <StoreMap resultados={mapResultados} loja={loja} totalEstimado={totalEstimado} />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      </>
       )}
 
       <ProdutoDrawer produto={produtoDrawer} onClose={() => setProdutoDrawer(null)} />
