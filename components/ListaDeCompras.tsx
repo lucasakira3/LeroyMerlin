@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2, Wallet, Package, Wrench } from 'lucide-react'
+import { Map, ShoppingBag, Lightbulb, CalendarCheck, ChevronDown, ChevronUp, X, Share2, Wallet, Package, Wrench, Bookmark, BookmarkCheck } from 'lucide-react'
 import StoreMap from './StoreMap'
 import ProjetoTimeline from './ProjetoTimeline'
 import { type Projeto, type ItemProjeto } from './ProjetoMosaico'
@@ -14,6 +14,9 @@ import Card from './ui/Card'
 import Button from './ui/Button'
 import { codificarLista } from '@/lib/listaCompartilhada'
 import { getOrcamento } from '@/lib/clientOrcamento'
+import { getUsuarioLogado } from '@/lib/clientAuth'
+import { salvarProjeto, atualizarProgresso, type ProjetoSalvo } from '@/lib/clientProjetos'
+import { showToast } from '@/lib/toast'
 
 const LOJAS = [
   'Interlagos — São Paulo/SP', 'Osasco — Osasco/SP', 'Aricanduva — São Paulo/SP',
@@ -22,17 +25,64 @@ const LOJAS = [
   'Barra da Tijuca — Rio de Janeiro/RJ', 'Curitiba — Curitiba/PR',
 ]
 
-export default function ListaDeCompras({ projeto, onTotalChange }: { projeto: Projeto; descricaoOriginal: string; onTotalChange?: (total: number | null) => void }) {
-  const [loja, setLoja] = useState(LOJAS[0])
+// `projetoSalvo`: quando vem de Minha Conta > Projetos, começa do progresso guardado
+// (produtos escolhidos, etapas concluídas, loja) e grava de volta cada mudança.
+export default function ListaDeCompras({ projeto, descricaoOriginal, onTotalChange, projetoSalvo }: {
+  projeto: Projeto
+  descricaoOriginal: string
+  onTotalChange?: (total: number | null) => void
+  projetoSalvo?: ProjetoSalvo
+}) {
+  const [loja, setLoja] = useState(projetoSalvo?.loja ?? LOJAS[0])
   const [selecionados, setSelecionados] = useState<Set<string>>(
-    () => new Set(projeto.itens.flatMap(i => {
+    () => projetoSalvo ? new Set(projetoSalvo.selecionados) : new Set(projeto.itens.flatMap(i => {
       const preferido = i.resultados.find(r => r.produto.estoque > 0) ?? i.resultados[0]
       return preferido ? [preferido.produto.id] : []
     }))
   )
   const [mapaAberto, setMapaAberto] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
-  const [aba, setAba] = useState<'visao-geral' | 'lista-completa'>('visao-geral')
+  const [aba, setAba] = useState<'visao-geral' | 'lista-completa'>(projetoSalvo ? 'lista-completa' : 'visao-geral')
+  const [concluidas, setConcluidas] = useState<Set<number>>(() => new Set(projetoSalvo?.etapasConcluidas ?? []))
+  const [salvoId, setSalvoId] = useState<string | null>(projetoSalvo?.id ?? null)
+  const [emailUsuario, setEmailUsuario] = useState<string | null>(null)
+  useEffect(() => { setEmailUsuario(getUsuarioLogado()?.email ?? null) }, [])
+
+  // Com o projeto salvo, todo progresso (troca de produto, etapa concluída, loja) é gravado
+  useEffect(() => {
+    if (!salvoId || !emailUsuario) return
+    atualizarProgresso(emailUsuario, salvoId, {
+      selecionados: Array.from(selecionados),
+      etapasConcluidas: Array.from(concluidas),
+      loja,
+    })
+  }, [salvoId, emailUsuario, selecionados, concluidas, loja])
+
+  function alternarConcluida(ordem: number) {
+    setConcluidas(prev => {
+      const next = new Set(prev)
+      next.has(ordem) ? next.delete(ordem) : next.add(ordem)
+      return next
+    })
+  }
+
+  function salvarNaConta() {
+    if (!emailUsuario) return
+    const salvo = salvarProjeto(emailUsuario, {
+      titulo: projeto.titulo,
+      descricao: descricaoOriginal,
+      loja,
+      projeto,
+      selecionados: Array.from(selecionados),
+      etapasConcluidas: Array.from(concluidas),
+    })
+    if (!salvo) {
+      showToast('Não foi possível salvar: o armazenamento do navegador está cheio.')
+      return
+    }
+    setSalvoId(salvo.id)
+    showToast('Projeto salvo em Minha Conta › Projetos')
+  }
   const [produtoDrawer, setProdutoDrawer] = useState<SearchResult['produto'] | null>(null)
   // Orçamento definido no topo da tela do Projeto Guiado (TermometroOrcamento) — lido no
   // useEffect porque vive em localStorage; e reage ao evento que o termômetro já dispara.
@@ -202,6 +252,28 @@ export default function ListaDeCompras({ projeto, onTotalChange }: { projeto: Pr
             <Share2 size={14} />
             {linkCopiado ? 'Link copiado ✓' : 'Copiar link'}
           </button>
+          {salvoId ? (
+            <Link
+              href="/conta/projetos"
+              className="flex items-center gap-2 bg-lm-yellow text-lm-dark text-sm font-bold px-4 py-2.5 rounded-xl"
+            >
+              <BookmarkCheck size={15} /> Projeto salvo · ver meus projetos
+            </Link>
+          ) : emailUsuario ? (
+            <button
+              onClick={salvarNaConta}
+              className="flex items-center gap-2 bg-lm-yellow hover:brightness-95 text-lm-dark text-sm font-bold px-4 py-2.5 rounded-xl transition-all"
+            >
+              <Bookmark size={15} /> Salvar projeto
+            </button>
+          ) : (
+            <Link
+              href="/funcionario/login?next=/projeto"
+              className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
+            >
+              <Bookmark size={15} /> Entre para salvar o projeto
+            </Link>
+          )}
         </div>
       </div>
 
@@ -255,6 +327,8 @@ export default function ListaDeCompras({ projeto, onTotalChange }: { projeto: Pr
         <ProjetoTimeline
           itens={projeto.itens}
           selecionados={selecionados}
+          concluidas={concluidas}
+          onAlternarConcluida={alternarConcluida}
           onSelecionarProduto={setProdutoDrawer}
         />
       </div>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LogOut, Package, HelpCircle, Star, Heart } from 'lucide-react'
+import { LogOut, Package, HelpCircle, Star, Heart, Route } from 'lucide-react'
 import { logoutUsuario } from '@/lib/clientAuth'
 
 interface Props {
@@ -15,6 +15,7 @@ const ITENS = [
   { href: '/conta/perguntas', label: 'Perguntas', icone: HelpCircle },
   { href: '/conta/avaliacoes', label: 'Opiniões', icone: Star },
   { href: '/conta/favoritos', label: 'Favoritos', icone: Heart },
+  { href: '/conta/projetos', label: 'Projetos', icone: Route },
 ]
 
 // Barra lateral persistente em todo /conta/* (ver app/conta/layout.tsx) — navegação por

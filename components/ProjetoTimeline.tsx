@@ -38,6 +38,9 @@ interface Etapa {
 interface Props {
   itens: ItemProjeto[]
   selecionados: Set<string>
+  // Etapas concluídas vivem em ListaDeCompras (lá são gravadas no projeto salvo)
+  concluidas: Set<number>
+  onAlternarConcluida: (ordem: number) => void
   onSelecionarProduto: (produto: SearchResult['produto']) => void
 }
 
@@ -46,10 +49,9 @@ const moeda = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', curr
 // Road map do projeto: uma trilha de cartões (um por etapa, em ordem). Clicar num cartão
 // abre embaixo o passo a passo daquela etapa — cada material vira um passo numerado, com a
 // quantidade e a observação que a IA deu, mais o produto escolhido (foto, preço, corredor).
-// Marcar a etapa como concluída é só estado local da tela (some ao recarregar).
-export default function ProjetoTimeline({ itens, selecionados, onSelecionarProduto }: Props) {
+// Marcar a etapa como concluída só persiste se o projeto foi salvo (Minha Conta > Projetos).
+export default function ProjetoTimeline({ itens, selecionados, concluidas, onAlternarConcluida, onSelecionarProduto }: Props) {
   const [ativa, setAtiva] = useState<number | null>(null)
-  const [concluidas, setConcluidas] = useState<Set<number>>(new Set())
 
   const etapasMap = new Map<number, Etapa>()
   for (const item of itens) {
@@ -66,14 +68,6 @@ export default function ProjetoTimeline({ itens, selecionados, onSelecionarProdu
   const ordemAtiva = ativa ?? etapas[0].ordem
   const etapaAtiva = etapas.find(e => e.ordem === ordemAtiva) ?? etapas[0]
   const feitas = etapas.filter(e => concluidas.has(e.ordem)).length
-
-  function alternarConcluida(ordem: number) {
-    setConcluidas(prev => {
-      const next = new Set(prev)
-      next.has(ordem) ? next.delete(ordem) : next.add(ordem)
-      return next
-    })
-  }
 
   return (
     <Card className="mb-2" padding="none">
@@ -140,7 +134,7 @@ export default function ProjetoTimeline({ itens, selecionados, onSelecionarProdu
           </div>
           <button
             type="button"
-            onClick={() => alternarConcluida(etapaAtiva.ordem)}
+            onClick={() => onAlternarConcluida(etapaAtiva.ordem)}
             className={`flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
               concluidas.has(etapaAtiva.ordem)
                 ? 'bg-lm-green text-white border-lm-green'
