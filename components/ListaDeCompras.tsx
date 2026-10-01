@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
 import { ShoppingBag, Lightbulb, CalendarCheck, Share2, Wallet, Package, Wrench, Bookmark, BookmarkCheck } from 'lucide-react'
 import ProjetoTimeline from './ProjetoTimeline'
 import { type Projeto, type ItemProjeto } from './ProjetoMosaico'
@@ -60,14 +60,30 @@ function remapearConcluidos(itensAntigos: ItemProjeto[], itensNovos: ItemProjeto
   return novo
 }
 
-// `projetoSalvo`: quando vem de Minha Conta > Projetos, começa do progresso guardado
-// (produtos escolhidos, etapas concluídas, loja) e grava de volta cada mudança.
-export default function ListaDeCompras({ projeto: projetoInicial, descricaoOriginal, onTotalChange, projetoSalvo }: {
+// Exposto via ref pro ProjetoWizard aplicar uma atualização vinda do SEU PRÓPRIO chat
+// (quando `semChatInterno` esconde o ProjetoChat embutido abaixo) sem duplicar a lógica de
+// mesclagem de progresso, que já mora aqui.
+export interface ListaDeComprasHandle {
+  aplicarAtualizacao: (novoProjeto: Projeto) => void
+}
+
+interface ListaDeComprasProps {
   projeto: Projeto
   descricaoOriginal: string
   onTotalChange?: (total: number | null) => void
   projetoSalvo?: ProjetoSalvo
-}) {
+  // true quando usado dentro do ProjetoWizard (components/ProjetoWizard.tsx) — lá a conversa
+  // vive numa aba própria, separada do resultado, então o chat embutido aqui ficaria
+  // duplicado. Em Minha Conta > Projetos (uso standalone) continua false, chat normal.
+  semChatInterno?: boolean
+}
+
+// `projetoSalvo`: quando vem de Minha Conta > Projetos, começa do progresso guardado
+// (produtos escolhidos, etapas concluídas, loja) e grava de volta cada mudança.
+const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(function ListaDeCompras(
+  { projeto: projetoInicial, descricaoOriginal, onTotalChange, projetoSalvo, semChatInterno },
+  ref
+) {
   // Estado, não só prop: o chat do projeto (components/ProjetoChat.tsx) pode substituir a
   // lista inteira depois de um pedido de mudança do cliente.
   const [projeto, setProjeto] = useState<Projeto>(projetoInicial)
@@ -115,6 +131,8 @@ export default function ListaDeCompras({ projeto: projetoInicial, descricaoOrigi
     setSelecionados(novosSelecionados)
     setItensConcluidos(novosConcluidos)
   }
+
+  useImperativeHandle(ref, () => ({ aplicarAtualizacao: handleProjetoAtualizado }))
 
   function salvarNaConta() {
     if (!emailUsuario) return
@@ -384,12 +402,17 @@ export default function ListaDeCompras({ projeto: projetoInicial, descricaoOrigi
         </div>
       )}
 
-      {/* Continuação da conversa — visível nas duas abas, não só na "Lista completa" */}
-      <div className="mt-5">
-        <ProjetoChat projeto={projeto} onProjetoAtualizado={handleProjetoAtualizado} />
-      </div>
+      {/* Continuação da conversa — visível nas duas abas, não só na "Lista completa".
+          Omitido dentro do ProjetoWizard (semChatInterno): lá a conversa já tem aba própria. */}
+      {!semChatInterno && (
+        <div className="mt-5">
+          <ProjetoChat projeto={projeto} onProjetoAtualizado={handleProjetoAtualizado} />
+        </div>
+      )}
 
       <ProdutoDrawer produto={produtoDrawer} onClose={() => setProdutoDrawer(null)} />
     </div>
   )
-}
+})
+
+export default ListaDeCompras
