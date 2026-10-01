@@ -80,7 +80,7 @@ export default function ProdutosView() {
       <ProdutoDrawer produto={produtoDrawer} onClose={() => setProdutoDrawer(null)} />
 
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+        <h2 className="text-base sm:text-lg font-black text-lm-dark">
           Navegar por categoria
         </h2>
         <button
@@ -130,7 +130,7 @@ export default function ProdutosView() {
       ) : destaques.length > 0 && (
         <div className="mt-10">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+            <h2 className="text-base sm:text-lg font-black text-lm-dark">
               Destaques com desconto
             </h2>
             <Link
