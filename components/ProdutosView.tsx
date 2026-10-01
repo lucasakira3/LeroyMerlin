@@ -90,7 +90,10 @@ export default function ProdutosView() {
           Ver todos <Grid2x2 size={13} />
         </button>
       </div>
-      <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+      {/* 2 colunas no celular (telas pequenas de verdade): com 4 colunas o ladrilho fica
+          estreito demais e o título ("Ferramentas", "Construção"...) corta ao aumentar a
+          fonte — palavra única não tem onde quebrar linha. */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
         {CATEGORIAS.map(({ slug, label }, i) => (
           <button
             key={slug}
@@ -103,8 +106,10 @@ export default function ProdutosView() {
               alt={label}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent transition-opacity duration-300 group-hover:from-lm-green/85 group-hover:via-black/20" />
-            <span className="absolute bottom-1.5 left-0 right-0 text-center text-white text-[11px] font-bold leading-tight px-1">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent transition-opacity duration-300 group-hover:from-lm-green/90 group-hover:via-black/25" />
+            {/* Título maior e com sombra — usuários reclamaram que o antigo (11px) era
+                ilegível em cima da foto. */}
+            <span className="absolute bottom-2 left-0 right-0 text-center text-white text-sm sm:text-base font-black leading-tight px-1.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
               {label}
             </span>
           </button>
