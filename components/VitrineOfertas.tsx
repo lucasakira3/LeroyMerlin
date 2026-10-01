@@ -63,10 +63,11 @@ export default function VitrineOfertas() {
               alt={label}
               className="absolute right-0 top-0 h-full w-3/5 max-w-[380px] object-cover [mask-image:linear-gradient(to_right,transparent,black_40%)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_40%)] group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/10 to-transparent" />
+            {/* Título e desconto maiores — ficavam pequenos demais pro tamanho do card. */}
             <div className="relative h-full flex flex-col justify-center px-6">
-              <span className="text-white text-lg font-black leading-tight">{label}</span>
-              <span className="text-lm-yellow text-sm font-bold">até {maxDesconto}% de desconto</span>
+              <span className="text-white text-2xl sm:text-3xl font-black leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]">{label}</span>
+              <span className="text-lm-yellow text-lg font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">até {maxDesconto}% de desconto</span>
             </div>
           </Link>
         ))}
