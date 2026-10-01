@@ -113,7 +113,7 @@ export default function OfertasView() {
           className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
             descontoMinimo === f
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-gray-600 border-gray-500 hover:border-lm-green/50'
+              : 'bg-white text-gray-600 border-black dark:border-gray-500 hover:border-lm-green/50'
           }`}
         >
           {f === 0 ? 'Todas' : `${f}% ou mais`}

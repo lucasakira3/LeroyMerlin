@@ -139,7 +139,7 @@ export default function ConsultaRapidaPage() {
           id="loja-funcionario"
           value={loja}
           onChange={e => mudarLoja(e.target.value)}
-          className="h-9 px-2.5 rounded-lg border border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+          className="h-9 px-2.5 rounded-lg border border-black dark:border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
         >
           {LOJAS.map(l => <option key={l} value={l}>{l}</option>)}
         </select>
@@ -147,7 +147,7 @@ export default function ConsultaRapidaPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 items-start">
       <Card padding="none">
-        <div className="p-4 border-b border-gray-500">
+        <div className="p-4 border-b border-black dark:border-gray-500">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -156,7 +156,7 @@ export default function ConsultaRapidaPage() {
               value={busca}
               onChange={e => setBusca(e.target.value)}
               placeholder="Nome, código (LM-0042) ou tipo de produto..."
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-500 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-black dark:border-gray-500 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
             />
           </div>
           <p className="text-xs text-gray-500 mt-2">Consulta de balcão: preço, estoque e corredor na hora, sem sair do atendimento.</p>
@@ -220,7 +220,7 @@ export default function ConsultaRapidaPage() {
               </div>
 
               <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-xl bg-gray-50 border border-gray-500 p-3">
+                <div className="rounded-xl bg-gray-50 border border-black dark:border-gray-500 p-3">
                   <p className="text-[11px] text-gray-500">Preço</p>
                   {detalhe.oferta.emOferta ? (
                     <>
@@ -231,7 +231,7 @@ export default function ConsultaRapidaPage() {
                     <p className="text-lg font-black text-gray-900">{formatarBRL(detalhe.atual.preco)}</p>
                   )}
                 </div>
-                <div className="rounded-xl bg-gray-50 border border-gray-500 p-3">
+                <div className="rounded-xl bg-gray-50 border border-black dark:border-gray-500 p-3">
                   <p className="text-[11px] text-gray-500">Estoque</p>
                   <p className={`text-lg font-black ${detalhe.atual.estoque === 0 ? 'text-red-600' : 'text-gray-900'}`}>
                     {detalhe.atual.estoque === 0 ? 'Zerado' : `${detalhe.atual.estoque} un.`}
@@ -300,7 +300,7 @@ export default function ConsultaRapidaPage() {
                         <button
                           type="button"
                           onClick={() => setSelecionadoId(p.id)}
-                          className="w-full flex items-center gap-3 rounded-xl border border-gray-500 p-2.5 text-left hover:border-lm-green/50 transition-colors"
+                          className="w-full flex items-center gap-3 rounded-xl border border-black dark:border-gray-500 p-2.5 text-left hover:border-lm-green/50 transition-colors"
                         >
                           <span className="min-w-0 flex-1">
                             <span className="block text-sm font-medium text-gray-900 truncate">{p.produto}</span>
@@ -321,7 +321,7 @@ export default function ConsultaRapidaPage() {
 
       <div ref={mapaRef} className="scroll-mt-4">
       <Card padding="none">
-        <div className="flex flex-wrap items-center gap-2 p-4 border-b border-gray-500">
+        <div className="flex flex-wrap items-center gap-2 p-4 border-b border-black dark:border-gray-500">
           <span className="inline-flex items-center gap-2 font-bold text-gray-900">
             <MapaIcone size={17} className="text-lm-green" /> Mapa da loja
           </span>
@@ -342,7 +342,7 @@ export default function ConsultaRapidaPage() {
           <div className="p-4 space-y-3">
             <div className="flex flex-wrap gap-2">
               {mapa.resultados.map(({ produto }) => (
-                <span key={produto.id} className="inline-flex items-center gap-1.5 rounded-full border border-gray-500 pl-3 pr-1.5 py-1 text-xs text-gray-700">
+                <span key={produto.id} className="inline-flex items-center gap-1.5 rounded-full border border-black dark:border-gray-500 pl-3 pr-1.5 py-1 text-xs text-gray-700">
                   {produto.produto}
                   <button
                     type="button"

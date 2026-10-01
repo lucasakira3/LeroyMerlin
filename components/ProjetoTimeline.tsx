@@ -140,7 +140,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                 className={`relative w-40 h-full text-left rounded-2xl border-2 p-3 transition-all hover:-translate-y-0.5 ${
                   selecionada
                     ? 'border-lm-green bg-lm-green/10 shadow-sm'
-                    : 'border-gray-500 bg-white hover:border-lm-green/50'
+                    : 'border-black dark:border-gray-500 bg-white hover:border-lm-green/50'
                 }`}
               >
                 <span className={`absolute -top-2 -left-2 w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${
@@ -175,7 +175,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
       </div>
 
       {/* Passo a passo da etapa escolhida */}
-      <div className="border-t border-gray-500 px-4 py-4">
+      <div className="border-t border-black px-4 py-4">
         <div className="mb-3 min-w-0">
           <p className="text-[11px] font-bold uppercase tracking-widest text-lm-green">
             Etapa {etapaAtiva.ordem} de {etapas.length} · {feitosDaEtapa(etapaAtiva)} de {etapaAtiva.itens.length} itens
@@ -214,7 +214,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                   {feito ? <Check size={13} strokeWidth={3} /> : idx + 1}
                 </span>
                 <div className={`flex-1 min-w-0 rounded-xl border p-3 flex items-start gap-3 transition-colors ${
-                  feito ? 'border-lm-green/40 bg-lm-green/5' : 'border-gray-500'
+                  feito ? 'border-lm-green/40 bg-lm-green/5' : 'border-black dark:border-gray-500'
                 }`}>
                   {produto && (
                     <button
@@ -272,7 +272,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                       className={`w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-colors ${
                         feito
                           ? 'bg-lm-yellow border-lm-yellow text-black'
-                          : 'border-gray-500 text-gray-400 hover:border-lm-green hover:text-lm-green'
+                          : 'border-black dark:border-gray-500 text-gray-400 hover:border-lm-green hover:text-lm-green'
                       }`}
                     >
                       <Check size={17} strokeWidth={3} />

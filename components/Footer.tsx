@@ -16,7 +16,7 @@ export default function Footer() {
   if (pathname.startsWith('/funcionario')) return null
 
   return (
-    <footer className="bg-white dark:bg-zinc-900 border-t border-gray-500 dark:border-zinc-800 mt-12">
+    <footer className="bg-white dark:bg-zinc-900 border-t border-black dark:border-zinc-800 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Marca */}
         <div>
@@ -81,7 +81,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-gray-500 dark:border-zinc-800">
+      <div className="border-t border-black dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-600 dark:text-zinc-500">
           <p>© {new Date().getFullYear()} Leroy Merlin. Loja fictícia para fins de demonstração.</p>
           <p>Projeto acadêmico — FIAP Challenge 2026</p>

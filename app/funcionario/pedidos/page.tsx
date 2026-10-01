@@ -159,7 +159,7 @@ export default function PedidosFuncionarioPage() {
       </div>
 
       <Card padding="none">
-        <div className="p-4 border-b border-gray-500 flex flex-wrap items-center gap-3">
+        <div className="p-4 border-b border-black dark:border-gray-500 flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[220px] max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -167,7 +167,7 @@ export default function PedidosFuncionarioPage() {
               placeholder="Buscar por nº do pedido ou cliente..."
               value={busca}
               onChange={e => setBusca(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-500 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-black dark:border-gray-500 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
             />
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -177,7 +177,7 @@ export default function PedidosFuncionarioPage() {
                 type="button"
                 onClick={() => setFiltro(f.valor)}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                  filtro === f.valor ? 'bg-lm-green text-white border-lm-green' : 'bg-white text-gray-500 border-gray-500 hover:border-lm-green/40'
+                  filtro === f.valor ? 'bg-lm-green text-white border-lm-green' : 'bg-white text-gray-500 border-black dark:border-gray-500 hover:border-lm-green/40'
                 }`}
               >
                 {f.label}
@@ -252,7 +252,7 @@ export default function PedidosFuncionarioPage() {
                         Lista de separação — na ordem do caminho pela loja
                         {feitos.length > 0 && ` · ${feitos.length}/${pedido.itens.length} separados`}
                       </p>
-                      <ul className="rounded-xl border border-gray-500 divide-y divide-gray-500">
+                      <ul className="rounded-xl border border-black dark:border-gray-500 divide-y divide-gray-500">
                         {itensEmOrdemDeRota(pedido).map(item => {
                           const base = catalogo[item.produtoId]
                           const estoqueAtual = base ? aplicarAjustes(base).estoque : null

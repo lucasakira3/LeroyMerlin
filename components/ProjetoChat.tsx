@@ -65,7 +65,7 @@ export default function ProjetoChat({ projeto, onProjetoAtualizado }: Props) {
 
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-500">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-black dark:border-gray-500">
         <MessageCircleMore size={16} className="text-lm-green flex-shrink-0" />
         <div>
           <p className="text-sm font-bold text-gray-900">Converse sobre este projeto</p>
@@ -104,14 +104,14 @@ export default function ProjetoChat({ projeto, onProjetoAtualizado }: Props) {
         </div>
       )}
 
-      <form onSubmit={enviar} className="flex items-center gap-2 p-3 border-t border-gray-500">
+      <form onSubmit={enviar} className="flex items-center gap-2 p-3 border-t border-black dark:border-gray-500">
         <input
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Ex: Por que esse chuveiro? Troca o vaso por um mais barato..."
           disabled={loading}
-          className="flex-1 h-10 px-3.5 rounded-xl border border-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-50 bg-white"
+          className="flex-1 h-10 px-3.5 rounded-xl border border-black dark:border-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-lm-green focus:border-transparent disabled:opacity-50 bg-white"
         />
         <button
           type="submit"

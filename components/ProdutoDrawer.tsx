@@ -296,7 +296,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </h3>
 
 
-            <div className="rounded-xl border border-gray-500 bg-gray-50/70 h-56 md:h-64 flex flex-col overflow-hidden">
+            <div className="rounded-xl border border-black dark:border-gray-500 bg-gray-50/70 h-56 md:h-64 flex flex-col overflow-hidden">
               <div
                 className="flex-1 min-h-0 overflow-y-auto px-3 py-3 space-y-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
@@ -359,7 +359,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 onKeyDown={e => e.key === 'Enter' && enviarPergunta()}
                 placeholder="Ex: Como instalar? Qual a garantia?"
                 disabled={loadingChat}
-                className="flex-1 text-sm px-3 py-2 rounded-xl border border-gray-500 focus:outline-none focus:ring-2 focus:ring-lm-green/40 disabled:opacity-50 bg-white"
+                className="flex-1 text-sm px-3 py-2 rounded-xl border border-black dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-lm-green/40 disabled:opacity-50 bg-white"
               />
               <button
                 onClick={() => enviarPergunta()}
@@ -488,7 +488,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
 
           {/* Avaliações — resumo compacto (média + estrelas) a lista
               completa e o formulário de avaliação só aparecem se a pessoa expandir, economizando espaço */}
-          <div className="border-t border-gray-500 pt-3">
+          <div className="border-t border-black dark:border-gray-500 pt-3">
             {/* div (não button) porque o conteúdo já inclui o StarRating, que renderiza
                 seus próprios <button> por estrela — button dentro de button é HTML inválido */}
             <div
