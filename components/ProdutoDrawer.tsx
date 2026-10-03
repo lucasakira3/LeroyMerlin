@@ -296,7 +296,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </h3>
 
 
-            <div className="rounded-xl border border-gray-200 dark:border-gray-500 bg-gray-50/70 h-56 md:h-64 flex flex-col overflow-hidden">
+            <div className="rounded-xl border border-gray-200 dark:border-gray-500 bg-gray-50 h-56 md:h-64 flex flex-col overflow-hidden">
               <div
                 className="flex-1 min-h-0 overflow-y-auto px-3 py-3 space-y-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
