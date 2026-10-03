@@ -253,7 +253,7 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
             <Link
               key={s.href}
               href={s.href}
-              className="block bg-white border border-gray-200 dark:border-gray-500 rounded-xl p-4 hover:border-lm-green/40 transition-colors"
+              className="block bg-white border border-gray-200 dark:border-gray-500 rounded-xl p-4 shadow-soft hover:border-lm-green/40 hover:shadow-soft-lg transition-all"
             >
               <p className="text-sm font-semibold text-gray-900">{s.titulo}</p>
               <p className="text-xs text-gray-500 mt-1">{s.descricao}</p>

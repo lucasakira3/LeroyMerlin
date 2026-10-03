@@ -266,9 +266,9 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
                     type="button"
                     onClick={() => toggleComodo(comodo)}
                     aria-pressed={selecionado}
-                    className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 px-3 py-5 text-center transition-all hover:-translate-y-0.5 ${
+                    className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 px-3 py-5 text-center shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-soft-lg ${
                       selecionado
-                        ? 'border-lm-green bg-lm-green/10 shadow-sm'
+                        ? 'border-lm-green bg-lm-green/10 shadow-soft-lg'
                         : 'border-gray-200 dark:border-gray-500 bg-white hover:border-lm-green/50'
                     }`}
                   >
