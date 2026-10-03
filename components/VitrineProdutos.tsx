@@ -13,8 +13,9 @@ type ProdutoComOferta = Omit<Produto, 'embedding' | 'embedding_text'> & {
   percentualDesconto: number
 }
 
-// 12 fecha linhas cheias em 2, 3 e 4 colunas; em 5 colunas (2xl) os 2 últimos ficam ocultos pra não sobrar linha quebrada.
-const QTD_DESTAQUES = 12
+// Uma linha só, com scroll horizontal (como "Destaques com desconto" em ProdutosView.tsx) —
+// uma grade que quebra em 2 linhas ficava comprida demais e pesada na home.
+const QTD_DESTAQUES = 10
 
 // Fim da home: os produtos com maior desconto real (mesma fonte de /ofertas, nada inventado).
 // Sem isso a home terminava na altura da tela, só com banner e 2 botões.
@@ -43,12 +44,12 @@ export default function VitrineProdutos() {
           Ver todas as ofertas <ArrowRight size={14} />
         </Link>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+      <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory">
         {produtos === null
-          ? Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)
-          : produtos.map((p, i) => (
-              <div key={p.id} className={i >= 10 ? '2xl:hidden' : undefined}>
-                <ProductCard produto={p} onDetalhes={() => setProdutoDrawer(p)} />
+          ? Array.from({ length: 5 }).map((_, i) => <div key={i} className="w-52 flex-shrink-0"><ProductCardSkeleton /></div>)
+          : produtos.map(p => (
+              <div key={p.id} className="w-52 flex-shrink-0 snap-start">
+                <ProductCard produto={p} onDetalhes={() => setProdutoDrawer(p)} className="h-full" />
               </div>
             ))}
       </div>
