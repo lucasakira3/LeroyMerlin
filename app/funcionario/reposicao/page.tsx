@@ -119,7 +119,7 @@ export default function ReposicaoPage() {
             min={1}
             value={limiteBaixo}
             onChange={e => setLimiteBaixo(Math.max(1, Number(e.target.value) || 1))}
-            className="block w-24 h-9 mt-1 px-2 rounded-lg border border-black dark:border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="block w-24 h-9 mt-1 px-2 rounded-lg border border-gray-200 dark:border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
         </label>
         <label className="text-xs text-gray-500">
@@ -129,7 +129,7 @@ export default function ReposicaoPage() {
             min={1}
             value={reporAte}
             onChange={e => setReporAte(Math.max(1, Number(e.target.value) || 1))}
-            className="block w-24 h-9 mt-1 px-2 rounded-lg border border-black dark:border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            className="block w-24 h-9 mt-1 px-2 rounded-lg border border-gray-200 dark:border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
         </label>
         <div className="flex-1 min-w-[180px] text-sm text-gray-600">
@@ -154,7 +154,7 @@ export default function ReposicaoPage() {
       ) : (
         grupos.map(grupo => (
           <Card key={grupo.corredorNormalizado} padding="none">
-            <div className="flex items-center gap-3 p-4 border-b border-black dark:border-gray-500">
+            <div className="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-gray-500">
               <span className="inline-flex items-center gap-1.5 font-bold text-gray-900">
                 <MapPin size={16} className="text-lm-green" /> {grupo.corredor}
               </span>
@@ -185,7 +185,7 @@ export default function ReposicaoPage() {
                       value={quantidadePara(item)}
                       onChange={e => setQuantidades(q => ({ ...q, [item.id]: Math.max(1, Number(e.target.value) || 1) }))}
                       aria-label={`Quantidade a repor de ${item.nome}`}
-                      className="w-16 h-8 px-2 rounded-lg border border-black dark:border-gray-500 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                      className="w-16 h-8 px-2 rounded-lg border border-gray-200 dark:border-gray-500 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                     />
                   </label>
                   <Button size="sm" onClick={() => repor(item)}>Repor</Button>
