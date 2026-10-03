@@ -118,14 +118,22 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
     })
   }
 
-  function handleWheel(e: React.WheelEvent<HTMLDivElement>) {
-    e.preventDefault()
-    aplicarZoom(e.deltaY < 0 ? 0.25 : -0.25)
-  }
-
   function resetZoom() {
     setZoom(1)
     setPan({ x: 0, y: 0 })
+  }
+
+  // Zoom via scroll da roda do mouse atrapalhava a rolagem normal da página (o usuário
+  // só queria rolar a tela e o mapa dava zoom sem querer). Trocado por duplo clique:
+  // aproxima num nível fixo e confortável, duplo clique de novo volta ao normal.
+  const ZOOM_DUPLO_CLIQUE = 2.5
+
+  function handleDoubleClick() {
+    if (zoom > 1) {
+      resetZoom()
+    } else {
+      setZoom(ZOOM_DUPLO_CLIQUE)
+    }
   }
 
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
@@ -261,7 +269,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
 
       <div
         className="border border-gray-200 dark:border-gray-500 rounded-card overflow-hidden shadow-soft bg-white relative select-none"
-        onWheel={handleWheel}
+        onDoubleClick={handleDoubleClick}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
