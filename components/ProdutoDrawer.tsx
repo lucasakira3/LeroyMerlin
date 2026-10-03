@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
   X, MapPin, Tag, Zap, Leaf, Package, BadgeCheck, SendHorizonal, Bot,
@@ -23,6 +23,8 @@ import AvaliacoesProduto from './AvaliacoesProduto'
 import BotaoAjudaCorredor from './BotaoAjudaCorredor'
 import VerificarCompatibilidade from './VerificarCompatibilidade'
 import StarRating from './ui/StarRating'
+import BotaoNovasMensagens from './ui/BotaoNovasMensagens'
+import { useChatScroll } from '@/lib/hooks/useChatScroll'
 import type { SearchResult } from '@/types/produto'
 
 interface Mensagem {
@@ -113,7 +115,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
   const [noComparador, setNoComparador] = useState(false)
   const [comparadorMsg, setComparadorMsg] = useState<string | null>(null)
   const [avaliacoesAbertas, setAvaliacoesAbertas] = useState(false)
-  const chatEndRef = useRef<HTMLDivElement>(null)
+  const { containerRef: chatRef, onScroll: onScrollChat, naoLidas, irParaNaoLidas } = useChatScroll(mensagens.length)
 
   useEffect(() => {
     setMensagens([])
@@ -126,10 +128,6 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     setAvaliacoesAbertas(false)
     addAoHistorico(produto.id)
   }, [produto.id])
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [mensagens])
 
   // `texto` vem dos chips de pergunta pronta; sem ele, usa o que foi digitado no input.
   async function enviarPergunta(texto?: string) {
@@ -296,8 +294,10 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </h3>
 
 
-            <div className="rounded-xl border border-gray-200 dark:border-gray-500 bg-gray-50 h-56 md:h-64 flex flex-col overflow-hidden">
+            <div className="relative rounded-xl border border-gray-200 dark:border-gray-500 bg-gray-50 h-56 md:h-64 flex flex-col overflow-hidden">
               <div
+                ref={chatRef}
+                onScroll={onScrollChat}
                 className="flex-1 min-h-0 overflow-y-auto px-3 py-3 space-y-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
                 {mensagens.length === 0 ? (
@@ -324,7 +324,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 ) : (
                   <>
                     {mensagens.map((m, i) => (
-                      <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div key={i} data-mensagem className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-xs leading-relaxed whitespace-pre-wrap ${
                           m.role === 'user'
                             ? 'bg-lm-green text-white rounded-br-sm'
@@ -344,10 +344,10 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                         </div>
                       </div>
                     )}
-                    <div ref={chatEndRef} />
                   </>
                 )}
               </div>
+              <BotaoNovasMensagens quantidade={naoLidas} onClick={irParaNaoLidas} />
             </div>
 
             {/* Input */}

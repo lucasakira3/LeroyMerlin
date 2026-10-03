@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { Send, Bot, User, Phone, MessageCircle } from 'lucide-react'
 import FormattedText from './ui/FormattedText'
+import BotaoNovasMensagens from './ui/BotaoNovasMensagens'
+import { useChatScroll } from '@/lib/hooks/useChatScroll'
 
 interface Mensagem {
   tipo: 'usuario' | 'especialista'
@@ -28,11 +30,7 @@ export default function DuvidasChat() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [mensagens])
+  const { containerRef, onScroll, naoLidas, irParaNaoLidas } = useChatScroll(mensagens.length)
 
   const enviar = async (texto: string) => {
     if (!texto.trim() || loading) return
@@ -68,44 +66,50 @@ export default function DuvidasChat() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
-        {mensagens.map((msg, i) => (
-          <div key={i} className={`flex gap-3 ${msg.tipo === 'usuario' ? 'flex-row-reverse' : ''}`}>
-            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-              msg.tipo === 'especialista' ? 'bg-lm-green text-white' : 'bg-gray-200 text-gray-600'
-            }`}>
-              {msg.tipo === 'especialista' ? <Bot size={16} /> : <User size={16} />}
-            </div>
-            <div className={`max-w-[80%] ${msg.tipo === 'usuario' ? 'items-end' : 'items-start'} flex flex-col`}>
-              <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                msg.tipo === 'especialista'
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'bg-lm-green text-white'
+    // min-h-0: sem ele, quando a conversa fica mais alta que o cartão este bloco não encolhe
+    // (altura mínima automática de item flex) e empurra a barra de digitar pra fora do
+    // cartão. Antes o scrollIntoView disfarçava isso rolando o cartão por dentro — e
+    // escondendo o cabeçalho com o botão de voltar.
+    <div className="flex flex-col h-full min-h-0">
+      {/* Chat messages — o wrapper `relative` é só pra ancorar o botão de mensagem nova */}
+      <div className="relative flex-1 min-h-0 flex flex-col">
+        <div ref={containerRef} onScroll={onScroll} className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+          {mensagens.map((msg, i) => (
+            <div key={i} data-mensagem className={`flex gap-3 ${msg.tipo === 'usuario' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                msg.tipo === 'especialista' ? 'bg-lm-green text-white' : 'bg-gray-200 text-gray-600'
               }`}>
-                {msg.tipo === 'especialista' ? <FormattedText text={msg.texto} /> : msg.texto}
+                {msg.tipo === 'especialista' ? <Bot size={16} /> : <User size={16} />}
               </div>
-              <span className="text-xs text-gray-600 mt-1 px-1">{msg.hora}</span>
+              <div className={`max-w-[80%] ${msg.tipo === 'usuario' ? 'items-end' : 'items-start'} flex flex-col`}>
+                <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                  msg.tipo === 'especialista'
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'bg-lm-green text-white'
+                }`}>
+                  {msg.tipo === 'especialista' ? <FormattedText text={msg.texto} /> : msg.texto}
+                </div>
+                <span className="text-xs text-gray-600 mt-1 px-1">{msg.hora}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
 
-        {loading && (
-          <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-lm-green text-white flex items-center justify-center flex-shrink-0">
-              <Bot size={16} />
-            </div>
-            <div className="bg-gray-100 rounded-2xl px-4 py-3">
-              <div className="flex gap-1">
-                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          {loading && (
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-lm-green text-white flex items-center justify-center flex-shrink-0">
+                <Bot size={16} />
+              </div>
+              <div className="bg-gray-100 rounded-2xl px-4 py-3">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        <div ref={bottomRef} />
+          )}
+        </div>
+        <BotaoNovasMensagens quantidade={naoLidas} onClick={irParaNaoLidas} />
       </div>
 
       {/* Suggestions */}

@@ -1,12 +1,14 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Send, Headset, User, Clock, LogIn } from 'lucide-react'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import {
   getConversa, enviarMensagemEspecialista, type ConversaEspecialista as Conversa,
 } from '@/lib/conversasEspecialista'
+import BotaoNovasMensagens from './ui/BotaoNovasMensagens'
+import { useChatScroll } from '@/lib/hooks/useChatScroll'
 
 // Chat de verdade com um funcionário da loja (sem IA) — mensagens ficam salvas em
 // lib/conversasEspecialista.ts e aparecem no lado do funcionário em
@@ -17,7 +19,7 @@ export default function ConversaEspecialista() {
   const [nome, setNome] = useState('')
   const [conversa, setConversa] = useState<Conversa | null>(null)
   const [input, setInput] = useState('')
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const { containerRef, onScroll, naoLidas, irParaNaoLidas } = useChatScroll(conversa?.mensagens.length ?? 0)
 
   useEffect(() => {
     const usuario = getUsuarioLogado()
@@ -34,10 +36,6 @@ export default function ConversaEspecialista() {
       window.removeEventListener('storage', atualizar)
     }
   }, [])
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [conversa?.mensagens.length])
 
   function enviar() {
     const texto = input.trim()
@@ -70,40 +68,45 @@ export default function ConversaEspecialista() {
   const mensagens = conversa?.mensagens ?? []
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
-        {mensagens.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-base text-gray-700">
-              Mande sua dúvida — um funcionário da loja vai te responder por aqui.
-            </p>
-          </div>
-        )}
-        {mensagens.map((msg, i) => (
-          <div key={i} className={`flex gap-3 ${msg.autor === 'cliente' ? 'flex-row-reverse' : ''}`}>
-            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-              msg.autor === 'funcionario' ? 'bg-lm-green text-white' : 'bg-gray-200 text-gray-600'
-            }`}>
-              {msg.autor === 'funcionario' ? <Headset size={16} /> : <User size={16} />}
+    // min-h-0: mesmo motivo de components/DuvidasChat.tsx — sem ele a barra de digitar sai do
+    // cartão quando a conversa fica longa.
+    <div className="flex flex-col h-full min-h-0">
+      {/* O wrapper `relative` é só pra ancorar o botão de mensagem nova */}
+      <div className="relative flex-1 min-h-0 flex flex-col">
+        <div ref={containerRef} onScroll={onScroll} className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+          {mensagens.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-base text-gray-700">
+                Mande sua dúvida — um funcionário da loja vai te responder por aqui.
+              </p>
             </div>
-            <div className={`max-w-[80%] ${msg.autor === 'cliente' ? 'items-end' : 'items-start'} flex flex-col`}>
-              <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                msg.autor === 'funcionario' ? 'bg-gray-100 text-gray-800' : 'bg-lm-green text-white'
+          )}
+          {mensagens.map((msg, i) => (
+            <div key={i} data-mensagem className={`flex gap-3 ${msg.autor === 'cliente' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                msg.autor === 'funcionario' ? 'bg-lm-green text-white' : 'bg-gray-200 text-gray-600'
               }`}>
-                {msg.texto}
+                {msg.autor === 'funcionario' ? <Headset size={16} /> : <User size={16} />}
               </div>
-              <span className="text-xs text-gray-600 mt-1 px-1">
-                {new Date(msg.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-              </span>
+              <div className={`max-w-[80%] ${msg.autor === 'cliente' ? 'items-end' : 'items-start'} flex flex-col`}>
+                <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                  msg.autor === 'funcionario' ? 'bg-gray-100 text-gray-800' : 'bg-lm-green text-white'
+                }`}>
+                  {msg.texto}
+                </div>
+                <span className="text-xs text-gray-600 mt-1 px-1">
+                  {new Date(msg.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
-        {mensagens.length > 0 && !conversa?.atendida && mensagens[mensagens.length - 1].autor === 'cliente' && (
-          <div className="flex items-center gap-1.5 text-sm text-gray-600 pl-11">
-            <Clock size={12} /> Aguardando resposta de um funcionário...
-          </div>
-        )}
-        <div ref={bottomRef} />
+          ))}
+          {mensagens.length > 0 && !conversa?.atendida && mensagens[mensagens.length - 1].autor === 'cliente' && (
+            <div className="flex items-center gap-1.5 text-sm text-gray-600 pl-11">
+              <Clock size={12} /> Aguardando resposta de um funcionário...
+            </div>
+          )}
+        </div>
+        <BotaoNovasMensagens quantidade={naoLidas} onClick={irParaNaoLidas} />
       </div>
 
       <div className="border-t border-gray-200 dark:border-gray-500 p-4">
