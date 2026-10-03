@@ -69,12 +69,12 @@ export default function AgendamentoPage() {
                 ))}
               </ul>
             </Card>
-            <div className="bg-lm-yellow/20 border border-lm-yellow/40 rounded-card p-4">
+            <Card padding="sm">
               <p className="text-xs font-semibold text-lm-dark mb-1">Precisa de ajuda agora?</p>
               <p className="text-xs text-gray-600 mb-3">Fale com um especialista pelo WhatsApp.</p>
               <a href="https://wa.me/551140071380" target="_blank" rel="noopener noreferrer"
                 className="text-xs font-bold text-lm-green underline">Abrir WhatsApp →</a>
-            </div>
+            </Card>
           </div>
         </div>
       ) : (
