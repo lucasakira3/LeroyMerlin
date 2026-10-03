@@ -125,7 +125,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
         <button
           type="button"
           onClick={() => setNovoAberto(true)}
-          className="flex items-center gap-1.5 text-sm font-semibold text-lm-green hover:underline"
+          className="flex items-center gap-1.5 text-sm font-semibold text-lm-green-dark hover:underline"
         >
           <Plus size={14} /> Adicionar cartão
         </button>

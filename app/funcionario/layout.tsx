@@ -56,7 +56,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
   ]
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen">
       {/* Overlay — mobile */}
       {sidebarAberta && (
         <div
@@ -134,7 +134,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
           <div className="w-9" />
         </div>
 
-        <main className="flex-1 overflow-auto bg-gray-50 relative">
+        <main className="flex-1 overflow-auto relative">
           {children}
         </main>
       </div>

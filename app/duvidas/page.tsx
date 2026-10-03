@@ -101,7 +101,7 @@ export default function DuvidasPage() {
           </Card>
 
           {/* Garantia */}
-          <div className="bg-lm-green/5 border border-lm-green/20 rounded-card p-4">
+          <div className="bg-green-50 border border-lm-green/20 rounded-card p-4">
             <div className="flex items-start gap-2">
               <ShieldCheck size={16} className="text-lm-green mt-0.5 flex-shrink-0" />
               <div>

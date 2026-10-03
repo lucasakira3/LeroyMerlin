@@ -50,7 +50,7 @@ export default function ContaSidebar({ nome, email }: Props) {
               href={href}
               className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-base whitespace-nowrap transition-colors ${
                 ativo
-                  ? 'bg-lm-green/10 text-lm-green font-semibold'
+                  ? 'bg-green-50 text-lm-green font-semibold'
                   : 'text-gray-600 font-medium hover:bg-gray-100'
               }`}
             >

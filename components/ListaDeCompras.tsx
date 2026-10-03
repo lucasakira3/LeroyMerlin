@@ -352,7 +352,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
       </div>
 
       {projeto.dica_especialista && (
-        <div className="mb-5 flex items-start gap-3 rounded-2xl border border-lm-yellow/50 bg-lm-yellow/10 p-4">
+        <div className="mb-5 flex items-start gap-3 rounded-2xl border border-lm-yellow/50 bg-yellow-50 p-4">
           <span className="w-9 h-9 rounded-xl bg-lm-yellow text-black flex items-center justify-center flex-shrink-0">
             <Lightbulb size={18} />
           </span>

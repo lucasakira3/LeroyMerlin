@@ -127,7 +127,7 @@ export default function OfertasView() {
       <span className="text-gray-700">
         Ofertas em <strong className="text-lm-dark">{categoriaLabel}</strong>
       </span>
-      <Link href="/ofertas" className="flex items-center gap-1 text-lm-green font-semibold hover:underline">
+      <Link href="/ofertas" className="flex items-center gap-1 text-lm-green-dark font-semibold hover:underline">
         <X size={13} /> limpar filtro
       </Link>
     </div>

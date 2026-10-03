@@ -206,7 +206,7 @@ export default function FavoritosPage() {
                 <button
                   type="button"
                   onClick={criarNovoGrupo}
-                  className="text-xs font-semibold text-lm-green px-2"
+                  className="text-xs font-semibold text-lm-green-dark px-2"
                 >
                   Criar
                 </button>

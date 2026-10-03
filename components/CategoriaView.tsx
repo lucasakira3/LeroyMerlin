@@ -226,7 +226,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
             onChange={e => setFiltroPrecoMin(e.target.value)}
             className="w-20 h-7 px-2 rounded-full border border-gray-200 dark:border-gray-500 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-lm-green/30 bg-white"
           />
-          <span className="text-xs text-gray-300">—</span>
+          <span className="text-xs text-gray-600">—</span>
           <input
             type="number"
             min={0}

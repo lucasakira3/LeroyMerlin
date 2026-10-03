@@ -10,6 +10,10 @@ module.exports = {
     extend: {
       colors: {
         'lm-green': '#00843d',
+        // Verde da marca mais escuro, só pra TEXTO que fica direto sobre o fundo cinza da
+        // página (lm-light): o lm-green ali dá 3.3:1 de contraste, abaixo do mínimo de 4.5:1.
+        // Dentro de cartão branco o lm-green normal continua valendo.
+        'lm-green-dark': '#046432',
         'lm-yellow': '#ffd100',
         'lm-dark': '#1a1a1a',
         'lm-light': '#d1d5db',

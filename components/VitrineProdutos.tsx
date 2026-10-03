@@ -40,7 +40,7 @@ export default function VitrineProdutos() {
         <h2 className="text-base sm:text-lg font-black text-lm-dark">
           Maiores descontos da semana
         </h2>
-        <Link href="/ofertas" className="flex items-center gap-1 text-sm font-semibold text-lm-green hover:underline">
+        <Link href="/ofertas" className="flex items-center gap-1 text-sm font-semibold text-lm-green-dark hover:underline">
           Ver todas as ofertas <ArrowRight size={14} />
         </Link>
       </div>

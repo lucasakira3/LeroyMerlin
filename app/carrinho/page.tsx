@@ -272,7 +272,7 @@ export default function CarrinhoPage() {
     }
 
     return (
-      <main className="flex-1 bg-gray-50">
+      <main className="flex-1">
         <div className="max-w-xl mx-auto px-4 py-10">
           <Card className="text-center">
             <CheckCircle2 size={40} className="text-lm-green mx-auto mb-3" />
@@ -342,7 +342,7 @@ export default function CarrinhoPage() {
   }
 
   return (
-    <main className="flex-1 bg-gray-50">
+    <main className="flex-1">
       <div className="max-w-2xl mx-auto px-4 py-6">
         <PageHeader title="Carrinho" description={itens.length > 0 ? `${itens.length} ${itens.length === 1 ? 'item' : 'itens'}` : undefined} />
 
@@ -375,7 +375,7 @@ export default function CarrinhoPage() {
             <button
               type="button"
               onClick={() => setVerRota(v => !v)}
-              className="w-full flex items-center justify-center gap-2 mb-4 h-10 rounded-xl border border-lm-green/30 text-lm-green text-sm font-semibold bg-lm-green/5 hover:bg-lm-green/10 transition-colors"
+              className="w-full flex items-center justify-center gap-2 mb-4 h-10 rounded-xl border border-lm-green/30 text-lm-green text-sm font-semibold bg-white hover:bg-green-50 transition-colors"
             >
               <MapIcon size={15} /> {verRota ? 'Esconder rota no mapa' : 'Ver rota no mapa'}
             </button>

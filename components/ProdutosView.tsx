@@ -85,7 +85,7 @@ export default function ProdutosView() {
         </h2>
         <button
           onClick={() => setCategoriaAtiva({ slug: 'todos', label: 'Todos' })}
-          className="flex items-center gap-1.5 text-xs font-semibold text-lm-green hover:underline"
+          className="flex items-center gap-1.5 text-xs font-semibold text-lm-green-dark hover:underline"
         >
           Ver todos <Grid2x2 size={13} />
         </button>
@@ -135,7 +135,7 @@ export default function ProdutosView() {
             </h2>
             <Link
               href="/ofertas"
-              className="flex items-center gap-1.5 text-xs font-semibold text-lm-green hover:underline"
+              className="flex items-center gap-1.5 text-xs font-semibold text-lm-green-dark hover:underline"
             >
               Ver todas as ofertas <Tag size={13} />
             </Link>

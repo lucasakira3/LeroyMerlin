@@ -31,7 +31,7 @@ export default function ContaLayout({ children }: { children: React.ReactNode })
   const largo = pathname.startsWith('/conta/projetos')
 
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
+    <main className="min-h-screen flex flex-col lg:flex-row">
       {/* Barra lateral encostada na borda esquerda de verdade, fora do container
           centralizado — não faz sentido ela ficar boiando no meio da tela em monitor largo. */}
       <div className="lg:w-64 flex-shrink-0 px-4 sm:px-6 lg:px-8 py-6">

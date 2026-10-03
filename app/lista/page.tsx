@@ -3,7 +3,7 @@ import ListaCompartilhadaView from '@/components/ListaCompartilhadaView'
 
 export default function ListaCompartilhadaPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+    <Suspense fallback={<div className="min-h-screen" />}>
       <ListaCompartilhadaView />
     </Suspense>
   )
