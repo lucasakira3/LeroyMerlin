@@ -229,20 +229,20 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
           <button
             type="button"
             onClick={() => setViewMode('chat')}
-            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+            className={`flex items-center gap-2 text-base font-bold px-4 py-2.5 rounded-lg transition-colors ${
               viewMode === 'chat' ? 'bg-lm-green/10 text-lm-green' : 'text-gray-700 hover:text-gray-700'
             }`}
           >
-            <MessageCircle size={14} /> Conversa
+            <MessageCircle size={18} /> Conversa
           </button>
           <button
             type="button"
             onClick={() => setViewMode('projeto')}
-            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+            className={`flex items-center gap-2 text-base font-bold px-4 py-2.5 rounded-lg transition-colors ${
               viewMode === 'projeto' ? 'bg-lm-green/10 text-lm-green' : 'text-gray-700 hover:text-gray-700'
             }`}
           >
-            <ClipboardList size={14} /> Projeto
+            <ClipboardList size={18} /> Projeto
           </button>
         </div>
       )}
