@@ -47,7 +47,7 @@ export default function VitrineOfertas() {
 
   return (
     <div className="mb-8">
-      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
+      <h2 className="text-base sm:text-lg font-black text-lm-dark mb-4">
         Ofertas em destaque
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

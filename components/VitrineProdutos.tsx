@@ -37,7 +37,7 @@ export default function VitrineProdutos() {
     <section className="mb-8">
       <ProdutoDrawer produto={produtoDrawer as any} onClose={() => setProdutoDrawer(null)} />
       <div className="flex items-end justify-between mb-4">
-        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+        <h2 className="text-base sm:text-lg font-black text-lm-dark">
           Maiores descontos da semana
         </h2>
         <Link href="/ofertas" className="flex items-center gap-1 text-sm font-semibold text-lm-green hover:underline">
