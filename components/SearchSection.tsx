@@ -72,11 +72,11 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
       {/* Seletor de loja */}
       <div className="flex items-center gap-3">
         <MapPin size={15} className="text-lm-green flex-shrink-0" />
-        <label className="text-xs font-semibold text-gray-600 flex-shrink-0">Loja:</label>
+        <label className="text-sm font-bold text-lm-dark flex-shrink-0">Loja:</label>
         <select
           value={loja}
           onChange={(e) => setLoja(e.target.value)}
-          className="flex-1 h-9 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+          className="flex-1 h-9 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm font-medium text-lm-dark bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
         >
           {LOJAS.map((l) => <option key={l} value={l}>{l}</option>)}
         </select>
@@ -118,8 +118,8 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
       {/* Mapa com resultados */}
       {!loading && resultados.length > 0 && (
         <div key={queryProcessada} className="space-y-4 animate-fade-in-up">
-          <p className="text-xs text-gray-400">
-            Resultados para: <span className="font-medium text-gray-600">{queryProcessada}</span>
+          <p className="text-sm text-gray-700">
+            Resultados para: <span className="font-bold text-lm-dark">{queryProcessada}</span>
           </p>
 
           <SearchFilters resultados={resultados} filtros={filtros} onChange={setFiltros} />
@@ -134,7 +134,7 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
             />
           ) : (
             <div className="text-center py-10">
-              <p className="text-sm text-gray-500 mb-3">Nenhum produto encontrado com esses filtros.</p>
+              <p className="text-base font-semibold text-lm-dark mb-3">Nenhum produto encontrado com esses filtros.</p>
               <button
                 type="button"
                 onClick={() => setFiltros(FILTROS_INICIAIS)}
@@ -151,15 +151,15 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
       {!loading && resultados.length === 0 && (
         <div className="text-center py-12">
           <div className="text-4xl mb-4">🗺️</div>
-          <h2 className="text-base font-semibold text-lm-dark mb-2">
+          <h2 className="text-xl font-black text-lm-dark mb-2">
             Busque um produto para ver no mapa
           </h2>
-          <p className="text-sm text-gray-500 mb-6">
+          <p className="text-base text-gray-700 mb-6">
             Os produtos aparecerão como pins na planta da loja selecionada
           </p>
           <div className="flex flex-wrap gap-2.5 justify-center">
             {['Torneira banheiro', 'Tinta branca', 'Disjuntor 20A', 'Piso laminado', 'Mangueira jardim'].map((s) => (
-              <span key={s} className="px-3 py-1.5 bg-white border border-gray-200 dark:border-gray-500 shadow-soft rounded-full text-sm text-gray-600">
+              <span key={s} className="px-3 py-1.5 bg-white border border-gray-200 dark:border-gray-500 shadow-soft rounded-full text-sm font-semibold text-lm-dark">
                 {s}
               </span>
             ))}

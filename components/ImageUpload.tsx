@@ -123,10 +123,10 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           type="button"
           onClick={() => trocarModo('produto')}
           aria-pressed={modo === 'produto'}
-          className={`flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg border transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-bold py-2 rounded-lg border transition-colors ${
             modo === 'produto'
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+              : 'bg-white text-lm-dark border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
           }`}
         >
           <PackageSearch size={14} /> Já sei o produto
@@ -135,10 +135,10 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           type="button"
           onClick={() => trocarModo('problema')}
           aria-pressed={modo === 'problema'}
-          className={`flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg border transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-bold py-2 rounded-lg border transition-colors ${
             modo === 'problema'
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+              : 'bg-white text-lm-dark border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
           }`}
         >
           <Wrench size={14} /> Solucionar problema
@@ -162,7 +162,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           }`}
         >
           <Camera size={28} className="text-gray-400" />
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-base font-semibold text-lm-dark text-center">
             {modo === 'produto'
               ? 'Arraste uma foto do produto ou clique para selecionar'
               : 'Mostre o problema — cano vazando, parede rachada, tomada solta — e a IA identifica o que fazer'}
