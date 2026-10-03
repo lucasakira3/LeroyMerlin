@@ -12,7 +12,7 @@ module.exports = {
         'lm-green': '#00843d',
         'lm-yellow': '#ffd100',
         'lm-dark': '#1a1a1a',
-        'lm-light': '#f1f2f4',
+        'lm-light': '#e7e9ec',
         'lm-orange': '#e87722',
       },
       fontFamily: {

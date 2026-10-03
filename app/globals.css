@@ -16,7 +16,7 @@
 
 body {
   color: var(--lm-dark);
-  background-color: #f1f2f4;
+  background-color: #e7e9ec;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
