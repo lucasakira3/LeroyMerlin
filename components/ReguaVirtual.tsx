@@ -71,7 +71,7 @@ export default function ReguaVirtual() {
     <div className="max-w-lg mx-auto">
       <Card>
         <h3 className="text-sm font-bold text-lm-dark mb-1">1. Escolha o objeto de referência</h3>
-        <p className="text-xs text-gray-500 mb-3">
+        <p className="text-sm text-gray-700 mb-3">
           Sem sensor de profundidade, a única forma de estimar tamanho por foto é comparando com algo de tamanho conhecido.
         </p>
         <div className="flex flex-wrap gap-2 mb-5">
@@ -93,7 +93,7 @@ export default function ReguaVirtual() {
         </div>
 
         <h3 className="text-sm font-bold text-lm-dark mb-1">2. Tire a foto</h3>
-        <p className="text-xs text-gray-500 mb-3">
+        <p className="text-sm text-gray-700 mb-3">
           Coloque a {referencia.label.toLowerCase()} bem visível, encostada no que você quer medir (parede, piso, vão), e fotografe os dois juntos.
         </p>
 
@@ -106,8 +106,8 @@ export default function ReguaVirtual() {
             aria-label="Selecionar foto pra medir"
             className="flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 transition-colors"
           >
-            <Camera size={28} className="text-gray-400" />
-            <p className="text-sm text-gray-500 text-center">Tirar foto ou escolher imagem</p>
+            <Camera size={28} className="text-gray-600" />
+            <p className="text-base text-gray-700 text-center">Tirar foto ou escolher imagem</p>
             <input
               ref={inputRef}
               type="file"
@@ -146,12 +146,12 @@ export default function ReguaVirtual() {
               <p className="text-sm font-bold text-gray-900">
                 {resultado.largura_cm} × {resultado.altura_cm} cm
                 {resultado.area_m2 != null && (
-                  <span className="text-gray-500 font-medium"> · {resultado.area_m2} m²</span>
+                  <span className="text-gray-700 font-medium"> · {resultado.area_m2} m²</span>
                 )}
               </p>
             </div>
             <p className="text-xs text-gray-600">{resultado.explicacao}</p>
-            <p className="text-[11px] text-gray-400 mt-2">
+            <p className="text-xs text-gray-600 mt-2">
               Estimativa aproximada por foto — para uma compra que exige precisão, confirme com fita métrica antes de fechar o pedido.
             </p>
           </div>
@@ -161,7 +161,7 @@ export default function ReguaVirtual() {
           <button
             type="button"
             onClick={recomecar}
-            className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-lm-green"
+            className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-lm-green"
           >
             <RotateCcw size={13} /> Tirar outra foto
           </button>

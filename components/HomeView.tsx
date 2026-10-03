@@ -35,9 +35,9 @@ export default function HomeView() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-bold">Navegar por categoria</p>
-            <p className="text-sm text-gray-500">Ferramentas, elétrica, hidráulica e mais</p>
+            <p className="text-base text-gray-700">Ferramentas, elétrica, hidráulica e mais</p>
           </div>
-          <ArrowRight size={20} className="flex-shrink-0 text-gray-400" />
+          <ArrowRight size={20} className="flex-shrink-0 text-gray-600" />
         </Link>
       </div>
 

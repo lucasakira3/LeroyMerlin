@@ -59,11 +59,11 @@ export default function ListaCompartilhadaView() {
           </p>
         </Card>
 
-        {carregando && <p className="text-sm text-gray-400">Carregando...</p>}
+        {carregando && <p className="text-base text-gray-600">Carregando...</p>}
 
         {!carregando && resultados.length === 0 && (
           <Card className="text-center py-10">
-            <p className="text-sm text-gray-500">Os produtos desta lista não estão mais disponíveis.</p>
+            <p className="text-base text-gray-700">Os produtos desta lista não estão mais disponíveis.</p>
           </Card>
         )}
 

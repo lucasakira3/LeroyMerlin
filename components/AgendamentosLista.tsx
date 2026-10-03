@@ -74,7 +74,7 @@ export default function AgendamentosLista() {
             className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
               filtro === f
                 ? 'bg-lm-green text-white border-lm-green'
-                : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
             }`}
           >
             {f === 'todos' ? 'Todos' : f === 'confirmado' ? 'Confirmados' : 'Cancelados'}
@@ -87,7 +87,7 @@ export default function AgendamentosLista() {
 
       {/* Lista vazia */}
       {filtrados.length === 0 && (
-        <div className="text-center py-14 text-gray-400">
+        <div className="text-center py-14 text-gray-600">
           <CalendarCheck size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm font-medium">Nenhum agendamento {filtro !== 'todos' ? `${filtro}` : 'encontrado'}</p>
           <p className="text-xs mt-1">
@@ -116,7 +116,7 @@ export default function AgendamentosLista() {
                     {ag.status === 'confirmado' ? 'Confirmado' : 'Cancelado'}
                   </Badge>
                 </div>
-                <p className="text-xs text-gray-400 mt-0.5">#{ag.id} · Criado em {ag.criadoEm}</p>
+                <p className="text-sm text-gray-600 mt-0.5">#{ag.id} · Criado em {ag.criadoEm}</p>
               </div>
               {ag.status === 'confirmado' && (
                 <Button
@@ -147,7 +147,7 @@ export default function AgendamentosLista() {
             </div>
 
             {ag.observacao && (
-              <p className="mt-2.5 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2 border border-gray-200 dark:border-gray-500">
+              <p className="mt-2.5 text-sm text-gray-700 bg-gray-50 rounded-xl px-3 py-2 border border-gray-200 dark:border-gray-500">
                 <span className="font-medium">Obs:</span> {ag.observacao}
               </p>
             )}
@@ -161,9 +161,9 @@ export default function AgendamentosLista() {
 function Detail({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-start gap-1.5">
-      <span className="text-gray-400 mt-0.5 flex-shrink-0">{icon}</span>
+      <span className="text-gray-600 mt-0.5 flex-shrink-0">{icon}</span>
       <div>
-        <p className="text-[10px] text-gray-400">{label}</p>
+        <p className="text-xs text-gray-600">{label}</p>
         <p className="text-xs font-semibold text-gray-700 leading-tight">{value}</p>
       </div>
     </div>

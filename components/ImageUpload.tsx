@@ -161,7 +161,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
               : 'border-gray-300 bg-white hover:border-lm-green hover:bg-green-50/50'
           }`}
         >
-          <Camera size={28} className="text-gray-400" />
+          <Camera size={28} className="text-gray-600" />
           <p className="text-base font-semibold text-lm-dark text-center">
             {modo === 'produto'
               ? 'Arraste uma foto do produto ou clique para selecionar'
@@ -219,7 +219,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
 
           {diagnostico.itens_sugeridos.length > 0 && (
             <div className="mt-3 pt-3 border-t border-lm-green/10 space-y-2.5">
-              <p className="text-xs font-semibold text-gray-500">
+              <p className="text-sm font-semibold text-gray-700">
                 Produtos que você provavelmente precisa:
               </p>
               {diagnostico.itens_sugeridos.map((item, i) => {
@@ -231,7 +231,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
                         {top ? top.produto.produto : item.nome_busca}
                       </p>
                       {item.motivo && (
-                        <p className="text-xs text-gray-500 truncate">{item.motivo}</p>
+                        <p className="text-sm text-gray-700 truncate">{item.motivo}</p>
                       )}
                     </div>
                     {top ? (
@@ -243,7 +243,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
                         <MapPin size={11} /> {top.produto.corredor}
                       </button>
                     ) : (
-                      <span className="text-xs text-gray-400 flex-shrink-0">peça ao vendedor</span>
+                      <span className="text-sm text-gray-600 flex-shrink-0">peça ao vendedor</span>
                     )}
                   </div>
                 )

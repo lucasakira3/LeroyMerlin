@@ -43,11 +43,11 @@ function Passos({ atual }: { atual: number }) {
         return (
           <li key={nome} className="flex items-center gap-2 flex-1 last:flex-none" aria-current={ativo ? 'step' : undefined}>
             <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center flex-shrink-0 transition-colors ${
-              feito || ativo ? 'bg-lm-green text-white' : 'bg-gray-200 text-gray-500'
+              feito || ativo ? 'bg-lm-green text-white' : 'bg-gray-200 text-gray-700'
             }`}>
               {feito ? <Check size={13} strokeWidth={3} /> : n}
             </span>
-            <span className={`text-xs font-semibold ${ativo ? 'text-lm-dark' : 'text-gray-400'}`}>{nome}</span>
+            <span className={`text-sm font-semibold ${ativo ? 'text-lm-dark' : 'text-gray-600'}`}>{nome}</span>
             {n < PASSOS.length && <span className={`flex-1 h-0.5 rounded ${feito ? 'bg-lm-green' : 'bg-gray-200'}`} />}
           </li>
         )
@@ -230,7 +230,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
             type="button"
             onClick={() => setViewMode('chat')}
             className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
-              viewMode === 'chat' ? 'bg-lm-green/10 text-lm-green' : 'text-gray-500 hover:text-gray-700'
+              viewMode === 'chat' ? 'bg-lm-green/10 text-lm-green' : 'text-gray-700 hover:text-gray-700'
             }`}
           >
             <MessageCircle size={14} /> Conversa
@@ -239,7 +239,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
             type="button"
             onClick={() => setViewMode('projeto')}
             className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
-              viewMode === 'projeto' ? 'bg-lm-green/10 text-lm-green' : 'text-gray-500 hover:text-gray-700'
+              viewMode === 'projeto' ? 'bg-lm-green/10 text-lm-green' : 'text-gray-700 hover:text-gray-700'
             }`}
           >
             <ClipboardList size={14} /> Projeto
@@ -321,7 +321,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
                       <li
                         key={nome}
                         className={`flex items-center gap-2.5 text-sm transition-colors ${
-                          feito ? 'text-lm-green' : ativo ? 'text-lm-dark font-semibold' : 'text-gray-400'
+                          feito ? 'text-lm-green' : ativo ? 'text-lm-dark font-semibold' : 'text-gray-600'
                         }`}
                       >
                         <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">
@@ -378,7 +378,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
                   onClick={voltarParaComodos}
                   disabled={loading}
                   aria-label="Voltar pros cômodos"
-                  className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-500 text-gray-400 hover:text-lm-green hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-500 text-gray-600 hover:text-lm-green hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <ArrowLeft size={16} />
                 </button>
@@ -391,7 +391,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
                 className={`h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
                   ouvindo
                     ? 'bg-red-50 text-red-500 border-red-200 animate-pulse'
-                    : 'text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40 hover:text-lm-green'
+                    : 'text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40 hover:text-lm-green'
                 }`}
               >
                 {ouvindo ? <MicOff size={16} /> : <Mic size={16} />}
@@ -447,7 +447,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
             </button>
             <button
               onClick={novoProjeto}
-              className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-lm-green transition-colors"
+              className="flex items-center gap-1.5 text-base font-semibold text-gray-700 hover:text-lm-green transition-colors"
             >
               <RotateCcw size={14} /> Começar um novo projeto
             </button>

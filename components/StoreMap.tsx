@@ -243,7 +243,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
       <div className="flex items-center justify-between mb-2">
         <div>
           <span className="text-xs font-bold text-gray-700">{loja}</span>
-          <span className="ml-2 text-[11px] text-gray-400">Planta da loja · 50 corredores</span>
+          <span className="ml-2 text-xs text-gray-600">Planta da loja · 50 corredores</span>
         </div>
         <div className="flex items-center gap-2">
           {pins.length > 0 && (
@@ -341,7 +341,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                     {Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </p>
                 )}
-                <p className="text-[10px] text-gray-400 mt-0.5">
+                <p className="text-xs text-gray-600 mt-0.5">
                   {produto.estoque > 0 ? `${produto.estoque} un. em estoque` : 'Sem estoque'}
                 </p>
                 <div className="mt-2 flex gap-1.5">
@@ -531,7 +531,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                 />
                 <div className="min-w-0">
                   <p className="font-semibold text-gray-800 truncate max-w-[180px]">{pin.produto.produto}</p>
-                  <p className="text-gray-500">{pin.produto.corredor} · {pin.produto.categoria}</p>
+                  <p className="text-gray-700">{pin.produto.corredor} · {pin.produto.categoria}</p>
                   {(pin.produto as any).preco != null && (
                     <p className="text-xs font-bold text-lm-green mt-0.5">
                       {Number((pin.produto as any).preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}

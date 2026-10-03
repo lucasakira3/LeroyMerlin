@@ -113,7 +113,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
           <Route size={16} className="text-lm-green" />
           <h3 className="text-sm font-bold text-gray-900">Road map do projeto</h3>
         </div>
-        <span className="text-xs text-gray-500">
+        <span className="text-sm text-gray-700">
           {totalFeitos} de {totalItens} itens · {etapasFeitas} de {etapas.length} etapas concluídas
         </span>
       </div>
@@ -153,10 +153,10 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                 }`}>
                   <Icone size={20} />
                 </span>
-                <span className={`block text-sm font-bold leading-snug line-clamp-2 min-h-[2.5rem] ${feita ? 'text-gray-400 line-through' : 'text-lm-dark'}`}>
+                <span className={`block text-base font-bold leading-snug line-clamp-2 min-h-[2.5rem] ${feita ? 'text-gray-600 line-through' : 'text-lm-dark'}`}>
                   {etapa.nome}
                 </span>
-                <span className="block text-[11px] text-gray-500 mt-1">
+                <span className="block text-xs text-gray-700 mt-1">
                   {feitos} de {etapa.itens.length} {etapa.itens.length === 1 ? 'item' : 'itens'}
                 </span>
                 <span className="block h-1 rounded-full bg-gray-100 overflow-hidden mt-1.5">
@@ -232,16 +232,16 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                     </button>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-bold ${feito ? 'text-gray-400 line-through' : 'text-lm-dark'}`}>
+                    <p className={`text-base font-bold ${feito ? 'text-gray-600 line-through' : 'text-lm-dark'}`}>
                       {item.material}
-                      {item.quantidade && <span className="font-medium text-gray-500 no-underline"> · {item.quantidade}</span>}
+                      {item.quantidade && <span className="font-medium text-gray-700 no-underline"> · {item.quantidade}</span>}
                     </p>
                     {item.observacao && <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">{item.observacao}</p>}
                     {produto && (
                       <button
                         type="button"
                         onClick={() => onSelecionarProduto(produto)}
-                        className="mt-1.5 flex items-center gap-2 flex-wrap text-left text-xs text-gray-500 hover:text-lm-green transition-colors"
+                        className="mt-1.5 flex items-center gap-2 flex-wrap text-left text-sm text-gray-700 hover:text-lm-green transition-colors"
                       >
                         <span className="font-semibold text-gray-700 truncate max-w-full">{produto.produto}</span>
                         {preco != null && <span className="font-bold text-lm-green">{moeda(Number(preco))}</span>}
@@ -272,7 +272,7 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                       className={`w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-colors ${
                         feito
                           ? 'bg-lm-yellow border-lm-yellow text-black'
-                          : 'border-gray-200 dark:border-gray-500 text-gray-400 hover:border-lm-green hover:text-lm-green'
+                          : 'border-gray-200 dark:border-gray-500 text-gray-600 hover:border-lm-green hover:text-lm-green'
                       }`}
                     >
                       <Check size={17} strokeWidth={3} />

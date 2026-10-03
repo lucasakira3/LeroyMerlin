@@ -100,7 +100,7 @@ export default function ProductCard({
               aria-label={selected ? 'Remover da seleção' : 'Selecionar produto'}
               aria-pressed={selected}
               className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors ${
-                selected ? 'bg-lm-green text-white' : 'bg-white/90 text-gray-400 hover:text-lm-green'
+                selected ? 'bg-lm-green text-white' : 'bg-white/90 text-gray-600 hover:text-lm-green'
               }`}
             >
               {selected ? <CheckSquare size={15} /> : <Square size={15} />}
@@ -112,7 +112,7 @@ export default function ProductCard({
             aria-label={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
             aria-pressed={favoritado}
             className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors bg-white/90 ${
-              favoritado ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+              favoritado ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
             }`}
           >
             <Heart size={15} fill={favoritado ? 'currentColor' : 'none'} />
@@ -139,11 +139,11 @@ export default function ProductCard({
         {totalAvaliacoes > 0 && (
           <div className="flex items-center gap-1.5 mb-2">
             <StarRating value={media} size={12} />
-            <span className="text-[11px] text-gray-400">({totalAvaliacoes})</span>
+            <span className="text-xs text-gray-600">({totalAvaliacoes})</span>
           </div>
         )}
         {emOferta && (
-          <p className="text-xs text-gray-400 line-through">
+          <p className="text-sm text-gray-600 line-through">
             {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
         )}
@@ -152,7 +152,7 @@ export default function ProductCard({
             <p className="text-base font-black text-lm-dark">
               {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </p>
-            {parcelamentoStr && <p className="text-[10px] text-gray-400">{parcelamentoStr}</p>}
+            {parcelamentoStr && <p className="text-xs text-gray-600">{parcelamentoStr}</p>}
           </div>
           <div className="w-28 flex-shrink-0">
             <SeletorQuantidadeCarrinho produtoId={produto.id} estoque={produto.estoque} />

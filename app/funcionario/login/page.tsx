@@ -92,7 +92,7 @@ export default function LoginFuncionario() {
               type="button"
               onClick={() => setTipo('cliente')}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                tipo === 'cliente' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+                tipo === 'cliente' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
               }`}
             >
               Cliente
@@ -101,7 +101,7 @@ export default function LoginFuncionario() {
               type="button"
               onClick={() => setTipo('funcionario')}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                tipo === 'funcionario' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+                tipo === 'funcionario' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
               }`}
             >
               Funcionário
@@ -116,7 +116,7 @@ export default function LoginFuncionario() {
             <>
               <div className="text-center mb-8">
                 <h1 className="text-2xl font-black text-gray-900">{textos.titulo}</h1>
-                <p className="text-gray-500 text-sm mt-2">{textos.descricao}</p>
+                <p className="text-gray-700 text-base mt-2">{textos.descricao}</p>
               </div>
 
               <form onSubmit={handleLogin} className="space-y-5">
@@ -124,7 +124,7 @@ export default function LoginFuncionario() {
                   <label className="block text-sm font-bold text-gray-700 mb-1.5">{textos.labelEmail}</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail size={18} className="text-gray-400" />
+                      <Mail size={18} className="text-gray-600" />
                     </div>
                     <input
                       type="email"
@@ -141,7 +141,7 @@ export default function LoginFuncionario() {
                   <label className="block text-sm font-bold text-gray-700 mb-1.5">Senha</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <KeyRound size={18} className="text-gray-400" />
+                      <KeyRound size={18} className="text-gray-600" />
                     </div>
                     <input
                       type="password"

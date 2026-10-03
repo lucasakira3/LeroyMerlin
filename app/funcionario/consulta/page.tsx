@@ -149,7 +149,7 @@ export default function ConsultaRapidaPage() {
       <Card padding="none">
         <div className="p-4 border-b border-gray-200 dark:border-gray-500">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
             <input
               ref={inputRef}
               type="text"
@@ -159,11 +159,11 @@ export default function ConsultaRapidaPage() {
               className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 dark:border-gray-500 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
             />
           </div>
-          <p className="text-xs text-gray-500 mt-2">Consulta de balcão: preço, estoque e corredor na hora, sem sair do atendimento.</p>
+          <p className="text-sm text-gray-700 mt-2">Consulta de balcão: preço, estoque e corredor na hora, sem sair do atendimento.</p>
         </div>
 
         {catalogo === null ? (
-          <p className="p-4 text-sm text-gray-500">Carregando catálogo...</p>
+          <p className="p-4 text-base text-gray-700">Carregando catálogo...</p>
         ) : busca.trim() === '' ? (
           <EmptyState icon={Search} title="Digite para consultar" description="Ex.: furadeira, LM-0042, rejunte cinza" />
         ) : resultados.length === 0 ? (
@@ -188,7 +188,7 @@ export default function ConsultaRapidaPage() {
                     />
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-medium text-gray-900 truncate">{p.produto}</span>
-                      <span className="block text-xs text-gray-500">{p.id} · {p.corredor}</span>
+                      <span className="block text-sm text-gray-700">{p.id} · {p.corredor}</span>
                     </span>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${estoque === 0 ? 'bg-red-100 text-red-700' : estoque < 10 ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
                       {estoque === 0 ? 'Sem estoque' : `${estoque} un.`}
@@ -215,30 +215,30 @@ export default function ConsultaRapidaPage() {
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <p className="text-xs text-gray-500">{selecionado.id} · {selecionado.categoria}</p>
+                <p className="text-sm text-gray-700">{selecionado.id} · {selecionado.categoria}</p>
                 <h2 className="text-lg font-bold text-gray-900">{selecionado.produto}</h2>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-xl bg-gray-50 border border-gray-200 dark:border-gray-500 p-3">
-                  <p className="text-[11px] text-gray-500">Preço</p>
+                  <p className="text-xs text-gray-700">Preço</p>
                   {detalhe.oferta.emOferta ? (
                     <>
                       <p className="text-lg font-black text-lm-green">{formatarBRL(detalhe.oferta.precoComDesconto)}</p>
-                      <p className="text-[11px] text-gray-400 line-through">{formatarBRL(detalhe.atual.preco)}</p>
+                      <p className="text-xs text-gray-600 line-through">{formatarBRL(detalhe.atual.preco)}</p>
                     </>
                   ) : (
                     <p className="text-lg font-black text-gray-900">{formatarBRL(detalhe.atual.preco)}</p>
                   )}
                 </div>
                 <div className="rounded-xl bg-gray-50 border border-gray-200 dark:border-gray-500 p-3">
-                  <p className="text-[11px] text-gray-500">Estoque</p>
+                  <p className="text-xs text-gray-700">Estoque</p>
                   <p className={`text-lg font-black ${detalhe.atual.estoque === 0 ? 'text-red-600' : 'text-gray-900'}`}>
                     {detalhe.atual.estoque === 0 ? 'Zerado' : `${detalhe.atual.estoque} un.`}
                   </p>
                 </div>
                 <div className="rounded-xl bg-lm-green/10 border border-lm-green/30 p-3">
-                  <p className="text-[11px] text-gray-500">Onde fica</p>
+                  <p className="text-xs text-gray-700">Onde fica</p>
                   <p className="text-lg font-black text-lm-green inline-flex items-center gap-1">
                     <MapPin size={16} /> {selecionado.corredor.replace('Corredor ', '')}
                   </p>
@@ -267,7 +267,7 @@ export default function ConsultaRapidaPage() {
 
               {selecionado.especificacoes && (
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Especificações</p>
+                  <p className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-1">Especificações</p>
                   <p className="text-sm text-gray-700">{selecionado.especificacoes}</p>
                 </div>
               )}
@@ -285,13 +285,13 @@ export default function ConsultaRapidaPage() {
                     {copiado === 'resposta' ? <Check size={13} /> : <Copy size={13} />} {copiado === 'resposta' ? 'Copiado' : 'Copiar'}
                   </button>
                 </div>
-                {selecionado.pergunta && <p className="text-xs text-gray-500 mb-1">Pergunta comum: “{selecionado.pergunta}”</p>}
+                {selecionado.pergunta && <p className="text-sm text-gray-700 mb-1">Pergunta comum: “{selecionado.pergunta}”</p>}
                 <p className="text-sm text-gray-800">{selecionado.resposta_ia}</p>
               </div>
 
               {detalhe.alternativas.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 inline-flex items-center gap-1.5">
+                  <p className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2 inline-flex items-center gap-1.5">
                     <Repeat size={13} /> Alternativas em estoque
                   </p>
                   <ul className="space-y-1.5">
@@ -304,7 +304,7 @@ export default function ConsultaRapidaPage() {
                         >
                           <span className="min-w-0 flex-1">
                             <span className="block text-sm font-medium text-gray-900 truncate">{p.produto}</span>
-                            <span className="block text-xs text-gray-500">{p.corredor} · {atual.estoque} un.</span>
+                            <span className="block text-sm text-gray-700">{p.corredor} · {atual.estoque} un.</span>
                           </span>
                           <span className="text-sm font-bold text-gray-900">{formatarBRL(atual.preco)}</span>
                         </button>
@@ -325,9 +325,9 @@ export default function ConsultaRapidaPage() {
           <span className="inline-flex items-center gap-2 font-bold text-gray-900">
             <MapaIcone size={17} className="text-lm-green" /> Mapa da loja
           </span>
-          <span className="text-xs text-gray-500">{loja}</span>
+          <span className="text-sm text-gray-700">{loja}</span>
           {mapa.resultados.length > 0 && (
-            <button type="button" onClick={() => setNoMapaIds([])} className="ml-auto text-xs text-gray-400 hover:text-lm-green">
+            <button type="button" onClick={() => setNoMapaIds([])} className="ml-auto text-sm text-gray-600 hover:text-lm-green">
               Limpar mapa
             </button>
           )}
@@ -348,7 +348,7 @@ export default function ConsultaRapidaPage() {
                     type="button"
                     onClick={() => alternarNoMapa(produto.id)}
                     aria-label={`Tirar ${produto.produto} do mapa`}
-                    className="w-5 h-5 rounded-full flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50"
+                    className="w-5 h-5 rounded-full flex items-center justify-center text-gray-600 hover:text-red-600 hover:bg-red-50"
                   >
                     <X size={12} />
                   </button>

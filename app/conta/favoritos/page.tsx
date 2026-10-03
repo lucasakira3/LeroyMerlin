@@ -124,7 +124,7 @@ export default function FavoritosPage() {
   return (
     <div>
         <h1 className="text-xl font-bold text-gray-900 mb-1">Meus favoritos</h1>
-        <p className="text-sm text-gray-500">Produtos que você salvou pra ver depois.</p>
+        <p className="text-base text-gray-700">Produtos que você salvou pra ver depois.</p>
         {produtos !== null && produtos.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-4 mb-2">
             <button
@@ -215,7 +215,7 @@ export default function FavoritosPage() {
               <button
                 type="button"
                 onClick={() => setNovoGrupoAberto(true)}
-                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border border-dashed border-gray-300 text-gray-500 hover:border-lm-green hover:text-lm-green transition-colors"
+                className="flex items-center gap-1 text-sm font-semibold px-3 py-1.5 rounded-full border border-dashed border-gray-300 text-gray-700 hover:border-lm-green hover:text-lm-green transition-colors"
               >
                 <Plus size={12} /> Novo grupo
               </button>
@@ -231,7 +231,7 @@ export default function FavoritosPage() {
           </div>
         )}
         {produtos !== null && produtos.length === 0 && (
-          <p className="text-sm text-gray-500 py-8">
+          <p className="text-base text-gray-700 py-8">
             Você ainda não favoritou nenhum produto.
           </p>
         )}
@@ -275,7 +275,7 @@ export default function FavoritosPage() {
               />
             ))}
             {produtosFiltrados.length === 0 && (
-              <p className="text-sm text-gray-500 py-6">Nenhum produto neste grupo.</p>
+              <p className="text-base text-gray-700 py-6">Nenhum produto neste grupo.</p>
             )}
           </div>
         )}

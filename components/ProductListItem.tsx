@@ -36,7 +36,7 @@ export default function ProductListItem({ produto, href, style, className = '', 
           <p className="text-sm font-bold text-lm-green mt-0.5">
             {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
-          <p className="text-xs text-gray-400 mt-0.5">{produto.categoria}</p>
+          <p className="text-sm text-gray-600 mt-0.5">{produto.categoria}</p>
         </div>
       </Link>
       {extra}

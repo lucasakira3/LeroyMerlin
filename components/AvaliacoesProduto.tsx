@@ -61,7 +61,7 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
   return (
     <div>
       {!usuario && (
-        <p className="text-xs text-gray-400 italic mb-4">Faça login para avaliar este produto.</p>
+        <p className="text-sm text-gray-600 italic mb-4">Faça login para avaliar este produto.</p>
       )}
 
       {usuario && (
@@ -91,7 +91,7 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
             <button
               type="button"
               onClick={() => inputFotoRef.current?.click()}
-              className="self-start flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-lm-green transition-colors"
+              className="self-start flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-lm-green transition-colors"
             >
               <Camera size={14} /> Adicionar foto
             </button>
@@ -121,13 +121,13 @@ export default function AvaliacoesProduto({ produtoId }: { produtoId: string }) 
             <div key={i} className="border-t border-gray-200 dark:border-gray-500 pt-3 first:border-t-0 first:pt-0">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <StarRating value={a.nota} size={13} />
-                <span className="text-[11px] text-gray-400">{new Date(a.data).toLocaleDateString('pt-BR')}</span>
+                <span className="text-xs text-gray-600">{new Date(a.data).toLocaleDateString('pt-BR')}</span>
               </div>
               {a.comentario && <p className="text-sm text-gray-600 leading-relaxed mb-1">{a.comentario}</p>}
               {a.foto && (
                 <img src={a.foto} alt="Foto enviada na avaliação" className="w-16 h-16 rounded-lg object-cover mb-1" />
               )}
-              <p className="text-[11px] text-gray-400">{mascararEmail(a.email)}</p>
+              <p className="text-xs text-gray-600">{mascararEmail(a.email)}</p>
             </div>
           ))}
         </div>

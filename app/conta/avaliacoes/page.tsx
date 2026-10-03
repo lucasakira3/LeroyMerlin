@@ -54,14 +54,14 @@ export default function MinhasAvaliacoesPage() {
   return (
     <div>
         <h1 className="text-xl font-bold text-gray-900 mb-1">Minhas avaliações</h1>
-        <p className="text-sm text-gray-500 mb-6">Notas e comentários que você deixou em produtos</p>
+        <p className="text-base text-gray-700 mb-6">Notas e comentários que você deixou em produtos</p>
 
         {avaliacoes === null && (
-          <p className="text-sm text-gray-400 py-8">Carregando...</p>
+          <p className="text-base text-gray-600 py-8">Carregando...</p>
         )}
 
         {avaliacoes !== null && avaliacoes.length === 0 && (
-          <p className="text-sm text-gray-500 py-8">Você ainda não avaliou nenhum produto.</p>
+          <p className="text-base text-gray-700 py-8">Você ainda não avaliou nenhum produto.</p>
         )}
 
         {avaliacoes !== null && avaliacoes.length > 0 && (
@@ -92,7 +92,7 @@ export default function MinhasAvaliacoesPage() {
                     </div>
                     <div className="flex items-center gap-2 mt-1 mb-1.5">
                       <StarRating value={avaliacao.nota} size={13} />
-                      <span className="text-xs text-gray-400">
+                      <span className="text-sm text-gray-600">
                         {new Date(avaliacao.data).toLocaleDateString('pt-BR')}
                       </span>
                     </div>

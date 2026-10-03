@@ -23,14 +23,14 @@ export default function ProjetoSalvoPage() {
 
   return (
     <div>
-      <Link href="/conta/projetos" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-lm-green transition-colors mb-4">
+      <Link href="/conta/projetos" className="inline-flex items-center gap-1.5 text-base text-gray-700 hover:text-lm-green transition-colors mb-4">
         <ArrowLeft size={16} /> Meus projetos
       </Link>
 
       {projeto === undefined ? (
         <div className="h-64 bg-gray-100 rounded-card animate-pulse" />
       ) : projeto === null ? (
-        <p className="text-sm text-gray-500 py-10 text-center">Projeto não encontrado. Ele pode ter sido removido.</p>
+        <p className="text-base text-gray-700 py-10 text-center">Projeto não encontrado. Ele pode ter sido removido.</p>
       ) : (
         <ListaDeCompras projeto={projeto.projeto} descricaoOriginal={projeto.descricao} projetoSalvo={projeto} />
       )}

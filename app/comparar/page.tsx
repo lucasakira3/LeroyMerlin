@@ -69,7 +69,7 @@ function ComparadorContent() {
         <div className="max-w-xl mx-auto px-4 py-10">
           <Card className="text-center py-10">
             <Scale size={32} className="text-gray-300 mx-auto mb-3" />
-            <p className="text-sm text-gray-500 mb-4">Nenhum produto selecionado pra comparar.</p>
+            <p className="text-base text-gray-700 mb-4">Nenhum produto selecionado pra comparar.</p>
             <Link href="/produtos"><Button variant="primary">Ver produtos</Button></Link>
           </Card>
         </div>

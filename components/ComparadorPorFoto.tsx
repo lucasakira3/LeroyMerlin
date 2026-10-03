@@ -91,7 +91,7 @@ export default function ComparadorPorFoto() {
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-zinc-700 px-3 py-1.5 rounded-full hover:border-lm-green/40 hover:text-lm-green transition-colors flex-shrink-0"
+        className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 dark:text-zinc-400 border border-gray-200 dark:border-zinc-700 px-3 py-1.5 rounded-full hover:border-lm-green/40 hover:text-lm-green transition-colors flex-shrink-0"
       >
         <Camera size={13} /> Comparar por foto
       </button>
@@ -102,7 +102,7 @@ export default function ComparadorPorFoto() {
     <div className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl p-3 shadow-soft animate-fade-in">
       <div className="flex items-center justify-between mb-2">
         <p className="text-xs font-semibold text-gray-600 dark:text-zinc-300">Aponte a câmera pro produto</p>
-        <button onClick={fechar} aria-label="Fechar" className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200">
+        <button onClick={fechar} aria-label="Fechar" className="text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200">
           <X size={16} />
         </button>
       </div>
@@ -116,8 +116,8 @@ export default function ComparadorPorFoto() {
           aria-label="Selecionar foto do produto pra comparar"
           className="flex flex-col items-center justify-center gap-2 p-5 border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 dark:hover:bg-zinc-800/50 transition-colors"
         >
-          <Camera size={22} className="text-gray-400" />
-          <p className="text-xs text-gray-500 dark:text-zinc-400 text-center">Tirar foto ou escolher imagem</p>
+          <Camera size={22} className="text-gray-600" />
+          <p className="text-sm text-gray-700 dark:text-zinc-400 text-center">Tirar foto ou escolher imagem</p>
           <input
             ref={inputRef}
             type="file"
@@ -160,7 +160,7 @@ export default function ComparadorPorFoto() {
               <div key={r.produto.id} className="flex items-center gap-2 bg-gray-50 dark:bg-zinc-800 rounded-lg px-2.5 py-2">
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-gray-900 dark:text-zinc-50 truncate">{r.produto.produto}</p>
-                  <p className="text-[11px] text-gray-500 dark:text-zinc-400">
+                  <p className="text-xs text-gray-700 dark:text-zinc-400">
                     {r.produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </p>
                 </div>

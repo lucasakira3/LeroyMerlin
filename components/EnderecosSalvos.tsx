@@ -76,7 +76,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
   return (
     <div>
       {enderecos.length === 0 && !novoAberto && (
-        <p className="text-sm text-gray-500 py-2 mb-3">Nenhum endereço salvo ainda.</p>
+        <p className="text-base text-gray-700 py-2 mb-3">Nenhum endereço salvo ainda.</p>
       )}
 
       {enderecos.length > 0 && (
@@ -97,7 +97,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 truncate">{formatarEndereco(end)}</p>
+                  <p className="text-sm text-gray-700 truncate">{formatarEndereco(end)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
@@ -152,7 +152,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
               inputMode="numeric"
               className="w-full h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
             />
-            {buscandoCep && <Loader2 size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />}
+            {buscandoCep && <Loader2 size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 animate-spin text-gray-600" />}
           </div>
 
           <div className="flex gap-2">
@@ -214,7 +214,7 @@ export default function EnderecosSalvos({ email }: { email: string }) {
             <button
               type="button"
               onClick={() => { setNovoAberto(false); setForm(ENDERECO_VAZIO) }}
-              className="text-gray-500 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="text-gray-700 text-base font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancelar
             </button>

@@ -39,7 +39,7 @@ export default function ClienteAuthForm() {
     <>
       <div className="text-center mb-8">
         <h1 className="text-2xl font-black text-gray-900">Entrar como Cliente</h1>
-        <p className="text-gray-500 text-sm mt-2">Acesse para favoritar produtos e ver seu histórico</p>
+        <p className="text-gray-700 text-base mt-2">Acesse para favoritar produtos e ver seu histórico</p>
       </div>
 
       <form onSubmit={handleLogin} className="space-y-5">
@@ -47,7 +47,7 @@ export default function ClienteAuthForm() {
           <label className="block text-sm font-bold text-gray-700 mb-1.5">E-mail</label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Mail size={18} className="text-gray-400" />
+              <Mail size={18} className="text-gray-600" />
             </div>
             <input
               type="email"
@@ -64,7 +64,7 @@ export default function ClienteAuthForm() {
           <label className="block text-sm font-bold text-gray-700 mb-1.5">Senha</label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <KeyRound size={18} className="text-gray-400" />
+              <KeyRound size={18} className="text-gray-600" />
             </div>
             <input
               type="password"

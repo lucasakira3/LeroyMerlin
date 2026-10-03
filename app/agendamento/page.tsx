@@ -18,7 +18,7 @@ export default function AgendamentoPage() {
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
             aba === 'novo'
               ? 'bg-lm-green text-white shadow-soft'
-              : 'text-gray-500 hover:text-lm-green'
+              : 'text-gray-700 hover:text-lm-green'
           }`}
         >
           <CalendarPlus size={15} />
@@ -29,7 +29,7 @@ export default function AgendamentoPage() {
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
             aba === 'consultar'
               ? 'bg-lm-green text-white shadow-soft'
-              : 'text-gray-500 hover:text-lm-green'
+              : 'text-gray-700 hover:text-lm-green'
           }`}
         >
           <CalendarCheck size={15} />
@@ -42,7 +42,7 @@ export default function AgendamentoPage() {
           <Card className="lg:col-span-2">
             <div className="mb-6">
               <h2 className="text-xl font-bold text-lm-dark">Agendar visita presencial</h2>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-base text-gray-700 mt-1">
                 Converse com um especialista na loja mais próxima. Atendimento gratuito, sem compromisso.
               </p>
             </div>
@@ -63,7 +63,7 @@ export default function AgendamentoPage() {
                     <div className="w-1.5 h-1.5 rounded-full bg-lm-green mt-1.5 flex-shrink-0" />
                     <div>
                       <p className="text-xs font-semibold text-lm-dark">{item.titulo}</p>
-                      <p className="text-xs text-gray-500">{item.desc}</p>
+                      <p className="text-sm text-gray-700">{item.desc}</p>
                     </div>
                   </li>
                 ))}
@@ -81,7 +81,7 @@ export default function AgendamentoPage() {
         <Card>
           <div className="mb-5">
             <h2 className="text-xl font-bold text-lm-dark">Meus Agendamentos</h2>
-            <p className="text-sm text-gray-500 mt-1">Consulte, acompanhe e cancele suas visitas agendadas.</p>
+            <p className="text-base text-gray-700 mt-1">Consulte, acompanhe e cancele suas visitas agendadas.</p>
           </div>
           <AgendamentosLista />
         </Card>

@@ -19,7 +19,7 @@ export default function PerguntasPage() {
   return (
     <div>
       <h1 className="text-xl font-bold text-gray-900 mb-1">Minhas perguntas</h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <p className="text-base text-gray-700 mb-6">
         Perguntas que você fez no chat &quot;Pergunte sobre este produto&quot;, com a resposta da IA.
       </p>
 
@@ -32,7 +32,7 @@ export default function PerguntasPage() {
       {perguntas !== null && perguntas.length === 0 && (
         <div className="text-center py-10">
           <MessageCircleQuestion size={32} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">
+          <p className="text-base text-gray-700">
             Você ainda não fez nenhuma pergunta. Abra um produto e use o chat &quot;Pergunte sobre este produto&quot;.
           </p>
         </div>
@@ -46,7 +46,7 @@ export default function PerguntasPage() {
                 <Link href={`/produto/${p.produtoId}`} className="text-sm font-semibold text-gray-900 hover:text-lm-green truncate">
                   {p.produtoNome}
                 </Link>
-                <span className="text-xs text-gray-400 flex-shrink-0">
+                <span className="text-sm text-gray-600 flex-shrink-0">
                   {new Date(p.data).toLocaleDateString('pt-BR')}
                 </span>
               </div>

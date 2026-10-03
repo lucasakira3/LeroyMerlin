@@ -39,7 +39,7 @@ export default async function ProdutoPage({ params }: PageProps) {
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         <nav aria-label="Breadcrumb">
-          <ol className="flex items-center gap-1.5 text-xs text-gray-500 flex-wrap">
+          <ol className="flex items-center gap-1.5 text-sm text-gray-700 flex-wrap">
             <li><Link href="/produtos" className="hover:text-lm-green hover:underline transition-colors">Produtos</Link></li>
             <li aria-hidden="true">/</li>
             <li>{produto.categoria}</li>
@@ -55,7 +55,7 @@ export default async function ProdutoPage({ params }: PageProps) {
 
         {/* Corredor — seção mais proeminente */}
         <Card className="text-center">
-          <p className="text-sm text-gray-500 mb-3 uppercase tracking-wide font-medium">
+          <p className="text-base text-gray-700 mb-3 uppercase tracking-wide font-medium">
             Localização na loja
           </p>
           <CorridorBadge corredor={produto.corredor} large />
@@ -64,12 +64,12 @@ export default async function ProdutoPage({ params }: PageProps) {
         {/* Estoque + Sustentabilidade */}
         <Card padding="sm" className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs text-gray-400 mb-1 uppercase tracking-wide">Estoque</p>
+            <p className="text-sm text-gray-600 mb-1 uppercase tracking-wide">Estoque</p>
             <StockIndicator estoque={produto.estoque} />
           </div>
           {produto.sustentabilidade !== 'N/A' && (
             <div className="text-right">
-              <p className="text-xs text-gray-400 mb-1 uppercase tracking-wide">Sustentabilidade</p>
+              <p className="text-sm text-gray-600 mb-1 uppercase tracking-wide">Sustentabilidade</p>
               <SustainabilityBadge sustentabilidade={produto.sustentabilidade} />
             </div>
           )}
@@ -119,7 +119,7 @@ export default async function ProdutoPage({ params }: PageProps) {
         {/* Complexidade */}
         <Card padding="sm">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Complexidade de instalação</span>
+            <span className="text-base text-gray-700">Complexidade de instalação</span>
             <span className="text-sm font-semibold text-gray-900">{produto.complexidade}</span>
           </div>
         </Card>

@@ -37,7 +37,7 @@ export default function ContaSidebar({ nome, email }: Props) {
         </div>
         <div className="min-w-0">
           <p className="text-sm font-bold text-gray-900 truncate">{nome}</p>
-          <p className="text-xs text-gray-400 truncate">{email}</p>
+          <p className="text-sm text-gray-600 truncate">{email}</p>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ export default function ContaSidebar({ nome, email }: Props) {
       <button
         type="button"
         onClick={sair}
-        className="flex items-center gap-3 px-3.5 py-2.5 mt-4 rounded-xl text-base font-medium text-gray-500 hover:bg-gray-100 transition-colors w-full"
+        className="flex items-center gap-3 px-3.5 py-2.5 mt-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-100 transition-colors w-full"
       >
         <LogOut size={20} /> Sair
       </button>

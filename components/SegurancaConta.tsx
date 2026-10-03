@@ -44,11 +44,11 @@ export default function SegurancaConta({ email }: { email: string }) {
   return (
     <Card>
       <div className="flex items-center gap-2 mb-1">
-        <ShieldCheck size={16} className="text-gray-400" />
+        <ShieldCheck size={16} className="text-gray-600" />
         <h2 className="text-sm font-bold text-gray-900">Segurança</h2>
       </div>
       {conta && (
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="text-sm text-gray-700 mb-4">
           Conta criada em {new Date(conta.criadoEm).toLocaleDateString('pt-BR')}
         </p>
       )}
@@ -60,7 +60,7 @@ export default function SegurancaConta({ email }: { email: string }) {
       ) : (
         <form onSubmit={salvar} className="space-y-2.5">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">Senha atual</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Senha atual</label>
             <input
               type="password"
               value={senhaAtual}
@@ -70,7 +70,7 @@ export default function SegurancaConta({ email }: { email: string }) {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">Nova senha</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Nova senha</label>
             <input
               type="password"
               value={novaSenha}
@@ -89,7 +89,7 @@ export default function SegurancaConta({ email }: { email: string }) {
             <button
               type="button"
               onClick={cancelar}
-              className="flex items-center gap-1.5 text-gray-500 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-1.5 text-gray-700 text-base font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <X size={14} /> Cancelar
             </button>

@@ -181,7 +181,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-3xl font-semibold text-gray-900">{stat.value}</p>
-                <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+                <p className="text-base text-gray-700 mt-1">{stat.label}</p>
               </div>
             </Card>
           </Link>
@@ -213,7 +213,7 @@ export default function DashboardPage() {
                 }`}
               >
                 <p className="text-sm text-gray-700">{act.texto}</p>
-                <span className="text-xs font-medium text-gray-400 whitespace-nowrap">{tempoRelativo(act.quando)}</span>
+                <span className="text-sm font-medium text-gray-600 whitespace-nowrap">{tempoRelativo(act.quando)}</span>
               </div>
             ))}
           </div>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
           </h2>
           <div className="space-y-4">
             {alertasEstoque.length === 0 && (
-              <p className="text-sm text-gray-500">Nenhum produto com estoque crítico no momento.</p>
+              <p className="text-base text-gray-700">Nenhum produto com estoque crítico no momento.</p>
             )}
             {alertasEstoque.map(alerta => (
               <div key={alerta.id} className="bg-red-50 rounded-xl p-4 border border-red-100 flex justify-between items-center gap-3">
@@ -256,7 +256,7 @@ export default function DashboardPage() {
           Estoque por Categoria
         </h2>
         {estoquePorCategoria.length === 0 ? (
-          <p className="text-sm text-gray-500">Carregando...</p>
+          <p className="text-base text-gray-700">Carregando...</p>
         ) : (
           <GraficoBarras dados={estoquePorCategoria} />
         )}

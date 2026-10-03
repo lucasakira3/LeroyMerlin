@@ -48,7 +48,7 @@ export default function CompareToast() {
 
         <button
           onClick={dismiss}
-          className="absolute top-4 right-4 p-1 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+          className="absolute top-4 right-4 p-1 rounded-full text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
           aria-label="Fechar notificação"
         >
           <X size={16} />

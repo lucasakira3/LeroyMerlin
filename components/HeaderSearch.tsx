@@ -38,7 +38,7 @@ export default function HeaderSearch() {
 
   return (
     <form onSubmit={handleSubmit} className="relative flex-1 min-w-0 md:max-w-2xl">
-      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={17} />
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none" size={17} />
       <input
         type="text"
         value={query}
@@ -58,7 +58,7 @@ export default function HeaderSearch() {
                 onMouseDown={() => handleSugestaoClick(termo)}
                 className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left text-gray-600 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
               >
-                <Clock size={14} className="text-gray-400 flex-shrink-0" />
+                <Clock size={14} className="text-gray-600 flex-shrink-0" />
                 {termo}
               </button>
             </li>

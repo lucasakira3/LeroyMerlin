@@ -63,9 +63,9 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
 
   return (
     <div className="flex flex-wrap items-center gap-3 p-3 bg-white border border-gray-200 dark:border-gray-500 rounded-xl shadow-soft">
-      <div className="flex items-center gap-1.5 text-gray-400">
+      <div className="flex items-center gap-1.5 text-gray-600">
         <SlidersHorizontal size={13} />
-        <span className="text-xs font-medium text-gray-500">Filtros:</span>
+        <span className="text-sm font-medium text-gray-700">Filtros:</span>
       </div>
 
       <select
@@ -109,7 +109,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
             className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
               filtros.notaMinima === o.valor
                 ? 'bg-lm-green text-white border-lm-green'
-                : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
             }`}
           >
             {o.label}
@@ -123,7 +123,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
         className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
           filtros.apenasDisponiveis
             ? 'bg-lm-green text-white border-lm-green'
-            : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+            : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
         }`}
       >
         ✓ Só disponíveis
@@ -133,7 +133,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
         <button
           type="button"
           onClick={() => onChange(FILTROS_INICIAIS)}
-          className="text-xs text-gray-400 hover:text-lm-green ml-auto"
+          className="text-sm text-gray-600 hover:text-lm-green ml-auto"
         >
           Limpar filtros
         </button>

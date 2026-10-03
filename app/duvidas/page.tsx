@@ -33,14 +33,14 @@ export default function DuvidasPage() {
                   type="button"
                   onClick={() => setModo('escolha')}
                   aria-label="Voltar"
-                  className="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center text-gray-400 hover:text-lm-green hover:bg-gray-50 transition-colors"
+                  className="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center text-gray-600 hover:text-lm-green hover:bg-gray-50 transition-colors"
                 >
                   <ArrowLeft size={16} />
                 </button>
                 <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-lm-dark">{CABECALHOS[modo].titulo}</p>
-                  <p className="text-xs text-gray-500">{CABECALHOS[modo].descricao}</p>
+                  <p className="text-sm text-gray-700">{CABECALHOS[modo].descricao}</p>
                 </div>
               </div>
 
@@ -55,7 +55,7 @@ export default function DuvidasPage() {
           {/* Falar com especialista humano */}
           <Card padding="sm">
             <h2 className="text-sm font-bold text-lm-dark mb-1">Prefere falar com um especialista?</h2>
-            <p className="text-xs text-gray-500 mb-4">
+            <p className="text-sm text-gray-700 mb-4">
               Nossos consultores estão disponíveis para tirar dúvidas técnicas e ajudar no seu projeto.
             </p>
 

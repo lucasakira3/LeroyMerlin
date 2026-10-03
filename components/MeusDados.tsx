@@ -40,7 +40,7 @@ export default function MeusDados({ email, nomeAtual, onNomeAtualizado }: Props)
       <Card className="flex items-center justify-between">
         <div>
           <p className="text-sm font-semibold text-gray-900">{nomeAtual}</p>
-          <p className="text-xs text-gray-400">{email}</p>
+          <p className="text-sm text-gray-600">{email}</p>
         </div>
         <button
           type="button"
@@ -57,7 +57,7 @@ export default function MeusDados({ email, nomeAtual, onNomeAtualizado }: Props)
     <Card>
       <form onSubmit={salvar} className="space-y-3">
         <div>
-          <label className="block text-xs font-semibold text-gray-500 mb-1">Nome</label>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Nome</label>
           <input
             type="text"
             value={nome}
@@ -67,12 +67,12 @@ export default function MeusDados({ email, nomeAtual, onNomeAtualizado }: Props)
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-500 mb-1">E-mail</label>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">E-mail</label>
           <input
             type="text"
             value={email}
             disabled
-            className="w-full h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-gray-50 text-gray-400"
+            className="w-full h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-base bg-gray-50 text-gray-600"
           />
         </div>
 
@@ -86,7 +86,7 @@ export default function MeusDados({ email, nomeAtual, onNomeAtualizado }: Props)
           <button
             type="button"
             onClick={cancelar}
-            className="flex items-center gap-1.5 text-gray-500 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 text-gray-700 text-base font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <X size={14} /> Cancelar
           </button>

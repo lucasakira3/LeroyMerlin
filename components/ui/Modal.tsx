@@ -51,7 +51,7 @@ export default function Modal({ open, onClose, title, children, maxWidthClass = 
             <button
               onClick={onClose}
               aria-label="Fechar"
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
+              className="text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
             >
               <X size={20} />
             </button>

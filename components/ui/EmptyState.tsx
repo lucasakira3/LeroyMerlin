@@ -10,7 +10,7 @@ interface EmptyStateProps {
 
 const toneClasses: Record<NonNullable<EmptyStateProps['tone']>, string> = {
   green: 'bg-lm-green/10 text-lm-green',
-  gray: 'bg-gray-100 dark:bg-gray-700 text-gray-400',
+  gray: 'bg-gray-100 dark:bg-gray-700 text-gray-600',
 }
 
 const sizeClasses: Record<NonNullable<EmptyStateProps['size']>, { wrap: string; circle: string; icon: number }> = {
@@ -28,7 +28,7 @@ export default function EmptyState({ icon: Icon, title, description, tone = 'gra
         <Icon size={s.icon} />
       </div>
       <p className="text-sm font-semibold text-gray-600">{title}</p>
-      {description && <p className="text-xs text-gray-400 max-w-xs">{description}</p>}
+      {description && <p className="text-sm text-gray-600 max-w-xs">{description}</p>}
     </div>
   )
 }

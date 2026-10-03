@@ -81,7 +81,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
       <div className="max-w-lg mx-auto text-center py-16 px-4">
         <CheckCircle2 size={56} className="text-lm-green mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-lm-dark mb-2">Visita agendada!</h2>
-        <p className="text-gray-500 mb-6">Você receberá uma confirmação por e-mail e SMS.</p>
+        <p className="text-gray-700 mb-6">Você receberá uma confirmação por e-mail e SMS.</p>
 
         <Card padding="sm" className="text-left space-y-3 mb-6">
           <Row label="Serviço" value={servico?.label ?? form.servico} />
@@ -108,12 +108,12 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
         {[1, 2, 3].map((n) => (
           <div key={n} className="flex items-center gap-2">
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-              step > n ? 'bg-lm-green text-white' : step === n ? 'bg-lm-green text-white ring-4 ring-lm-green/20' : 'bg-gray-200 text-gray-500'
+              step > n ? 'bg-lm-green text-white' : step === n ? 'bg-lm-green text-white ring-4 ring-lm-green/20' : 'bg-gray-200 text-gray-700'
             }`}>{step > n ? '✓' : n}</div>
             {n < 3 && <div className={`h-0.5 w-12 ${step > n ? 'bg-lm-green' : 'bg-gray-200'}`} />}
           </div>
         ))}
-        <span className="ml-2 text-xs text-gray-500">
+        <span className="ml-2 text-sm text-gray-700">
           {step === 1 ? 'Serviço e loja' : step === 2 ? 'Data e horário' : 'Seus dados'}
         </span>
       </div>
@@ -141,7 +141,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-lm-dark">{s.label}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{s.desc}</p>
+                    <p className="text-sm text-gray-700 mt-0.5">{s.desc}</p>
                   </div>
                 </button>
               ))}
@@ -334,7 +334,7 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between text-xs">
-      <span className="text-gray-500">{label}</span>
+      <span className="text-gray-700">{label}</span>
       <span className="font-medium text-lm-dark">{value}</span>
     </div>
   )

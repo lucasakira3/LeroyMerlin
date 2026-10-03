@@ -44,7 +44,7 @@ export default function PedidoCompartilhadoView() {
               <Package size={16} className="text-lm-green" />
               <span className="font-mono text-sm font-semibold text-gray-900">{pedido.numero}</span>
             </div>
-            <span className="text-xs text-gray-400">
+            <span className="text-sm text-gray-600">
               {new Date(pedido.data).toLocaleDateString('pt-BR')}
             </span>
           </div>
@@ -57,7 +57,7 @@ export default function PedidoCompartilhadoView() {
             {pedido.itens.map((item) => (
               <div key={item.produtoId} className="flex items-center justify-between gap-2 text-sm">
                 <span className="text-gray-700">{item.quantidade}× {item.nome}</span>
-                <span className="text-gray-500 flex-shrink-0">
+                <span className="text-gray-700 flex-shrink-0">
                   {(item.preco * item.quantidade).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </span>
               </div>
@@ -76,7 +76,7 @@ export default function PedidoCompartilhadoView() {
           </div>
 
           {pedido.pagamento && (
-            <div className="flex items-center gap-1.5 text-xs text-gray-500 pt-1.5">
+            <div className="flex items-center gap-1.5 text-sm text-gray-700 pt-1.5">
               <CreditCard size={12} />
               {pedido.pagamento.metodo === 'cartao'
                 ? `${pedido.pagamento.bandeira} final ${pedido.pagamento.ultimosDigitos}${pedido.pagamento.parcelas && pedido.pagamento.parcelas > 1 ? ` · ${pedido.pagamento.parcelas}x` : ''}`

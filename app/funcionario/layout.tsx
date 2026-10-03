@@ -76,18 +76,18 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
             type="button"
             onClick={() => setSidebarAberta(false)}
             aria-label="Fechar menu"
-            className="lg:hidden p-1.5 text-gray-400 hover:text-gray-700"
+            className="lg:hidden p-1.5 text-gray-600 hover:text-gray-700"
           >
             <X size={20} />
           </button>
         </div>
         <div className="px-6 pt-6 pb-2 flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <span className="text-sm font-bold text-gray-600 uppercase tracking-wider">
             Painel do Funcionário
           </span>
           <ThemeToggle variant="onLight" />
         </div>
-        <p className="px-6 pb-2 text-xs text-gray-500 truncate" title={email}>{email}</p>
+        <p className="px-6 pb-2 text-sm text-gray-700 truncate" title={email}>{email}</p>
         <nav className="flex-1 px-4 py-2 space-y-1">
           {menuItems.map(item => {
             const active = pathname.startsWith(item.href)
@@ -101,7 +101,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
-                <item.icon size={18} className={active ? 'text-lm-green' : 'text-gray-400'} />
+                <item.icon size={18} className={active ? 'text-lm-green' : 'text-gray-600'} />
                 {item.label}
               </Link>
             )

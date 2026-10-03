@@ -48,20 +48,20 @@ export default function PedidoTimeline({ etapas, etapaAtual, previsoes }: Props)
                 className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                   concluida || atual
                     ? 'bg-lm-green text-white'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 dark:border-gray-500'
+                    : 'bg-gray-100 text-gray-600 border border-gray-200 dark:border-gray-500'
                 } ${atual ? 'ring-4 ring-lm-green/20' : ''}`}
               >
                 <Icone size={15} />
               </div>
               <span
                 className={`text-[10px] text-center leading-tight ${
-                  i <= etapaAtual ? 'text-gray-700 font-semibold' : 'text-gray-400'
+                  i <= etapaAtual ? 'text-gray-700 font-semibold' : 'text-gray-600'
                 }`}
               >
                 {etapa}
               </span>
               {previsoes?.[i] && (
-                <span className="text-[9px] text-center leading-tight text-gray-400">
+                <span className="text-[9px] text-center leading-tight text-gray-600">
                   {formatarPrevisao(previsoes[i], i <= etapaAtual)}
                 </span>
               )}

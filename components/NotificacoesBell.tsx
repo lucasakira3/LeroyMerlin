@@ -104,7 +104,7 @@ export default function NotificacoesBell() {
           </div>
 
           {notificacoes.length === 0 ? (
-            <p className="px-4 py-8 text-sm text-gray-400 text-center">Nenhuma notificação por enquanto</p>
+            <p className="px-4 py-8 text-base text-gray-600 text-center">Nenhuma notificação por enquanto</p>
           ) : (
             <ul>
               {notificacoes.map((n) => (
@@ -119,8 +119,8 @@ export default function NotificacoesBell() {
                     {!n.lida && <span className="w-1.5 h-1.5 rounded-full bg-lm-green mt-1.5 flex-shrink-0" />}
                     <div className={n.lida ? 'pl-3.5' : ''}>
                       <p className="text-xs font-semibold text-lm-dark">{n.titulo}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{n.mensagem}</p>
-                      <p className="text-[10px] text-gray-400 mt-1">{tempoRelativo(n.criadaEm)}</p>
+                      <p className="text-sm text-gray-700 mt-0.5">{n.mensagem}</p>
+                      <p className="text-xs text-gray-600 mt-1">{tempoRelativo(n.criadaEm)}</p>
                     </div>
                   </Link>
                 </li>

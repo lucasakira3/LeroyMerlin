@@ -11,7 +11,7 @@ interface Props {
 export default function SortSelect({ value, onChange }: Props) {
   return (
     <div className="flex items-center gap-1.5">
-      <ArrowUpDown size={13} className="text-gray-400 flex-shrink-0" />
+      <ArrowUpDown size={13} className="text-gray-600 flex-shrink-0" />
       <select
         value={value}
         onChange={e => onChange(e.target.value as CriterioOrdenacao)}

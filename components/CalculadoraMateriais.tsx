@@ -102,7 +102,7 @@ export default function CalculadoraMateriais() {
               className={`flex items-center justify-center gap-1 text-[11px] font-semibold px-1.5 py-1.5 rounded-md transition-colors ${
                 tipo === valor
                   ? 'bg-white dark:bg-zinc-700 text-lm-green shadow-sm'
-                  : 'text-gray-500 dark:text-zinc-400 hover:text-lm-green'
+                  : 'text-gray-700 dark:text-zinc-400 hover:text-lm-green'
               }`}
             >
               <Icone size={12} className="flex-shrink-0" /> {label}
@@ -146,7 +146,7 @@ export default function CalculadoraMateriais() {
           </>
         )}
 
-        <p className="text-[10px] text-gray-400 dark:text-zinc-500 mt-auto pt-2 leading-relaxed">
+        <p className="text-xs text-gray-600 dark:text-zinc-500 mt-auto pt-2 leading-relaxed">
           Estimativa aproximada — para obras estruturais ou grandes áreas, confirme com um especialista antes de comprar.
         </p>
       </div>
@@ -161,7 +161,7 @@ export default function CalculadoraMateriais() {
               </div>
               <div>
                 <p className="text-2xl font-black text-lm-dark dark:text-zinc-50">
-                  {resultado.quantidade} <span className="text-sm font-semibold text-gray-500 dark:text-zinc-400">{resultado.unidade}</span>
+                  {resultado.quantidade} <span className="text-base font-semibold text-gray-700 dark:text-zinc-400">{resultado.unidade}</span>
                 </p>
               </div>
             </div>
@@ -169,13 +169,13 @@ export default function CalculadoraMateriais() {
             <div className="space-y-1.5 mb-5">
               {resultado.linhas.map(linha => (
                 <div key={linha.label} className="flex items-center justify-between text-xs px-1">
-                  <span className="text-gray-500 dark:text-zinc-400">{linha.label}</span>
+                  <span className="text-gray-700 dark:text-zinc-400">{linha.label}</span>
                   <span className="font-semibold text-gray-800 dark:text-zinc-200">{linha.valor}</span>
                 </div>
               ))}
             </div>
 
-            <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-2">Produtos que combinam</p>
+            <p className="text-sm font-semibold text-gray-700 dark:text-zinc-400 mb-2">Produtos que combinam</p>
 
             {buscandoProdutos && (
               <div className="flex justify-center py-6">
@@ -184,7 +184,7 @@ export default function CalculadoraMateriais() {
             )}
 
             {!buscandoProdutos && produtos?.length === 0 && (
-              <p className="text-xs text-gray-400 dark:text-zinc-500 py-2">
+              <p className="text-sm text-gray-600 dark:text-zinc-500 py-2">
                 Não achamos esse material no catálogo — tente buscar manualmente na aba Buscar.
               </p>
             )}
@@ -203,7 +203,7 @@ export default function CalculadoraMateriais() {
                     />
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-gray-800 dark:text-zinc-100 truncate">{produto.produto}</p>
-                      <p className="text-gray-500 dark:text-zinc-400">
+                      <p className="text-gray-700 dark:text-zinc-400">
                         {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                       </p>
                     </div>

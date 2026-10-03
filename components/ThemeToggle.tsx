@@ -5,7 +5,7 @@ import { Moon, Sun } from 'lucide-react'
 
 const VARIANT_CLASSES = {
   onDark: 'text-white/80 hover:text-white hover:bg-white/10',
-  onLight: 'text-gray-500 dark:text-gray-400 hover:text-lm-green hover:bg-lm-green/10',
+  onLight: 'text-gray-700 dark:text-gray-400 hover:text-lm-green hover:bg-lm-green/10',
 }
 
 interface ThemeToggleProps {

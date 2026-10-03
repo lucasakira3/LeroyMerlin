@@ -29,7 +29,7 @@ export default function DuvidasEscolha({ onEscolher }: Props) {
     <div className="flex-1 flex items-center justify-center p-6">
       <div className="w-full max-w-3xl">
         <h2 className="text-3xl font-bold text-lm-dark text-center mb-2">Como podemos ajudar?</h2>
-        <p className="text-base text-gray-500 text-center mb-10">Escolha como prefere tirar sua dúvida</p>
+        <p className="text-base text-gray-700 text-center mb-10">Escolha como prefere tirar sua dúvida</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {OPCOES.map(({ modo, titulo, descricao, icone: Icone }) => (
@@ -47,7 +47,7 @@ export default function DuvidasEscolha({ onEscolher }: Props) {
                   <p className="text-2xl font-bold text-lm-dark">{titulo}</p>
                   <ChevronRight size={24} className="text-gray-300" />
                 </div>
-                <p className="text-base text-gray-500 mt-2">{descricao}</p>
+                <p className="text-base text-gray-700 mt-2">{descricao}</p>
               </div>
             </button>
           ))}

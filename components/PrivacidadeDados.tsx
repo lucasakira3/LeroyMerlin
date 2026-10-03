@@ -52,10 +52,10 @@ export default function PrivacidadeDados({ email }: { email: string }) {
   return (
     <Card>
       <div className="flex items-center gap-2 mb-1">
-        <ShieldAlert size={16} className="text-gray-400" />
+        <ShieldAlert size={16} className="text-gray-600" />
         <h2 className="text-sm font-bold text-gray-900">Privacidade e dados</h2>
       </div>
-      <p className="text-xs text-gray-500 mb-4">
+      <p className="text-sm text-gray-700 mb-4">
         Você pode baixar uma cópia de tudo que guardamos sobre você, ou apagar sua conta por completo.
       </p>
 
@@ -80,7 +80,7 @@ export default function PrivacidadeDados({ email }: { email: string }) {
             <strong> neste navegador</strong>. Não tem como desfazer.
           </p>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Digite sua senha pra confirmar
             </label>
             <input

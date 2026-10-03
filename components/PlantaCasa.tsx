@@ -44,7 +44,7 @@ export default function PlantaCasa({ itens, selecionados, onSelecionarProduto, o
 
   if (gruposComProdutos.length === 0) {
     return (
-      <p className="text-sm text-gray-500">Nenhum produto encontrado para este projeto. Veja a Lista completa.</p>
+      <p className="text-base text-gray-700">Nenhum produto encontrado para este projeto. Veja a Lista completa.</p>
     )
   }
 

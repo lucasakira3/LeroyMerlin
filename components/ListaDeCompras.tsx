@@ -351,7 +351,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
           type="button"
           onClick={() => setAba('visao-geral')}
           className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
-            aba === 'visao-geral' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+            aba === 'visao-geral' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
           }`}
         >
           Visão geral
@@ -360,7 +360,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
           type="button"
           onClick={() => setAba('lista-completa')}
           className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
-            aba === 'lista-completa' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+            aba === 'lista-completa' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
           }`}
         >
           Lista completa
@@ -390,7 +390,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
           {/* CTA Agendamento */}
           <Card className="bg-lm-yellow/10 border-lm-yellow/30">
             <p className="text-sm font-bold text-gray-900 mb-1">Quer ajuda especializada?</p>
-            <p className="text-xs text-gray-500 mb-4">
+            <p className="text-sm text-gray-700 mb-4">
               Nossos consultores avaliam seu projeto na loja, sem custo e sem compromisso.
             </p>
             <Link href="/agendamento" className="block">

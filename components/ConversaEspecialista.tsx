@@ -54,7 +54,7 @@ export default function ConversaEspecialista() {
           <Headset size={22} />
         </div>
         <p className="text-sm font-semibold text-lm-dark">Entre na sua conta pra falar com um especialista</p>
-        <p className="text-xs text-gray-500 max-w-xs">
+        <p className="text-sm text-gray-700 max-w-xs">
           Assim o funcionário sabe quem está perguntando e consegue te responder depois, mesmo que você saia da página.
         </p>
         <Link
@@ -74,7 +74,7 @@ export default function ConversaEspecialista() {
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
         {mensagens.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-sm text-gray-500">
+            <p className="text-base text-gray-700">
               Mande sua dúvida — um funcionário da loja vai te responder por aqui.
             </p>
           </div>
@@ -92,14 +92,14 @@ export default function ConversaEspecialista() {
               }`}>
                 {msg.texto}
               </div>
-              <span className="text-[10px] text-gray-400 mt-1 px-1">
+              <span className="text-xs text-gray-600 mt-1 px-1">
                 {new Date(msg.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           </div>
         ))}
         {mensagens.length > 0 && !conversa?.atendida && mensagens[mensagens.length - 1].autor === 'cliente' && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-400 pl-11">
+          <div className="flex items-center gap-1.5 text-sm text-gray-600 pl-11">
             <Clock size={12} /> Aguardando resposta de um funcionário...
           </div>
         )}

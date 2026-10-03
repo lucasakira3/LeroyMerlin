@@ -43,8 +43,8 @@ function PedidosAjudaCorredor() {
           <div key={p.id} className="flex items-center gap-3 bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs">
             <div>
               <p className="font-bold text-gray-900">{p.corredor} {p.clienteNome ? `· ${p.clienteNome}` : ''}</p>
-              <p className="text-gray-500 truncate max-w-[220px]">{p.produtoNome}</p>
-              <p className="text-gray-400">{tempoRelativo(p.criadoEm)}</p>
+              <p className="text-gray-700 truncate max-w-[220px]">{p.produtoNome}</p>
+              <p className="text-gray-600">{tempoRelativo(p.criadoEm)}</p>
             </div>
             <button
               onClick={() => marcarAjudaAtendida(p.id)}
@@ -177,7 +177,7 @@ export default function ChamadosPage() {
         {/* Sidebar de Chamados */}
         <div className="w-full lg:w-80 shrink-0 flex flex-col min-h-0 max-h-56 lg:max-h-none">
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={16} />
             <input
               type="text"
               placeholder={modo === 'agendamentos' ? 'Buscar por nome, serviço ou loja...' : 'Buscar por nome ou e-mail...'}
@@ -190,7 +190,7 @@ export default function ChamadosPage() {
             {modo === 'agendamentos' && (
               <>
                 {agendamentos === null && (
-                  <p className="text-sm text-gray-400 text-center py-6">Carregando...</p>
+                  <p className="text-base text-gray-600 text-center py-6">Carregando...</p>
                 )}
                 {agendamentos !== null && fila.length === 0 && (
                   <EmptyState
@@ -214,7 +214,7 @@ export default function ChamadosPage() {
                     >
                       <div className="flex justify-between items-start mb-1.5">
                         <span className="font-bold text-sm text-gray-900 truncate">{ag.nome}</span>
-                        <span className="text-[10px] font-medium text-gray-400 flex items-center gap-1 shrink-0">
+                        <span className="text-xs font-medium text-gray-600 flex items-center gap-1 shrink-0">
                           <Clock size={10} /> {ag.data}
                         </span>
                       </div>
@@ -224,7 +224,7 @@ export default function ChamadosPage() {
                           <span className="w-2 h-2 rounded-full bg-red-500" title="Aguardando" />
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 line-clamp-1">
+                      <p className="text-sm text-gray-700 line-clamp-1">
                         {ag.observacao || 'Sem observações'}
                       </p>
                     </Card>
@@ -257,12 +257,12 @@ export default function ChamadosPage() {
                     >
                       <div className="flex justify-between items-start mb-1.5">
                         <span className="font-bold text-sm text-gray-900 truncate">{c.clienteNome}</span>
-                        <span className="text-[10px] font-medium text-gray-400 flex items-center gap-1 shrink-0">
+                        <span className="text-xs font-medium text-gray-600 flex items-center gap-1 shrink-0">
                           <Clock size={10} /> {tempoRelativo(c.atualizadoEm)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <p className="text-xs text-gray-500 line-clamp-1 flex-1">
+                        <p className="text-sm text-gray-700 line-clamp-1 flex-1">
                           {ultima ? `${ultima.autor === 'funcionario' ? 'Você: ' : ''}${ultima.texto}` : ''}
                         </p>
                         {!c.atendida && (
@@ -288,7 +288,7 @@ export default function ChamadosPage() {
                   </div>
                   <div>
                     <h2 className="font-bold text-gray-900">{chamadoSelecionado.nome}</h2>
-                    <p className="text-xs text-gray-500 flex items-center gap-2">
+                    <p className="text-sm text-gray-700 flex items-center gap-2">
                       <span>{chamadoSelecionado.servicoLabel}</span>
                       <span className="flex items-center gap-1"><MapPin size={11} /> {chamadoSelecionado.loja.split(' — ')[0]}</span>
                       <span>{chamadoSelecionado.data} às {chamadoSelecionado.horario}</span>
@@ -326,7 +326,7 @@ export default function ChamadosPage() {
                       <div className="px-4 py-3 rounded-2xl text-sm leading-relaxed bg-lm-green text-white">
                         {nota.texto}
                       </div>
-                      <span className="text-[10px] text-gray-400 mt-1">
+                      <span className="text-xs text-gray-600 mt-1">
                         {new Date(nota.data).toLocaleString('pt-BR')}
                       </span>
                     </div>
@@ -363,7 +363,7 @@ export default function ChamadosPage() {
                   </div>
                   <div>
                     <h2 className="font-bold text-gray-900">{conversaSelecionada.clienteNome}</h2>
-                    <p className="text-xs text-gray-500">{conversaSelecionada.clienteEmail}</p>
+                    <p className="text-sm text-gray-700">{conversaSelecionada.clienteEmail}</p>
                   </div>
                 </div>
                 {!conversaSelecionada.atendida ? (
@@ -392,7 +392,7 @@ export default function ChamadosPage() {
                       }`}>
                         {msg.texto}
                       </div>
-                      <span className="text-[10px] text-gray-400 mt-1">
+                      <span className="text-xs text-gray-600 mt-1">
                         {new Date(msg.data).toLocaleString('pt-BR')}
                       </span>
                     </div>

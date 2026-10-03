@@ -95,7 +95,7 @@ export default function ClientesPage() {
       <Card padding="none">
         <div className="p-4 border-b border-gray-200 dark:border-gray-500 flex gap-4">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
             <input
               type="text"
               placeholder="Buscar por nome ou e-mail..."
@@ -109,7 +109,7 @@ export default function ClientesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+              <tr className="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
                 <th className="p-4 font-bold">
                   <button onClick={() => handleSort('nome')} className="flex items-center gap-1.5 hover:text-lm-green transition-colors">
                     Nome <SortIcon ativo={sortKey === 'nome'} dir={sortDir} />
@@ -138,7 +138,7 @@ export default function ClientesPage() {
                   >
                     <td className="p-4">
                       <p className="font-bold text-lm-dark">{cliente.nome}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">
+                      <p className="text-sm text-gray-700 mt-0.5">
                         Cadastrado em {new Date(cliente.criadoEm).toLocaleDateString('pt-BR')}
                       </p>
                     </td>
@@ -159,7 +159,7 @@ export default function ClientesPage() {
                     <tr key={`${cliente.email}-detalhe`}>
                       <td colSpan={5} className="p-4 bg-gray-50 border-b border-gray-200 dark:border-gray-500">
                         {cliente.pedidos.length === 0 ? (
-                          <p className="text-sm text-gray-500">Nenhum pedido ainda.</p>
+                          <p className="text-base text-gray-700">Nenhum pedido ainda.</p>
                         ) : (
                           <div className="space-y-2">
                             {cliente.pedidos.map(pedido => (
@@ -167,7 +167,7 @@ export default function ClientesPage() {
                                 <div className="flex items-center gap-2">
                                   <Package size={14} className="text-lm-green" />
                                   <span className="font-mono text-xs font-semibold text-gray-700">{pedido.numero}</span>
-                                  <span className="text-xs text-gray-400">
+                                  <span className="text-sm text-gray-600">
                                     {new Date(pedido.data).toLocaleDateString('pt-BR')} · {pedido.itens.length} item{pedido.itens.length > 1 ? 's' : ''}
                                   </span>
                                 </div>

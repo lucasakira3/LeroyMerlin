@@ -87,7 +87,7 @@ export default function VerificarCompatibilidade({ produtoId }: { produtoId: str
 
       {aberto && (
         <div className="mt-2.5">
-          <p className="text-[11px] text-gray-400 mb-2">
+          <p className="text-xs text-gray-600 mb-2">
             Mande uma foto do que você já tem em casa (a pia, o vaso, a tomada) pra IA avaliar se este produto serve.
           </p>
 
@@ -100,8 +100,8 @@ export default function VerificarCompatibilidade({ produtoId }: { produtoId: str
               aria-label="Selecionar foto pra verificar compatibilidade"
               className="flex flex-col items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 transition-colors"
             >
-              <Camera size={20} className="text-gray-400" />
-              <p className="text-xs text-gray-500 text-center">Tirar foto ou escolher imagem</p>
+              <Camera size={20} className="text-gray-600" />
+              <p className="text-sm text-gray-700 text-center">Tirar foto ou escolher imagem</p>
               <input
                 ref={inputRef}
                 type="file"

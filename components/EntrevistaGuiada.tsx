@@ -39,7 +39,7 @@ function Chip({ label, selecionado, onClick, disabled }: ChipProps) {
           ? 'bg-lm-green text-white border-lm-green'
           : disabled
             ? 'bg-white text-gray-300 border-gray-200 dark:border-gray-500 cursor-not-allowed'
-            : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+            : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
       }`}
     >
       {label}
@@ -148,7 +148,7 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
           <Sparkles size={16} className="text-lm-green" />
           <h2 className="text-sm font-bold text-gray-900">Entrevista guiada</h2>
         </div>
-        <p className="text-xs text-gray-500 mb-3">
+        <p className="text-sm text-gray-700 mb-3">
           Responda 5 perguntas rápidas e receba sugestões de produtos e serviços pensadas pra você.
         </p>
         <Button variant="primary" size="sm" onClick={() => setModo('formulario')}>
@@ -256,14 +256,14 @@ export default function EntrevistaGuiada({ email }: { email: string }) {
               className="block bg-white border border-gray-200 dark:border-gray-500 rounded-xl p-4 shadow-soft hover:border-lm-green/40 hover:shadow-soft-lg transition-all"
             >
               <p className="text-sm font-semibold text-gray-900">{s.titulo}</p>
-              <p className="text-xs text-gray-500 mt-1">{s.descricao}</p>
+              <p className="text-sm text-gray-700 mt-1">{s.descricao}</p>
             </Link>
           ))}
         </div>
       )}
 
       {!erro && produtos.length === 0 && (
-        <p className="text-sm text-gray-500 py-6">
+        <p className="text-base text-gray-700 py-6">
           Nenhum produto encontrado pro seu perfil ainda — tente outras áreas na próxima entrevista.
         </p>
       )}

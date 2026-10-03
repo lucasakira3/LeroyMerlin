@@ -40,14 +40,14 @@ export default function Pagination({ page, totalPages, onChange, className = '' 
         onClick={() => onChange(page - 1)}
         disabled={page === 1}
         aria-label="Página anterior"
-        className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 dark:border-gray-500 text-gray-500 hover:bg-gray-50 hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+        className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 dark:border-gray-500 text-gray-700 hover:bg-gray-50 hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
       >
         <ChevronLeft size={16} />
       </button>
 
       {paginasVisiveis(page, totalPages).map((p, i) =>
         p === '…' ? (
-          <span key={`ellipsis-${i}`} className="w-9 h-9 flex items-center justify-center text-sm text-gray-400">
+          <span key={`ellipsis-${i}`} className="w-9 h-9 flex items-center justify-center text-base text-gray-600">
             …
           </span>
         ) : (
@@ -72,7 +72,7 @@ export default function Pagination({ page, totalPages, onChange, className = '' 
         onClick={() => onChange(page + 1)}
         disabled={page === totalPages}
         aria-label="Próxima página"
-        className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 dark:border-gray-500 text-gray-500 hover:bg-gray-50 hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+        className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 dark:border-gray-500 text-gray-700 hover:bg-gray-50 hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
       >
         <ChevronRight size={16} />
       </button>

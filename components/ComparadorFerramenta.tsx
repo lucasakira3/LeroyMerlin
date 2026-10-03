@@ -109,7 +109,7 @@ export default function ComparadorFerramenta() {
               className={`flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold px-2 py-1.5 rounded-md transition-colors ${
                 aba === valor
                   ? 'bg-white dark:bg-zinc-700 text-lm-green shadow-sm'
-                  : 'text-gray-500 dark:text-zinc-400 hover:text-lm-green'
+                  : 'text-gray-700 dark:text-zinc-400 hover:text-lm-green'
               }`}
             >
               <Icone size={13} /> {label}
@@ -119,7 +119,7 @@ export default function ComparadorFerramenta() {
 
         {aba === 'loja' && (
           <div className="relative flex-shrink-0">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
             <input
               type="text"
               value={query}
@@ -138,7 +138,7 @@ export default function ComparadorFerramenta() {
           )}
 
           {!carregandoLista && listaAtual?.length === 0 && (
-            <p className="text-xs text-gray-400 text-center py-6 leading-relaxed">
+            <p className="text-sm text-gray-600 text-center py-6 leading-relaxed">
               {aba === 'loja' && !query.trim() && 'Digite pra buscar um produto.'}
               {aba === 'loja' && query.trim() && 'Nenhum produto encontrado.'}
               {aba === 'carrinho' && 'Seu carrinho está vazio.'}
@@ -163,12 +163,12 @@ export default function ComparadorFerramenta() {
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-lm-dark dark:text-zinc-50 truncate">{produto.produto}</p>
-                  <p className="text-[11px] text-gray-500 dark:text-zinc-400">
+                  <p className="text-xs text-gray-700 dark:text-zinc-400">
                     {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </p>
                 </div>
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  selecionado ? 'bg-lm-green text-white' : 'bg-gray-100 dark:bg-zinc-700 text-gray-400'
+                  selecionado ? 'bg-lm-green text-white' : 'bg-gray-100 dark:bg-zinc-700 text-gray-600'
                 }`}>
                   {selecionado ? <Check size={13} /> : <Plus size={13} />}
                 </div>
@@ -191,7 +191,7 @@ export default function ComparadorFerramenta() {
         ) : produtos.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-center py-10 h-full">
             <Scale size={28} className="text-gray-300 mb-3" />
-            <p className="text-sm text-gray-500">Escolha até 3 produtos ao lado pra comparar.</p>
+            <p className="text-base text-gray-700">Escolha até 3 produtos ao lado pra comparar.</p>
           </div>
         ) : (
           <ComparadorResultado

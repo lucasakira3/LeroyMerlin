@@ -42,7 +42,7 @@ export default function SearchBar({ onResults, loading, setLoading }: SearchBarP
   return (
     <form onSubmit={handleSubmit} className="w-full">
       <div className="relative flex items-center">
-        <Search className="absolute left-4 text-gray-400 pointer-events-none" size={20} />
+        <Search className="absolute left-4 text-gray-600 pointer-events-none" size={20} />
         <input
           type="text"
           value={query}

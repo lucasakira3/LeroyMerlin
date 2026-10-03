@@ -145,15 +145,15 @@ export default function PedidosFuncionarioPage() {
     <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card padding="sm">
-          <p className="text-xs text-gray-500">Em andamento</p>
+          <p className="text-sm text-gray-700">Em andamento</p>
           <p className="text-2xl font-black text-gray-900">{contagem.ativos}</p>
         </Card>
         <Card padding="sm">
-          <p className="text-xs text-gray-500">Prontos para retirada</p>
+          <p className="text-sm text-gray-700">Prontos para retirada</p>
           <p className="text-2xl font-black text-lm-green">{contagem.prontos}</p>
         </Card>
         <Card padding="sm">
-          <p className="text-xs text-gray-500">Concluídos</p>
+          <p className="text-sm text-gray-700">Concluídos</p>
           <p className="text-2xl font-black text-gray-900">{contagem.concluidos}</p>
         </Card>
       </div>
@@ -161,7 +161,7 @@ export default function PedidosFuncionarioPage() {
       <Card padding="none">
         <div className="p-4 border-b border-gray-200 dark:border-gray-500 flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[220px] max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
             <input
               type="text"
               placeholder="Buscar por nº do pedido ou cliente..."
@@ -177,7 +177,7 @@ export default function PedidosFuncionarioPage() {
                 type="button"
                 onClick={() => setFiltro(f.valor)}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                  filtro === f.valor ? 'bg-lm-green text-white border-lm-green' : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                  filtro === f.valor ? 'bg-lm-green text-white border-lm-green' : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
                 }`}
               >
                 {f.label}
@@ -220,7 +220,7 @@ export default function PedidosFuncionarioPage() {
                           <span className="font-mono text-sm font-semibold text-gray-900">{pedido.numero}</span>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COR[status.cor]}`}>{status.label}</span>
                         </span>
-                        <span className="block text-xs text-gray-500 truncate">
+                        <span className="block text-sm text-gray-700 truncate">
                           {pedido.nomeCliente} · {pedido.metodo === 'retirada' ? 'Retirada na loja' : 'Entrega'} · {formatarData(pedido.data)}
                         </span>
                       </span>
@@ -240,7 +240,7 @@ export default function PedidosFuncionarioPage() {
                       type="button"
                       onClick={() => setExpandido(aberto ? null : pedido.numero)}
                       aria-label={aberto ? 'Recolher pedido' : 'Ver itens do pedido'}
-                      className="text-gray-400 hover:text-lm-green"
+                      className="text-gray-600 hover:text-lm-green"
                     >
                       {aberto ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </button>
@@ -248,7 +248,7 @@ export default function PedidosFuncionarioPage() {
 
                   {aberto && (
                     <div className="px-4 pb-4">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      <p className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
                         Lista de separação — na ordem do caminho pela loja
                         {feitos.length > 0 && ` · ${feitos.length}/${pedido.itens.length} separados`}
                       </p>
@@ -268,10 +268,10 @@ export default function PedidosFuncionarioPage() {
                                 className="w-4 h-4 accent-lm-green flex-shrink-0"
                               />
                               <span className="min-w-0 flex-1">
-                                <span className={`block text-sm font-medium ${marcado ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+                                <span className={`block text-base font-medium ${marcado ? 'line-through text-gray-600' : 'text-gray-900'}`}>
                                   {item.quantidade}× {item.nome}
                                 </span>
-                                <span className="block text-xs text-gray-500">
+                                <span className="block text-sm text-gray-700">
                                   {item.produtoId}
                                   {estoqueAtual !== null && ` · ${estoqueAtual} em estoque`}
                                 </span>
@@ -289,10 +289,10 @@ export default function PedidosFuncionarioPage() {
                         })}
                       </ul>
                       {pedido.metodo === 'entrega' && pedido.endereco && (
-                        <p className="text-xs text-gray-500 mt-2">Entrega em: {pedido.endereco}</p>
+                        <p className="text-sm text-gray-700 mt-2">Entrega em: {pedido.endereco}</p>
                       )}
                       {pedido.metodo === 'retirada' && pedido.loja && (
-                        <p className="text-xs text-gray-500 mt-2">Retirada em: {pedido.loja}</p>
+                        <p className="text-sm text-gray-700 mt-2">Retirada em: {pedido.loja}</p>
                       )}
                     </div>
                   )}

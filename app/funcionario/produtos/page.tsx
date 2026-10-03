@@ -142,7 +142,7 @@ export default function ProdutosPage() {
       <Card padding="none">
         <div className="p-4 border-b border-gray-200 dark:border-gray-500 space-y-3">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
             <input
               type="text"
               placeholder="Buscar produto por nome..."
@@ -153,9 +153,9 @@ export default function ProdutosPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1.5 text-gray-400">
+            <div className="flex items-center gap-1.5 text-gray-600">
               <SlidersHorizontal size={13} />
-              <span className="text-xs font-medium text-gray-500">Filtros:</span>
+              <span className="text-sm font-medium text-gray-700">Filtros:</span>
             </div>
 
             <select
@@ -200,7 +200,7 @@ export default function ProdutosPage() {
                   className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                     estoqueFiltro === o.valor
                       ? 'bg-lm-green text-white border-lm-green'
-                      : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                      : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
                   }`}
                 >
                   {o.label}
@@ -209,7 +209,7 @@ export default function ProdutosPage() {
             </div>
 
             {temFiltroAtivo && (
-              <button type="button" onClick={limparFiltros} className="text-xs text-gray-400 hover:text-lm-green ml-auto">
+              <button type="button" onClick={limparFiltros} className="text-sm text-gray-600 hover:text-lm-green ml-auto">
                 Limpar filtros
               </button>
             )}
@@ -219,7 +219,7 @@ export default function ProdutosPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+              <tr className="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
                 <th className="p-4 font-bold">
                   <button onClick={() => handleSort('produto')} className="flex items-center gap-1.5 hover:text-lm-green transition-colors">
                     Produto <SortIcon ativo={sortKey === 'produto'} dir={sortDir} />
@@ -246,19 +246,19 @@ export default function ProdutosPage() {
             <tbody className="divide-y divide-gray-100">
               {!produtosBase && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-500">Carregando catálogo...</td>
+                  <td colSpan={5} className="p-8 text-center text-gray-700">Carregando catálogo...</td>
                 </tr>
               )}
               {produtosBase && paginados.map(produto => (
                 <tr key={produto.id} className="hover:bg-gray-50 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600 flex-shrink-0">
                         <Package size={20} />
                       </div>
                       <div>
                         <p className="font-bold text-lm-dark text-sm">{produto.produto}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">Cód: {produto.id}</p>
+                        <p className="text-sm text-gray-700 mt-0.5">Cód: {produto.id}</p>
                       </div>
                     </div>
                   </td>
@@ -278,7 +278,7 @@ export default function ProdutosPage() {
                         <button onClick={() => salvarPreco(produto.id)} aria-label="Salvar preço" className="text-lm-green hover:bg-green-50 p-1 rounded">
                           <Check size={14} />
                         </button>
-                        <button onClick={() => setEditandoPrecoId(null)} aria-label="Cancelar" className="text-gray-400 hover:bg-gray-100 p-1 rounded">
+                        <button onClick={() => setEditandoPrecoId(null)} aria-label="Cancelar" className="text-gray-600 hover:bg-gray-100 p-1 rounded">
                           <X size={14} />
                         </button>
                       </div>
@@ -307,7 +307,7 @@ export default function ProdutosPage() {
                     <button
                       onClick={() => abrirEdicaoPreco(produto)}
                       aria-label="Editar preço"
-                      className="p-2 hover:text-lm-green hover:bg-green-50 rounded-lg transition-colors text-gray-400"
+                      className="p-2 hover:text-lm-green hover:bg-green-50 rounded-lg transition-colors text-gray-600"
                     >
                       <Edit2 size={16} />
                     </button>

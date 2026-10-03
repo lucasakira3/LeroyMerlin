@@ -128,7 +128,7 @@ export default function ContaPage() {
                 <Icone size={26} className="text-lm-green flex-shrink-0 mt-0.5" />
                 <div className="min-w-0 flex-1">
                   <p className="text-base font-semibold text-gray-900">{titulo}</p>
-                  <p className="text-sm text-gray-500 mt-1">{descricao}</p>
+                  <p className="text-base text-gray-700 mt-1">{descricao}</p>
                 </div>
                 <ChevronRight size={18} className="text-gray-300 flex-shrink-0 mt-1" />
               </Card>
@@ -140,7 +140,7 @@ export default function ContaPage() {
       {historicoIds.length > 0 && (
         <div>
           <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
-            <Clock size={16} className="text-gray-400" /> Vistos recentemente
+            <Clock size={16} className="text-gray-600" /> Vistos recentemente
           </h2>
           {historico === null ? (
             <div className="space-y-2">

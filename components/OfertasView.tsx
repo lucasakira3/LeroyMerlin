@@ -103,7 +103,7 @@ export default function OfertasView() {
 
   const faixas = (
     <div className="flex flex-wrap items-center gap-2 mb-4">
-      <span className="text-xs font-semibold text-gray-500 mr-1">Desconto:</span>
+      <span className="text-sm font-semibold text-gray-700 mr-1">Desconto:</span>
       {FAIXAS_DESCONTO.map(f => (
         <button
           key={f}
@@ -124,7 +124,7 @@ export default function OfertasView() {
 
   const filtro = categoriaLabel && (
     <div className="flex items-center gap-2 mb-4 text-sm">
-      <span className="text-gray-500">
+      <span className="text-gray-700">
         Ofertas em <strong className="text-lm-dark">{categoriaLabel}</strong>
       </span>
       <Link href="/ofertas" className="flex items-center gap-1 text-lm-green font-semibold hover:underline">
@@ -150,7 +150,7 @@ export default function OfertasView() {
       <>
         {cabecalho}
         {filtro}
-        <p className="text-sm text-gray-500 py-10 text-center">
+        <p className="text-base text-gray-700 py-10 text-center">
           {categoriaLabel ? `Nenhuma oferta em ${categoriaLabel} no momento.` : 'Nenhuma oferta disponível no momento.'}
         </p>
       </>
@@ -163,7 +163,7 @@ export default function OfertasView() {
       {cabecalho}
       {filtro}
       {faixas}
-      <p className="text-xs text-gray-400 mb-4">{produtosFiltrados.length} produtos em oferta</p>
+      <p className="text-sm text-gray-600 mb-4">{produtosFiltrados.length} produtos em oferta</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6">
         {produtosPaginados.map(p => (
           <ProductCard key={p.id} produto={p} onDetalhes={() => setProdutoDrawer(p)} />

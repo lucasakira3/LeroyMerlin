@@ -55,7 +55,7 @@ export default function ComparadorResultado({ produtos, onRemover, onAdicionarCa
                 className={`w-full h-28 ${ajusteFoto(produto, 'p-2')} rounded-lg mb-3`}
               />
 
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{produto.categoria}</p>
+              <p className="text-xs text-gray-600 uppercase tracking-wide mb-1">{produto.categoria}</p>
               <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3 pr-6">{produto.produto}</h3>
 
               <div className="flex items-center gap-1.5 text-lm-green mb-3">
@@ -90,19 +90,19 @@ export default function ComparadorResultado({ produtos, onRemover, onAdicionarCa
                     </div>
 
                     <div className="mb-3">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Complexidade</p>
+                      <p className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-1">Complexidade</p>
                       <p className="text-xs text-gray-700">{produto.complexidade}</p>
                     </div>
 
                     <div className={`mb-3 ${venceuAvaliacao ? destaque : ''}`}>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Avaliação</p>
+                      <p className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-1">Avaliação</p>
                       {total > 0 ? (
                         <div className="flex items-center gap-1.5">
                           <StarRating value={media} size={13} />
-                          <span className="text-xs text-gray-500">{media.toFixed(1)} ({total})</span>
+                          <span className="text-sm text-gray-700">{media.toFixed(1)} ({total})</span>
                         </div>
                       ) : (
-                        <p className="text-xs text-gray-400 italic">Sem avaliações</p>
+                        <p className="text-sm text-gray-600 italic">Sem avaliações</p>
                       )}
                     </div>
                   </>
@@ -111,14 +111,14 @@ export default function ComparadorResultado({ produtos, onRemover, onAdicionarCa
 
               {produto.especificacoes && (
                 <div className="mb-3">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Especificações</p>
+                  <p className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-1">Especificações</p>
                   <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">{produto.especificacoes}</p>
                 </div>
               )}
 
               {produto.tags && produto.tags.length > 0 && (
                 <div className="mb-4">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tags</p>
+                  <p className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-1">Tags</p>
                   <div className="flex flex-wrap gap-1">
                     {produto.tags.map(tag => (
                       <span key={tag} className="px-2 py-0.5 bg-gray-100 rounded-full text-[10px] text-gray-600">

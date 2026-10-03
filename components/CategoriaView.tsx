@@ -129,7 +129,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
       {/* Breadcrumb — orientação de "onde estou" na navegação por categoria; o botão
           "Voltar" abaixo continua sendo a ação principal de volta, isso é só o rótulo. */}
       <nav aria-label="Breadcrumb" className="mb-2">
-        <ol className="flex items-center gap-1.5 text-xs text-gray-500">
+        <ol className="flex items-center gap-1.5 text-sm text-gray-700">
           <li>
             <button onClick={onBack} className="hover:text-lm-green hover:underline transition-colors">
               Produtos
@@ -158,13 +158,13 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
       {/* Header da categoria */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
         <button onClick={onBack}
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-lm-green transition-colors flex-shrink-0">
+          className="flex items-center gap-1.5 text-base text-gray-700 hover:text-lm-green transition-colors flex-shrink-0">
           <ArrowLeft size={16} /> Voltar
         </button>
 
         {/* Busca por nome dentro da categoria */}
         <div className="relative w-full sm:flex-1 sm:min-w-0">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
           <input
             type="text"
             value={filtroTexto}
@@ -174,7 +174,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
           />
           {filtroTexto !== '' && (
             <button onClick={() => setFiltroTexto('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-600">
               <X size={14} />
             </button>
           )}
@@ -192,7 +192,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               </h3>
             </div>
             <button onClick={() => setMostrarMapa(false)}
-              className="text-xs text-gray-400 hover:text-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg px-3 py-1 hover:bg-gray-50 transition-colors">
+              className="text-sm text-gray-600 hover:text-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg px-3 py-1 hover:bg-gray-50 transition-colors">
               Fechar mapa
             </button>
           </div>
@@ -203,8 +203,8 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
       {/* Filtros */}
       <div className="flex items-center gap-3 mb-4 flex-wrap">
         <div className="flex items-center gap-1.5">
-          <SlidersHorizontal size={13} className="text-gray-400" />
-          <span className="text-xs text-gray-500 font-medium">Complexidade:</span>
+          <SlidersHorizontal size={13} className="text-gray-600" />
+          <span className="text-sm text-gray-700 font-medium">Complexidade:</span>
         </div>
         <div className="flex gap-1.5 flex-wrap">
           {complexidades.map(c => (
@@ -212,7 +212,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 filtroComplexidade === c
                   ? 'bg-lm-green text-white border-lm-green'
-                  : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                  : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
               }`}>{c}</button>
           ))}
         </div>
@@ -242,7 +242,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
           className={`text-xs px-3 py-1 rounded-full border transition-colors ${
             filtroEstoque
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+              : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
           }`}>
           ✓ Só disponíveis
         </button>
@@ -253,7 +253,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 filtroNotaMinima === o.valor
                   ? 'bg-lm-green text-white border-lm-green'
-                  : 'bg-white text-gray-500 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                  : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
               }`}>{o.label}</button>
           ))}
         </div>
@@ -270,7 +270,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
 
         {filtrosAtivos && (
           <button onClick={limparFiltros}
-            className="text-xs text-gray-400 hover:text-lm-green ml-auto">
+            className="text-sm text-gray-600 hover:text-lm-green ml-auto">
             Limpar filtros
           </button>
         )}
@@ -331,11 +331,11 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               <span className="text-sm font-semibold text-lm-dark">
                 {selecionados.length} produto{selecionados.length > 1 ? 's' : ''} selecionado{selecionados.length > 1 ? 's' : ''}
               </span>
-              <span className="text-xs text-gray-400 hidden sm:block">— {loja.split(' — ')[0]}</span>
+              <span className="text-sm text-gray-600 hidden sm:block">— {loja.split(' — ')[0]}</span>
             </div>
             <div className="flex gap-2">
               <button onClick={() => setSelecionados([])}
-                className="text-xs px-3 py-2 border border-gray-200 dark:border-gray-500 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
+                className="text-sm px-3 py-2 border border-gray-200 dark:border-gray-500 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors">
                 Limpar
               </button>
               <button

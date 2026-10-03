@@ -277,7 +277,7 @@ export default function CarrinhoPage() {
           <Card className="text-center">
             <CheckCircle2 size={40} className="text-lm-green mx-auto mb-3" />
             <h1 className="text-xl font-bold text-gray-900 mb-1">Pedido confirmado!</h1>
-            <p className="text-sm text-gray-500 mb-4">Número do pedido: <span className="font-mono font-semibold text-gray-700">{pedidoConfirmado.numero}</span></p>
+            <p className="text-base text-gray-700 mb-4">Número do pedido: <span className="font-mono font-semibold text-gray-700">{pedidoConfirmado.numero}</span></p>
 
             <div className="text-left mb-5 px-1">
               <PedidoTimeline etapas={status.etapas} etapaAtual={status.etapa} previsoes={status.previsoes} />
@@ -313,7 +313,7 @@ export default function CarrinhoPage() {
 
             <div className="text-left space-y-1 mb-6">
               {pag && (
-                <p className="text-xs text-gray-500">
+                <p className="text-sm text-gray-700">
                   Pagamento:{' '}
                   {pag.metodo === 'cartao'
                     ? `${pag.bandeira} final ${pag.ultimosDigitos}${pag.parcelas && pag.parcelas > 1 ? ` · ${pag.parcelas}x` : ''}`
@@ -328,7 +328,7 @@ export default function CarrinhoPage() {
               <button
                 type="button"
                 onClick={compartilhar}
-                className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-lm-green transition-colors px-2"
+                className="flex items-center gap-1.5 text-base font-semibold text-gray-700 hover:text-lm-green transition-colors px-2"
               >
                 <Share2 size={14} /> Compartilhar rastreio
               </button>
@@ -400,14 +400,14 @@ export default function CarrinhoPage() {
                       <span className="flex items-center gap-1 text-xs text-lm-green font-bold">
                         <MapPin size={10} /> {produto.corredor}
                       </span>
-                      <span className="text-xs text-gray-400">{produto.estoque} disp.</span>
+                      <span className="text-sm text-gray-600">{produto.estoque} disp.</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => mudarQuantidade(produto.id, -1)}
-                      className="w-6 h-6 rounded-md border border-gray-200 dark:border-gray-500 flex items-center justify-center text-gray-500 hover:bg-gray-50"
+                      className="w-6 h-6 rounded-md border border-gray-200 dark:border-gray-500 flex items-center justify-center text-gray-700 hover:bg-gray-50"
                       aria-label="Diminuir quantidade"
                     >
                       <Minus size={12} />
@@ -416,7 +416,7 @@ export default function CarrinhoPage() {
                     <button
                       onClick={() => mudarQuantidade(produto.id, 1)}
                       disabled={item.quantidade >= produto.estoque}
-                      className="w-6 h-6 rounded-md border border-gray-200 dark:border-gray-500 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-6 h-6 rounded-md border border-gray-200 dark:border-gray-500 flex items-center justify-center text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label="Aumentar quantidade"
                     >
                       <Plus size={12} />
@@ -446,7 +446,7 @@ export default function CarrinhoPage() {
                     {total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </span>
                   {parcelamentoStr && (
-                    <span className="text-xs text-gray-400">{parcelamentoStr}</span>
+                    <span className="text-sm text-gray-600">{parcelamentoStr}</span>
                   )}
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function CarrinhoPage() {
                       type="button"
                       onClick={() => setMetodo('retirada')}
                       className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                        metodo === 'retirada' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+                        metodo === 'retirada' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
                       }`}
                     >
                       Retirar na loja
@@ -479,7 +479,7 @@ export default function CarrinhoPage() {
                       type="button"
                       onClick={() => setMetodo('entrega')}
                       className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                        metodo === 'entrega' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+                        metodo === 'entrega' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
                       }`}
                     >
                       Entrega em casa
@@ -541,7 +541,7 @@ export default function CarrinhoPage() {
                               inputMode="numeric"
                               className="w-full h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
-                            {buscandoCep && <Loader2 size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />}
+                            {buscandoCep && <Loader2 size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 animate-spin text-gray-600" />}
                           </div>
                           <div className="flex gap-2">
                             <input
@@ -589,7 +589,7 @@ export default function CarrinhoPage() {
                               className="w-14 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                           </div>
-                          <label className="flex items-center gap-2 text-xs text-gray-500 pt-1">
+                          <label className="flex items-center gap-2 text-sm text-gray-700 pt-1">
                             <input
                               type="checkbox"
                               checked={salvarNovoEndereco}
@@ -613,7 +613,7 @@ export default function CarrinhoPage() {
                       type="button"
                       onClick={() => setFormaPagamento('cartao')}
                       className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                        formaPagamento === 'cartao' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+                        formaPagamento === 'cartao' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
                       }`}
                     >
                       <CreditCard size={13} /> Cartão
@@ -622,7 +622,7 @@ export default function CarrinhoPage() {
                       type="button"
                       onClick={() => setFormaPagamento('pix')}
                       className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                        formaPagamento === 'pix' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+                        formaPagamento === 'pix' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
                       }`}
                     >
                       <QrCode size={13} /> Pix
@@ -631,7 +631,7 @@ export default function CarrinhoPage() {
                       type="button"
                       onClick={() => setFormaPagamento('boleto')}
                       className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                        formaPagamento === 'boleto' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-500 hover:text-gray-700'
+                        formaPagamento === 'boleto' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
                       }`}
                     >
                       <Barcode size={13} /> Boleto
@@ -740,7 +740,7 @@ export default function CarrinhoPage() {
                               ))}
                             </select>
                           </div>
-                          <label className="flex items-center gap-2 text-xs text-gray-500 pt-1">
+                          <label className="flex items-center gap-2 text-sm text-gray-700 pt-1">
                             <input
                               type="checkbox"
                               checked={salvarNovoCartao}
@@ -751,7 +751,7 @@ export default function CarrinhoPage() {
                           </label>
                         </>
                       )}
-                      <p className="text-[11px] text-gray-400">
+                      <p className="text-xs text-gray-600">
                         Cartão fictício — nenhum pagamento real é processado neste projeto.
                       </p>
                     </div>
@@ -762,7 +762,7 @@ export default function CarrinhoPage() {
                       <div className="w-28 h-28 mx-auto mb-3 rounded-lg bg-white border-2 border-dashed border-gray-300 flex items-center justify-center">
                         <QrCode size={48} className="text-gray-300" />
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm text-gray-700">
                         QR Code Pix simulado — gerado após confirmar o pedido, pagamento em até 30 minutos.
                       </p>
                     </div>
@@ -771,7 +771,7 @@ export default function CarrinhoPage() {
                   {formaPagamento === 'boleto' && (
                     <div className="text-center bg-gray-50 rounded-xl p-5">
                       <Barcode size={40} className="text-gray-300 mx-auto mb-3" />
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm text-gray-700">
                         Boleto simulado — gerado após confirmar o pedido, vencimento em 3 dias úteis.
                       </p>
                     </div>

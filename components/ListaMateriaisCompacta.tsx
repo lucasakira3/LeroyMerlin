@@ -45,7 +45,7 @@ export default function ListaMateriaisCompacta({ itens, selecionados, onTrocarAl
         if (!produto) {
           return (
             <div key={idx} className="px-3 py-2.5 rounded-lg border border-dashed border-gray-200 dark:border-zinc-700">
-              <p className="text-xs text-gray-400 italic">{item.material} — peça ao vendedor da seção {item.categoria}</p>
+              <p className="text-sm text-gray-600 italic">{item.material} — peça ao vendedor da seção {item.categoria}</p>
             </div>
           )
         }
@@ -70,7 +70,7 @@ export default function ListaMateriaisCompacta({ itens, selecionados, onTrocarAl
               />
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-gray-800 dark:text-zinc-100 truncate">{produto.produto}</p>
-                <p className="text-gray-500 dark:text-zinc-400 flex items-center gap-1.5">
+                <p className="text-gray-700 dark:text-zinc-400 flex items-center gap-1.5">
                   {produto.estoque === 0
                     ? <span className="text-red-500 font-medium">Sem estoque</span>
                     : (produto as any).preco != null
@@ -105,7 +105,7 @@ export default function ListaMateriaisCompacta({ itens, selecionados, onTrocarAl
                       key={r.produto.id}
                       onClick={() => onTrocarAlternativa(item, r.produto.id)}
                       className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-[11px] transition-colors ${
-                        sel ? 'bg-lm-green/10 text-lm-dark dark:text-zinc-50' : 'text-gray-500 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                        sel ? 'bg-lm-green/10 text-lm-dark dark:text-zinc-50' : 'text-gray-700 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800'
                       }`}
                     >
                       {sel ? <Check size={11} className="text-lm-green flex-shrink-0" /> : <span className="w-[11px] flex-shrink-0" />}

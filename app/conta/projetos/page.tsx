@@ -38,7 +38,7 @@ export default function ProjetosPage() {
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Meus projetos</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Projetos guiados que você salvou — continue o road map de onde parou.</p>
+          <p className="text-base text-gray-700 mt-0.5">Projetos guiados que você salvou — continue o road map de onde parou.</p>
         </div>
         <Link href="/projeto">
           <Button variant="primary"><Sparkles size={16} /> Novo projeto</Button>
@@ -69,8 +69,8 @@ export default function ProjetosPage() {
                 <div className="flex items-start justify-between gap-3">
                   <Link href={`/conta/projetos/${p.id}`} className="min-w-0 flex-1 group">
                     <p className="text-base font-bold text-gray-900 group-hover:text-lm-green transition-colors truncate">{p.titulo}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{p.descricao}</p>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-gray-500">
+                    <p className="text-sm text-gray-700 mt-0.5 line-clamp-1">{p.descricao}</p>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-gray-700">
                       <span className="flex items-center gap-1"><Package size={12} /> {r.materiais} materiais</span>
                       {r.total > 0 && <span className="flex items-center gap-1"><Wallet size={12} /> {moeda(r.total)}</span>}
                       <span>Salvo em {new Date(p.criadoEm).toLocaleDateString('pt-BR')}</span>
@@ -83,11 +83,11 @@ export default function ProjetosPage() {
                         <button onClick={() => setConfirmandoId(null)} className="text-xs font-semibold text-gray-600 hover:bg-gray-100 px-2.5 py-1.5 rounded-lg">Cancelar</button>
                       </>
                     ) : (
-                      <button onClick={() => setConfirmandoId(p.id)} aria-label={`Remover ${p.titulo}`} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-colors">
+                      <button onClick={() => setConfirmandoId(p.id)} aria-label={`Remover ${p.titulo}`} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-600 hover:text-red-500 hover:bg-gray-100 transition-colors">
                         <Trash2 size={16} />
                       </button>
                     )}
-                    <Link href={`/conta/projetos/${p.id}`} aria-label={`Abrir ${p.titulo}`} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-lm-green hover:bg-gray-100 transition-colors">
+                    <Link href={`/conta/projetos/${p.id}`} aria-label={`Abrir ${p.titulo}`} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-600 hover:text-lm-green hover:bg-gray-100 transition-colors">
                       <ChevronRight size={18} />
                     </Link>
                   </div>
@@ -97,7 +97,7 @@ export default function ProjetosPage() {
                   <div>
                     <div className="flex items-center justify-between text-[11px] mb-1">
                       <span className="font-semibold text-gray-600">Road map</span>
-                      <span className="text-gray-500">{r.itensFeitos} de {r.itensTotal} itens · {r.concluidas} de {r.totalEtapas} etapas</span>
+                      <span className="text-gray-700">{r.itensFeitos} de {r.itensTotal} itens · {r.concluidas} de {r.totalEtapas} etapas</span>
                     </div>
                     <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
                       <div className="h-full rounded-full bg-lm-green transition-all duration-500" style={{ width: `${pct}%` }} />

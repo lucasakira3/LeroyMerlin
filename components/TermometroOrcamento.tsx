@@ -143,11 +143,11 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
   return (
     <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-card shadow-soft">
       <div className="px-4 py-3 flex items-center gap-3">
-        <Wallet size={16} className="text-gray-400 dark:text-zinc-500 flex-shrink-0" />
+        <Wallet size={16} className="text-gray-600 dark:text-zinc-500 flex-shrink-0" />
         {!editando && orcamento !== null && (
           <button
             onClick={() => { setValorInput(String(orcamento)); setEditando(true) }}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
+            className="text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
             aria-label="Editar orçamento"
           >
             <Pencil size={14} />
@@ -159,7 +159,7 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
             onSubmit={e => { e.preventDefault(); salvarOrcamento() }}
             className="flex items-center gap-2 flex-1"
           >
-            <span className="text-xs text-gray-500 dark:text-zinc-400 whitespace-nowrap">Meu orçamento é</span>
+            <span className="text-sm text-gray-700 dark:text-zinc-400 whitespace-nowrap">Meu orçamento é</span>
             <input
               autoFocus
               type="text"
@@ -173,7 +173,7 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
               <Check size={16} />
             </button>
             {orcamento !== null && (
-              <button type="button" onClick={() => setEditando(false)} className="text-gray-400 hover:text-gray-600 flex-shrink-0" aria-label="Cancelar">
+              <button type="button" onClick={() => setEditando(false)} className="text-gray-600 hover:text-gray-600 flex-shrink-0" aria-label="Cancelar">
                 <X size={16} />
               </button>
             )}
@@ -203,7 +203,7 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
             {!modoProjeto && itens.length > 0 && (
               <button
                 onClick={() => setExpandido(v => !v)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
+                className="text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
                 aria-label={expandido ? 'Esconder itens' : 'Ver itens'}
               >
                 {expandido ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -247,14 +247,14 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
                 <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${PALETA_SEGMENTOS[i % PALETA_SEGMENTOS.length]}`} />
                 <span className="flex-1 truncate text-gray-700 dark:text-zinc-300">
                   {item.produto.produto}
-                  {item.quantidade > 1 && <span className="text-gray-400 dark:text-zinc-500"> ×{item.quantidade}</span>}
+                  {item.quantidade > 1 && <span className="text-gray-600 dark:text-zinc-500"> ×{item.quantidade}</span>}
                 </span>
-                <span className="text-gray-500 dark:text-zinc-400 whitespace-nowrap">{fatia.toFixed(0)}% do orçamento</span>
+                <span className="text-gray-700 dark:text-zinc-400 whitespace-nowrap">{fatia.toFixed(0)}% do orçamento</span>
                 <span className="font-semibold text-gray-900 dark:text-zinc-50 whitespace-nowrap">{formatarMoeda(subtotal)}</span>
                 <div className="flex items-center gap-0.5 flex-shrink-0">
                   <button
                     onClick={() => mudarQuantidade(item.produto.id, -1)}
-                    className="w-5 h-5 rounded flex items-center justify-center text-gray-400 hover:text-lm-green hover:bg-lm-green/10"
+                    className="w-5 h-5 rounded flex items-center justify-center text-gray-600 hover:text-lm-green hover:bg-lm-green/10"
                     aria-label="Diminuir quantidade"
                   >
                     <Minus size={11} />
@@ -263,7 +263,7 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
                   <button
                     onClick={() => mudarQuantidade(item.produto.id, 1)}
                     disabled={item.quantidade >= item.produto.estoque}
-                    className="w-5 h-5 rounded flex items-center justify-center text-gray-400 hover:text-lm-green hover:bg-lm-green/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-5 h-5 rounded flex items-center justify-center text-gray-600 hover:text-lm-green hover:bg-lm-green/10 disabled:opacity-30 disabled:cursor-not-allowed"
                     aria-label="Aumentar quantidade"
                   >
                     <Plus size={11} />
@@ -304,7 +304,7 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
           </button>
           <button
             onClick={() => setSugestaoDispensada(true)}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
+            className="text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
             aria-label="Dispensar sugestão"
           >
             <X size={14} />

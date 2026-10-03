@@ -44,7 +44,7 @@ export default function ProjetoPage() {
             <div className="w-2 h-2 rounded-full bg-lm-green animate-pulse" />
             <div>
               <p className="text-sm font-semibold text-lm-dark">Assistente de Projetos</p>
-              <p className="text-xs text-gray-500">Powered by Gemini · monta sua lista de materiais</p>
+              <p className="text-sm text-gray-700">Powered by Gemini · monta sua lista de materiais</p>
             </div>
           </div>
 
@@ -65,7 +65,7 @@ export default function ProjetoPage() {
               </div>
               <div>
                 <p className="text-sm font-bold text-lm-dark">{ferramenta.label}</p>
-                <p className="text-xs text-gray-500 mt-0.5 max-w-[160px]">{ferramenta.texto}</p>
+                <p className="text-sm text-gray-700 mt-0.5 max-w-[160px]">{ferramenta.texto}</p>
               </div>
             </button>
           ))}

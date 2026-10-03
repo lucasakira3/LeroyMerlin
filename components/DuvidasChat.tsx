@@ -86,7 +86,7 @@ export default function DuvidasChat() {
               }`}>
                 {msg.tipo === 'especialista' ? <FormattedText text={msg.texto} /> : msg.texto}
               </div>
-              <span className="text-[10px] text-gray-400 mt-1 px-1">{msg.hora}</span>
+              <span className="text-xs text-gray-600 mt-1 px-1">{msg.hora}</span>
             </div>
           </div>
         ))}
@@ -111,7 +111,7 @@ export default function DuvidasChat() {
       {/* Suggestions */}
       {mensagens.length <= 1 && (
         <div className="px-4 pb-3">
-          <p className="text-xs text-gray-400 mb-2">Perguntas frequentes:</p>
+          <p className="text-sm text-gray-600 mb-2">Perguntas frequentes:</p>
           <div className="flex flex-wrap gap-2">
             {sugestoes.map((s) => (
               <button

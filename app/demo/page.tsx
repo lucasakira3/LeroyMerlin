@@ -91,7 +91,7 @@ export default function DemoPage() {
                   <span className="font-bold text-lm-green flex-shrink-0">{i + 1}.</span>
                   <span>
                     <span className="font-semibold text-gray-900">{passo.tela}</span>
-                    <span className="text-gray-500"> — {passo.mostrar}</span>
+                    <span className="text-gray-700"> — {passo.mostrar}</span>
                   </span>
                 </li>
               ))}
@@ -101,7 +101,7 @@ export default function DemoPage() {
           <button
             type="button"
             onClick={desativar}
-            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500"
+            className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-red-500"
           >
             <Trash2 size={13} />
             Desativar modo demo (limpa tudo de novo)

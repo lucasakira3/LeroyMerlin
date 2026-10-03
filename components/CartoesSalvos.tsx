@@ -70,7 +70,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
   return (
     <div>
       {cartoes.length === 0 && !novoAberto && (
-        <p className="text-sm text-gray-500 py-2 mb-3">Nenhum cartão salvo ainda.</p>
+        <p className="text-base text-gray-700 py-2 mb-3">Nenhum cartão salvo ainda.</p>
       )}
 
       {cartoes.length > 0 && (
@@ -91,7 +91,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-sm text-gray-700 truncate">
                     {c.bandeira} final {c.ultimosDigitos} · vence {c.validade}
                   </p>
                 </div>
@@ -161,7 +161,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
             inputMode="numeric"
             className="w-24 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
-          <p className="text-[11px] text-gray-400">
+          <p className="text-xs text-gray-600">
             Cartão fictício — só os 4 últimos dígitos ficam salvos, nunca o número completo.
           </p>
 
@@ -176,7 +176,7 @@ export default function CartoesSalvos({ email }: { email: string }) {
             <button
               type="button"
               onClick={() => { setNovoAberto(false); setForm(FORM_VAZIO) }}
-              className="text-gray-500 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="text-gray-700 text-base font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancelar
             </button>

@@ -380,9 +380,9 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
           {/* Nome + id/categoria + marca/unidade */}
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-mono text-gray-400">{produto.id}</span>
+              <span className="text-xs font-mono text-gray-600">{produto.id}</span>
               <span className="text-[10px] text-gray-300">·</span>
-              <span className="text-[10px] text-gray-400 uppercase tracking-wide">{produto.categoria}</span>
+              <span className="text-xs text-gray-600 uppercase tracking-wide">{produto.categoria}</span>
             </div>
             <h2 className="text-lg font-bold text-lm-dark leading-snug mb-1.5">{produto.produto}</h2>
             <div className="flex items-center gap-2">
@@ -398,15 +398,15 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
 
           <div className="bg-gray-50 rounded-xl p-3.5 flex items-center justify-between gap-3">
             <div>
-              <p className="text-[10px] text-gray-400 mb-0.5 uppercase tracking-wide">Preço</p>
+              <p className="text-xs text-gray-600 mb-0.5 uppercase tracking-wide">Preço</p>
               {precoStr
                 ? <p className="text-xl font-black text-lm-green leading-none">{precoStr}</p>
-                : <p className="text-sm text-gray-400 italic">Consultar loja</p>
+                : <p className="text-base text-gray-600 italic">Consultar loja</p>
               }
-              {parcelamentoStr && <p className="text-[11px] text-gray-400 mt-1">{parcelamentoStr}</p>}
+              {parcelamentoStr && <p className="text-xs text-gray-600 mt-1">{parcelamentoStr}</p>}
             </div>
             <div className="text-right">
-              <p className="text-[10px] text-gray-400 mb-0.5 uppercase tracking-wide">Localização</p>
+              <p className="text-xs text-gray-600 mb-0.5 uppercase tracking-wide">Localização</p>
               <div className="flex items-center gap-1.5 text-lm-green justify-end">
                 <MapPin size={13} strokeWidth={2.5} />
                 <span className="text-sm font-bold">{produto.corredor}</span>
@@ -422,7 +422,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
           {/* Badges — Estoque, Complexidade, Sustentabilidade */}
           <div className="flex flex-wrap gap-1.5">
             <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${
-              produto.estoque === 0 ? 'bg-gray-100 text-gray-500' :
+              produto.estoque === 0 ? 'bg-gray-100 text-gray-700' :
               produto.estoque < 10 ? 'bg-orange-100 text-orange-700' :
               'bg-green-100 text-green-700'
             }`}>
@@ -438,7 +438,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             </span>
 
             {produto.sustentabilidade !== 'N/A' && (
-              <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${SUST_COR[produto.sustentabilidade] ?? 'bg-gray-100 text-gray-500'}`}>
+              <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${SUST_COR[produto.sustentabilidade] ?? 'bg-gray-100 text-gray-700'}`}>
                 <Leaf size={11} />
                 {produto.sustentabilidade}
               </span>
@@ -450,7 +450,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               tela — o modal não tem mais um espaço "solto" pra crescer sem limite. */}
           {produto.especificacoes && (
             <div>
-              <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              <h3 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-1.5">
                 Especificações
               </h3>
               <div className="grid grid-cols-2 gap-2">
@@ -462,7 +462,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                         <Icone size={13} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[9px] text-gray-400 truncate leading-tight">{item.rotulo}</p>
+                        <p className="text-[9px] text-gray-600 truncate leading-tight">{item.rotulo}</p>
                         <p className="text-[11px] font-semibold text-gray-800 truncate leading-tight">{item.valor}</p>
                       </div>
                     </div>
@@ -475,7 +475,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
           {/* Tags */}
           {produto.tags && produto.tags.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-0.5">
+              <span className="flex items-center gap-1 text-xs font-bold text-gray-600 uppercase tracking-widest mr-0.5">
                 <Tag size={10} /> Tags
               </span>
               {produto.tags.slice(0, 6).map(tag => (
@@ -506,7 +506,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                     {mediaAvaliacoes.toFixed(1)} · {totalAvaliacoes} avaliaç{totalAvaliacoes > 1 ? 'ões' : 'ão'}
                   </span>
                 ) : (
-                  <span className="text-xs text-gray-400 italic">Seja o primeiro a avaliar</span>
+                  <span className="text-sm text-gray-600 italic">Seja o primeiro a avaliar</span>
                 )}
               </span>
               <span className="flex items-center gap-1 text-xs font-semibold text-lm-green flex-shrink-0">

@@ -112,7 +112,7 @@ export default function ReposicaoPage() {
   return (
     <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-4">
       <Card padding="sm" className="flex flex-wrap items-end gap-4">
-        <label className="text-xs text-gray-500">
+        <label className="text-sm text-gray-700">
           Considerar baixo abaixo de
           <input
             type="number"
@@ -122,7 +122,7 @@ export default function ReposicaoPage() {
             className="block w-24 h-9 mt-1 px-2 rounded-lg border border-gray-200 dark:border-gray-500 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
           />
         </label>
-        <label className="text-xs text-gray-500">
+        <label className="text-sm text-gray-700">
           Repor até (unidades)
           <input
             type="number"
@@ -146,7 +146,7 @@ export default function ReposicaoPage() {
       </Card>
 
       {catalogo === null ? (
-        <Card><p className="text-sm text-gray-500">Carregando estoque...</p></Card>
+        <Card><p className="text-base text-gray-700">Carregando estoque...</p></Card>
       ) : grupos.length === 0 ? (
         <Card padding="none">
           <EmptyState icon={PackageCheck} tone="green" title="Nada para repor" description="Nenhum produto abaixo do limite escolhido." />
@@ -158,7 +158,7 @@ export default function ReposicaoPage() {
               <span className="inline-flex items-center gap-1.5 font-bold text-gray-900">
                 <MapPin size={16} className="text-lm-green" /> {grupo.corredor}
               </span>
-              <span className="text-xs text-gray-500">{grupo.itens.length} {grupo.itens.length === 1 ? 'produto' : 'produtos'}</span>
+              <span className="text-sm text-gray-700">{grupo.itens.length} {grupo.itens.length === 1 ? 'produto' : 'produtos'}</span>
               <Button size="sm" variant="secondary" className="ml-auto" onClick={() => reporCorredor(grupo)}>
                 Repor corredor
               </Button>
@@ -168,7 +168,7 @@ export default function ReposicaoPage() {
                 <li key={item.id} className="flex flex-wrap items-center gap-3 p-3 px-4">
                   <span className="min-w-[200px] flex-1">
                     <span className="block text-sm font-medium text-gray-900">{item.nome}</span>
-                    <span className="block text-xs text-gray-500">{item.id} · {item.categoria}</span>
+                    <span className="block text-sm text-gray-700">{item.id} · {item.categoria}</span>
                   </span>
                   <span
                     className={`text-xs font-bold px-2.5 py-1 rounded-full ${
@@ -177,7 +177,7 @@ export default function ReposicaoPage() {
                   >
                     {item.estoque === 0 ? 'Sem estoque' : `${item.estoque} un.`}
                   </span>
-                  <label className="text-xs text-gray-500 flex items-center gap-1.5">
+                  <label className="text-sm text-gray-700 flex items-center gap-1.5">
                     Repor
                     <input
                       type="number"

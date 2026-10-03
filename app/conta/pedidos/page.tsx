@@ -65,7 +65,7 @@ export default function PedidosPage() {
       )}
 
       {pedidos !== null && pedidos.length === 0 && (
-        <p className="text-sm text-gray-500 py-6">Você ainda não fez nenhum pedido.</p>
+        <p className="text-base text-gray-700 py-6">Você ainda não fez nenhum pedido.</p>
       )}
 
       {pedidos !== null && pedidos.length > 0 && (
@@ -82,7 +82,7 @@ export default function PedidosPage() {
                       {status.label}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-400">{new Date(pedido.data).toLocaleDateString('pt-BR')}</span>
+                  <span className="text-sm text-gray-600">{new Date(pedido.data).toLocaleDateString('pt-BR')}</span>
                 </div>
                 <div className="space-y-1 mb-3">
                   {pedido.itens.map(item => (
@@ -108,7 +108,7 @@ export default function PedidosPage() {
                   </span>
                 </div>
                 {pedido.pagamento && (
-                  <p className="text-xs text-gray-500 pt-1.5">
+                  <p className="text-sm text-gray-700 pt-1.5">
                     {pedido.pagamento.metodo === 'cartao'
                       ? `${pedido.pagamento.bandeira} final ${pedido.pagamento.ultimosDigitos}${pedido.pagamento.parcelas && pedido.pagamento.parcelas > 1 ? ` · ${pedido.pagamento.parcelas}x` : ''}`
                       : pedido.pagamento.metodo === 'pix' ? 'Pix' : 'Boleto bancário'}
@@ -125,7 +125,7 @@ export default function PedidosPage() {
                   <button
                     type="button"
                     onClick={() => compartilharPedido(pedido)}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-lm-green transition-colors"
+                    className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-lm-green transition-colors"
                   >
                     <Share2 size={13} />
                     {linkCopiadoId === pedido.numero ? 'Link copiado ✓' : 'Compartilhar'}

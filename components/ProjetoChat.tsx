@@ -69,7 +69,7 @@ export default function ProjetoChat({ projeto, onProjetoAtualizado }: Props) {
         <MessageCircleMore size={16} className="text-lm-green flex-shrink-0" />
         <div>
           <p className="text-sm font-bold text-gray-900">Converse sobre este projeto</p>
-          <p className="text-xs text-gray-500">Tire dúvidas ou peça uma mudança — ex: "troca o vaso por um mais barato"</p>
+          <p className="text-sm text-gray-700">Tire dúvidas ou peça uma mudança — ex: "troca o vaso por um mais barato"</p>
         </div>
       </div>
 

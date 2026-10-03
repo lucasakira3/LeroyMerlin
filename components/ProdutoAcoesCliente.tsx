@@ -25,7 +25,7 @@ export default function ProdutoAcoesCliente({ produtoId }: ProdutoAcoesClientePr
       aria-pressed={favorito}
       className="shrink-0 p-2.5 rounded-xl border border-gray-200 dark:border-gray-500 hover:bg-gray-50 transition-colors"
     >
-      <Heart size={20} className={favorito ? 'fill-red-500 text-red-500' : 'text-gray-400'} />
+      <Heart size={20} className={favorito ? 'fill-red-500 text-red-500' : 'text-gray-600'} />
     </button>
   )
 }

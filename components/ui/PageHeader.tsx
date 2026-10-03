@@ -11,7 +11,7 @@ export default function PageHeader({ title, description, action }: PageHeaderPro
     <div className="flex items-start justify-between gap-4 mb-6">
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
-        {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+        {description && <p className="text-base text-gray-700 mt-1">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
