@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button'
 import { loginUsuario } from '@/lib/clientAuth'
 import { loginFuncionario } from '@/lib/funcionarioAuth'
 import ClienteAuthForm from '@/components/ClienteAuthForm'
+import Logo from '@/components/Logo'
 
 type TipoLogin = 'funcionario' | 'cliente'
 
@@ -82,8 +83,7 @@ export default function LoginFuncionario() {
         <div className="p-8">
           <div className="flex justify-center mb-8">
             <Link href="/">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/leroy-logo.png" alt="Leroy Merlin" className="h-12 w-auto object-contain" />
+              <Logo className="h-12" />
             </Link>
           </div>
 

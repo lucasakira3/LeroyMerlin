@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { LayoutDashboard, Users, Package, MessageSquare, LogOut, Menu, X, Search, ClipboardList, PackagePlus } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
+import Logo from '@/components/Logo'
 import { getFuncionarioLogado, logoutFuncionario } from '@/lib/funcionarioAuth'
 
 export default function FuncionarioLayout({ children }: { children: React.ReactNode }) {
@@ -70,8 +71,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
         }`}
       >
         <div className="p-6 flex items-center justify-between border-b border-gray-200 dark:border-gray-500 bg-white">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/leroy-logo.png" alt="Leroy Merlin" className="h-10 w-auto object-contain" />
+          <Logo className="h-10" />
           <button
             type="button"
             onClick={() => setSidebarAberta(false)}
@@ -130,8 +130,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
           >
             <Menu size={22} />
           </button>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/leroy-logo.png" alt="Leroy Merlin" className="h-7 w-auto object-contain" />
+          <Logo className="h-7" />
           <div className="w-9" />
         </div>
 

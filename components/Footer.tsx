@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { MessageCircle, Phone, Clock } from 'lucide-react'
 import { tabs } from './NavBar'
+import Logo from './Logo'
 
 // Rodapé global (app/layout.tsx). Escondido em /funcionario/* pelo mesmo motivo do NavBar
 // (components/NavBar.tsx) — o painel do funcionário já tem sua própria casca de tela cheia
@@ -21,8 +22,7 @@ export default function Footer() {
         {/* Marca */}
         <div>
           <Link href="/" className="inline-block mb-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/leroy-logo.png" alt="Leroy Merlin" className="h-9 w-auto object-contain" />
+            <Logo className="h-9" />
           </Link>
           <p className="text-sm text-gray-700 dark:text-zinc-400 leading-relaxed max-w-xs">
             A loja que entende você — inteligência artificial que transforma a jornada do cliente dentro da loja física.

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { Search, Camera, Sparkles, MessageCircleQuestion, ArrowRight, MapPin, Brain, Clock, ChevronRight } from 'lucide-react'
+import Logo from './Logo'
 
 const TOUR_KEY = 'lm_tour_completo'
 
@@ -70,8 +71,7 @@ export default function TourGuiado() {
           {passo === 0 && (
             <div className="flex-1 flex flex-col items-center justify-center text-center gap-5">
               <div className="bg-white rounded-2xl px-5 py-3 inline-block shadow-lg">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/leroy-logo.png" alt="Leroy Merlin" className="h-10 w-auto object-contain" />
+                <Logo className="h-10" />
               </div>
 
               <div>
