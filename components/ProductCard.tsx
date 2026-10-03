@@ -75,8 +75,8 @@ export default function ProductCard({
     onSelect?.()
   }
 
-  const wrapperClass = `group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white transition-all hover:shadow-md hover:-translate-y-0.5 ${
-    selected ? 'border-lm-green shadow-sm' : 'border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+  const wrapperClass = `group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white shadow-soft transition-all hover:shadow-md hover:-translate-y-0.5 ${
+    selected ? 'border-lm-green shadow-md' : 'border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
   } ${className}`
 
   const conteudo = (

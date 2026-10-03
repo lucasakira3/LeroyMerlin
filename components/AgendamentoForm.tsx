@@ -128,9 +128,9 @@ export default function AgendamentoForm({ onConfirmado }: { onConfirmado?: () =>
                 <button
                   key={s.id}
                   onClick={() => set('servico', s.id)}
-                  className={`flex items-start gap-3 text-left p-3 rounded-xl border transition-all ${
+                  className={`flex items-start gap-3 text-left p-3 rounded-xl border shadow-soft transition-all hover:shadow-soft-lg ${
                     form.servico === s.id
-                      ? 'border-lm-green bg-lm-green/5 ring-1 ring-lm-green'
+                      ? 'border-lm-green bg-lm-green/5 ring-1 ring-lm-green shadow-soft-lg'
                       : 'border-gray-200 dark:border-gray-500 bg-white hover:border-lm-green/40'
                   }`}
                 >

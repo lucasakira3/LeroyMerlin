@@ -137,9 +137,9 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                 type="button"
                 onClick={() => setAtiva(etapa.ordem)}
                 aria-pressed={selecionada}
-                className={`relative w-40 h-full text-left rounded-2xl border-2 p-3 transition-all hover:-translate-y-0.5 ${
+                className={`relative w-40 h-full text-left rounded-2xl border-2 p-3 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-soft-lg ${
                   selecionada
-                    ? 'border-lm-green bg-lm-green/10 shadow-sm'
+                    ? 'border-lm-green bg-lm-green/10 shadow-soft-lg'
                     : 'border-gray-200 dark:border-gray-500 bg-white hover:border-lm-green/50'
                 }`}
               >

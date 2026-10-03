@@ -99,7 +99,7 @@ export default function ComparadorPorFoto() {
   }
 
   return (
-    <div className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl p-3 animate-fade-in">
+    <div className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl p-3 shadow-soft animate-fade-in">
       <div className="flex items-center justify-between mb-2">
         <p className="text-xs font-semibold text-gray-600 dark:text-zinc-300">Aponte a câmera pro produto</p>
         <button onClick={fechar} aria-label="Fechar" className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200">
