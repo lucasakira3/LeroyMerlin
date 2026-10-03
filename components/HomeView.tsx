@@ -9,11 +9,8 @@ import VitrineProdutos from '@/components/VitrineProdutos'
 export default function HomeView() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
-      <BannerCarrossel />
-      <VitrineOfertas />
-      <VitrineProdutos />
-
-      {/* Chamadas pras telas de busca e produtos */}
+      {/* Chamadas pras telas de busca e produtos — a pedido do usuário, no topo da home
+          (logo abaixo do header), não mais no final da página. */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <Link
           href="/buscar"
@@ -43,6 +40,10 @@ export default function HomeView() {
           <ArrowRight size={20} className="flex-shrink-0 text-gray-400" />
         </Link>
       </div>
+
+      <BannerCarrossel />
+      <VitrineOfertas />
+      <VitrineProdutos />
     </div>
   )
 }
