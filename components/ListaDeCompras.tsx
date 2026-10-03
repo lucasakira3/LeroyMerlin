@@ -7,6 +7,7 @@ import { type Projeto, type ItemProjeto } from './ProjetoMosaico'
 import ProjetoChat from './ProjetoChat'
 import PlantaCasa from './PlantaCasa'
 import ProdutoDrawer from './ProdutoDrawer'
+import StoreMap from './StoreMap'
 import type { SearchResult } from '@/types/produto'
 import Link from 'next/link'
 import Card from './ui/Card'
@@ -95,7 +96,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
     }))
   )
   const [linkCopiado, setLinkCopiado] = useState(false)
-  const [aba, setAba] = useState<'visao-geral' | 'lista-completa'>(projetoSalvo ? 'lista-completa' : 'visao-geral')
+  const [aba, setAba] = useState<'visao-geral' | 'lista-completa' | 'mapa'>(projetoSalvo ? 'lista-completa' : 'visao-geral')
   const [itensConcluidos, setItensConcluidos] = useState<Set<number>>(() => new Set(projetoSalvo?.itensConcluidos ?? []))
   const [salvoId, setSalvoId] = useState<string | null>(projetoSalvo?.id ?? null)
   const [emailUsuario, setEmailUsuario] = useState<string | null>(null)
@@ -220,8 +221,25 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
   }
 
   async function copiarLink() {
+    // Mesmo critério do compartilhar por WhatsApp e do mapa: só os itens com um produto
+    // selecionado entram no link — o que o cliente vê é exatamente o que ele escolheu.
+    const itensCompartilhados = projeto.itens.flatMap(item => {
+      const escolhido = item.resultados.find(r => selecionados.has(r.produto.id))
+      if (!escolhido) return []
+      return [{
+        material: item.material,
+        categoria: item.categoria,
+        quantidade: item.quantidade,
+        prioridade: item.prioridade,
+        observacao: item.observacao,
+        comodo: item.comodo,
+        etapa_ordem: item.etapa_ordem,
+        etapa_nome: item.etapa_nome,
+        produtoId: escolhido.produto.id,
+      }]
+    })
     const url = `${window.location.origin}/lista?d=${encodeURIComponent(
-      codificarLista({ titulo: projeto.titulo, loja, produtoIds: mapResultados.map(r => r.produto.id) })
+      codificarLista({ titulo: projeto.titulo, resumo: projeto.resumo, loja, itens: itensCompartilhados })
     )}`
     await navigator.clipboard.writeText(url)
     setLinkCopiado(true)
@@ -365,7 +383,31 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
         >
           Lista completa
         </button>
+        <button
+          type="button"
+          onClick={() => setAba('mapa')}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+            aba === 'mapa' ? 'bg-white text-lm-green shadow-soft' : 'text-gray-700 hover:text-gray-700'
+          }`}
+        >
+          Mapa
+        </button>
       </div>
+
+      {aba === 'mapa' && (
+        mapResultados.length > 0 ? (
+          <StoreMap
+            resultados={mapResultados}
+            loja={loja}
+            totalEstimado={totalEstimado}
+            onSelect={setProdutoDrawer}
+          />
+        ) : (
+          <Card className="text-center py-10">
+            <p className="text-sm text-gray-700">Selecione produtos na Lista completa pra vê-los no mapa.</p>
+          </Card>
+        )
+      )}
 
       {aba === 'visao-geral' && (
         <PlantaCasa
