@@ -205,13 +205,9 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
     })
   })
 
-  const selPin = selectedId ? pins.find(p => p.produto.id === selectedId) : null
-
   function handlePinClick(pin: typeof pins[0]) {
     // Quando existe um `onSelect` (ex.: busca, mapa com detalhes habilitados), o clique no
-    // pin já abre o modal de detalhes do produto diretamente — antes era preciso clicar no
-    // pin (selecionar) e depois clicar num botão "Ver detalhes (o que gerava mais cliques para o cliente)" no popup pra só então ver
-    // as informações do produto. 
+    // pin já abre o modal de detalhes do produto diretamente.
     if (onSelect) {
       trackProductView({ id: pin.produto.id, nome: pin.produto.produto, categoria: pin.produto.categoria })
       setSelectedId(pin.produto.id)
@@ -318,69 +314,6 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             transition: arrastando ? 'none' : 'transform 0.15s ease-out',
           }}
         >
-        {/* Info box HTML — aparece ao clicar num pin */}
-        {selPin && (() => {
-          const { pos, produto, color } = selPin
-          const preco = (produto as any).preco as number | undefined
-          const leftPct = (pos.x / VW) * 100
-          const topPct  = (pos.y / VH)  * 100
-          const flipX = leftPct > 70
-          const flipY = topPct  > 55
-          return (
-            <div
-              className="absolute z-20 w-52 bg-white rounded-xl shadow-xl border-2 pointer-events-auto"
-              style={{
-                borderColor: color,
-                left:   flipX ? 'auto' : `calc(${leftPct}% + 14px)`,
-                right:  flipX ? `calc(${100 - leftPct}% + 14px)` : 'auto',
-                top:    flipY ? 'auto' : `calc(${topPct}% + 14px)`,
-                bottom: flipY ? `calc(${100 - topPct}% + 14px)` : 'auto',
-              }}
-            >
-              <div className="rounded-t-[10px] px-3 py-2" style={{ backgroundColor: `${color}18` }}>
-                <p className="text-[11px] font-black" style={{ color }}>📍 {produto.corredor}</p>
-              </div>
-              <div className="px-3 py-2">
-                <p className="text-xs font-semibold text-gray-800 leading-tight mb-1 line-clamp-2">
-                  {produto.produto}
-                </p>
-                {preco != null && (
-                  <p className="text-sm font-black text-lm-green">
-                    {Number(preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                  </p>
-                )}
-                <p className="text-xs text-gray-600 mt-0.5">
-                  {produto.estoque > 0 ? `${produto.estoque} un. em estoque` : 'Sem estoque'}
-                </p>
-                <div className="mt-2 flex gap-1.5">
-                  {!semCarrinho && <button
-                    onClick={(e) => handleAdicionar(produto.id, produto.estoque, e)}
-                    disabled={produto.estoque === 0}
-                    aria-label="Adicionar ao carrinho"
-                    className="flex items-center justify-center w-8 h-8 rounded-lg text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
-                    style={{ backgroundColor: color }}
-                  >
-                    {adicionadoId === produto.id ? <Check size={14} /> : <ShoppingCart size={14} />}
-                  </button>}
-                  {onSelect && (
-                    <button
-                      onClick={() => {
-                        trackProductView({ id: produto.id, nome: produto.produto, categoria: produto.categoria })
-                        onSelect(produto)
-                        setSelectedId(null)
-                      }}
-                      className="flex-1 text-[11px] font-bold text-white rounded-lg py-1.5 transition-colors"
-                      style={{ backgroundColor: color }}
-                    >
-                      Ver detalhes →
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )
-        })()}
-
         <svg viewBox={`0 0 ${VW} ${VH}`} className="w-full" style={{ display: 'block' }}>
           <rect width={VW} height={VH} fill="#eef2f7" />
 
