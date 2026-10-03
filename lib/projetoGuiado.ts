@@ -435,8 +435,15 @@ export function buscaTextoSimples(
   const termos = query.toLowerCase().split(/\s+/).filter((t) => t.length > 2);
   return produtos
     .map((p) => {
+      const nome = p.produto.toLowerCase();
       const hay = `${p.produto} ${p.categoria} ${p.tags.join(" ")}`.toLowerCase();
-      const score = termos.filter((t) => hay.includes(t)).length / termos.length;
+      // Exige que pelo menos um termo bata no NOME do produto, não só em categoria/tags —
+      // sem isso, uma tag genérica isolada (ex.: "proteção" num disjuntor, porque disjuntor
+      // "protege" o circuito) empata em score com produtos de EPI de verdade e às vezes
+      // vence por ordem de array, devolvendo um disjuntor pra quem pediu luvas de proteção.
+      // Achado real pedindo "Luvas de Proteção" numa troca de vaso sanitário (2026-10-03).
+      const bateNoNome = termos.some((t) => nome.includes(t));
+      const score = bateNoNome ? termos.filter((t) => hay.includes(t)).length / termos.length : 0;
       return { produto: p, score };
     })
     .filter((r) => r.score >= SCORE_MINIMO)
