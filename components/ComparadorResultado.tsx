@@ -40,7 +40,7 @@ export default function ComparadorResultado({ produtos, onRemover, onAdicionarCa
         {produtos.map(produto => {
           const { media, total } = getMedia(produto.id)
           return (
-            <Card key={produto.id} className="flex-1 min-w-[220px] relative">
+            <Card key={produto.id} className="flex-1 min-w-[220px] relative flex flex-col">
               <button
                 onClick={() => onRemover(produto.id)}
                 className="absolute top-3 right-3 text-gray-300 hover:text-red-500"
@@ -132,7 +132,7 @@ export default function ComparadorResultado({ produtos, onRemover, onAdicionarCa
               <button
                 onClick={() => onAdicionarCarrinho(produto.id)}
                 disabled={produto.estoque === 0}
-                className="w-full flex items-center justify-center gap-1.5 bg-lm-green text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full mt-auto flex items-center justify-center gap-1.5 bg-lm-green text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <ShoppingCart size={13} />
                 {adicionadoId === produto.id ? 'Adicionado ✓' : 'Adicionar ao carrinho'}
