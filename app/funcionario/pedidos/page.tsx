@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Search, ChevronDown, ChevronUp, ClipboardList, Store, Truck, MapPin, Check, ArrowRight } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, ClipboardList, Store, Truck, MapPin, Check, CheckCheck, ArrowRight } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
@@ -127,6 +127,15 @@ export default function PedidosFuncionarioPage() {
     })
   }
 
+  // Marca (ou desmarca) vários itens de uma vez — usado pelo "marcar todos" do corredor e do
+  // pedido inteiro. Mexe só nos ids recebidos; o que já estava marcado fora deles fica igual.
+  function marcarVarios(numero: string, produtoIds: string[], marcar: boolean) {
+    setSeparados(atual => {
+      const resto = (atual[numero] ?? []).filter(id => !produtoIds.includes(id))
+      return { ...atual, [numero]: marcar ? [...resto, ...produtoIds] : resto }
+    })
+  }
+
   // Itens na ordem em que o funcionário deve percorrer a loja (serpentina, mesma lógica da
   // Rota de Compra do cliente), com o corredor de cada um. Sem corredor conhecido vai no fim.
   function itensEmOrdemDeRota(pedido: PedidoDoCliente) {
@@ -139,6 +148,25 @@ export default function PedidosFuncionarioPage() {
       const pb = posicao.get(catalogo[b.produtoId]?.corredor_normalizado ?? '') ?? 999
       return pa - pb
     })
+  }
+
+  // Um grupo por corredor, na ordem da rota. Corredor (e não categoria) porque é a parada
+  // física do caminho: uma categoria se espalha por vários corredores, e agrupar por ela
+  // quebraria a ordem de percurso. A categoria vai no cabeçalho só como referência.
+  function gruposDeSeparacao(pedido: PedidoDoCliente) {
+    const grupos: { chave: string; corredor: string; categorias: string[]; itens: Pedido['itens'] }[] = []
+    for (const item of itensEmOrdemDeRota(pedido)) {
+      const base = catalogo[item.produtoId]
+      const chave = base?.corredor_normalizado ?? 'sem-corredor'
+      let grupo = grupos.find(g => g.chave === chave)
+      if (!grupo) {
+        grupo = { chave, corredor: base?.corredor ?? 'Corredor não identificado', categorias: [], itens: [] }
+        grupos.push(grupo)
+      }
+      if (base?.categoria && !grupo.categorias.includes(base.categoria)) grupo.categorias.push(base.categoria)
+      grupo.itens.push(item)
+    }
+    return grupos
   }
 
   return (
@@ -246,48 +274,90 @@ export default function PedidosFuncionarioPage() {
                     </button>
                   </div>
 
-                  {aberto && (
+                  {aberto && (() => {
+                    const idsDoPedido = pedido.itens.map(i => i.produtoId)
+                    const separadosNoPedido = idsDoPedido.filter(id => feitos.includes(id)).length
+                    const tudoSeparado = separadosNoPedido === idsDoPedido.length
+                    return (
                     <div className="px-4 pb-4">
-                      <p className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
-                        Lista de separação — na ordem do caminho pela loja
-                        {feitos.length > 0 && ` · ${feitos.length}/${pedido.itens.length} separados`}
-                      </p>
-                      <ul className="rounded-xl border border-gray-200 dark:border-gray-500 divide-y divide-gray-500">
-                        {itensEmOrdemDeRota(pedido).map(item => {
-                          const base = catalogo[item.produtoId]
-                          const estoqueAtual = base ? aplicarAjustes(base).estoque : null
-                          const marcado = feitos.includes(item.produtoId)
-                          const faltando = estoqueAtual !== null && estoqueAtual < item.quantidade
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                        <p className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                          Lista de separação — na ordem do caminho pela loja · {separadosNoPedido}/{idsDoPedido.length} separados
+                        </p>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => marcarVarios(pedido.numero, idsDoPedido, !tudoSeparado)}
+                        >
+                          <CheckCheck size={14} /> {tudoSeparado ? 'Desmarcar todos os itens' : 'Marcar todos os itens'}
+                        </Button>
+                      </div>
+                      <div className="rounded-xl border border-gray-200 dark:border-gray-500 divide-y divide-gray-500 overflow-hidden">
+                        {gruposDeSeparacao(pedido).map(grupo => {
+                          const idsDoGrupo = grupo.itens.map(i => i.produtoId)
+                          const separadosNoGrupo = idsDoGrupo.filter(id => feitos.includes(id)).length
+                          const grupoCompleto = separadosNoGrupo === idsDoGrupo.length
                           return (
-                            <li key={item.produtoId} className="flex items-center gap-3 p-3">
-                              <input
-                                type="checkbox"
-                                checked={marcado}
-                                onChange={() => alternarSeparado(pedido.numero, item.produtoId)}
-                                aria-label={`Separado: ${item.nome}`}
-                                className="w-4 h-4 accent-lm-green flex-shrink-0"
-                              />
-                              <span className="min-w-0 flex-1">
-                                <span className={`block text-base font-medium ${marcado ? 'line-through text-gray-600' : 'text-gray-900'}`}>
-                                  {item.quantidade}× {item.nome}
+                            <section key={grupo.chave} aria-label={grupo.corredor}>
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 bg-gray-50">
+                                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-900">
+                                  <MapPin size={14} className="text-lm-green" /> {grupo.corredor}
                                 </span>
-                                <span className="block text-sm text-gray-700">
-                                  {item.produtoId}
-                                  {estoqueAtual !== null && ` · ${estoqueAtual} em estoque`}
+                                {grupo.categorias.length > 0 && (
+                                  <span className="text-sm text-gray-700">{grupo.categorias.join(', ')}</span>
+                                )}
+                                <span className={`ml-auto text-sm font-semibold ${grupoCompleto ? 'text-lm-green' : 'text-gray-700'}`}>
+                                  {separadosNoGrupo}/{idsDoGrupo.length}
                                 </span>
-                              </span>
-                              {faltando && (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
-                                  Estoque insuficiente
-                                </span>
-                              )}
-                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-lm-green flex-shrink-0">
-                                <MapPin size={12} /> {base?.corredor ?? 'Corredor ?'}
-                              </span>
-                            </li>
+                                {/* Com um item só, o checkbox dele já faz o mesmo que este botão. */}
+                                {idsDoGrupo.length > 1 && (
+                                  <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={() => marcarVarios(pedido.numero, idsDoGrupo, !grupoCompleto)}
+                                    aria-label={`${grupoCompleto ? 'Desmarcar' : 'Marcar'} todos os itens do ${grupo.corredor}`}
+                                  >
+                                    {grupoCompleto ? 'Desmarcar' : 'Marcar todos'}
+                                  </Button>
+                                )}
+                              </div>
+                              <ul className="divide-y divide-gray-500">
+                                {grupo.itens.map(item => {
+                                  const base = catalogo[item.produtoId]
+                                  const estoqueAtual = base ? aplicarAjustes(base).estoque : null
+                                  const marcado = feitos.includes(item.produtoId)
+                                  const faltando = estoqueAtual !== null && estoqueAtual < item.quantidade
+                                  return (
+                                    <li key={item.produtoId} className="flex items-center gap-3 p-3">
+                                      <input
+                                        type="checkbox"
+                                        checked={marcado}
+                                        onChange={() => alternarSeparado(pedido.numero, item.produtoId)}
+                                        aria-label={`Separado: ${item.nome}`}
+                                        className="w-4 h-4 accent-lm-green flex-shrink-0"
+                                      />
+                                      <span className="min-w-0 flex-1">
+                                        <span className={`block text-base font-medium ${marcado ? 'line-through text-gray-600' : 'text-gray-900'}`}>
+                                          {item.quantidade}× {item.nome}
+                                        </span>
+                                        <span className="block text-sm text-gray-700">
+                                          {item.produtoId}
+                                          {estoqueAtual !== null && ` · ${estoqueAtual} em estoque`}
+                                        </span>
+                                      </span>
+                                      {faltando && (
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                                          Estoque insuficiente
+                                        </span>
+                                      )}
+                                    </li>
+                                  )
+                                })}
+                              </ul>
+                            </section>
                           )
                         })}
-                      </ul>
+                      </div>
                       {pedido.metodo === 'entrega' && pedido.endereco && (
                         <p className="text-sm text-gray-700 mt-2">Entrega em: {pedido.endereco}</p>
                       )}
@@ -295,7 +365,8 @@ export default function PedidosFuncionarioPage() {
                         <p className="text-sm text-gray-700 mt-2">Retirada em: {pedido.loja}</p>
                       )}
                     </div>
-                  )}
+                    )
+                  })()}
                 </li>
               )
             })}
