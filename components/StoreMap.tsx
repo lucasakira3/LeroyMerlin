@@ -453,7 +453,11 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
         </p>
       )}
       {pins.length > 0 && (
-        <div className={`${rota && rota.length > 0 ? 'mt-1.5' : 'mt-3'} flex flex-wrap gap-2`}>
+        // Grade de colunas iguais (e não flex-wrap): com flex cada cartão ficava da largura do
+        // próprio nome do produto, e a legenda virava uma fileira de caixas de tamanhos diferentes.
+        // 340px é o mínimo pra caber nome + marca sem cortar; o min(100%, …) evita que a coluna
+        // estoure a tela em celular, onde o espaço é menor que isso.
+        <div className={`${rota && rota.length > 0 ? 'mt-1.5' : 'mt-3'} grid grid-cols-[repeat(auto-fill,minmax(min(100%,340px),1fr))] gap-2`}>
           {pins.map((pin, i) => {
             const isSel = selectedId === pin.produto.id
             return (
@@ -470,9 +474,9 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                   alt={pin.produto.categoria}
                   className={`w-9 h-9 rounded-md ${ajusteFoto(pin.produto, 'p-0.5')} flex-shrink-0`}
                 />
-                <div className="min-w-0">
-                  <p className="font-semibold text-gray-800 truncate max-w-[180px]">{pin.produto.produto}</p>
-                  <p className="text-gray-700">{pin.produto.corredor} · {pin.produto.categoria}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-gray-800 truncate">{pin.produto.produto}</p>
+                  <p className="text-gray-700 truncate">{pin.produto.corredor} · {pin.produto.categoria}</p>
                   {(pin.produto as any).preco != null && (
                     <p className="text-xs font-bold text-lm-green mt-0.5">
                       {Number((pin.produto as any).preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
