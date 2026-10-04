@@ -138,7 +138,7 @@ export default function ProdutosPage() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto">
       <Card padding="none">
         <div className="p-4 border-b border-gray-200 dark:border-gray-500 space-y-3">
           <div className="relative flex-1 max-w-md">
@@ -221,29 +221,29 @@ export default function ProdutosPage() {
             <thead>
               <tr className="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
                 <th className="p-4 font-bold">
-                  <button onClick={() => handleSort('produto')} className="flex items-center gap-1.5 hover:text-lm-green transition-colors">
+                  <button onClick={() => handleSort('produto')} className="flex items-center gap-1.5 uppercase hover:text-lm-green transition-colors">
                     Produto <SortIcon ativo={sortKey === 'produto'} dir={sortDir} />
                   </button>
                 </th>
                 <th className="p-4 font-bold">
-                  <button onClick={() => handleSort('categoria')} className="flex items-center gap-1.5 hover:text-lm-green transition-colors">
+                  <button onClick={() => handleSort('categoria')} className="flex items-center gap-1.5 uppercase hover:text-lm-green transition-colors">
                     Categoria <SortIcon ativo={sortKey === 'categoria'} dir={sortDir} />
                   </button>
                 </th>
                 <th className="p-4 font-bold text-right">
-                  <button onClick={() => handleSort('preco')} className="flex items-center gap-1.5 ml-auto hover:text-lm-green transition-colors">
+                  <button onClick={() => handleSort('preco')} className="flex items-center gap-1.5 ml-auto uppercase hover:text-lm-green transition-colors">
                     Preço (R$) <SortIcon ativo={sortKey === 'preco'} dir={sortDir} />
                   </button>
                 </th>
                 <th className="p-4 font-bold text-center">
-                  <button onClick={() => handleSort('estoque')} className="flex items-center gap-1.5 mx-auto hover:text-lm-green transition-colors">
+                  <button onClick={() => handleSort('estoque')} className="flex items-center gap-1.5 mx-auto uppercase hover:text-lm-green transition-colors">
                     Estoque <SortIcon ativo={sortKey === 'estoque'} dir={sortDir} />
                   </button>
                 </th>
                 <th className="p-4 font-bold text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-500">
               {!produtosBase && (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-gray-700">Carregando catálogo...</td>

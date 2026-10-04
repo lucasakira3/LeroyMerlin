@@ -146,7 +146,7 @@ export default function ReposicaoPage() {
       </Card>
 
       {catalogo === null ? (
-        <Card><p className="text-base text-gray-700">Carregando estoque...</p></Card>
+        <Card padding="sm"><p className="text-base text-gray-700">Carregando estoque...</p></Card>
       ) : grupos.length === 0 ? (
         <Card padding="none">
           <EmptyState icon={PackageCheck} tone="green" title="Nada para repor" description="Nenhum produto abaixo do limite escolhido." />
@@ -163,7 +163,7 @@ export default function ReposicaoPage() {
                 Repor corredor
               </Button>
             </div>
-            <ul className="divide-y divide-gray-500">
+            <ul className="divide-y divide-gray-200 dark:divide-gray-500">
               {grupo.itens.map(item => (
                 <li key={item.id} className="flex flex-wrap items-center gap-3 p-3 px-4">
                   <span className="min-w-[200px] flex-1">

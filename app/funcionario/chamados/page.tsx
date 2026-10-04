@@ -138,7 +138,7 @@ export default function ChamadosPage() {
   }
 
   return (
-    <div className="p-4 lg:p-8 max-w-6xl mx-auto h-[calc(100vh-4rem)] flex flex-col">
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto h-full min-h-[30rem] flex flex-col">
       <PedidosAjudaCorredor />
 
       {/* Alterna entre a fila de agendamentos confirmados e as conversas do card
@@ -173,7 +173,7 @@ export default function ChamadosPage() {
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-4 lg:gap-6">
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-4">
         {/* Sidebar de Chamados */}
         <div className="w-full lg:w-80 shrink-0 flex flex-col min-h-0 max-h-56 lg:max-h-none">
           <div className="relative mb-4">

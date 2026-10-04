@@ -5,7 +5,8 @@ import { Search, ChevronDown, ChevronUp, ClipboardList, Store, Truck, MapPin, Ch
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
-import { getStatusPedido } from '@/lib/statusPedido'
+import MetricCard from '@/components/ui/MetricCard'
+import { getStatusPedido, STATUS_PEDIDO_COR } from '@/lib/statusPedido'
 import { definirEtapaManual } from '@/lib/statusPedidoFuncionario'
 import { calcularRota } from '@/lib/rotaLoja'
 import { aplicarAjustes } from '@/lib/ajustesFuncionario'
@@ -18,13 +19,6 @@ interface PedidoDoCliente extends Pedido {
 }
 
 type Filtro = 'todos' | 'ativos' | 'prontos' | 'concluidos'
-
-const STATUS_COR: Record<string, string> = {
-  blue: 'bg-blue-100 text-blue-700',
-  amber: 'bg-amber-100 text-amber-700',
-  purple: 'bg-purple-100 text-purple-700',
-  green: 'bg-green-100 text-green-700',
-}
 
 const FILTROS: { valor: Filtro; label: string }[] = [
   { valor: 'todos', label: 'Todos' },
@@ -171,19 +165,10 @@ export default function PedidosFuncionarioPage() {
 
   return (
     <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Card padding="sm">
-          <p className="text-sm text-gray-700">Em andamento</p>
-          <p className="text-2xl font-black text-gray-900">{contagem.ativos}</p>
-        </Card>
-        <Card padding="sm">
-          <p className="text-sm text-gray-700">Prontos para retirada</p>
-          <p className="text-2xl font-black text-lm-green">{contagem.prontos}</p>
-        </Card>
-        <Card padding="sm">
-          <p className="text-sm text-gray-700">Concluídos</p>
-          <p className="text-2xl font-black text-gray-900">{contagem.concluidos}</p>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <MetricCard label="Em andamento" value={contagem.ativos} icon={ClipboardList} iconClassName="bg-blue-500" />
+        <MetricCard label="Prontos para retirada" value={contagem.prontos} icon={Store} iconClassName="bg-lm-green" />
+        <MetricCard label="Concluídos" value={contagem.concluidos} icon={CheckCheck} iconClassName="bg-gray-500" />
       </div>
 
       <Card padding="none">
@@ -225,7 +210,7 @@ export default function PedidosFuncionarioPage() {
             }
           />
         ) : (
-          <ul className="divide-y divide-gray-500">
+          <ul className="divide-y divide-gray-200 dark:divide-gray-500">
             {filtrados.map(({ pedido, status }) => {
               const aberto = expandido === pedido.numero
               const ultima = status.etapa === status.etapas.length - 1
@@ -246,7 +231,7 @@ export default function PedidosFuncionarioPage() {
                       <span className="min-w-0">
                         <span className="flex items-center gap-2 flex-wrap">
                           <span className="font-mono text-sm font-semibold text-gray-900">{pedido.numero}</span>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COR[status.cor]}`}>{status.label}</span>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_PEDIDO_COR[status.cor]}`}>{status.label}</span>
                         </span>
                         <span className="block text-sm text-gray-700 truncate">
                           {pedido.nomeCliente} · {pedido.metodo === 'retirada' ? 'Retirada na loja' : 'Entrega'} · {formatarData(pedido.data)}
@@ -292,7 +277,7 @@ export default function PedidosFuncionarioPage() {
                           <CheckCheck size={14} /> {tudoSeparado ? 'Desmarcar todos os itens' : 'Marcar todos os itens'}
                         </Button>
                       </div>
-                      <div className="rounded-xl border border-gray-200 dark:border-gray-500 divide-y divide-gray-500 overflow-hidden">
+                      <div className="rounded-xl border border-gray-200 dark:border-gray-500 divide-y divide-gray-200 dark:divide-gray-500 overflow-hidden">
                         {gruposDeSeparacao(pedido).map(grupo => {
                           const idsDoGrupo = grupo.itens.map(i => i.produtoId)
                           const separadosNoGrupo = idsDoGrupo.filter(id => feitos.includes(id)).length
@@ -321,7 +306,7 @@ export default function PedidosFuncionarioPage() {
                                   </Button>
                                 )}
                               </div>
-                              <ul className="divide-y divide-gray-500">
+                              <ul className="divide-y divide-gray-200 dark:divide-gray-500">
                                 {grupo.itens.map(item => {
                                   const base = catalogo[item.produtoId]
                                   const estoqueAtual = base ? aplicarAjustes(base).estoque : null

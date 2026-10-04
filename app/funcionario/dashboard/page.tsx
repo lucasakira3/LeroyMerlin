@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
+import MetricCard from '@/components/ui/MetricCard'
 import GraficoBarras from '@/components/GraficoBarras'
 import { aplicarAjustes } from '@/lib/ajustesFuncionario'
 import { getEstadoChamado } from '@/lib/chamadosFuncionario'
@@ -160,44 +161,42 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-4">
+      <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-lm-dark">Dashboard</h1>
         <Button variant="secondary" onClick={exportarCSV} className="flex items-center gap-2">
           <Download size={16} /> Exportar CSV
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
           <Link key={i} href={stat.href}>
-            <Card
+            <MetricCard
+              label={stat.label}
+              value={stat.value}
+              icon={stat.icon}
+              iconClassName={stat.color}
               hoverable
-              className="flex items-start gap-4 animate-fade-in-up"
+              className="animate-fade-in-up"
               style={{ '--stagger-delay': `${i * 60}ms` } as React.CSSProperties}
-            >
-              <div className={`p-3 rounded-xl text-white ${stat.color} shadow-soft`}>
-                <stat.icon size={24} />
-              </div>
-              <div>
-                <p className="text-3xl font-semibold text-gray-900">{stat.value}</p>
-                <p className="text-base text-gray-700 mt-1">{stat.label}</p>
-              </div>
-            </Card>
+            />
           </Link>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Atividades Recentes */}
-        <Card padding="none">
-          <div className="p-6 pb-4">
+        <Card padding="none" className="flex flex-col">
+          <div className="p-4">
             <h2 className="text-lg font-bold text-lm-dark flex items-center gap-2">
               <TrendingUp size={20} className="text-lm-green" />
               Atividades Recentes
             </h2>
           </div>
-          <div>
+          {/* O cartão estica até a altura do vizinho (Alertas de Estoque); sem atividades, o
+              aviso fica no meio desse espaço em vez de colado no título. */}
+          <div className={atividades.length === 0 ? 'flex-1 flex flex-col justify-center' : ''}>
             {atividades.length === 0 && (
               <EmptyState
                 icon={TrendingUp}
@@ -208,7 +207,7 @@ export default function DashboardPage() {
             {atividades.map((act, i) => (
               <div
                 key={i}
-                className={`flex justify-between items-start gap-4 px-6 py-4 ${
+                className={`flex justify-between items-start gap-4 px-4 py-3 ${
                   i < atividades.length - 1 ? 'border-b border-gray-200 dark:border-gray-500' : ''
                 }`}
               >
@@ -220,12 +219,12 @@ export default function DashboardPage() {
         </Card>
 
         {/* Alertas de Estoque */}
-        <Card>
+        <Card padding="sm">
           <h2 className="text-lg font-bold text-lm-dark mb-4 flex items-center gap-2">
             <AlertTriangle size={20} className="text-red-500" />
             Alertas de Estoque
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {alertasEstoque.length === 0 && (
               <p className="text-base text-gray-700">Nenhum produto com estoque crítico no momento.</p>
             )}
@@ -250,7 +249,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Estoque por Categoria */}
-      <Card className="mt-6">
+      <Card padding="sm">
         <h2 className="text-lg font-bold text-lm-dark mb-4 flex items-center gap-2">
           <BarChart3 size={20} className="text-lm-green" />
           Estoque por Categoria
