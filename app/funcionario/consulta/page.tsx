@@ -145,8 +145,11 @@ export default function ConsultaRapidaPage() {
         </select>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 items-start">
-      <Card padding="none">
+      {/* Os dois cartões têm sempre a mesma altura, vazios ou preenchidos: a grade estica os
+          dois (stretch) e tem altura mínima — a tela menos o que fica acima e uma faixa do
+          mapa embaixo. Com um produto aberto, quem dita a altura é o cartão de detalhe. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 lg:min-h-[max(28rem,calc(100vh_-_13rem))]">
+      <Card padding="none" className="flex flex-col">
         <div className="p-4 border-b border-gray-200 dark:border-gray-500">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
@@ -162,14 +165,17 @@ export default function ConsultaRapidaPage() {
           <p className="text-sm text-gray-700 mt-2">Consulta de balcão: preço, estoque e corredor na hora, sem sair do atendimento.</p>
         </div>
 
+        <div className="relative flex-1 flex flex-col justify-center">
         {catalogo === null ? (
-          <p className="p-4 text-base text-gray-700">Carregando catálogo...</p>
+          <p className="p-4 text-base text-gray-700 text-center">Carregando catálogo...</p>
         ) : busca.trim() === '' ? (
-          <EmptyState icon={Search} title="Digite para consultar" description="Ex.: furadeira, LM-0042, rejunte cinza" />
+          <EmptyState icon={Search} size="md" title="Digite para consultar" description="Ex.: furadeira, LM-0042, rejunte cinza" />
         ) : resultados.length === 0 ? (
-          <EmptyState icon={Search} title="Nada encontrado" description="Tente outras palavras ou o código do produto." />
+          <EmptyState icon={Search} size="md" title="Nada encontrado" description="Tente outras palavras ou o código do produto." />
         ) : (
-          <ul className="divide-y divide-gray-500 max-h-[70vh] overflow-y-auto">
+          // Em tela larga a lista sai do fluxo (absolute) e rola por dentro do espaço que
+          // sobra: assim 30 resultados não esticam o cartão além da altura do vizinho.
+          <ul className="divide-y divide-gray-200 dark:divide-gray-500 max-h-[70vh] overflow-y-auto lg:absolute lg:inset-0 lg:max-h-none">
             {resultados.map(p => {
               const estoque = aplicarAjustes(p).estoque
               const ativo = p.id === selecionadoId
@@ -199,21 +205,24 @@ export default function ConsultaRapidaPage() {
             })}
           </ul>
         )}
+        </div>
       </Card>
 
-      <Card padding="none" className="lg:sticky lg:top-4">
+      <Card padding="none" className="flex flex-col">
         {!selecionado || !detalhe ? (
-          <EmptyState icon={Lightbulb} title="Escolha um produto" description="Os detalhes e uma resposta pronta para o cliente aparecem aqui." />
+          <div className="flex-1 flex flex-col justify-center">
+            <EmptyState icon={Lightbulb} size="md" title="Escolha um produto" description="Os detalhes e uma resposta pronta para o cliente aparecem aqui." />
+          </div>
         ) : (
           <div>
-            <div className={`rounded-t-card ${fundoFoto(selecionado)}`}>
+            <div className={fundoFoto(selecionado)}>
               <img
                 src={getImagemProduto(selecionado)}
                 alt={selecionado.produto}
-                className={`w-full h-48 rounded-t-card ${ajusteFoto(selecionado, 'p-3')}`}
+                className={`w-full h-48 ${ajusteFoto(selecionado, 'p-3')}`}
               />
             </div>
-            <div className="p-5 space-y-4">
+            <div className="p-4 space-y-4">
               <div>
                 <p className="text-sm text-gray-700">{selecionado.id} · {selecionado.categoria}</p>
                 <h2 className="text-lg font-bold text-gray-900">{selecionado.produto}</h2>
