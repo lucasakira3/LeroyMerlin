@@ -19,6 +19,15 @@ const ETAPAS_ENTREGA = ['Confirmado', 'Em preparação', 'Enviado', 'Entregue']
 const OFFSETS_RETIRADA = [0, HORA / 2, 2 * HORA, 2 * HORA]
 const OFFSETS_ENTREGA = [0, 2 * HORA, 24 * HORA, 72 * HORA]
 
+// Cores do selo de status (fundo + texto), por `StatusPedido['cor']` — as mesmas na área do
+// cliente e no painel do funcionário.
+export const STATUS_PEDIDO_COR: Record<string, string> = {
+  blue: 'bg-blue-100 text-blue-700',
+  amber: 'bg-amber-100 text-amber-700',
+  purple: 'bg-purple-100 text-purple-700',
+  green: 'bg-green-100 text-green-700',
+}
+
 export interface StatusPedido {
   label: string
   cor: 'blue' | 'amber' | 'purple' | 'green'

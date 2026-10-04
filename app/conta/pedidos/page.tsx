@@ -7,17 +7,10 @@ import Pagination from '@/components/ui/Pagination'
 import PedidoTimeline from '@/components/PedidoTimeline'
 import { getUsuarioLogado } from '@/lib/clientAuth'
 import { getPedidos, type Pedido } from '@/lib/clientPedidos'
-import { getStatusPedido } from '@/lib/statusPedido'
+import { getStatusPedido, STATUS_PEDIDO_COR } from '@/lib/statusPedido'
 import { linkPedidoCompartilhado } from '@/lib/pedidoCompartilhado'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { showToast } from '@/lib/toast'
-
-const STATUS_COR: Record<string, string> = {
-  blue: 'bg-blue-100 text-blue-700',
-  amber: 'bg-amber-100 text-amber-700',
-  purple: 'bg-purple-100 text-purple-700',
-  green: 'bg-green-100 text-green-700',
-}
 
 const PEDIDOS_POR_PAGINA = 5
 
@@ -78,7 +71,7 @@ export default function PedidosPage() {
                   <div className="flex items-center gap-2">
                     <Package size={15} className="text-lm-green" />
                     <span className="font-mono text-sm font-semibold text-gray-900">{pedido.numero}</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COR[status.cor]}`}>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_PEDIDO_COR[status.cor]}`}>
                       {status.label}
                     </span>
                   </div>

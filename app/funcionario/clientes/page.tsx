@@ -1,29 +1,17 @@
 'use client'
 
 import { Fragment, useEffect, useMemo, useState } from 'react'
-import { Search, ChevronDown, ChevronUp, Package } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, Store, Truck } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
+import { getStatusPedido, STATUS_PEDIDO_COR } from '@/lib/statusPedido'
+import type { Pedido } from '@/lib/clientPedidos'
 
 interface ContaCliente {
   nome: string
   senha: string
   criadoEm: string
-}
-
-interface ItemPedido {
-  produtoId: string
-  nome: string
-  preco: number
-  quantidade: number
-}
-
-interface Pedido {
-  numero: string
-  data: string
-  itens: ItemPedido[]
-  total: number
 }
 
 interface ClienteResumo {
@@ -59,7 +47,7 @@ export default function ClientesPage() {
     const pedidosPorEmail: Record<string, Pedido[]> = JSON.parse(localStorage.getItem('lm_pedidos_cliente') ?? '{}')
 
     const resumo: ClienteResumo[] = Object.entries(contas).map(([email, conta]) => {
-      const pedidos = pedidosPorEmail[email] ?? []
+      const pedidos = [...(pedidosPorEmail[email] ?? [])].sort((a, b) => b.data.localeCompare(a.data))
       const totalGasto = pedidos.reduce((soma, p) => soma + p.total, 0)
       const status: ClienteResumo['status'] = pedidos.length === 0 ? 'Novo' : totalGasto >= 500 ? 'VIP' : 'Ativo'
       return { email, nome: conta.nome, criadoEm: conta.criadoEm, pedidos, totalGasto, status }
@@ -91,7 +79,7 @@ export default function ClientesPage() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto">
       <Card padding="none">
         <div className="p-4 border-b border-gray-200 dark:border-gray-500 flex gap-4">
           <div className="relative flex-1 max-w-md">
@@ -109,74 +97,100 @@ export default function ClientesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
-                <th className="p-4 font-bold">
-                  <button onClick={() => handleSort('nome')} className="flex items-center gap-1.5 hover:text-lm-green transition-colors">
+              {/* `uppercase` repetido nos botões: o Tailwind zera o text-transform de <button>,
+                  então o da linha não chega neles e o cabeçalho ficava metade em maiúsculas. */}
+              <tr className="bg-gray-50 text-gray-700 text-xs sm:text-sm uppercase tracking-wider">
+                <th className="px-3 py-4 sm:p-4 font-bold max-md:w-full">
+                  <button onClick={() => handleSort('nome')} className="flex items-center gap-1.5 uppercase hover:text-lm-green transition-colors">
                     Nome <SortIcon ativo={sortKey === 'nome'} dir={sortDir} />
                   </button>
                 </th>
-                <th className="p-4 font-bold">Contato</th>
-                <th className="p-4 font-bold text-center">
-                  <button onClick={() => handleSort('pedidos')} className="flex items-center gap-1.5 mx-auto hover:text-lm-green transition-colors">
+                <th className="p-4 font-bold hidden md:table-cell">Contato</th>
+                <th className="px-3 py-4 sm:p-4 font-bold text-center">
+                  <button onClick={() => handleSort('pedidos')} className="flex items-center gap-1.5 mx-auto uppercase hover:text-lm-green transition-colors">
                     Pedidos <SortIcon ativo={sortKey === 'pedidos'} dir={sortDir} />
                   </button>
                 </th>
-                <th className="p-4 font-bold text-right">
-                  <button onClick={() => handleSort('totalGasto')} className="flex items-center gap-1.5 ml-auto hover:text-lm-green transition-colors">
+                <th className="px-3 py-4 sm:p-4 font-bold text-right">
+                  <button onClick={() => handleSort('totalGasto')} className="flex items-center gap-1.5 ml-auto uppercase text-right hover:text-lm-green transition-colors">
                     Total gasto <SortIcon ativo={sortKey === 'totalGasto'} dir={sortDir} />
                   </button>
                 </th>
-                <th className="p-4 font-bold text-center">Status</th>
+                <th className="p-4 font-bold text-center hidden sm:table-cell">Status</th>
               </tr>
             </thead>
-            <tbody>
+            {/* Linha divisória entre as linhas (divide-y), não embaixo de cada uma: assim a
+                última não soma a própria borda com a do cartão. */}
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-500">
               {ordenados.map(cliente => (
                 <Fragment key={cliente.email}>
                   <tr
                     onClick={() => setExpandidoEmail(e => (e === cliente.email ? null : cliente.email))}
-                    className="hover:bg-gray-50 transition-colors border-b border-gray-200 dark:border-gray-500 last:border-0 cursor-pointer"
+                    aria-expanded={expandidoEmail === cliente.email}
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
                   >
-                    <td className="p-4">
-                      <p className="font-bold text-lm-dark">{cliente.nome}</p>
+                    <td className="px-3 py-4 sm:p-4">
+                      {/* Em tela estreita as colunas Contato e Status somem e o conteúdo delas
+                          vem pra cá, pra tabela caber sem rolagem lateral. */}
+                      <p className="font-bold text-lm-dark flex flex-wrap items-center gap-x-2 gap-y-1">
+                        {cliente.nome}
+                        <Badge tone={STATUS_TONE[cliente.status]} className="sm:hidden">{cliente.status}</Badge>
+                      </p>
+                      <p className="text-sm text-gray-700 mt-0.5 break-all md:hidden">{cliente.email}</p>
                       <p className="text-sm text-gray-700 mt-0.5">
                         Cadastrado em {new Date(cliente.criadoEm).toLocaleDateString('pt-BR')}
                       </p>
                     </td>
-                    <td className="p-4">
-                      <p className="text-sm text-gray-700">{cliente.email}</p>
+                    <td className="p-4 hidden md:table-cell">
+                      <p className="text-sm text-gray-700 break-all">{cliente.email}</p>
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="px-3 py-4 sm:p-4 text-center">
                       <Badge tone="gray">{cliente.pedidos.length}</Badge>
                     </td>
-                    <td className="p-4 text-right font-medium text-sm text-gray-700">
+                    <td className="px-3 py-4 sm:p-4 text-right font-medium text-sm text-gray-700">
                       {cliente.totalGasto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="p-4 text-center hidden sm:table-cell">
                       <Badge tone={STATUS_TONE[cliente.status]}>{cliente.status}</Badge>
                     </td>
                   </tr>
                   {expandidoEmail === cliente.email && (
                     <tr key={`${cliente.email}-detalhe`}>
-                      <td colSpan={5} className="p-4 bg-gray-50 border-b border-gray-200 dark:border-gray-500">
+                      <td colSpan={5} className="p-3 sm:p-4 bg-gray-50">
+                        <p className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                          Pedidos de {cliente.nome}
+                        </p>
                         {cliente.pedidos.length === 0 ? (
                           <p className="text-base text-gray-700">Nenhum pedido ainda.</p>
                         ) : (
-                          <div className="space-y-2">
-                            {cliente.pedidos.map(pedido => (
-                              <div key={pedido.numero} className="flex items-center justify-between bg-white rounded-xl border border-gray-200 dark:border-gray-500 px-4 py-2.5">
-                                <div className="flex items-center gap-2">
-                                  <Package size={14} className="text-lm-green" />
-                                  <span className="font-mono text-xs font-semibold text-gray-700">{pedido.numero}</span>
-                                  <span className="text-sm text-gray-600">
-                                    {new Date(pedido.data).toLocaleDateString('pt-BR')} · {pedido.itens.length} item{pedido.itens.length > 1 ? 's' : ''}
+                          // Mesma linha de pedido da tela Pedidos (ícone, número + status, resumo,
+                          // total). `flex-wrap` + `min-w-0` fazem o conteúdo quebrar de linha em vez
+                          // de empurrar a largura da tabela.
+                          <ul className="rounded-xl border border-gray-200 dark:border-gray-500 bg-white divide-y divide-gray-200 dark:divide-gray-500 overflow-hidden">
+                            {cliente.pedidos.map(pedido => {
+                              const status = getStatusPedido(pedido)
+                              const totalItens = pedido.itens.length
+                              return (
+                                <li key={pedido.numero} className="flex flex-wrap items-center gap-x-3 gap-y-2 p-3 sm:px-4">
+                                  <span className="w-9 h-9 rounded-lg bg-lm-green/10 text-lm-green flex items-center justify-center flex-shrink-0">
+                                    {pedido.metodo === 'retirada' ? <Store size={18} /> : <Truck size={18} />}
                                   </span>
-                                </div>
-                                <span className="text-sm font-bold text-gray-900">
-                                  {pedido.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
+                                  <span className="min-w-0 flex-1">
+                                    <span className="flex items-center gap-2 flex-wrap">
+                                      <span className="font-mono text-sm font-semibold text-gray-900">{pedido.numero}</span>
+                                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_PEDIDO_COR[status.cor]}`}>{status.label}</span>
+                                    </span>
+                                    <span className="block text-sm text-gray-700">
+                                      {new Date(pedido.data).toLocaleDateString('pt-BR')} · {totalItens} {totalItens === 1 ? 'item' : 'itens'} · {pedido.metodo === 'retirada' ? 'Retirada na loja' : 'Entrega'}
+                                    </span>
+                                  </span>
+                                  <span className="text-sm font-bold text-gray-900">
+                                    {pedido.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  </span>
+                                </li>
+                              )
+                            })}
+                          </ul>
                         )}
                       </td>
                     </tr>

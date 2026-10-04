@@ -8,7 +8,9 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const paddingClasses: Record<CardPadding, string> = {
-  none: '',
+  // Sem padding o conteúdo encosta na borda do cartão. Recortar aqui impede que fundo de
+  // cabeçalho de tabela, linha em hover ou foto vazem pelos cantos arredondados.
+  none: 'overflow-hidden',
   sm: 'p-4',
   md: 'p-6',
 }
