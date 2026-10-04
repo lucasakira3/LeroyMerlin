@@ -114,7 +114,9 @@ html.dark {
 
 /* text-lm-green (#00843d) é escuro demais pra ler bem sobre fundo escuro — mesmo tratamento de clarear já aplicado a text-green-600/700 (ver bloco de cores de status abaixo) */
 .dark .text-lm-green, .dark .text-lm-green-dark { color: #4ade80; }
-.dark .hover\:text-lm-green:hover { color: #4ade80; }
+.dark .hover\:text-lm-green:hover, .dark .hover\:text-lm-green-dark:hover { color: #4ade80; }
+/* group-hover não era coberto pela regra acima: o texto virava verde escuro sobre cartão escuro */
+.dark .group:hover .group-hover\:text-lm-green { color: #4ade80; }
 
 /* Escala de cinza — texto, bordas e preenchimentos sutis */
 .dark .text-gray-900 { color: #f9fafb; }
@@ -156,7 +158,9 @@ html.dark {
 .dark .bg-yellow-50, .dark .bg-yellow-100 { background-color: rgba(202, 138, 4, 0.16); }
 .dark .text-yellow-600, .dark .text-yellow-700, .dark .text-yellow-800 { color: #facc15; }
 .dark .border-yellow-200 { border-color: rgba(202, 138, 4, 0.35); }
-.dark .hover\:bg-yellow-100:hover, .dark .hover\:bg-yellow-300:hover { background-color: rgba(202, 138, 4, 0.24); }
+/* Só o yellow-100 (chip claro). O yellow-300 é hover de botão amarelo SÓLIDO com texto preto:
+   escurecer o fundo dele deixava texto preto sobre fundo escuro (contraste 1,5). */
+.dark .hover\:bg-yellow-100:hover { background-color: rgba(202, 138, 4, 0.24); }
 
 .dark .bg-green-50, .dark .bg-green-100 { background-color: rgba(22, 163, 74, 0.16); }
 .dark .text-green-600, .dark .text-green-700 { color: #4ade80; }
@@ -187,6 +191,20 @@ html.dark {
 .dark .text-stone-600 { color: #a8a29e; }
 .dark .border-stone-200 { border-color: rgba(120, 113, 108, 0.35); }
 .dark .hover\:bg-stone-100:hover { background-color: rgba(120, 113, 108, 0.24); }
+
+/*
+ * Hover padrão de botão secundário, pílula de filtro e área clicável neutra ("fade verde").
+ * Usar a classe `hover-verde` em vez de inventar um hover por componente.
+ *
+ * As cores são OPACAS e em par fundo+texto por tema, de propósito: um véu translúcido muda
+ * conforme o que está atrás dele (turvo sobre o fundo cinza da página, claro demais sobre
+ * cartão escuro) — foi isso que derrubou o contraste do texto no modo escuro. Assim o
+ * contraste do hover é sempre o mesmo: 6,5:1 no claro e 10:1 no escuro.
+ * Precisa ficar depois das regras `.dark .bg-white` / `.dark .text-*` acima pra ganhar delas.
+ * A suavização fica por conta do `transition-colors` do próprio elemento.
+ */
+.hover-verde:not(:disabled):hover { background-color: #e8f5ee; border-color: #00843d; color: #046432; }
+.dark .hover-verde:not(:disabled):hover { background-color: #173d2b; border-color: #4ade80; color: #bbf7d0; }
 
 /* Sombras — pretas sobre fundo escuro somem; escurece mais para dar profundidade */
 .dark .shadow-soft { box-shadow: 0 2px 12px -2px rgba(0, 0, 0, 0.5); }

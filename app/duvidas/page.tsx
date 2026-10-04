@@ -71,7 +71,7 @@ export default function DuvidasPage() {
 
             <a
               href="tel:40205376"
-              className="flex items-center gap-3 w-full bg-white border-2 border-lm-green text-lm-green px-4 py-3 rounded-xl text-sm font-semibold hover:bg-lm-green/5 transition-colors"
+              className="flex items-center gap-3 w-full bg-white border-2 border-lm-green text-lm-green px-4 py-3 rounded-xl text-sm font-semibold hover-verde transition-colors"
             >
               <Phone size={18} />
               4020-5376

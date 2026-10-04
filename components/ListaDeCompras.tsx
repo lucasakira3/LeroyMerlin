@@ -321,7 +321,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
           </button>
           <button
             onClick={copiarLink}
-            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
+            className="flex items-center gap-2 bg-white/15 hover:bg-black/15 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
           >
             <Share2 size={14} />
             {linkCopiado ? 'Link copiado ✓' : 'Copiar link'}
@@ -343,7 +343,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
           ) : (
             <Link
               href="/funcionario/login?next=/projeto"
-              className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
+              className="flex items-center gap-2 bg-white/15 hover:bg-black/15 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
             >
               <Bookmark size={15} /> Entre para salvar o projeto
             </Link>

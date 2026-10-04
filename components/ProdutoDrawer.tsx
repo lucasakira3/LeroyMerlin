@@ -259,7 +259,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-lm-green/90 backdrop-blur-sm rounded-full p-1.5 shadow-md">
               <button
                 onClick={handleFavorito}
-                className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors"
                 aria-label={favorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
                 aria-pressed={favorito}
               >
@@ -267,7 +267,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               </button>
               <button
                 onClick={handleComparar}
-                className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors"
                 aria-label={noComparador ? 'Remover da comparação' : 'Adicionar à comparação'}
                 aria-pressed={noComparador}
               >
@@ -275,7 +275,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               </button>
               <button
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors"
                 aria-label="Fechar"
               >
                 <X size={16} />

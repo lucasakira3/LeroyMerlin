@@ -506,7 +506,7 @@ export default function CarrinhoPage() {
                               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                                 enderecoSelecionadoId === end.id
                                   ? 'bg-lm-green text-white border-lm-green'
-                                  : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                                  : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover-verde'
                               }`}
                             >
                               {end.rotulo}
@@ -518,7 +518,7 @@ export default function CarrinhoPage() {
                             className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                               enderecoSelecionadoId === 'novo'
                                 ? 'bg-lm-green text-white border-lm-green'
-                                : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                                : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover-verde'
                             }`}
                           >
                             + Novo endereço
@@ -650,7 +650,7 @@ export default function CarrinhoPage() {
                               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                                 cartaoSelecionadoId === c.id
                                   ? 'bg-lm-green text-white border-lm-green'
-                                  : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                                  : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover-verde'
                               }`}
                             >
                               {c.bandeira} final {c.ultimosDigitos}
@@ -662,7 +662,7 @@ export default function CarrinhoPage() {
                             className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                               cartaoSelecionadoId === 'novo'
                                 ? 'bg-lm-green text-white border-lm-green'
-                                : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                                : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover-verde'
                             }`}
                           >
                             + Novo cartão

@@ -200,7 +200,7 @@ export default function ProdutosPage() {
                   className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                     estoqueFiltro === o.valor
                       ? 'bg-lm-green text-white border-lm-green'
-                      : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                      : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
                   }`}
                 >
                   {o.label}

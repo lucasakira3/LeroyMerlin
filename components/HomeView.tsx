@@ -14,7 +14,7 @@ export default function HomeView() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <Link
           href="/buscar"
-          className="flex items-center gap-4 bg-lm-green text-white rounded-card px-6 py-5 hover:bg-lm-green/90 transition-colors shadow-soft"
+          className="flex items-center gap-4 bg-lm-green text-white rounded-card px-6 py-5 hover:bg-green-700 transition-colors shadow-soft"
         >
           <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <Search size={20} />

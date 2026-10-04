@@ -103,7 +103,7 @@ export default function ContaPage() {
                   <Link
                     href={href}
                     className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
-                      feito ? 'bg-white/10 text-white/70' : 'bg-white/15 hover:bg-white/25'
+                      feito ? 'bg-white/10 text-white/70' : 'bg-white/15 hover:bg-black/15'
                     }`}
                   >
                     <span className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${feito ? 'bg-lm-yellow text-black' : 'bg-white/20'}`}>

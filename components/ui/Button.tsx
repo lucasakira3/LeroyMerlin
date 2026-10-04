@@ -9,10 +9,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-lm-green text-white hover:bg-lm-green/90',
-  secondary: 'bg-white text-lm-green border border-lm-green/30 hover:bg-lm-green/5',
+  // Primário escurece no hover (clarear, como era, baixava o contraste do texto branco).
+  primary: 'bg-lm-green text-white hover:bg-green-700',
+  // `hover-verde` é o hover padrão de botão secundário — ver app/globals.css.
+  secondary: 'bg-white text-lm-green border border-lm-green/30 hover-verde',
   ghost: 'bg-transparent text-gray-600 hover:bg-gray-100',
-  danger: 'bg-white text-red-600 border border-red-200 hover:bg-red-50',
+  // red-700 e não red-600: sobre o rosado do hover (red-50) o 600 ficava em 4,4:1.
+  danger: 'bg-white text-red-700 border border-red-200 hover:bg-red-50',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {

@@ -91,7 +91,7 @@ export default function ComparadorPorFoto() {
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 dark:text-zinc-400 border border-gray-200 dark:border-zinc-700 px-3 py-1.5 rounded-full hover:border-lm-green/40 hover:text-lm-green transition-colors flex-shrink-0"
+        className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 dark:text-zinc-400 border border-gray-200 dark:border-zinc-700 px-3 py-1.5 rounded-full hover-verde transition-colors flex-shrink-0"
       >
         <Camera size={13} /> Comparar por foto
       </button>
@@ -114,7 +114,7 @@ export default function ComparadorPorFoto() {
           role="button"
           tabIndex={0}
           aria-label="Selecionar foto do produto pra comparar"
-          className="flex flex-col items-center justify-center gap-2 p-5 border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 dark:hover:bg-zinc-800/50 transition-colors"
+          className="flex flex-col items-center justify-center gap-2 p-5 border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-xl cursor-pointer hover-verde transition-colors"
         >
           <Camera size={22} className="text-gray-600" />
           <p className="text-sm text-gray-700 dark:text-zinc-400 text-center">Tirar foto ou escolher imagem</p>

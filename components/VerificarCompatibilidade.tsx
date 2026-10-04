@@ -98,7 +98,7 @@ export default function VerificarCompatibilidade({ produtoId }: { produtoId: str
               role="button"
               tabIndex={0}
               aria-label="Selecionar foto pra verificar compatibilidade"
-              className="flex flex-col items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 transition-colors"
+              className="flex flex-col items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover-verde transition-colors"
             >
               <Camera size={20} className="text-gray-600" />
               <p className="text-sm text-gray-700 text-center">Tirar foto ou escolher imagem</p>

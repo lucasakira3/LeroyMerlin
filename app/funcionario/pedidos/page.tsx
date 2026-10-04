@@ -205,7 +205,7 @@ export default function PedidosFuncionarioPage() {
                 type="button"
                 onClick={() => setFiltro(f.valor)}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                  filtro === f.valor ? 'bg-lm-green text-white border-lm-green' : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                  filtro === f.valor ? 'bg-lm-green text-white border-lm-green' : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
                 }`}
               >
                 {f.label}

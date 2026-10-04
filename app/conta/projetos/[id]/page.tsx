@@ -23,7 +23,7 @@ export default function ProjetoSalvoPage() {
 
   return (
     <div>
-      <Link href="/conta/projetos" className="inline-flex items-center gap-1.5 text-base text-gray-700 hover:text-lm-green transition-colors mb-4">
+      <Link href="/conta/projetos" className="inline-flex items-center gap-1.5 text-base text-gray-700 hover:text-lm-green-dark transition-colors mb-4">
         <ArrowLeft size={16} /> Meus projetos
       </Link>
 

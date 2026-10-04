@@ -109,7 +109,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
             className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
               filtros.notaMinima === o.valor
                 ? 'bg-lm-green text-white border-lm-green'
-                : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
             }`}
           >
             {o.label}
@@ -123,7 +123,7 @@ export default function SearchFilters({ resultados, filtros, onChange }: Props) 
         className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
           filtros.apenasDisponiveis
             ? 'bg-lm-green text-white border-lm-green'
-            : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+            : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
         }`}
       >
         ✓ Só disponíveis

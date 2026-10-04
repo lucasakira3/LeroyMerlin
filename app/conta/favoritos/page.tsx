@@ -133,7 +133,7 @@ export default function FavoritosPage() {
               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                 filtro === "todos"
                   ? "bg-lm-dark text-white border-lm-dark"
-                  : "bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover:border-lm-green/40"
+                  : "bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover-verde"
               }`}
             >
               Todos ({produtos.length})
@@ -149,7 +149,7 @@ export default function FavoritosPage() {
                   className={`flex items-center rounded-full border transition-colors ${
                     filtro === g.id
                       ? "bg-lm-green text-white border-lm-green"
-                      : "bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover:border-lm-green/40"
+                      : "bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover-verde"
                   }`}
                 >
                   <button
@@ -181,7 +181,7 @@ export default function FavoritosPage() {
               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                 filtro === SEM_GRUPO
                   ? "bg-lm-dark text-white border-lm-dark"
-                  : "bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover:border-lm-green/40"
+                  : "bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover-verde"
               }`}
             >
               Sem grupo

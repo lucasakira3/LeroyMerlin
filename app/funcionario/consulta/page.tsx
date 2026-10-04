@@ -252,7 +252,7 @@ export default function ConsultaRapidaPage() {
                 className={`w-full inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
                   noMapaIds.includes(selecionado.id)
                     ? 'bg-lm-green/10 text-lm-green border border-lm-green/40'
-                    : 'bg-lm-green text-white hover:bg-lm-green/90'
+                    : 'bg-lm-green text-white hover:bg-green-700'
                 }`}
               >
                 <MapaIcone size={16} />

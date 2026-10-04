@@ -148,7 +148,7 @@ export default function ChamadosPage() {
         <button
           onClick={() => { setModo('agendamentos'); setBusca('') }}
           className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl transition-colors ${
-            modo === 'agendamentos' ? 'bg-lm-green text-white' : 'bg-white text-gray-600 border border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+            modo === 'agendamentos' ? 'bg-lm-green text-white' : 'bg-white text-gray-600 border border-gray-200 dark:border-gray-500 hover-verde'
           }`}
         >
           <CalendarClock size={14} /> Agendamentos
@@ -161,7 +161,7 @@ export default function ChamadosPage() {
         <button
           onClick={() => { setModo('conversas'); setBusca('') }}
           className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl transition-colors ${
-            modo === 'conversas' ? 'bg-lm-green text-white' : 'bg-white text-gray-600 border border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+            modo === 'conversas' ? 'bg-lm-green text-white' : 'bg-white text-gray-600 border border-gray-200 dark:border-gray-500 hover-verde'
           }`}
         >
           <Headset size={14} /> Conversas com especialista
@@ -347,7 +347,7 @@ export default function ChamadosPage() {
                   <button
                     onClick={enviarNota}
                     disabled={!mensagem.trim()}
-                    className="bg-lm-green hover:bg-lm-green/90 text-white p-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="bg-lm-green hover:bg-green-700 text-white p-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <Send size={18} />
                   </button>
@@ -413,7 +413,7 @@ export default function ChamadosPage() {
                   <button
                     onClick={responderConversa}
                     disabled={!respostaConversa.trim()}
-                    className="bg-lm-green hover:bg-lm-green/90 text-white p-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="bg-lm-green hover:bg-green-700 text-white p-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <Send size={18} />
                   </button>

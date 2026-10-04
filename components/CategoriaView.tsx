@@ -131,7 +131,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
       <nav aria-label="Breadcrumb" className="mb-2">
         <ol className="flex items-center gap-1.5 text-sm text-gray-700">
           <li>
-            <button onClick={onBack} className="hover:text-lm-green hover:underline transition-colors">
+            <button onClick={onBack} className="hover:text-lm-green-dark hover:underline transition-colors">
               Produtos
             </button>
           </li>
@@ -212,7 +212,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 filtroComplexidade === c
                   ? 'bg-lm-green text-white border-lm-green'
-                  : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                  : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
               }`}>{c}</button>
           ))}
         </div>
@@ -242,7 +242,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
           className={`text-xs px-3 py-1 rounded-full border transition-colors ${
             filtroEstoque
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+              : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
           }`}>
           ✓ Só disponíveis
         </button>
@@ -253,7 +253,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 filtroNotaMinima === o.valor
                   ? 'bg-lm-green text-white border-lm-green'
-                  : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                  : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
               }`}>{o.label}</button>
           ))}
         </div>

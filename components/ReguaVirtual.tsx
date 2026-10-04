@@ -84,7 +84,7 @@ export default function ReguaVirtual() {
               className={`text-xs font-semibold px-3 py-2 rounded-xl border transition-colors ${
                 referenciaId === o.id
                   ? 'bg-lm-green text-white border-lm-green'
-                  : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                  : 'bg-white text-gray-600 border-gray-200 dark:border-gray-500 hover-verde'
               }`}
             >
               {o.label}
@@ -104,7 +104,7 @@ export default function ReguaVirtual() {
             role="button"
             tabIndex={0}
             aria-label="Selecionar foto pra medir"
-            className="flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-lm-green hover:bg-green-50/50 transition-colors"
+            className="flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover-verde transition-colors"
           >
             <Camera size={28} className="text-gray-600" />
             <p className="text-base text-gray-700 text-center">Tirar foto ou escolher imagem</p>

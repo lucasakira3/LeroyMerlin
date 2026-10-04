@@ -39,7 +39,7 @@ export default function BotaoAjudaCorredor({ produtoId, produtoNome, corredor }:
       className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
         enviado
           ? 'bg-lm-green/10 text-lm-green cursor-default'
-          : 'bg-gray-100 text-gray-600 hover:bg-lm-yellow/20 hover:text-amber-700'
+          : 'bg-gray-100 text-gray-600 hover-verde'
       }`}
     >
       {enviado ? <Check size={13} /> : <Bell size={13} />}

@@ -378,7 +378,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
                   onClick={voltarParaComodos}
                   disabled={loading}
                   aria-label="Voltar pros cômodos"
-                  className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-500 text-gray-600 hover:text-lm-green hover:border-lm-green/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-500 text-gray-600 hover-verde disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <ArrowLeft size={16} />
                 </button>
@@ -391,7 +391,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
                 className={`h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-xl border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
                   ouvindo
                     ? 'bg-red-50 text-red-500 border-red-200 animate-pulse'
-                    : 'text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40 hover:text-lm-green'
+                    : 'text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
                 }`}
               >
                 {ouvindo ? <MicOff size={16} /> : <Mic size={16} />}

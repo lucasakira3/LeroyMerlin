@@ -126,7 +126,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-bold py-2 rounded-lg border transition-colors ${
             modo === 'produto'
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-lm-dark border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+              : 'bg-white text-lm-dark border-gray-200 dark:border-gray-500 hover-verde'
           }`}
         >
           <PackageSearch size={14} /> Já sei o produto
@@ -138,7 +138,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-bold py-2 rounded-lg border transition-colors ${
             modo === 'problema'
               ? 'bg-lm-green text-white border-lm-green'
-              : 'bg-white text-lm-dark border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+              : 'bg-white text-lm-dark border-gray-200 dark:border-gray-500 hover-verde'
           }`}
         >
           <Wrench size={14} /> Solucionar problema
@@ -158,7 +158,7 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
           className={`relative flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
             dragOver
               ? 'border-lm-green bg-green-50'
-              : 'border-gray-300 bg-white hover:border-lm-green hover:bg-green-50/50'
+              : 'border-gray-300 bg-white hover-verde'
           }`}
         >
           <Camera size={28} className="text-gray-600" />

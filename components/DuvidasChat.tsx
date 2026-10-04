@@ -121,7 +121,7 @@ export default function DuvidasChat() {
               <button
                 key={s}
                 onClick={() => enviar(s)}
-                className="text-xs px-3 py-1.5 bg-lm-green/10 text-lm-green border border-lm-green/20 rounded-full hover:bg-lm-green/20 transition-colors"
+                className="text-xs px-3 py-1.5 bg-lm-green/10 text-lm-green border border-lm-green/20 rounded-full hover-verde transition-colors"
               >
                 {s}
               </button>

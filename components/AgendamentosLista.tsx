@@ -74,7 +74,7 @@ export default function AgendamentosLista() {
             className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
               filtro === f
                 ? 'bg-lm-green text-white border-lm-green'
-                : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+                : 'bg-white text-gray-700 border-gray-200 dark:border-gray-500 hover-verde'
             }`}
           >
             {f === 'todos' ? 'Todos' : f === 'confirmado' ? 'Confirmados' : 'Cancelados'}

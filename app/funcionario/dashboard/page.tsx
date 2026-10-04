@@ -239,7 +239,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                   href="/funcionario/produtos"
-                  className="text-xs font-bold text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0"
+                  className="text-xs font-bold text-red-600 hover:underline px-3 py-1.5 rounded-lg flex-shrink-0"
                 >
                   Ver
                 </Link>
