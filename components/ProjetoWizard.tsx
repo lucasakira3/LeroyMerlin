@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   Mic, MicOff, Send, RotateCcw, ArrowLeft, Bot, User, Check, Loader2,
   MessageCircle, ClipboardList,
@@ -8,6 +8,9 @@ import {
 import ListaDeCompras, { type ListaDeComprasHandle } from './ListaDeCompras'
 import { COMODOS_DISPONIVEIS, getIconeComodo } from '@/lib/comodoIcones'
 import type { Projeto } from './ProjetoMosaico'
+import { getUsuarioLogado } from '@/lib/clientAuth'
+import { lerRascunho, salvarRascunho, limparRascunho, type ProgressoProjeto } from '@/lib/rascunhoProjeto'
+import { showToast } from '@/lib/toast'
 
 // Etapas do indicador de "carregando" — genéricas de propósito: a cada mensagem a IA pode
 // devolver uma pergunta, o resultado, uma resposta ou uma atualização da lista, e só se sabe
@@ -106,6 +109,65 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
   const [etapaWizard, setEtapaWizard] = useState<'comodos' | 'descricao'>('comodos')
   const [comodosSelecionados, setComodosSelecionados] = useState<Set<string>>(new Set())
 
+  // ── Rascunho automático (lib/rascunhoProjeto.ts) ─────────────────────────────────────
+  // Antes, sair desta tela sem clicar em "Salvar projeto" perdia a conversa e a lista — e
+  // pra salvar era preciso estar logado, o que mandava o cliente pra tela de login e também
+  // perdia tudo. Agora a conversa, a lista e o progresso são gravados a cada mudança e
+  // recuperados ao voltar.
+  const [carregado, setCarregado] = useState(false)
+  const [rascunhoSalvo, setRascunhoSalvo] = useState(false)
+  const [progressoInicial, setProgressoInicial] = useState<ProgressoProjeto | undefined>(undefined)
+  // Último progresso avisado pela ListaDeCompras. Ref (e não estado) porque muda a cada
+  // clique na lista e não precisa redesenhar o assistente; `versaoProgresso` só dispara a
+  // gravação do rascunho.
+  const progressoRef = useRef<(ProgressoProjeto & { projeto: Projeto }) | null>(null)
+  const [versaoProgresso, setVersaoProgresso] = useState(0)
+  const donoRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    const email = getUsuarioLogado()?.email ?? null
+    donoRef.current = email
+    const rascunho = lerRascunho(email)
+    if (rascunho && (rascunho.resultado || rascunho.mensagens.length > 0)) {
+      setComodosSelecionados(new Set(rascunho.comodos))
+      setMensagens(rascunho.mensagens)
+      setEtapaWizard('descricao')
+      if (rascunho.resultado) {
+        setResultado(rascunho.resultado)
+        setProgressoInicial(rascunho.progresso ?? undefined)
+        setViewMode('projeto')
+      }
+      setRascunhoSalvo(true)
+      // Com um pequeno atraso: o aviso global (UndoToast, no layout) só começa a escutar
+      // depois que os efeitos desta tela já rodaram.
+      setTimeout(() => showToast('Recuperamos o projeto em que você estava trabalhando'), 400)
+    }
+    setCarregado(true)
+  }, [])
+
+  const handleProgresso = useCallback((progresso: ProgressoProjeto & { projeto: Projeto }) => {
+    progressoRef.current = progresso
+    setVersaoProgresso(v => v + 1)
+  }, [])
+
+  useEffect(() => {
+    // Antes de `carregado` o estado ainda é o vazio inicial: gravar aqui apagaria o rascunho
+    // que está prestes a ser recuperado.
+    if (!carregado) return
+    if (!resultado && mensagens.length === 0) return
+    const progresso = progressoRef.current
+    setRascunhoSalvo(salvarRascunho({
+      dono: donoRef.current,
+      comodos: Array.from(comodosSelecionados),
+      mensagens,
+      // A lista dentro da ListaDeCompras é a mais atual (pode ter produto trocado).
+      resultado: progresso?.projeto ?? resultado,
+      progresso: progresso
+        ? { selecionados: progresso.selecionados, itensConcluidos: progresso.itensConcluidos, loja: progresso.loja, salvoId: progresso.salvoId }
+        : null,
+    }))
+  }, [carregado, mensagens, comodosSelecionados, resultado, versaoProgresso])
+
   function toggleComodo(comodo: string) {
     setComodosSelecionados(prev => {
       const next = new Set(prev)
@@ -133,7 +195,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
     // projeto (pergunta ou pedido de mudança) — manda a lista atual como `projetoAtual` pra
     // IA decidir. Sem resultado, é a fase de esclarecimento de antes de gerar.
     const corpo = resultado
-      ? { historico: novoHistorico, projetoAtual: resultado }
+      ? { historico: novoHistorico, projetoAtual: progressoRef.current?.projeto ?? resultado }
       : { historico: novoHistorico, comodos: Array.from(comodosSelecionados) }
 
     try {
@@ -176,6 +238,10 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
   }
 
   function novoProjeto() {
+    limparRascunho()
+    progressoRef.current = null
+    setProgressoInicial(undefined)
+    setRascunhoSalvo(false)
     setResultado(null)
     setViewMode('chat')
     setMensagens([])
@@ -225,7 +291,7 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
       {/* Alterna entre a conversa e o resultado — só existe depois que há um resultado pra
           ver; antes disso o chat é a única tela mesmo. */}
       {resultado && (
-        <div className="flex gap-1 px-4 pt-3 flex-shrink-0">
+        <div className="flex flex-wrap items-center gap-1 px-4 pt-3 flex-shrink-0">
           <button
             type="button"
             onClick={() => setViewMode('chat')}
@@ -244,6 +310,11 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
           >
             <ClipboardList size={18} /> Projeto
           </button>
+          {rascunhoSalvo && (
+            <span className="ml-auto inline-flex items-center gap-1.5 text-sm text-gray-700">
+              <Check size={14} className="text-lm-green" /> Salvo automaticamente neste aparelho
+            </span>
+          )}
         </div>
       )}
 
@@ -436,6 +507,8 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
               descricaoOriginal={descricaoAcumulada}
               onTotalChange={onTotalChange}
               semChatInterno
+              progressoInicial={progressoInicial}
+              onProgresso={handleProgresso}
             />
           </div>
           <div className="border-t border-gray-200 dark:border-gray-500 p-4 flex items-center justify-between gap-2 flex-shrink-0">

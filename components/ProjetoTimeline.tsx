@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import {
   Route, Hammer, PaintRoller, Zap, Droplets, Layers, Sparkles, Ruler, ListOrdered,
-  Check, ChevronRight, MapPin, ShoppingCart, BookOpenText, type LucideIcon,
+  Check, ChevronRight, MapPin, ShoppingCart, BookOpenText, Repeat, type LucideIcon,
 } from 'lucide-react'
 import Card from './ui/Card'
 import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
@@ -51,6 +51,9 @@ interface Props {
   itensConcluidos: Set<number>
   onAlternarItem: (indice: number) => void
   onSelecionarProduto: (produto: SearchResult['produto']) => void
+  // Troca o produto de um item por outra das opções que a busca achou pra ele. Sem esta
+  // função (lista compartilhada por link, que só traz o produto escolhido) o botão some.
+  onTrocarProduto?: (indice: number, produtoId: string) => void
   // Instruções gerais por fase (lib/projetoGuiado.ts) — ausente em projetos salvos antes
   // dessa mudança, aí o quadro de instruções simplesmente não aparece.
   etapasInfo?: EtapaProjeto[]
@@ -70,8 +73,10 @@ function quantidadeDoItem(quantidade: string | undefined): number {
 // um botão de carrinho e um check. O progresso é POR ITEM: a etapa fica concluída sozinha
 // quando todos os itens dela estão marcados. Só persiste se o projeto foi salvo (Minha
 // Conta > Projetos).
-export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, onAlternarItem, onSelecionarProduto, etapasInfo }: Props) {
+export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, onAlternarItem, onSelecionarProduto, onTrocarProduto, etapasInfo }: Props) {
   const [ativa, setAtiva] = useState<number | null>(null)
+  // Item (posição em `itens`) com a lista de "outras opções" aberta
+  const [trocando, setTrocando] = useState<number | null>(null)
 
   const etapasMap = new Map<number, Etapa>()
   itens.forEach((item, indice) => {
@@ -206,78 +211,137 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
             const produto = escolhido?.produto
             const preco = produto ? (produto as any).preco as number | undefined : undefined
             const feito = itensConcluidos.has(indice)
+            const outrasOpcoes = onTrocarProduto && produto ? item.resultados.filter(r => r.produto.id !== produto.id) : []
+            const trocaAberta = trocando === indice && outrasOpcoes.length > 0
             return (
-              <li key={`${item.material}-${indice}`} className="flex gap-3">
+              <li key={`${item.material}-${indice}`} className="flex gap-2 sm:gap-3">
                 <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center flex-shrink-0 mt-1 ${
                   feito ? 'bg-lm-yellow text-black' : 'bg-lm-green text-white'
                 }`}>
                   {feito ? <Check size={13} strokeWidth={3} /> : idx + 1}
                 </span>
-                <div className={`flex-1 min-w-0 rounded-xl border p-3 flex items-start gap-3 transition-colors ${
+                {/* Cartão do item em duas faixas: em cima foto + material + ações; embaixo, na
+                    largura toda, o produto escolhido e as outras opções. Numa faixa só (como
+                    era) o nome do produto ficava espremido entre a foto e os botões no celular. */}
+                <div className={`flex-1 min-w-0 rounded-xl border p-3 transition-colors ${
                   feito ? 'border-lm-green/40 bg-lm-green/5' : 'border-gray-200 dark:border-gray-500'
                 }`}>
-                  {produto && (
-                    <button
-                      type="button"
-                      onClick={() => onSelecionarProduto(produto)}
-                      aria-label={`Ver ${produto.produto}`}
-                      className="flex-shrink-0"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={getImagemProduto(produto)}
-                        alt=""
-                        className={`w-14 h-14 rounded-lg bg-white ${ajusteFoto(produto, 'p-1')} ${feito ? 'opacity-60' : ''}`}
-                      />
-                    </button>
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <p className={`text-base font-bold ${feito ? 'text-gray-600 line-through' : 'text-lm-dark'}`}>
-                      {item.material}
-                      {item.quantidade && <span className="font-medium text-gray-700 no-underline"> · {item.quantidade}</span>}
-                    </p>
-                    {item.observacao && <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">{item.observacao}</p>}
+                  <div className="flex items-start gap-2 sm:gap-3">
                     {produto && (
                       <button
                         type="button"
                         onClick={() => onSelecionarProduto(produto)}
-                        className="mt-1.5 flex items-center gap-2 flex-wrap text-left text-sm text-gray-700 hover:text-lm-green transition-colors"
+                        aria-label={`Ver ${produto.produto}`}
+                        className="flex-shrink-0"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={getImagemProduto(produto)}
+                          alt=""
+                          className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg bg-white ${ajusteFoto(produto, 'p-1')} ${feito ? 'opacity-60' : ''}`}
+                        />
+                      </button>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-base font-bold ${feito ? 'text-gray-600 line-through' : 'text-lm-dark'}`}>
+                        {item.material}
+                        {item.quantidade && <span className="font-medium text-gray-700 no-underline"> · {item.quantidade}</span>}
+                      </p>
+                      {item.observacao && <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">{item.observacao}</p>}
+                    </div>
+
+                    {/* Ações do item: carrinho e check (progresso) — empilhadas no celular pra
+                        sobrar largura pro nome do material */}
+                    <div className="flex flex-col sm:flex-row items-center gap-1.5 flex-shrink-0">
+                      {produto && (
+                        <button
+                          type="button"
+                          onClick={() => adicionarNoCarrinho(item, produto)}
+                          aria-label={`Adicionar ${produto.produto} ao carrinho`}
+                          title="Adicionar ao carrinho"
+                          className="w-9 h-9 rounded-lg bg-lm-green text-white flex items-center justify-center hover:bg-green-700 transition-colors"
+                        >
+                          <ShoppingCart size={16} />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => onAlternarItem(indice)}
+                        aria-pressed={feito}
+                        aria-label={feito ? `Desmarcar ${item.material}` : `Marcar ${item.material} como feito`}
+                        title={feito ? 'Desmarcar' : 'Marcar como feito'}
+                        className={`w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-colors ${
+                          feito
+                            ? 'bg-lm-yellow border-lm-yellow text-black'
+                            : 'border-gray-200 dark:border-gray-500 text-gray-600 hover:border-lm-green hover:text-lm-green'
+                        }`}
+                      >
+                        <Check size={17} strokeWidth={3} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Em tela larga, alinhado com o texto de cima (foto de 56px + espaço de 12px) */}
+                  {produto && (
+                    <div className="mt-2 sm:mt-1 sm:pl-[68px]">
+                      <button
+                        type="button"
+                        onClick={() => onSelecionarProduto(produto)}
+                        className="flex items-center gap-x-2 gap-y-0.5 flex-wrap text-left text-sm text-gray-700 hover:text-lm-green transition-colors max-w-full"
                       >
                         <span className="font-semibold text-gray-700 truncate max-w-full">{produto.produto}</span>
                         {preco != null && <span className="font-bold text-lm-green">{moeda(Number(preco))}</span>}
                         <span className="flex items-center gap-0.5"><MapPin size={10} /> {produto.corredor}</span>
                       </button>
-                    )}
-                  </div>
-
-                  {/* Ações do item: carrinho e check (progresso) */}
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {produto && (
-                      <button
-                        type="button"
-                        onClick={() => adicionarNoCarrinho(item, produto)}
-                        aria-label={`Adicionar ${produto.produto} ao carrinho`}
-                        title="Adicionar ao carrinho"
-                        className="w-9 h-9 rounded-lg bg-lm-green text-white flex items-center justify-center hover:bg-green-700 transition-colors"
-                      >
-                        <ShoppingCart size={16} />
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => onAlternarItem(indice)}
-                      aria-pressed={feito}
-                      aria-label={feito ? `Desmarcar ${item.material}` : `Marcar ${item.material} como feito`}
-                      title={feito ? 'Desmarcar' : 'Marcar como feito'}
-                      className={`w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-colors ${
-                        feito
-                          ? 'bg-lm-yellow border-lm-yellow text-black'
-                          : 'border-gray-200 dark:border-gray-500 text-gray-600 hover:border-lm-green hover:text-lm-green'
-                      }`}
-                    >
-                      <Check size={17} strokeWidth={3} />
-                    </button>
-                  </div>
+                      {outrasOpcoes.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setTrocando(trocaAberta ? null : indice)}
+                          aria-expanded={trocaAberta}
+                          className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-lm-green hover:underline"
+                        >
+                          <Repeat size={14} /> {trocaAberta ? 'Fechar opções' : `Trocar produto (${outrasOpcoes.length} ${outrasOpcoes.length === 1 ? 'opção' : 'opções'})`}
+                        </button>
+                      )}
+                      {/* Outras opções que a busca achou pra este mesmo material */}
+                      {trocaAberta && (
+                        <ul className="mt-2 space-y-1.5">
+                          {outrasOpcoes.map(({ produto: opcao }) => {
+                            const precoOpcao = (opcao as any).preco as number | undefined
+                            const semEstoque = ((opcao as any).estoque as number | undefined) === 0
+                            return (
+                              <li key={opcao.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 rounded-lg border border-gray-200 dark:border-gray-500 bg-white p-2">
+                                <button
+                                  type="button"
+                                  onClick={() => onSelecionarProduto(opcao)}
+                                  className="min-w-0 flex-1 flex items-center gap-2.5 text-left"
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img src={getImagemProduto(opcao)} alt="" className={`w-10 h-10 rounded-lg flex-shrink-0 bg-white ${ajusteFoto(opcao, 'p-0.5')}`} />
+                                  <span className="min-w-0 flex-1">
+                                  <span className="block text-sm font-semibold text-gray-900 truncate hover:text-lm-green">{opcao.produto}</span>
+                                  <span className="flex items-center gap-x-2 flex-wrap text-sm text-gray-700">
+                                    {precoOpcao != null && <span className="font-bold text-lm-green">{moeda(Number(precoOpcao))}</span>}
+                                    <span className="flex items-center gap-0.5"><MapPin size={10} /> {opcao.corredor}</span>
+                                    {semEstoque && <span className="font-semibold text-red-600">Sem estoque</span>}
+                                  </span>
+                                  </span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => { onTrocarProduto?.(indice, opcao.id); setTrocando(null) }}
+                                  aria-label={`Usar ${opcao.produto} neste item`}
+                                  className="sm:flex-shrink-0 text-sm font-semibold px-3 py-1.5 rounded-lg border border-lm-green/30 bg-white text-lm-green hover-verde transition-colors"
+                                >
+                                  Usar este
+                                </button>
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      )}
+                    </div>
+                  )}
                 </div>
               </li>
             )

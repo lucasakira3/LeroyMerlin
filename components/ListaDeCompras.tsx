@@ -15,7 +15,8 @@ import Button from './ui/Button'
 import { codificarLista } from '@/lib/listaCompartilhada'
 import { getOrcamento } from '@/lib/clientOrcamento'
 import { getUsuarioLogado } from '@/lib/clientAuth'
-import { salvarProjeto, atualizarProgresso, type ProjetoSalvo } from '@/lib/clientProjetos'
+import { salvarProjeto, atualizarProgresso, getProjeto, type ProjetoSalvo } from '@/lib/clientProjetos'
+import type { ProgressoProjeto } from '@/lib/rascunhoProjeto'
 import { showToast } from '@/lib/toast'
 
 const LOJAS = [
@@ -48,17 +49,52 @@ function preencherSelecaoPadrao(itens: ItemProjeto[], selecionadosAtuais: Set<st
   return proximo
 }
 
-// Itens concluídos são guardados por ÍNDICE no array — se a IA reordenar ou adicionar itens
-// no meio da lista, os índices antigos apontam pra itens errados. Remapeia pela chave
-// (etapa + material): item que continua com o mesmo texto mantém o check; o resto perde.
-function remapearConcluidos(itensAntigos: ItemProjeto[], itensNovos: ItemProjeto[], concluidosAntigos: Set<number>): Set<number> {
-  const indiceAntigoPorChave = new Map(itensAntigos.map((item, i) => [chaveDoItem(item), i]))
-  const novo = new Set<number>()
+// Diz, pra cada item da lista NOVA (posição), qual era ele na lista ANTIGA. Primeiro pela
+// chave completa (etapa + material). Se não achar, pelo nome do material sozinho, desde que
+// ele seja único nas duas listas: a IA renumera as etapas quando tira uma inteira (visto no
+// teste com o Gemini real — "tira a pintura" fez a etapa 6 virar 4), e só com a chave
+// completa os itens que nem mudaram perdiam o progresso.
+function casarItens(itensAntigos: ItemProjeto[], itensNovos: ItemProjeto[]): Map<number, number> {
+  const contar = (itens: ItemProjeto[]) => {
+    const vezes = new Map<string, number>()
+    itens.forEach(i => vezes.set(i.material, (vezes.get(i.material) ?? 0) + 1))
+    return vezes
+  }
+  const vezesNaAntiga = contar(itensAntigos)
+  const vezesNaNova = contar(itensNovos)
+  const antigoPorChave = new Map(itensAntigos.map((item, i) => [chaveDoItem(item), i]))
+  const antigoPorMaterial = new Map(itensAntigos.map((item, i) => [item.material, i]))
+  const casados = new Map<number, number>()
   itensNovos.forEach((item, novoIndice) => {
-    const indiceAntigo = indiceAntigoPorChave.get(chaveDoItem(item))
-    if (indiceAntigo !== undefined && concluidosAntigos.has(indiceAntigo)) novo.add(novoIndice)
+    let antigo = antigoPorChave.get(chaveDoItem(item))
+    if (antigo === undefined && vezesNaAntiga.get(item.material) === 1 && vezesNaNova.get(item.material) === 1) {
+      antigo = antigoPorMaterial.get(item.material)
+    }
+    if (antigo !== undefined) casados.set(novoIndice, antigo)
+  })
+  return casados
+}
+
+// Itens concluídos são guardados por ÍNDICE no array — se a IA reordenar ou adicionar itens
+// no meio da lista, os índices antigos apontam pra itens errados. Item que continua sendo o
+// mesmo (ver casarItens) mantém o check; o resto perde.
+function remapearConcluidos(casados: Map<number, number>, concluidosAntigos: Set<number>): Set<number> {
+  const novo = new Set<number>()
+  casados.forEach((indiceAntigo, novoIndice) => {
+    if (concluidosAntigos.has(indiceAntigo)) novo.add(novoIndice)
   })
   return novo
+}
+
+// "O produto do item" em todas as telas (road map, planta, mapa, compartilhar) é a PRIMEIRA
+// opção do item que está selecionada. Pôr o produto escolhido na frente das opções é o que
+// garante que a escolha vale mesmo quando outro item da lista usa uma das outras opções.
+function comEscolhaNaFrente(item: ItemProjeto, produtoId: string): ItemProjeto {
+  if (!item.resultados.some(r => r.produto.id === produtoId)) return item
+  return {
+    ...item,
+    resultados: [...item.resultados.filter(r => r.produto.id === produtoId), ...item.resultados.filter(r => r.produto.id !== produtoId)],
+  }
 }
 
 // Exposto via ref pro ProjetoWizard aplicar uma atualização vinda do SEU PRÓPRIO chat
@@ -77,30 +113,55 @@ interface ListaDeComprasProps {
   // vive numa aba própria, separada do resultado, então o chat embutido aqui ficaria
   // duplicado. Em Minha Conta > Projetos (uso standalone) continua false, chat normal.
   semChatInterno?: boolean
+  // Rascunho automático (lib/rascunhoProjeto.ts), usado pelo ProjetoWizard: `progressoInicial`
+  // é de onde a tela recomeça ao voltar pro Projeto Guiado, e `onProgresso` avisa a cada
+  // mudança (produto trocado, item concluído, loja, lista alterada pelo chat, projeto salvo).
+  progressoInicial?: ProgressoProjeto
+  onProgresso?: (progresso: ProgressoProjeto & { projeto: Projeto }) => void
 }
 
 // `projetoSalvo`: quando vem de Minha Conta > Projetos, começa do progresso guardado
 // (produtos escolhidos, etapas concluídas, loja) e grava de volta cada mudança.
 const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(function ListaDeCompras(
-  { projeto: projetoInicial, descricaoOriginal, onTotalChange, projetoSalvo, semChatInterno },
+  { projeto: projetoInicial, descricaoOriginal, onTotalChange, projetoSalvo, semChatInterno, progressoInicial, onProgresso },
   ref
 ) {
   // Estado, não só prop: o chat do projeto (components/ProjetoChat.tsx) pode substituir a
   // lista inteira depois de um pedido de mudança do cliente.
   const [projeto, setProjeto] = useState<Projeto>(projetoInicial)
-  const [loja, setLoja] = useState(projetoSalvo?.loja ?? LOJAS[0])
+  // De onde a tela começa: projeto salvo na conta > rascunho automático > recém-gerado.
+  const inicio = projetoSalvo ?? progressoInicial
+  const [loja, setLoja] = useState(inicio?.loja ?? LOJAS[0])
   const [selecionados, setSelecionados] = useState<Set<string>>(
-    () => projetoSalvo ? new Set(projetoSalvo.selecionados) : new Set(projeto.itens.flatMap(i => {
+    () => inicio ? new Set(inicio.selecionados) : new Set(projeto.itens.flatMap(i => {
       const preferido = i.resultados.find(r => r.produto.estoque > 0) ?? i.resultados[0]
       return preferido ? [preferido.produto.id] : []
     }))
   )
   const [linkCopiado, setLinkCopiado] = useState(false)
   const [aba, setAba] = useState<'visao-geral' | 'lista-completa' | 'mapa'>(projetoSalvo ? 'lista-completa' : 'visao-geral')
-  const [itensConcluidos, setItensConcluidos] = useState<Set<number>>(() => new Set(projetoSalvo?.itensConcluidos ?? []))
-  const [salvoId, setSalvoId] = useState<string | null>(projetoSalvo?.id ?? null)
+  const [itensConcluidos, setItensConcluidos] = useState<Set<number>>(() => new Set(inicio?.itensConcluidos ?? []))
+  const [salvoId, setSalvoId] = useState<string | null>(projetoSalvo?.id ?? progressoInicial?.salvoId ?? null)
   const [emailUsuario, setEmailUsuario] = useState<string | null>(null)
-  useEffect(() => { setEmailUsuario(getUsuarioLogado()?.email ?? null) }, [])
+  useEffect(() => {
+    const email = getUsuarioLogado()?.email ?? null
+    setEmailUsuario(email)
+    // O rascunho pode lembrar de um projeto salvo que já foi apagado de Minha Conta (ou o
+    // cliente saiu da conta): aí volta a oferecer "Salvar projeto" em vez de dizer que está salvo.
+    const idDoRascunho = projetoSalvo ? null : progressoInicial?.salvoId
+    if (idDoRascunho && !(email && getProjeto(email, idDoRascunho))) setSalvoId(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    onProgresso?.({
+      selecionados: Array.from(selecionados),
+      itensConcluidos: Array.from(itensConcluidos),
+      loja,
+      salvoId,
+      projeto,
+    })
+  }, [onProgresso, selecionados, itensConcluidos, loja, salvoId, projeto])
 
   // Com o projeto salvo, todo progresso (troca de produto, etapa concluída, loja, e a lista
   // em si depois de um pedido de mudança pelo chat) é gravado.
@@ -122,12 +183,45 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
     })
   }
 
+  // "Trocar produto" de um passo do road map: o item passa a usar outra das opções que a
+  // busca achou pra ele. A escolha anterior só sai da lista se nenhum outro item estiver
+  // usando o mesmo produto; e o escolhido vai pra frente das opções do item, porque é a
+  // primeira opção selecionada que vale como "o produto do item" em todas as telas.
+  function trocarProduto(indice: number, produtoId: string) {
+    const item = projeto.itens[indice]
+    if (!item) return
+    const escolhaDe = (i: ItemProjeto) => i.resultados.find(r => selecionados.has(r.produto.id))?.produto.id
+    const anterior = escolhaDe(item)
+    const usadoPorOutro = projeto.itens.some((outro, i) => i !== indice && escolhaDe(outro) === anterior)
+    setSelecionados(prev => {
+      const next = new Set(prev)
+      if (anterior && !usadoPorOutro) next.delete(anterior)
+      next.add(produtoId)
+      return next
+    })
+    setProjeto(p => ({ ...p, itens: p.itens.map((it, i) => (i === indice ? comEscolhaNaFrente(it, produtoId) : it)) }))
+  }
+
   // Chamado pelo chat (ProjetoChat) quando a IA devolve a lista já atualizada. Tenta
   // preservar o progresso do cliente pros itens que continuam iguais — ver as duas funções
   // de mesclagem no topo do arquivo.
-  function handleProjetoAtualizado(novoProjeto: Projeto) {
+  function handleProjetoAtualizado(projetoDaIA: Projeto) {
+    // A lista volta da IA com as opções de cada item na ordem da busca. Nos itens que
+    // continuam iguais, o produto que estava escolhido (inclusive o trocado à mão) volta
+    // pra frente — senão um pedido de mudança no chat desfaria as trocas do cliente.
+    const casados = casarItens(projeto.itens, projetoDaIA.itens)
+    const novoProjeto: Projeto = {
+      ...projetoDaIA,
+      itens: projetoDaIA.itens.map((item, novoIndice) => {
+        const antigo = casados.get(novoIndice)
+        const escolha = antigo === undefined
+          ? undefined
+          : projeto.itens[antigo].resultados.find(r => selecionados.has(r.produto.id))?.produto.id
+        return escolha ? comEscolhaNaFrente(item, escolha) : item
+      }),
+    }
     const novosSelecionados = preencherSelecaoPadrao(novoProjeto.itens, selecionados)
-    const novosConcluidos = remapearConcluidos(projeto.itens, novoProjeto.itens, itensConcluidos)
+    const novosConcluidos = remapearConcluidos(casados, itensConcluidos)
     setProjeto(novoProjeto)
     setSelecionados(novosSelecionados)
     setItensConcluidos(novosConcluidos)
@@ -426,6 +520,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
             itensConcluidos={itensConcluidos}
             onAlternarItem={alternarItem}
             onSelecionarProduto={setProdutoDrawer}
+            onTrocarProduto={trocarProduto}
             etapasInfo={projeto.etapas}
           />
 
