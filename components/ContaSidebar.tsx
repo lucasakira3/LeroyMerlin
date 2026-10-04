@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LogOut, Package, HelpCircle, Star, Heart, Route } from 'lucide-react'
+import { LogOut, Package, HelpCircle, Star, Heart, Route, UserCircle } from 'lucide-react'
 import { logoutUsuario } from '@/lib/clientAuth'
 
 interface Props {
@@ -10,7 +10,14 @@ interface Props {
   email: string
 }
 
+const INICIO = '/conta'
+
+// Telas de configuração abertas a partir da tela inicial da conta (app/conta/page.tsx). Não
+// têm item próprio no menu, então quem fica marcado nelas é o "Meu perfil".
+const TELAS_DO_PERFIL = ['/conta/perfil', '/conta/seguranca', '/conta/cartoes', '/conta/enderecos', '/conta/privacidade']
+
 const ITENS = [
+  { href: INICIO, label: 'Meu perfil', icone: UserCircle },
   { href: '/conta/pedidos', label: 'Pedidos', icone: Package },
   { href: '/conta/perguntas', label: 'Perguntas', icone: HelpCircle },
   { href: '/conta/avaliacoes', label: 'Opiniões', icone: Star },
@@ -43,7 +50,11 @@ export default function ContaSidebar({ nome, email }: Props) {
 
       <nav className="flex flex-wrap lg:flex-col gap-1">
         {ITENS.map(({ href, label, icone: Icone }) => {
-          const ativo = pathname === href || pathname.startsWith(href + '/')
+          // O início não pode usar startsWith: todo /conta/* começa com /conta e ele ficaria
+          // marcado junto com qualquer outra seção.
+          const ativo = href === INICIO
+            ? pathname === INICIO || TELAS_DO_PERFIL.some(t => pathname === t || pathname.startsWith(t + '/'))
+            : pathname === href || pathname.startsWith(href + '/')
           return (
             <Link
               key={href}
