@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LogOut, Package, HelpCircle, Star, Heart, Route, UserCircle } from 'lucide-react'
+import { LogOut, Package, HelpCircle, Star, Heart, Route, LayoutGrid } from 'lucide-react'
 import { logoutUsuario } from '@/lib/clientAuth'
 
 interface Props {
@@ -13,11 +13,13 @@ interface Props {
 const INICIO = '/conta'
 
 // Telas de configuração abertas a partir da tela inicial da conta (app/conta/page.tsx). Não
-// têm item próprio no menu, então quem fica marcado nelas é o "Meu perfil".
+// têm item próprio no menu, então quem fica marcado nelas é a "Visão geral".
 const TELAS_DO_PERFIL = ['/conta/perfil', '/conta/seguranca', '/conta/cartoes', '/conta/enderecos', '/conta/privacidade']
 
 const ITENS = [
-  { href: INICIO, label: 'Meu perfil', icone: UserCircle },
+  // "Visão geral" e não "Meu perfil": a tela é o resumo da conta, e "perfil" já é o nome de
+  // um dos cartões dela (Informações do Perfil, em /conta/perfil).
+  { href: INICIO, label: 'Visão geral', icone: LayoutGrid },
   { href: '/conta/pedidos', label: 'Pedidos', icone: Package },
   { href: '/conta/perguntas', label: 'Perguntas', icone: HelpCircle },
   { href: '/conta/avaliacoes', label: 'Opiniões', icone: Star },
