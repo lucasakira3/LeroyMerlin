@@ -1,15 +1,21 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { Search, Edit2, Package, ArrowUp, ArrowDown, ArrowUpDown, Check, X, SlidersHorizontal } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Search, Edit2, ArrowUp, ArrowDown, ArrowUpDown, Check, X, SlidersHorizontal } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
+import Modal from '@/components/ui/Modal'
 import Pagination from '@/components/ui/Pagination'
 import EmptyState from '@/components/ui/EmptyState'
+import DetalheProdutoFuncionario from '@/components/DetalheProdutoFuncionario'
 import { ajustarEstoque, definirPreco, aplicarAjustes } from '@/lib/ajustesFuncionario'
-import type { Produto } from '@/types/produto'
+import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
+import { normalizar } from '@/lib/texto'
+import type { SearchResult } from '@/types/produto'
 
-type ProdutoResumo = Pick<Produto, 'id' | 'produto' | 'categoria' | 'preco' | 'estoque'>
+// Produto inteiro (e não só nome/preço/estoque): a ficha aberta ao clicar no produto precisa
+// de foto, especificações, corredor e resposta pronta.
+type ProdutoCatalogo = SearchResult['produto']
 type SortKey = 'produto' | 'categoria' | 'preco' | 'estoque'
 type SortDir = 'asc' | 'desc'
 type EstoqueFiltro = 'todos' | 'em_estoque' | 'baixo' | 'sem_estoque'
@@ -29,7 +35,7 @@ function SortIcon({ ativo, dir }: { ativo: boolean; dir: SortDir }) {
 }
 
 export default function ProdutosPage() {
-  const [produtosBase, setProdutosBase] = useState<ProdutoResumo[] | null>(null)
+  const [produtosBase, setProdutosBase] = useState<ProdutoCatalogo[] | null>(null)
   const [busca, setBusca] = useState('')
   const [categoriaFiltro, setCategoriaFiltro] = useState('Todas')
   const [estoqueFiltro, setEstoqueFiltro] = useState<EstoqueFiltro>('todos')
@@ -40,6 +46,10 @@ export default function ProdutosPage() {
   const [pagina, setPagina] = useState(1)
   const [editandoPrecoId, setEditandoPrecoId] = useState<string | null>(null)
   const [precoForm, setPrecoForm] = useState('')
+  // Produto com a ficha aberta (popup). Guarda o id, não o objeto, pra sempre mostrar o
+  // produto do catálogo carregado.
+  const [detalheId, setDetalheId] = useState<string | null>(null)
+  const fichaRef = useRef<HTMLDivElement>(null)
   // Incrementado a cada ajuste pra forçar recálculo de aplicarAjustes (que lê direto do
   // localStorage, fora do ciclo normal de estado do React).
   const [versaoAjustes, setVersaoAjustes] = useState(0)
@@ -47,14 +57,18 @@ export default function ProdutosPage() {
   useEffect(() => {
     fetch('/api/funcionario/produtos')
       .then(r => r.json())
-      .then((dados: Produto[]) => {
-        setProdutosBase(dados.map(({ id, produto, categoria, preco, estoque }) => ({ id, produto, categoria, preco, estoque })))
-      })
+      .then((dados: ProdutoCatalogo[]) => setProdutosBase(dados))
   }, [])
 
   useEffect(() => {
     setPagina(1)
   }, [busca, categoriaFiltro, estoqueFiltro, precoMin, precoMax])
+
+  // As alternativas ficam no fim da ficha: ao trocar de produto por elas, o popup volta pro
+  // topo (senão o produto novo abriria já rolado até o fim).
+  useEffect(() => {
+    fichaRef.current?.scrollIntoView({ block: 'start' })
+  }, [detalheId])
 
   const produtos = useMemo(() => {
     if (!produtosBase) return []
@@ -74,8 +88,17 @@ export default function ProdutosPage() {
   const min = precoMin ? Number(precoMin) : null
   const max = precoMax ? Number(precoMax) : null
 
+  // Busca por nome OU código, sem ligar pra acento/maiúscula e com as palavras em qualquer
+  // ordem. O código entra também sem o hífen, pra "lm0007" achar "LM-0007" (e "0007" acha os dois).
+  const textoDeBusca = useMemo(
+    () => new Map((produtosBase ?? []).map(p => [p.id, normalizar(`${p.produto} ${p.id} ${p.id.replace('-', '')}`)])),
+    [produtosBase]
+  )
+  const termos = normalizar(busca).split(/\s+/).filter(Boolean)
+
   const filtrados = produtos.filter(p => {
-    if (!p.produto.toLowerCase().includes(busca.toLowerCase())) return false
+    const texto = textoDeBusca.get(p.id) ?? ''
+    if (!termos.every(termo => texto.includes(termo))) return false
     if (categoriaFiltro !== 'Todas' && p.categoria !== categoriaFiltro) return false
     if (estoqueFiltro === 'em_estoque' && p.estoque <= 0) return false
     if (estoqueFiltro === 'baixo' && (p.estoque === 0 || p.estoque >= 10)) return false
@@ -123,7 +146,7 @@ export default function ProdutosPage() {
     setVersaoAjustes(v => v + 1)
   }
 
-  function abrirEdicaoPreco(produto: ProdutoResumo) {
+  function abrirEdicaoPreco(produto: ProdutoCatalogo) {
     setEditandoPrecoId(produto.id)
     setPrecoForm(produto.preco.toFixed(2).replace('.', ','))
   }
@@ -137,6 +160,8 @@ export default function ProdutosPage() {
     setEditandoPrecoId(null)
   }
 
+  const produtoDetalhe = detalheId ? produtosBase?.find(p => p.id === detalheId) ?? null : null
+
   return (
     <div className="p-4 sm:p-8 max-w-6xl mx-auto">
       <Card padding="none">
@@ -145,7 +170,7 @@ export default function ProdutosPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
             <input
               type="text"
-              placeholder="Buscar produto por nome..."
+              placeholder="Buscar por nome ou código (LM-0007)..."
               value={busca}
               onChange={e => setBusca(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 dark:border-gray-500 rounded-xl text-sm outline-none focus:border-lm-green focus:ring-1 focus:ring-lm-green transition-all"
@@ -252,15 +277,26 @@ export default function ProdutosPage() {
               {produtosBase && paginados.map(produto => (
                 <tr key={produto.id} className="hover:bg-gray-50 transition-colors">
                   <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600 flex-shrink-0">
-                        <Package size={20} />
-                      </div>
-                      <div>
-                        <p className="font-bold text-lm-dark text-sm">{produto.produto}</p>
-                        <p className="text-sm text-gray-700 mt-0.5">Cód: {produto.id}</p>
-                      </div>
-                    </div>
+                    {/* Foto + nome + código abrem a ficha do produto. Só esta célula é o
+                        botão (e não a linha inteira) pra não brigar com os botões de
+                        estoque e de editar preço, que ficam na mesma linha. */}
+                    <button
+                      type="button"
+                      onClick={() => setDetalheId(produto.id)}
+                      aria-label={`Ver detalhes de ${produto.produto}`}
+                      className="group flex items-center gap-3 text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-lm-green/40"
+                    >
+                      <img
+                        src={getImagemProduto(produto)}
+                        alt=""
+                        loading="lazy"
+                        className={`w-10 h-10 rounded-lg flex-shrink-0 ${ajusteFoto(produto, 'p-0.5')}`}
+                      />
+                      <span>
+                        <span className="block font-bold text-lm-dark text-sm group-hover:text-lm-green group-hover:underline">{produto.produto}</span>
+                        <span className="block text-sm text-gray-700 mt-0.5">Cód: {produto.id}</span>
+                      </span>
+                    </button>
                   </td>
                   <td className="p-4">
                     <Badge tone="gray">{produto.categoria}</Badge>
@@ -335,6 +371,21 @@ export default function ProdutosPage() {
           </div>
         )}
       </Card>
+
+      {/* Mesma ficha da Consulta rápida, aqui dentro de um popup. Clicar numa alternativa
+          troca o produto mostrado sem fechar. */}
+      <Modal open={produtoDetalhe !== null} onClose={() => setDetalheId(null)} title="Detalhes do produto" maxWidthClass="md:max-w-2xl">
+        {produtoDetalhe && produtosBase && (
+          <div ref={fichaRef}>
+            <DetalheProdutoFuncionario
+              key={produtoDetalhe.id}
+              produto={produtoDetalhe}
+              catalogo={produtosBase}
+              onSelecionar={setDetalheId}
+            />
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }
