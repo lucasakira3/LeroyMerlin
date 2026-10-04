@@ -162,6 +162,99 @@ export default function ProdutosPage() {
 
   const produtoDetalhe = detalheId ? produtosBase?.find(p => p.id === detalheId) ?? null : null
 
+  // As peças de uma linha (produto, preço, estoque, editar) servem à tabela da tela larga e
+  // aos blocos empilhados do celular — escritas uma vez só pra as duas versões não divergirem.
+
+  // Foto + nome + código abrem a ficha do produto. Só esta peça é o botão (e não a linha
+  // inteira) pra não brigar com os botões de estoque e de editar preço, que ficam ao lado.
+  const botaoProduto = (produto: ProdutoCatalogo) => (
+    <button
+      type="button"
+      onClick={() => setDetalheId(produto.id)}
+      aria-label={`Ver detalhes de ${produto.produto}`}
+      className="group flex items-center gap-3 text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-lm-green/40"
+    >
+      <img
+        src={getImagemProduto(produto)}
+        alt=""
+        loading="lazy"
+        className={`w-10 h-10 rounded-lg flex-shrink-0 ${ajusteFoto(produto, 'p-0.5')}`}
+      />
+      <span>
+        <span className="block font-bold text-lm-dark text-sm group-hover:text-lm-green group-hover:underline">{produto.produto}</span>
+        <span className="block text-sm text-gray-700 mt-0.5">
+          Cód: {produto.id}
+          {/* No celular não há coluna de categoria: ela vem junto do código. */}
+          <span className="md:hidden"> · {produto.categoria}</span>
+        </span>
+      </span>
+    </button>
+  )
+
+  const precoDoProduto = (produto: ProdutoCatalogo) =>
+    editandoPrecoId === produto.id ? (
+      <span className="inline-flex items-center justify-end gap-1.5">
+        <input
+          type="text"
+          value={precoForm}
+          onChange={e => setPrecoForm(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') salvarPreco(produto.id)
+            if (e.key === 'Escape') setEditandoPrecoId(null)
+          }}
+          aria-label={`Novo preço de ${produto.produto}`}
+          className="w-20 px-2 py-1 border border-gray-200 dark:border-gray-500 rounded-lg text-sm text-right bg-white focus:outline-none focus:ring-1 focus:ring-lm-green"
+          autoFocus
+        />
+        <button onClick={() => salvarPreco(produto.id)} aria-label="Salvar preço" className="text-lm-green hover:bg-green-50 p-1 rounded">
+          <Check size={14} />
+        </button>
+        <button onClick={() => setEditandoPrecoId(null)} aria-label="Cancelar" className="text-gray-600 hover:bg-gray-100 p-1 rounded">
+          <X size={14} />
+        </button>
+      </span>
+    ) : (
+      produto.preco.toFixed(2).replace('.', ',')
+    )
+
+  const controleEstoque = (produto: ProdutoCatalogo) => (
+    <div className="flex items-center justify-center gap-3">
+      <button
+        onClick={() => handleAjustarEstoque(produto.id, -1)}
+        aria-label={`Tirar 1 do estoque de ${produto.produto}`}
+        className="w-7 h-7 rounded-full border border-gray-200 dark:border-gray-500 hover:bg-gray-50 text-gray-600 transition-colors"
+      >-</button>
+      {produto.estoque < 10 ? (
+        <Badge tone="red" className="font-bold w-10 justify-center">{produto.estoque}</Badge>
+      ) : (
+        <span className="font-bold w-10 text-center text-lm-dark">{produto.estoque}</span>
+      )}
+      <button
+        onClick={() => handleAjustarEstoque(produto.id, 1)}
+        aria-label={`Somar 1 ao estoque de ${produto.produto}`}
+        className="w-7 h-7 rounded-full border border-gray-200 dark:border-gray-500 hover:bg-gray-50 text-gray-600 transition-colors"
+      >+</button>
+    </div>
+  )
+
+  const botaoEditarPreco = (produto: ProdutoCatalogo) => (
+    <button
+      onClick={() => abrirEdicaoPreco(produto)}
+      aria-label="Editar preço"
+      className="p-2 hover:text-lm-green hover:bg-green-50 rounded-lg transition-colors text-gray-600"
+    >
+      <Edit2 size={16} />
+    </button>
+  )
+
+  const avisoVazio = (
+    <EmptyState
+      icon={Search}
+      title="Nenhum produto encontrado"
+      description={busca || temFiltroAtivo ? 'Tente ajustar a busca ou os filtros.' : 'Ainda não há produtos no catálogo.'}
+    />
+  )
+
   return (
     <div className="p-4 sm:p-8 max-w-6xl mx-auto">
       <Card padding="none">
@@ -216,7 +309,26 @@ export default function ProdutosPage() {
               />
             </div>
 
-            <div className="flex gap-1.5">
+            {/* No celular a tabela vira blocos e some o cabeçalho clicável: a ordem vem daqui. */}
+            <select
+              value={sortKey ? `${sortKey}:${sortDir}` : ''}
+              aria-label="Ordenar produtos"
+              onChange={e => {
+                const [chave, direcao] = e.target.value.split(':')
+                setSortKey(chave ? (chave as SortKey) : null)
+                setSortDir(direcao === 'desc' ? 'desc' : 'asc')
+              }}
+              className="md:hidden h-8 px-2.5 rounded-lg border border-gray-200 dark:border-gray-500 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+            >
+              <option value="">Ordem do catálogo</option>
+              <option value="produto:asc">Nome (A–Z)</option>
+              <option value="preco:asc">Menor preço</option>
+              <option value="preco:desc">Maior preço</option>
+              <option value="estoque:asc">Menor estoque</option>
+              <option value="estoque:desc">Maior estoque</option>
+            </select>
+
+            <div className="flex flex-wrap gap-1.5">
               {OPCOES_ESTOQUE.map(o => (
                 <button
                   key={o.valor}
@@ -241,7 +353,26 @@ export default function ProdutosPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Tela estreita (celular e tablet em pé): um bloco por produto (nome em cima, preço e estoque embaixo). A tabela de
+            5 colunas com botões não cabe em tela estreita sem rolar de lado. */}
+        <ul className="md:hidden divide-y divide-gray-200 dark:divide-gray-500">
+          {!produtosBase && <li className="p-8 text-center text-gray-700">Carregando catálogo...</li>}
+          {produtosBase && paginados.map(produto => (
+            <li key={produto.id} className="p-4 space-y-3">
+              {botaoProduto(produto)}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-1 text-sm font-semibold text-gray-900">
+                  <span>R$</span> {precoDoProduto(produto)}
+                  {editandoPrecoId !== produto.id && botaoEditarPreco(produto)}
+                </div>
+                {controleEstoque(produto)}
+              </div>
+            </li>
+          ))}
+          {produtosBase && paginados.length === 0 && <li>{avisoVazio}</li>}
+        </ul>
+
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
@@ -276,89 +407,18 @@ export default function ProdutosPage() {
               )}
               {produtosBase && paginados.map(produto => (
                 <tr key={produto.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="p-4">
-                    {/* Foto + nome + código abrem a ficha do produto. Só esta célula é o
-                        botão (e não a linha inteira) pra não brigar com os botões de
-                        estoque e de editar preço, que ficam na mesma linha. */}
-                    <button
-                      type="button"
-                      onClick={() => setDetalheId(produto.id)}
-                      aria-label={`Ver detalhes de ${produto.produto}`}
-                      className="group flex items-center gap-3 text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-lm-green/40"
-                    >
-                      <img
-                        src={getImagemProduto(produto)}
-                        alt=""
-                        loading="lazy"
-                        className={`w-10 h-10 rounded-lg flex-shrink-0 ${ajusteFoto(produto, 'p-0.5')}`}
-                      />
-                      <span>
-                        <span className="block font-bold text-lm-dark text-sm group-hover:text-lm-green group-hover:underline">{produto.produto}</span>
-                        <span className="block text-sm text-gray-700 mt-0.5">Cód: {produto.id}</span>
-                      </span>
-                    </button>
-                  </td>
+                  <td className="p-4">{botaoProduto(produto)}</td>
                   <td className="p-4">
                     <Badge tone="gray">{produto.categoria}</Badge>
                   </td>
-                  <td className="p-4 text-right font-medium text-sm text-gray-700">
-                    {editandoPrecoId === produto.id ? (
-                      <div className="flex items-center justify-end gap-1.5">
-                        <input
-                          type="text"
-                          value={precoForm}
-                          onChange={e => setPrecoForm(e.target.value)}
-                          className="w-20 px-2 py-1 border border-gray-200 dark:border-gray-500 rounded-lg text-sm text-right bg-white focus:outline-none focus:ring-1 focus:ring-lm-green"
-                          autoFocus
-                        />
-                        <button onClick={() => salvarPreco(produto.id)} aria-label="Salvar preço" className="text-lm-green hover:bg-green-50 p-1 rounded">
-                          <Check size={14} />
-                        </button>
-                        <button onClick={() => setEditandoPrecoId(null)} aria-label="Cancelar" className="text-gray-600 hover:bg-gray-100 p-1 rounded">
-                          <X size={14} />
-                        </button>
-                      </div>
-                    ) : (
-                      produto.preco.toFixed(2).replace('.', ',')
-                    )}
-                  </td>
-                  <td className="p-4 text-center">
-                    <div className="flex items-center justify-center gap-3">
-                      <button
-                        onClick={() => handleAjustarEstoque(produto.id, -1)}
-                        className="w-7 h-7 rounded-full border border-gray-200 dark:border-gray-500 hover:bg-gray-50 text-gray-600 transition-colors"
-                      >-</button>
-                      {produto.estoque < 10 ? (
-                        <Badge tone="red" className="font-bold w-10 justify-center">{produto.estoque}</Badge>
-                      ) : (
-                        <span className="font-bold w-10 text-center text-lm-dark">{produto.estoque}</span>
-                      )}
-                      <button
-                        onClick={() => handleAjustarEstoque(produto.id, 1)}
-                        className="w-7 h-7 rounded-full border border-gray-200 dark:border-gray-500 hover:bg-gray-50 text-gray-600 transition-colors"
-                      >+</button>
-                    </div>
-                  </td>
-                  <td className="p-4 text-right">
-                    <button
-                      onClick={() => abrirEdicaoPreco(produto)}
-                      aria-label="Editar preço"
-                      className="p-2 hover:text-lm-green hover:bg-green-50 rounded-lg transition-colors text-gray-600"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                  </td>
+                  <td className="p-4 text-right font-medium text-sm text-gray-700">{precoDoProduto(produto)}</td>
+                  <td className="p-4 text-center">{controleEstoque(produto)}</td>
+                  <td className="p-4 text-right">{botaoEditarPreco(produto)}</td>
                 </tr>
               ))}
               {produtosBase && paginados.length === 0 && (
                 <tr>
-                  <td colSpan={5}>
-                    <EmptyState
-                      icon={Search}
-                      title="Nenhum produto encontrado"
-                      description={busca || temFiltroAtivo ? 'Tente ajustar a busca ou os filtros.' : 'Ainda não há produtos no catálogo.'}
-                    />
-                  </td>
+                  <td colSpan={5}>{avisoVazio}</td>
                 </tr>
               )}
             </tbody>
