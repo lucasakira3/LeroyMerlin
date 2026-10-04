@@ -144,20 +144,21 @@ export default function PedidosFuncionarioPage() {
     })
   }
 
-  // Um grupo por corredor, na ordem da rota. Corredor (e não categoria) porque é a parada
-  // física do caminho: uma categoria se espalha por vários corredores, e agrupar por ela
-  // quebraria a ordem de percurso. A categoria vai no cabeçalho só como referência.
+  // Um grupo por categoria (Ferramentas, Hidráulica, Elétrica...). Já foi um grupo por
+  // corredor, mas a loja tem 50 corredores: num pedido de 18 itens saíam 18 grupos de 1 item
+  // e o "marcar todos" do grupo não servia pra nada. Como cada categoria ocupa uma faixa
+  // contínua de corredores, a ordem do caminho se mantém quase toda: os grupos entram na
+  // ordem em que a rota chega neles e, dentro do grupo, os itens seguem a rota — cada linha
+  // mostra o próprio corredor.
   function gruposDeSeparacao(pedido: PedidoDoCliente) {
-    const grupos: { chave: string; corredor: string; categorias: string[]; itens: Pedido['itens'] }[] = []
+    const grupos: { categoria: string; itens: Pedido['itens'] }[] = []
     for (const item of itensEmOrdemDeRota(pedido)) {
-      const base = catalogo[item.produtoId]
-      const chave = base?.corredor_normalizado ?? 'sem-corredor'
-      let grupo = grupos.find(g => g.chave === chave)
+      const categoria = catalogo[item.produtoId]?.categoria ?? 'Sem categoria'
+      let grupo = grupos.find(g => g.categoria === categoria)
       if (!grupo) {
-        grupo = { chave, corredor: base?.corredor ?? 'Corredor não identificado', categorias: [], itens: [] }
+        grupo = { categoria, itens: [] }
         grupos.push(grupo)
       }
-      if (base?.categoria && !grupo.categorias.includes(base.categoria)) grupo.categorias.push(base.categoria)
       grupo.itens.push(item)
     }
     return grupos
@@ -267,7 +268,7 @@ export default function PedidosFuncionarioPage() {
                     <div className="px-4 pb-4">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <p className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                          Lista de separação — na ordem do caminho pela loja · {separadosNoPedido}/{idsDoPedido.length} separados
+                          Lista de separação — por categoria, na ordem do caminho pela loja · {separadosNoPedido}/{idsDoPedido.length} separados
                         </p>
                         <Button
                           variant="secondary"
@@ -283,28 +284,25 @@ export default function PedidosFuncionarioPage() {
                           const separadosNoGrupo = idsDoGrupo.filter(id => feitos.includes(id)).length
                           const grupoCompleto = separadosNoGrupo === idsDoGrupo.length
                           return (
-                            <section key={grupo.chave} aria-label={grupo.corredor}>
+                            <section key={grupo.categoria} aria-label={grupo.categoria}>
                               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 bg-gray-50">
-                                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-900">
-                                  <MapPin size={14} className="text-lm-green" /> {grupo.corredor}
+                                <span className="text-sm font-bold text-gray-900">{grupo.categoria}</span>
+                                <span className="text-sm text-gray-700">
+                                  {idsDoGrupo.length} {idsDoGrupo.length === 1 ? 'item' : 'itens'}
                                 </span>
-                                {grupo.categorias.length > 0 && (
-                                  <span className="text-sm text-gray-700">{grupo.categorias.join(', ')}</span>
-                                )}
                                 <span className={`ml-auto text-sm font-semibold ${grupoCompleto ? 'text-lm-green' : 'text-gray-700'}`}>
                                   {separadosNoGrupo}/{idsDoGrupo.length}
                                 </span>
-                                {/* Com um item só, o checkbox dele já faz o mesmo que este botão. */}
-                                {idsDoGrupo.length > 1 && (
-                                  <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    onClick={() => marcarVarios(pedido.numero, idsDoGrupo, !grupoCompleto)}
-                                    aria-label={`${grupoCompleto ? 'Desmarcar' : 'Marcar'} todos os itens do ${grupo.corredor}`}
-                                  >
-                                    {grupoCompleto ? 'Desmarcar' : 'Marcar todos'}
-                                  </Button>
-                                )}
+                                {/* Em todo grupo, mesmo com um item só: o botão fica sempre no
+                                    mesmo lugar e o funcionário não precisa procurar. */}
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={() => marcarVarios(pedido.numero, idsDoGrupo, !grupoCompleto)}
+                                  aria-label={`${grupoCompleto ? 'Desmarcar' : 'Marcar'} todos os itens de ${grupo.categoria}`}
+                                >
+                                  {grupoCompleto ? 'Desmarcar' : 'Marcar todos'}
+                                </Button>
                               </div>
                               <ul className="divide-y divide-gray-200 dark:divide-gray-500">
                                 {grupo.itens.map(item => {
@@ -335,6 +333,9 @@ export default function PedidosFuncionarioPage() {
                                           Estoque insuficiente
                                         </span>
                                       )}
+                                      <span className="inline-flex items-center gap-1 text-sm font-semibold text-lm-green flex-shrink-0">
+                                        <MapPin size={14} /> {base?.corredor ?? 'Corredor não identificado'}
+                                      </span>
                                     </li>
                                   )
                                 })}
