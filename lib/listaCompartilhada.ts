@@ -18,6 +18,9 @@ export interface ListaCompartilhadaDados {
   resumo: string
   loja: string
   itens: ItemCompartilhado[]
+  // true quando o link é do formato antigo (só os códigos dos produtos, sem cômodo nem
+  // etapa): não há dado pra montar a planta nem o passo a passo, só o mapa da loja.
+  soMapa?: boolean
 }
 
 // btoa/atob só lidam com Latin1 — encodeURIComponent+unescape (e o par decodeURIComponent+
@@ -33,6 +36,26 @@ export function decodificarLista(codificado: string): ListaCompartilhadaDados | 
   try {
     const json = decodeURIComponent(escape(atob(codificado)))
     const dados = JSON.parse(json)
+    // Formato antigo (links gerados antes de o compartilhamento levar as 3 seções):
+    // { titulo, loja, produtoIds }. Continua abrindo, só com o mapa — como era na época.
+    if (
+      dados &&
+      typeof dados.titulo === 'string' &&
+      typeof dados.loja === 'string' &&
+      !Array.isArray(dados.itens) &&
+      Array.isArray(dados.produtoIds) &&
+      dados.produtoIds.every((id: unknown) => typeof id === 'string')
+    ) {
+      return {
+        titulo: dados.titulo,
+        resumo: '',
+        loja: dados.loja,
+        soMapa: true,
+        itens: dados.produtoIds.map((produtoId: string) => ({
+          material: '', categoria: '', quantidade: '', prioridade: '', observacao: '', comodo: '', produtoId,
+        })),
+      }
+    }
     if (
       !dados ||
       typeof dados.titulo !== 'string' ||

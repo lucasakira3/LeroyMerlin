@@ -38,8 +38,9 @@ export default function ListaCompartilhadaView() {
         const produto = porId.get(item.produtoId)
         if (!produto) return []
         return [{
-          material: item.material,
-          categoria: item.categoria,
+          // Link antigo não traz o nome do material nem a categoria: usa os do produto.
+          material: item.material || produto.produto,
+          categoria: item.categoria || produto.categoria,
           quantidade: item.quantidade,
           prioridade: item.prioridade,
           observacao: item.observacao,
@@ -88,7 +89,10 @@ export default function ListaCompartilhadaView() {
         <Card className="mb-5 flex items-start gap-2 bg-lm-green/5 border-lm-green/20">
           <ShoppingBag size={15} className="text-lm-green flex-shrink-0 mt-0.5" />
           <p className="text-xs text-gray-600">
-            {dados.resumo || 'Lista de materiais compartilhada por um cliente Leroy Merlin.'} Veja a planta, o passo a passo ou o mapa da loja, e adicione ao seu carrinho.
+            {dados.resumo || 'Lista de materiais compartilhada por um cliente Leroy Merlin.'}{' '}
+            {dados.soMapa
+              ? 'Clique num produto no mapa para localizá-lo ou adicione ao seu carrinho.'
+              : 'Veja a planta, o passo a passo ou o mapa da loja, e adicione ao seu carrinho.'}
           </p>
         </Card>
 
@@ -100,7 +104,17 @@ export default function ListaCompartilhadaView() {
           </Card>
         )}
 
-        {!carregando && itens.length > 0 && (
+        {/* Link antigo: só o mapa, como era quando ele foi gerado. */}
+        {!carregando && itens.length > 0 && dados.soMapa && (
+          <StoreMap
+            resultados={mapResultados}
+            loja={dados.loja}
+            totalEstimado={totalEstimado}
+            onSelect={setProdutoDrawer}
+          />
+        )}
+
+        {!carregando && itens.length > 0 && !dados.soMapa && (
           <>
             <div className="flex rounded-xl bg-gray-100 p-1 mb-5">
               <button
