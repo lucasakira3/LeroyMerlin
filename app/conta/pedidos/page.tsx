@@ -11,6 +11,7 @@ import { getStatusPedido, STATUS_PEDIDO_COR } from '@/lib/statusPedido'
 import { linkPedidoCompartilhado } from '@/lib/pedidoCompartilhado'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import { showToast } from '@/lib/toast'
+import { useAoSincronizar } from '@/lib/hooks/useAoSincronizar'
 
 const PEDIDOS_POR_PAGINA = 5
 
@@ -20,11 +21,15 @@ export default function PedidosPage() {
   const [pagina, setPagina] = useState(1)
   const [linkCopiadoId, setLinkCopiadoId] = useState<string | null>(null)
 
-  useEffect(() => {
+  function carregar() {
     const usuario = getUsuarioLogado()
     if (!usuario) return
     setPedidos(getPedidos(usuario.email))
-  }, [])
+  }
+  useEffect(carregar, [])
+  // O funcionário mudou a etapa do pedido (ou o pedido foi feito em outro aparelho): a
+  // lista é relida e a linha do tempo de cada pedido acompanha.
+  useAoSincronizar(carregar)
 
   const totalPaginas = Math.max(1, Math.ceil((pedidos?.length ?? 0) / PEDIDOS_POR_PAGINA))
   const pedidosPaginados = (pedidos ?? []).slice((pagina - 1) * PEDIDOS_POR_PAGINA, pagina * PEDIDOS_POR_PAGINA)

@@ -11,6 +11,7 @@ import { definirEtapaManual } from '@/lib/statusPedidoFuncionario'
 import { calcularRota } from '@/lib/rotaLoja'
 import { aplicarAjustes } from '@/lib/ajustesFuncionario'
 import type { Pedido } from '@/lib/clientPedidos'
+import { getClientesConhecidos, nomeDoCliente } from '@/lib/clientesConhecidos'
 import type { Produto } from '@/types/produto'
 
 interface PedidoDoCliente extends Pedido {
@@ -56,10 +57,10 @@ export default function PedidosFuncionarioPage() {
   useEffect(() => {
     function carregar() {
       // Dado real: junta contas (nome) + pedidos já salvos neste navegador pelos clientes.
-      const contas: Record<string, { nome: string }> = JSON.parse(localStorage.getItem('lm_contas_cliente') ?? '{}')
+      const clientes = getClientesConhecidos()
       const porEmail: Record<string, Pedido[]> = JSON.parse(localStorage.getItem('lm_pedidos_cliente') ?? '{}')
       const todos: PedidoDoCliente[] = Object.entries(porEmail).flatMap(([email, lista]) =>
-        lista.map(p => ({ ...p, email, nomeCliente: contas[email.trim().toLowerCase()]?.nome ?? contas[email]?.nome ?? email }))
+        lista.map(p => ({ ...p, email, nomeCliente: nomeDoCliente(clientes, email) }))
       )
       todos.sort((a, b) => b.data.localeCompare(a.data))
       setPedidos(todos)

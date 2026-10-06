@@ -1,6 +1,8 @@
 // Cadastro de cliente sem backend: senha fica em texto puro no localStorage (aceitável só
 // porque é um MVP local/acadêmico, nunca faria isso com dado real). validarLogin distingue
 // 'nao_encontrada' de 'senha_incorreta' pra dar mensagem de erro específica no formulário.
+import { pedirSincronizacao } from './sync/motor'
+
 const CHAVE = 'lm_contas_cliente'
 
 export interface ContaCliente {
@@ -31,6 +33,9 @@ function lerMapa(): Mapa {
 function salvarMapa(mapa: Mapa): void {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(CHAVE, JSON.stringify(mapa))
+  // Só o nome e a data de cadastro vão pro banco (pra o painel do funcionário mostrar quem
+  // fez o pedido). A senha nunca sai do aparelho — ver linhasLocais em lib/sync/espelho.ts.
+  pedirSincronizacao()
 }
 
 export function contaExiste(email: string): boolean {

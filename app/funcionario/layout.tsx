@@ -7,12 +7,14 @@ import { LayoutDashboard, Users, Package, MessageSquare, LogOut, Menu, X, Search
 import ThemeToggle from '@/components/ThemeToggle'
 import Logo from '@/components/Logo'
 import { getFuncionarioLogado, logoutFuncionario } from '@/lib/funcionarioAuth'
+import { useSituacaoSync } from '@/lib/hooks/useAoSincronizar'
 
 export default function FuncionarioLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const [sidebarAberta, setSidebarAberta] = useState(false)
   const [email, setEmail] = useState<string | null>(null)
+  const situacaoSync = useSituacaoSync()
 
   const isLoginPage = pathname === '/funcionario/login'
 
@@ -88,6 +90,19 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
           <ThemeToggle variant="onLight" />
         </div>
         <p className="px-6 pb-2 text-sm text-gray-700 truncate" title={email}>{email}</p>
+        {/* Diz se o painel está recebendo o que os clientes fazem em outros aparelhos
+            (lib/sync). "Só neste aparelho" é o plano B: banco fora do ar ou não configurado. */}
+        {situacaoSync !== 'verificando' && (
+          <p
+            className="px-6 pb-2 flex items-center gap-2 text-sm text-gray-700"
+            title={situacaoSync === 'conectado'
+              ? 'Pedidos e atendimentos feitos em outros aparelhos aparecem aqui.'
+              : 'Sem conexão com o banco de dados: o painel mostra só o que foi feito neste aparelho.'}
+          >
+            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${situacaoSync === 'conectado' ? 'bg-lm-green' : 'bg-amber-500'}`} />
+            {situacaoSync === 'conectado' ? 'Banco de dados conectado' : 'Só neste aparelho'}
+          </p>
+        )}
         <nav className="flex-1 px-4 py-2 space-y-1">
           {menuItems.map(item => {
             const active = pathname.startsWith(item.href)

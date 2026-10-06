@@ -7,12 +7,8 @@ import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
 import { getStatusPedido, STATUS_PEDIDO_COR } from '@/lib/statusPedido'
 import type { Pedido } from '@/lib/clientPedidos'
-
-interface ContaCliente {
-  nome: string
-  senha: string
-  criadoEm: string
-}
+import { getClientesConhecidos } from '@/lib/clientesConhecidos'
+import { useAoSincronizar } from '@/lib/hooks/useAoSincronizar'
 
 interface ClienteResumo {
   email: string
@@ -39,11 +35,10 @@ export default function ClientesPage() {
   const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [expandidoEmail, setExpandidoEmail] = useState<string | null>(null)
 
-  useEffect(() => {
-    // Dado real, não inventado: agrega as contas (lib/clientContas.ts) com os pedidos
-    // (lib/clientPedidos.ts) já salvos neste navegador — sem endpoint dedicado porque as
-    // duas chaves de localStorage já têm tudo que essa tela precisa mostrar.
-    const contas: Record<string, ContaCliente> = JSON.parse(localStorage.getItem('lm_contas_cliente') ?? '{}')
+  function carregar() {
+    // Dado real, não inventado: agrega os clientes conhecidos (cadastrados neste navegador
+    // ou vindos do banco, ver lib/clientesConhecidos.ts) com os pedidos (lib/clientPedidos.ts).
+    const contas = getClientesConhecidos()
     const pedidosPorEmail: Record<string, Pedido[]> = JSON.parse(localStorage.getItem('lm_pedidos_cliente') ?? '{}')
 
     const resumo: ClienteResumo[] = Object.entries(contas).map(([email, conta]) => {
@@ -54,7 +49,10 @@ export default function ClientesPage() {
     })
 
     setClientes(resumo)
-  }, [])
+  }
+  useEffect(carregar, [])
+  // Cliente novo ou pedido novo feito em outro aparelho.
+  useAoSincronizar(carregar)
 
   const filtrados = clientes.filter(c =>
     c.nome.toLowerCase().includes(busca.toLowerCase()) || c.email.toLowerCase().includes(busca.toLowerCase())

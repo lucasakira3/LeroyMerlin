@@ -7,6 +7,7 @@ import TourGuiado from "@/components/TourGuiado";
 import PageTransition from "@/components/PageTransition";
 import CompareToast from "@/components/CompareToast";
 import UndoToast from "@/components/UndoToast";
+import Sincronizador from "@/components/Sincronizador";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -51,6 +52,8 @@ export default function RootLayout({
         <Footer />
         <CompareToast />
         <UndoToast />
+        {/* Espelha pedidos e atendimento no Supabase (lib/sync). Não desenha nada. */}
+        <Sincronizador />
       </body>
     </html>
   );

@@ -9,6 +9,8 @@
 // getUsuarioLogado(), igual todo outro call site desses módulos já faz (ver comentário em
 // lib/clientPedidos.ts sobre normalização inconsistente entre os módulos).
 
+import { registrarApagamentoDeCliente } from './sync/motor'
+
 const CHAVES_MAPA_POR_EMAIL = [
   'lm_contas_cliente',
   'lm_enderecos_cliente',
@@ -141,6 +143,11 @@ export function apagarDadosCliente(email: string): void {
   for (const chave of CHAVES_GLOBAIS_NAVEGADOR) window.localStorage.removeItem(chave)
 
   window.localStorage.removeItem('lm_usuario_logado')
+
+  // Desde o Supabase, pedidos, conversa e nome do cliente também ficam no banco: apagar só
+  // daqui faria tudo voltar na próxima sincronização. Isto pede ao servidor pra apagar lá
+  // (e avisar os outros aparelhos pra apagarem a cópia deles).
+  registrarApagamentoDeCliente(email)
 
   for (const evento of EVENTOS_PARA_DISPARAR) window.dispatchEvent(new Event(evento))
 }

@@ -19,6 +19,10 @@ export interface ConversaEspecialista {
   // Fica true quando um funcionário encerra o atendimento; volta pra false sozinho se o
   // cliente mandar mensagem de novo, pra não sumir da fila de pendentes por engano.
   atendida: boolean
+  // Quando o funcionário encerrou. É o que vai pro banco (lib/sync): com a hora, dois
+  // aparelhos chegam à mesma resposta sobre a conversa estar encerrada ou não — é encerrada
+  // se não houver mensagem do cliente depois dessa hora. Ausente em conversas antigas.
+  atendidaEm?: string | null
   atualizadoEm: string
 }
 
@@ -80,6 +84,6 @@ export function marcarConversaAtendida(email: string, atendida: boolean): void {
   const mapa = lerMapa()
   const atual = mapa[email]
   if (!atual) return
-  mapa[email] = { ...atual, atendida }
+  mapa[email] = { ...atual, atendida, atendidaEm: atendida ? new Date().toISOString() : null }
   salvarMapa(mapa)
 }

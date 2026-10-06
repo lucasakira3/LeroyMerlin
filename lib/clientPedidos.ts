@@ -2,6 +2,8 @@
 // checar o call site em app/carrinho/page.tsx antes de mudar isso). Um Pedido é um
 // instantâneo (nome/preço travados no momento da compra), não uma referência viva ao
 // produto — preço mudar depois no catálogo não altera pedidos já feitos.
+import { pedirSincronizacao } from './sync/motor'
+
 const CHAVE = 'lm_pedidos_cliente'
 
 export interface ItemPedido {
@@ -63,6 +65,9 @@ export function salvarPedido(email: string, pedido: Pedido): void {
   pedidos.push(pedido)
   mapa[email] = pedidos
   salvarMapa(mapa)
+  // Manda pro banco já, pra o pedido aparecer no painel do funcionário em outro aparelho
+  // sem esperar o próximo ciclo (lib/sync/motor.ts).
+  pedirSincronizacao()
 }
 
 export function gerarNumeroPedido(): string {

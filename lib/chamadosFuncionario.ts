@@ -2,6 +2,8 @@
 // (ver components/AgendamentosLista.tsx), não um ticket de suporte inventado. Guardado à
 // parte do status confirmado/cancelado do próprio agendamento (esse é do cliente) pra não
 // mexer num tipo compartilhado com o lado do cliente.
+import { pedirSincronizacao } from './sync/motor'
+
 const CHAVE = 'lm_chamados_funcionario'
 
 export interface NotaChamado {
@@ -32,6 +34,7 @@ function lerMapa(): Mapa {
 function salvarMapa(mapa: Mapa): void {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(CHAVE, JSON.stringify(mapa))
+  pedirSincronizacao()
 }
 
 export function getEstadoChamado(agendamentoId: string): EstadoChamado {

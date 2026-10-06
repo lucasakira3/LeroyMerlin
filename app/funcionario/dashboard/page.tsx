@@ -14,6 +14,8 @@ import { getEstadoChamado } from '@/lib/chamadosFuncionario'
 import { parseDataBR } from '@/lib/dataBr'
 import type { Produto } from '@/types/produto'
 import type { Agendamento } from '@/components/AgendamentosLista'
+import { getClientesConhecidos } from '@/lib/clientesConhecidos'
+import { useAoSincronizar } from '@/lib/hooks/useAoSincronizar'
 
 interface Pedido {
   numero: string
@@ -63,11 +65,12 @@ export default function DashboardPage() {
   const [atividades, setAtividades] = useState<Atividade[]>([])
   const [estoquePorCategoria, setEstoquePorCategoria] = useState<{ label: string; valor: number }[]>([])
 
-  useEffect(() => {
-    // Tudo abaixo é lido do mesmo localStorage já usado pelo lado do cliente — sem número
-    // inventado, ver lib/clientContas.ts, lib/clientPedidos.ts, components/AgendamentosLista.tsx.
-    const contas = JSON.parse(localStorage.getItem('lm_contas_cliente') ?? '{}')
-    setTotalClientes(Object.keys(contas).length)
+  // Clientes, pedidos e agendamentos: lidos do mesmo localStorage já usado pelo lado do
+  // cliente — sem número inventado, ver lib/clientesConhecidos.ts, lib/clientPedidos.ts,
+  // components/AgendamentosLista.tsx. Desde o Supabase esse localStorage também recebe o que
+  // foi feito em outros aparelhos (lib/sync), por isso é relido a cada sincronização.
+  function carregarMovimento() {
+    setTotalClientes(Object.keys(getClientesConhecidos()).length)
 
     const pedidosPorEmail: Record<string, Pedido[]> = JSON.parse(localStorage.getItem('lm_pedidos_cliente') ?? '{}')
     const todosPedidos = Object.values(pedidosPorEmail).flat()
@@ -89,6 +92,11 @@ export default function DashboardPage() {
         .sort((a, b) => b.quando.getTime() - a.quando.getTime())
         .slice(0, 6)
     )
+  }
+  useAoSincronizar(carregarMovimento)
+
+  useEffect(() => {
+    carregarMovimento()
 
     fetch('/api/funcionario/produtos')
       .then(r => r.json())

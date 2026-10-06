@@ -5,6 +5,8 @@ import { CalendarCheck, MapPin, Clock, Trash2, Tag, Check, X } from 'lucide-reac
 import Card from './ui/Card'
 import Badge from './ui/Badge'
 import Button from './ui/Button'
+import { pedirSincronizacao, registrarRemocao } from '@/lib/sync/motor'
+import { useAoSincronizar } from '@/lib/hooks/useAoSincronizar'
 
 export interface Agendamento {
   id: string
@@ -35,6 +37,8 @@ export function salvarAgendamento(ag: Omit<Agendamento, 'id' | 'criadoEm' | 'sta
     status: 'confirmado',
   }
   localStorage.setItem('lm_agendamentos', JSON.stringify([novo, ...existentes]))
+  // Manda pro banco já, pra o chamado aparecer no painel do funcionário em outro aparelho.
+  pedirSincronizacao()
   return novo
 }
 
@@ -42,10 +46,12 @@ export default function AgendamentosLista() {
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([])
   const [filtro, setFiltro] = useState<'todos' | 'confirmado' | 'cancelado'>('todos')
 
-  useEffect(() => {
-    const dados = JSON.parse(localStorage.getItem('lm_agendamentos') ?? '[]')
-    setAgendamentos(dados)
-  }, [])
+  function carregar() {
+    setAgendamentos(JSON.parse(localStorage.getItem('lm_agendamentos') ?? '[]'))
+  }
+  useEffect(carregar, [])
+  // Agendamento feito ou cancelado em outro aparelho do mesmo cliente.
+  useAoSincronizar(carregar)
 
   function cancelar(id: string) {
     const atualizados = agendamentos.map(a =>
@@ -53,12 +59,16 @@ export default function AgendamentosLista() {
     )
     setAgendamentos(atualizados)
     localStorage.setItem('lm_agendamentos', JSON.stringify(atualizados))
+    pedirSincronizacao()
   }
 
   function remover(id: string) {
     const atualizados = agendamentos.filter(a => a.id !== id)
     setAgendamentos(atualizados)
     localStorage.setItem('lm_agendamentos', JSON.stringify(atualizados))
+    // Apagar é o único caso que precisa ser dito ao motor (ver lib/sync/motor.ts): sem
+    // isto o agendamento voltaria do banco na próxima sincronização.
+    registrarRemocao('agendamentos', id)
   }
 
   const filtrados = agendamentos.filter(a => filtro === 'todos' || a.status === filtro)

@@ -12,6 +12,7 @@ import {
   getConversas, enviarMensagemEspecialista, marcarConversaAtendida, type ConversaEspecialista,
 } from '@/lib/conversasEspecialista'
 import { parseDataBR } from '@/lib/dataBr'
+import { useAoSincronizar } from '@/lib/hooks/useAoSincronizar'
 
 function tempoRelativo(iso: string): string {
   const diffMin = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
@@ -75,10 +76,16 @@ export default function ChamadosPage() {
   const [conversaAtivaEmail, setConversaAtivaEmail] = useState<string | null>(null)
   const [respostaConversa, setRespostaConversa] = useState('')
 
-  useEffect(() => {
-    const dados: Agendamento[] = JSON.parse(localStorage.getItem('lm_agendamentos') ?? '[]')
-    setAgendamentos(dados)
-  }, [])
+  function carregarAgendamentos() {
+    setAgendamentos(JSON.parse(localStorage.getItem('lm_agendamentos') ?? '[]'))
+  }
+  useEffect(carregarAgendamentos, [])
+  // Agendamento novo (ou cancelado) feito pelo cliente em outro aparelho, e notas de outro
+  // funcionário — `versao` força a releitura de lib/chamadosFuncionario.ts.
+  useAoSincronizar(() => {
+    carregarAgendamentos()
+    setVersao(v => v + 1)
+  })
 
   useEffect(() => {
     const atualizar = () => setConversas(getConversas())
