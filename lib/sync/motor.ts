@@ -234,6 +234,7 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
   const pedido: PedidoDeSync = {
     papel: escopo.papel,
     email: escopo.papel === 'cliente' ? escopo.email : undefined,
+    agora: new Date().toISOString(),
     desde: cursores[idEscopo] ?? {},
     gravar,
     remover: pendencias.remover,
@@ -298,15 +299,21 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
   for (const remocao of remocoes) delete enviados[chaveDaLinha(remocao.tabela, remocao.id)]
   gravarJSON(CHAVE_ENVIADOS, enviados)
 
-  // Avança o relógio de cada tabela até a última linha recebida (o servidor manda em ordem).
+  // Avança o relógio de cada tabela até a última linha recebida (o servidor manda em
+  // ordem), mas nunca além de `seguroAte` — ver o comentário desse campo em tabelas.ts.
   const cursoresAgora = lerJSON<Record<string, Record<string, string>>>(CHAVE_CURSORES, {})
   const doEscopo = (cursoresAgora[idEscopo] ??= {})
+  const avancar = (tabela: string, ultima: string | undefined) => {
+    if (!ultima) return
+    const ate = resposta.seguroAte && Date.parse(resposta.seguroAte) < Date.parse(ultima) ? resposta.seguroAte : ultima
+    const atual = doEscopo[tabela]
+    if (!atual || Date.parse(ate) > Date.parse(atual)) doEscopo[tabela] = ate
+  }
   for (const tabela of NOMES_DAS_TABELAS) {
     const recebidas = tabelas[tabela]
-    if (recebidas?.length) doEscopo[tabela] = recebidas[recebidas.length - 1].atualizado_em
+    avancar(tabela, recebidas?.[recebidas.length - 1]?.atualizado_em)
   }
-  const ultimaRemocao = remocoes[remocoes.length - 1]?.removido_em
-  if (ultimaRemocao) doEscopo.remocoes = ultimaRemocao
+  avancar('remocoes', remocoes[remocoes.length - 1]?.removido_em)
   gravarJSON(CHAVE_CURSORES, cursoresAgora)
 
   mudarSituacao('conectado')

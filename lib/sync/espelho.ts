@@ -66,8 +66,10 @@ function texto(valor: unknown): string | null {
   return typeof valor === 'string' && valor.trim() !== '' ? valor : null
 }
 
-export function idDaMensagem(email: string, mensagem: { data: string; autor: string }): string {
-  return `${email}|${iso(mensagem.data) ?? mensagem.data}|${mensagem.autor}`
+// Mensagens novas já nascem com `id` (lib/conversasEspecialista.ts). As antigas não têm:
+// pra elas a identidade é e-mail + hora + autor.
+export function idDaMensagem(email: string, mensagem: { id?: string; data: string; autor: string }): string {
+  return mensagem.id || `${email}|${iso(mensagem.data) ?? mensagem.data}|${mensagem.autor}`
 }
 
 export function chaveDaLinha(tabela: string, id: string): string {
@@ -123,8 +125,12 @@ export function linhasLocais(estado: EstadoLocal): Record<Tabela, Linha[]> {
   const pedidosStatus: Linha[] = []
   for (const [numero, item] of Object.entries(estado.status)) {
     const definidaEm = iso(item?.atualizadoEm)
-    if (!definidaEm || !Number.isInteger(item.etapa) || item.etapa < 0) continue
-    pedidosStatus.push({ id: numero, cliente_email: emailDoPedido.get(numero) ?? null, etapa: item.etapa, definida_em: definidaEm })
+    const email = emailDoPedido.get(numero)
+    // Sem o pedido neste aparelho a etapa não tem dono: é o que sobra depois de "apagar meus
+    // dados" (que tira o pedido, mas não este mapa). Mandá-la recriaria no banco a etapa de
+    // um pedido que acabou de ser apagado.
+    if (!email || !definidaEm || !Number.isInteger(item.etapa) || item.etapa < 0) continue
+    pedidosStatus.push({ id: numero, cliente_email: email, etapa: item.etapa, definida_em: definidaEm })
   }
 
   const clientes: Linha[] = Object.entries(estado.contas)
@@ -337,8 +343,19 @@ export function mesclarRemoto(
     const autor = linha.autor
     if (!email || !data || (autor !== 'cliente' && autor !== 'funcionario')) continue
     const conversa = conversaDe(email)
-    if (conversa.mensagens.some(m => idDaMensagem(email, m) === linha.id)) continue
-    conversa.mensagens.push({ autor, texto: String(linha.texto ?? ''), data })
+    const local = conversa.mensagens.find(m => idDaMensagem(email, m) === linha.id)
+    if (local) {
+      // A hora que vale é a do banco, já corrigida pelo servidor — inclusive pra quem
+      // enviou. Com cada aparelho usando o próprio relógio, a resposta do funcionário podia
+      // aparecer ANTES da pergunta do cliente. O id é fixado antes de trocar a hora, senão
+      // uma mensagem antiga (identificada pela hora) viraria outra mensagem.
+      if (ms(local.data) !== ms(data)) {
+        local.id = linha.id
+        local.data = data
+      }
+      continue
+    }
+    conversa.mensagens.push({ id: linha.id, autor, texto: String(linha.texto ?? ''), data })
   }
 
   for (const email of conversasTocadas) {

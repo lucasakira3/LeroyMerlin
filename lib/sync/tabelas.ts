@@ -43,6 +43,9 @@ export type Papel = 'funcionario' | 'cliente' | 'visitante'
 export interface PedidoDeSync {
   papel: Papel
   email?: string
+  // Que horas são no aparelho, no instante do envio. O servidor compara com a hora certa e
+  // corrige as horas que o aparelho carimbou (ver `acertarHoras` em app/api/sync/route.ts).
+  agora?: string
   desde?: Record<string, string>
   gravar?: Lote
   remover?: Partial<Record<Tabela, string[]>>
@@ -56,5 +59,11 @@ export interface RespostaDeSync {
   motivo?: 'sem-configuracao' | 'tabelas-ausentes'
   tabelas?: Partial<Record<Tabela, (Linha & { atualizado_em: string })[]>>
   remocoes?: Remocao[]
+  // Até que hora o aparelho pode dar o assunto por encerrado. Fica alguns segundos atrás do
+  // relógio do servidor: uma gravação que ainda estava sendo concluída no instante da
+  // consulta pode aparecer com hora um pouco anterior, e o aparelho que já tivesse avançado
+  // até "agora" nunca a receberia. O que é mais novo que isto volta de novo na próxima
+  // consulta (sem efeito, ver lib/sync/espelho.ts) até ficar mais velho que a folga.
+  seguroAte?: string
   erro?: string
 }

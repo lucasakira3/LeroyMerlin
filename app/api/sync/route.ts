@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { supabaseServidor } from '@/lib/supabaseServidor'
+import { horaCerta, supabaseServidor } from '@/lib/supabaseServidor'
 import {
   NOMES_DAS_TABELAS, TABELAS, ehTabela,
   type Linha, type PedidoDeSync, type Remocao, type RespostaDeSync, type Tabela,
@@ -20,10 +20,28 @@ export const dynamic = 'force-dynamic'
 const MAX_LINHAS_POR_CHAMADA = 600
 const MAX_LINHAS_POR_TABELA_NA_VOLTA = 500
 const MAX_TAMANHO_DA_LINHA = 100_000
-// O servidor devolve também o que mudou nos 3s ANTES do relógio do aparelho: uma gravação
-// que ainda estava sendo concluída quando ele perguntou da última vez não se perde. Receber
-// a mesma linha duas vezes não tem efeito (ver lib/sync/espelho.ts).
-const FOLGA_MS = 3000
+// Folga do relógio da sincronização — ver `seguroAte` em lib/sync/tabelas.ts.
+const FOLGA_MS = 5000
+
+// Colunas cuja hora é carimbada no APARELHO (quando o funcionário mudou a etapa, quando a
+// mensagem foi enviada...). Relógio de celular e de computador erram por segundos, às vezes
+// minutos, e essas horas decidem coisas: a ordem das mensagens no chat, qual etapa do pedido
+// vale, se a conversa foi reaberta. Então o servidor as corrige antes de gravar.
+const HORAS_DO_APARELHO: Partial<Record<Tabela, string[]>> = {
+  pedidos_status: ['definida_em'],
+  ajuda_corredor: ['pedido_em'],
+  conversas: ['atendida_em'],
+  mensagens: ['enviada_em'],
+}
+
+// Tabela cujo registro de remoção (tabela `remocoes`) bloqueia a gravação — ver `gravar`.
+// pedidos_status e chamados usam o mesmo id do pedido / do agendamento a que se referem.
+const DEPENDE_DE: Partial<Record<Tabela, string>> = {
+  pedidos: 'pedidos',
+  pedidos_status: 'pedidos',
+  agendamentos: 'agendamentos',
+  chamados: 'agendamentos',
+}
 
 type Erro = { code?: string; message?: string } | null
 
@@ -56,10 +74,33 @@ function limpar(tabela: Tabela, bruta: unknown): Linha | null {
   return JSON.stringify(linha).length <= MAX_TAMANHO_DA_LINHA ? linha : null
 }
 
-async function registrarRemocoes(sb: SupabaseClient, remocoes: { tabela: string; id: string; cliente_email: string | null }[]) {
+// Quanto somar às horas do aparelho pra virarem hora certa. O aparelho diz que horas são
+// pra ele no envio; a diferença pra hora certa na chegada é o erro do relógio dele (mais o
+// tempo de viagem do pedido, por isso menos de 2s é tratado como "relógio certo").
+function desvioDoAparelho(agoraDoAparelho: unknown, agoraCerto: number): number {
+  const la = typeof agoraDoAparelho === 'string' ? new Date(agoraDoAparelho).getTime() : NaN
+  if (!Number.isFinite(la)) return 0
+  const desvio = agoraCerto - la
+  return Math.abs(desvio) < 2000 ? 0 : desvio
+}
+
+function acertarHoras(tabela: Tabela, linhas: Linha[], desvio: number): Linha[] {
+  const colunas = HORAS_DO_APARELHO[tabela]
+  if (!colunas || desvio === 0) return linhas
+  return linhas.map(linha => {
+    const certa = { ...linha }
+    for (const coluna of colunas) {
+      const t = typeof linha[coluna] === 'string' ? new Date(linha[coluna] as string).getTime() : NaN
+      if (Number.isFinite(t)) certa[coluna] = new Date(t + desvio).toISOString()
+    }
+    return certa
+  })
+}
+
+async function registrarRemocoes(sb: SupabaseClient, agora: number, remocoes: { tabela: string; id: string; cliente_email: string | null }[]) {
   if (remocoes.length === 0) return
   const { error } = await sb.from('remocoes').upsert(
-    remocoes.map(r => ({ ...r, removido_em: new Date().toISOString() })),
+    remocoes.map(r => ({ ...r, removido_em: new Date(agora).toISOString() })),
     { onConflict: 'tabela,id' }
   )
   conferir(error)
@@ -68,7 +109,7 @@ async function registrarRemocoes(sb: SupabaseClient, remocoes: { tabela: string;
 // "Apagar meus dados": some com o que é desse e-mail e deixa o aviso pros outros aparelhos
 // apagarem a cópia deles. Apaga o mesmo que lib/privacidadeDados.ts já apagava no aparelho
 // (pedidos, conversa e conta); os agendamentos ficam, como lá.
-async function apagarCliente(sb: SupabaseClient, email: string) {
+async function apagarCliente(sb: SupabaseClient, agora: number, email: string) {
   const idCliente = email.trim().toLowerCase()
   const pedidos = await sb.from('pedidos').delete().eq('cliente_email', email).select('id')
   conferir(pedidos.error)
@@ -77,29 +118,31 @@ async function apagarCliente(sb: SupabaseClient, email: string) {
   conferir((await sb.from('conversas').delete().eq('id', email)).error)
   conferir((await sb.from('clientes').delete().eq('id', idCliente)).error)
 
-  await registrarRemocoes(sb, [
+  await registrarRemocoes(sb, agora, [
     ...(pedidos.data ?? []).map(p => ({ tabela: 'pedidos', id: p.id as string, cliente_email: email })),
     { tabela: 'conversas', id: email, cliente_email: email },
     { tabela: 'clientes', id: idCliente, cliente_email: email },
   ])
 }
 
-async function removerAgendamentos(sb: SupabaseClient, ids: string[]) {
+async function removerAgendamentos(sb: SupabaseClient, agora: number, ids: string[]) {
   const apagados = await sb.from('agendamentos').delete().in('id', ids).select('id, cliente_email')
   conferir(apagados.error)
   conferir((await sb.from('chamados').delete().in('id', ids)).error)
   const emailPorId = new Map((apagados.data ?? []).map(a => [a.id as string, (a.cliente_email as string | null) ?? null]))
   // Registra mesmo o que não estava mais no banco: outro aparelho ainda pode ter a cópia.
-  await registrarRemocoes(sb, ids.map(id => ({ tabela: 'agendamentos', id, cliente_email: emailPorId.get(id) ?? null })))
+  await registrarRemocoes(sb, agora, ids.map(id => ({ tabela: 'agendamentos', id, cliente_email: emailPorId.get(id) ?? null })))
 }
 
 async function gravar(sb: SupabaseClient, tabela: Tabela, linhas: Linha[]) {
   if (linhas.length === 0) return
   let aceitas = linhas
 
-  // O que foi apagado não volta só porque um aparelho antigo ainda tinha a cópia.
-  if (tabela === 'pedidos' || tabela === 'agendamentos') {
-    const apagadas = await sb.from('remocoes').select('id').eq('tabela', tabela).in('id', linhas.map(l => l.id))
+  // O que foi apagado não volta só porque um aparelho antigo ainda tinha a cópia — nem o
+  // que depende dele: a etapa de um pedido apagado, as anotações de um agendamento removido.
+  const dependeDe = DEPENDE_DE[tabela]
+  if (dependeDe) {
+    const apagadas = await sb.from('remocoes').select('id').eq('tabela', dependeDe).in('id', linhas.map(l => l.id))
     conferir(apagadas.error)
     const ids = new Set((apagadas.data ?? []).map(r => r.id as string))
     aceitas = linhas.filter(l => !ids.has(l.id))
@@ -120,17 +163,17 @@ async function gravar(sb: SupabaseClient, tabela: Tabela, linhas: Linha[]) {
   conferir(error)
 }
 
-function desdeComFolga(valor: unknown): string | null {
-  const t = typeof valor === 'string' ? new Date(valor).getTime() : NaN
-  return Number.isFinite(t) ? new Date(t - FOLGA_MS).toISOString() : null
+// O relógio que o aparelho mandou, se for uma data de verdade (é texto vindo de fora).
+function relogio(valor: unknown): string | null {
+  return typeof valor === 'string' && Number.isFinite(new Date(valor).getTime()) ? valor : null
 }
 
-async function puxar(sb: SupabaseClient, papel: 'funcionario' | 'cliente', email: string, desde: Record<string, unknown>) {
+async function puxar(sb: SupabaseClient, agora: number, papel: 'funcionario' | 'cliente', email: string, desde: Record<string, unknown>) {
   const tabelas = papel === 'funcionario' ? NOMES_DAS_TABELAS : NOMES_DAS_TABELAS.filter(t => TABELAS[t].escopoCliente)
 
   const consultas = tabelas.map(async tabela => {
     let consulta = sb.from(tabela).select('*').order('atualizado_em', { ascending: true }).limit(MAX_LINHAS_POR_TABELA_NA_VOLTA)
-    const corte = desdeComFolga(desde[tabela])
+    const corte = relogio(desde[tabela])
     if (corte) consulta = consulta.gt('atualizado_em', corte)
     const coluna = TABELAS[tabela].escopoCliente
     if (papel === 'cliente' && coluna) consulta = consulta.eq(coluna, email)
@@ -140,7 +183,7 @@ async function puxar(sb: SupabaseClient, papel: 'funcionario' | 'cliente', email
   })
 
   let consultaRemocoes = sb.from('remocoes').select('tabela, id, removido_em').order('removido_em', { ascending: true }).limit(MAX_LINHAS_POR_TABELA_NA_VOLTA)
-  const corteRemocoes = desdeComFolga(desde.remocoes)
+  const corteRemocoes = relogio(desde.remocoes)
   if (corteRemocoes) consultaRemocoes = consultaRemocoes.gt('removido_em', corteRemocoes)
   if (papel === 'cliente') consultaRemocoes = consultaRemocoes.eq('cliente_email', email)
 
@@ -149,6 +192,7 @@ async function puxar(sb: SupabaseClient, papel: 'funcionario' | 'cliente', email
   return {
     tabelas: Object.fromEntries(linhasPorTabela) as RespostaDeSync['tabelas'],
     remocoes: (remocoes.data ?? []) as Remocao[],
+    seguroAte: new Date(agora - FOLGA_MS).toISOString(),
   }
 }
 
@@ -172,13 +216,16 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const agora = await horaCerta()
+    const desvio = desvioDoAparelho(corpo.agora, agora)
+
     for (const emailApagar of (Array.isArray(corpo.apagarClientes) ? corpo.apagarClientes : []).slice(0, 5)) {
-      if (typeof emailApagar === 'string' && emailApagar.trim()) await apagarCliente(sb, emailApagar)
+      if (typeof emailApagar === 'string' && emailApagar.trim()) await apagarCliente(sb, agora, emailApagar)
     }
 
     const idsAgendamentos = corpo.remover?.agendamentos
     if (Array.isArray(idsAgendamentos) && idsAgendamentos.length > 0) {
-      await removerAgendamentos(sb, idsAgendamentos.filter(id => typeof id === 'string').slice(0, 100))
+      await removerAgendamentos(sb, agora, idsAgendamentos.filter(id => typeof id === 'string').slice(0, 100))
     }
 
     let total = 0
@@ -189,12 +236,12 @@ export async function POST(req: NextRequest) {
       if (total > MAX_LINHAS_POR_CHAMADA) {
         return NextResponse.json({ ativo: true, erro: 'linhas demais numa chamada' }, { status: 413 })
       }
-      await gravar(sb, nome, linhas)
+      await gravar(sb, nome, acertarHoras(nome, linhas, desvio))
     }
 
     if (papel === 'visitante') return NextResponse.json<RespostaDeSync>({ ativo: true })
     const desde = corpo.desde && typeof corpo.desde === 'object' ? (corpo.desde as Record<string, unknown>) : {}
-    return NextResponse.json<RespostaDeSync>({ ativo: true, ...(await puxar(sb, papel, email, desde)) })
+    return NextResponse.json<RespostaDeSync>({ ativo: true, ...(await puxar(sb, agora, papel, email, desde)) })
   } catch (erro) {
     if (erro instanceof TabelasAusentes) return inativo('tabelas-ausentes')
     const mensagem = erro instanceof Error ? erro.message : 'erro desconhecido'

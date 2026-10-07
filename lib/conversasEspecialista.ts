@@ -7,6 +7,10 @@
 const CHAVE = 'lm_conversas_especialista'
 
 export interface MensagemEspecialista {
+  // Identidade da mensagem entre aparelhos (lib/sync). Não pode ser a hora: a hora é
+  // corrigida pelo servidor quando o relógio do aparelho está errado, e cada aparelho passa
+  // a mostrar a hora corrigida. Ausente em mensagens antigas (aí vale e-mail + hora + autor).
+  id?: string
   autor: 'cliente' | 'funcionario'
   texto: string
   data: string
@@ -69,7 +73,12 @@ export function enviarMensagemEspecialista(
     atendida: false,
     atualizadoEm: new Date().toISOString(),
   }
-  const nova: MensagemEspecialista = { autor, texto, data: new Date().toISOString() }
+  const nova: MensagemEspecialista = {
+    id: `MS-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+    autor,
+    texto,
+    data: new Date().toISOString(),
+  }
   mapa[email] = {
     ...atual,
     clienteNome: nome || atual.clienteNome,

@@ -39,14 +39,13 @@ describe('linhasLocais', () => {
     expect(pedidos.map(p => [p.id, p.metodo])).toEqual([['LM1', 'entrega']])
   })
 
-  it('a etapa do pedido leva o e-mail do dono, pra o cliente conseguir recebê-la', () => {
+  it('a etapa do pedido leva o e-mail do dono (pra o cliente recebê-la); etapa de pedido que não está no aparelho não é enviada', () => {
     const estado = estadoVazio()
     estado.pedidos[ANA] = [pedido('LM1')]
     estado.status = { LM1: { etapa: 2, atualizadoEm: '2026-10-05T13:00:00.000Z' }, LMX: { etapa: 1, atualizadoEm: '2026-10-05T13:00:00.000Z' } }
     const { pedidos_status } = linhasLocais(estado)
     expect(pedidos_status).toEqual([
       { id: 'LM1', cliente_email: ANA, etapa: 2, definida_em: '2026-10-05T13:00:00.000Z' },
-      { id: 'LMX', cliente_email: null, etapa: 1, definida_em: '2026-10-05T13:00:00.000Z' },
     ])
   })
 })
@@ -186,6 +185,41 @@ describe('mesclarRemoto — quem ganha quando os dois lados mexeram', () => {
     local.conversas[ANA] = { clienteEmail: ANA, clienteNome: 'Ana', atendida: true, atualizadoEm: '2026-10-05T12:00:00.000Z', mensagens: [{ autor: 'cliente', texto: 'Oi', data: '2026-10-05T12:00:00.000Z' }] }
     const { estado } = mesclarRemoto(local, { conversas: [{ id: ANA, cliente_nome: 'Ana', atendida_em: null }] })
     expect(estado.conversas[ANA].atendida).toBe(true)
+  })
+})
+
+describe('mesclarRemoto — relógio errado no aparelho', () => {
+  it('a hora da mensagem passa a ser a do banco, inclusive pra quem enviou: a resposta não aparece antes da pergunta', () => {
+    // Celular do cliente 18s adiantado: ele pergunta às 12:00:00 (pra ele, 12:00:18) e o
+    // funcionário responde 5s depois. Pela hora de cada aparelho a resposta viria primeiro.
+    const celular = estadoVazio()
+    celular.conversas[ANA] = { clienteEmail: ANA, clienteNome: 'Ana', atendida: false, atualizadoEm: '2026-10-05T12:00:18.000Z', mensagens: [{ id: 'MS-1', autor: 'cliente', texto: 'Tem em estoque?', data: '2026-10-05T12:00:18.000Z' }] }
+
+    const { estado } = mesclarRemoto(celular, { mensagens: [
+      { id: 'MS-1', cliente_email: ANA, autor: 'cliente', texto: 'Tem em estoque?', enviada_em: '2026-10-05T12:00:00+00:00' },
+      { id: 'MS-2', cliente_email: ANA, autor: 'funcionario', texto: 'Tem sim', enviada_em: '2026-10-05T12:00:05+00:00' },
+    ] })
+    expect(estado.conversas[ANA].mensagens.map(m => [m.id, m.texto, m.data])).toEqual([
+      ['MS-1', 'Tem em estoque?', '2026-10-05T12:00:00.000Z'],
+      ['MS-2', 'Tem sim', '2026-10-05T12:00:05.000Z'],
+    ])
+    expect(linhasLocais(estado).mensagens.map(l => l.id)).toEqual(['MS-1', 'MS-2'])
+  })
+
+  it('mensagem antiga (sem id) guarda a identidade antes de ter a hora corrigida, e não vira outra mensagem', () => {
+    const local = estadoVazio()
+    const antiga = { autor: 'cliente' as const, texto: 'Oi', data: '2026-10-05T12:00:18.000Z' }
+    local.conversas[ANA] = { clienteEmail: ANA, clienteNome: 'Ana', atendida: false, atualizadoEm: antiga.data, mensagens: [antiga] }
+    const id = idDaMensagem(ANA, antiga)
+    const doBanco = { mensagens: [{ id, cliente_email: ANA, autor: 'cliente', texto: 'Oi', enviada_em: '2026-10-05T12:00:00+00:00' }] }
+
+    const primeira = mesclarRemoto(local, doBanco)
+    expect(primeira.estado.conversas[ANA].mensagens).toEqual([{ id, autor: 'cliente', texto: 'Oi', data: '2026-10-05T12:00:00.000Z' }])
+    expect(linhasLocais(primeira.estado).mensagens[0].id).toBe(id)
+
+    const segunda = mesclarRemoto(primeira.estado, doBanco)
+    expect(segunda.alteradas).toEqual([])
+    expect(segunda.estado.conversas[ANA].mensagens).toHaveLength(1)
   })
 })
 
