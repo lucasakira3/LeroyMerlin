@@ -252,6 +252,30 @@ describe('mesclarRemoto — o que foi apagado em outro aparelho', () => {
   })
 })
 
+describe('mesclarRemoto — apagamento e linha antiga na mesma resposta', () => {
+  it('mensagem e conversa anteriores ao "apagar meus dados" não recriam a conversa; as posteriores sim', () => {
+    const local = estadoVazio()
+    local.conversas[ANA] = { clienteEmail: ANA, clienteNome: 'Ana', atendida: false, atualizadoEm: '2026-10-05T12:00:00.000Z', mensagens: [{ id: 'MS-1', autor: 'cliente', texto: 'Oi', data: '2026-10-05T12:00:00.000Z' }] }
+    const apagou = [{ tabela: 'conversas', id: ANA, removido_em: '2026-10-05T12:10:00+00:00' }, { tabela: 'pedidos', id: 'LM1', removido_em: '2026-10-05T12:10:00+00:00' }]
+
+    const soAntigas = mesclarRemoto(local, {
+      conversas: [{ id: ANA, cliente_nome: 'Ana', atendida_em: null, atualizado_em: '2026-10-05T12:00:01+00:00' }],
+      mensagens: [{ id: 'MS-2', cliente_email: ANA, autor: 'funcionario', texto: 'Olá', enviada_em: '2026-10-05T12:09:58+00:00', atualizado_em: '2026-10-05T12:09:58+00:00' }],
+      pedidos: [{ id: 'LM1', cliente_email: ANA, dados: pedido('LM1'), atualizado_em: '2026-10-05T12:00:00+00:00' }],
+      pedidos_status: [{ id: 'LM1', cliente_email: ANA, etapa: 1, definida_em: '2026-10-05T12:05:00+00:00', atualizado_em: '2026-10-05T12:05:00+00:00' }],
+    }, apagou)
+    expect(soAntigas.estado.conversas).toEqual({})
+    expect(soAntigas.estado.pedidos).toEqual({})
+    expect(soAntigas.estado.status).toEqual({})
+
+    const voltouAEscrever = mesclarRemoto(local, {
+      conversas: [{ id: ANA, cliente_nome: 'Ana', atendida_em: null, atualizado_em: '2026-10-05T12:20:00+00:00' }],
+      mensagens: [{ id: 'MS-3', cliente_email: ANA, autor: 'cliente', texto: 'Voltei', enviada_em: '2026-10-05T12:20:00+00:00', atualizado_em: '2026-10-05T12:20:00+00:00' }],
+    }, apagou)
+    expect(voltouAEscrever.estado.conversas[ANA].mensagens.map(m => m.texto)).toEqual(['Voltei'])
+  })
+})
+
 describe('hashDaLinha', () => {
   it('é a mesma para a mesma linha montada em outra ordem, e muda quando o conteúdo muda', () => {
     const a = hashDaLinha({ id: 'x', atendido: false, dados: { b: 1, a: [1, 2] } })

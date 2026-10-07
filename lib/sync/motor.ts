@@ -20,11 +20,20 @@ import { NOMES_DAS_TABELAS, type Linha, type Lote, type PedidoDeSync, type Respo
 const CHAVE_ENVIADOS = 'lm_sync_enviados' // { "tabela:id": impressão digital da linha já em dia com o banco }
 const CHAVE_CURSORES = 'lm_sync_cursores' // { escopo: { tabela: até que hora este aparelho já recebeu } }
 const CHAVE_PENDENCIAS = 'lm_sync_pendencias' // o que foi apagado aqui e o banco ainda não sabe
+const CHAVE_APAGADOS = 'lm_sync_apagados_aqui' // { e-mail: quando "apagar meus dados" foi pedido neste aparelho }
 
 const MAX_LINHAS_POR_CICLO = 300
 const TEMPO_LIMITE_MS = 15000
 // Banco não configurado ou sem tabelas: não adianta insistir a cada poucos segundos.
 const PAUSA_QUANDO_INATIVO_MS = 5 * 60 * 1000
+// Depois de "apagar meus dados", por este tempo o aparelho ignora o que chegar daquele
+// cliente e não reenvia nada dele. Motivo: uma consulta que já estava no ar no instante do
+// apagamento (nesta aba ou em outra) ainda volta com as linhas antigas — visto no teste no
+// site publicado: a última mensagem do chat reaparecia no navegador de quem tinha acabado de
+// apagar a conta, e uma conversa vazia era recriada no banco.
+const SILENCIO_APOS_APAGAR_MS = 2 * 60 * 1000
+// Tabelas que "apagar meus dados" limpa (as mesmas de `apagarCliente` em app/api/sync/route.ts).
+const TABELAS_DO_APAGAMENTO: Tabela[] = ['clientes', 'pedidos', 'pedidos_status', 'conversas', 'mensagens']
 
 export type Escopo = { papel: 'funcionario' } | { papel: 'cliente'; email: string } | { papel: 'visitante' }
 export type SituacaoSync = 'verificando' | 'conectado' | 'local'
@@ -113,7 +122,22 @@ export function registrarApagamentoDeCliente(email: string): void {
   const pendencias = lerPendencias()
   pendencias.apagarClientes = Array.from(new Set([...pendencias.apagarClientes, email]))
   gravarJSON(CHAVE_PENDENCIAS, pendencias)
+  gravarJSON(CHAVE_APAGADOS, { ...lerJSON<Record<string, number>>(CHAVE_APAGADOS, {}), [email]: Date.now() })
   pedirSincronizacao()
+}
+
+// E-mails apagados neste aparelho há pouco (ver SILENCIO_APOS_APAGAR_MS). Os vencidos saem.
+function apagadosHaPouco(): Set<string> {
+  const todos = lerJSON<Record<string, number>>(CHAVE_APAGADOS, {})
+  const validos = Object.entries(todos).filter(([, quando]) => Date.now() - quando < SILENCIO_APOS_APAGAR_MS)
+  if (validos.length !== Object.keys(todos).length) gravarJSON(CHAVE_APAGADOS, Object.fromEntries(validos))
+  return new Set(validos.flatMap(([email]) => [email, email.trim().toLowerCase()]))
+}
+
+function ehDeClienteApagado(tabela: Tabela, linha: Linha, apagados: Set<string>): boolean {
+  if (apagados.size === 0 || !TABELAS_DO_APAGAMENTO.includes(tabela)) return false
+  const dono = tabela === 'conversas' || tabela === 'clientes' ? linha.id : linha.cliente_email
+  return typeof dono === 'string' && (apagados.has(dono) || apagados.has(dono.trim().toLowerCase()))
 }
 
 export function getSituacaoSync(): SituacaoSync {
@@ -208,12 +232,14 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
   if (cursoresMudaram) gravarJSON(CHAVE_CURSORES, cursores)
 
   // O que mudou aqui desde o último envio.
+  const apagados = apagadosHaPouco()
   const gravar: Lote = {}
   const enviadasAgora: [string, string][] = []
   let total = 0
   for (const tabela of NOMES_DAS_TABELAS) {
     for (const linha of linhas[tabela]) {
       if (total >= MAX_LINHAS_POR_CICLO) break
+      if (ehDeClienteApagado(tabela, linha, apagados)) continue
       const chave = chaveDaLinha(tabela, linha.id)
       const impressao = atuais.get(chave)!
       if (enviados[chave] === impressao) continue
@@ -278,7 +304,13 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
 
   // Junta o que veio dos outros aparelhos. Lê o estado de novo: o cliente pode ter mexido em
   // algo enquanto a chamada estava no ar.
-  const tabelas = resposta.tabelas ?? {}
+  // Relê a lista de apagados: o cliente pode ter apagado a conta com esta chamada no ar.
+  const apagadosAgora = apagadosHaPouco()
+  const tabelas: NonNullable<RespostaDeSync['tabelas']> = {}
+  for (const tabela of NOMES_DAS_TABELAS) {
+    const recebidas = resposta.tabelas?.[tabela]
+    if (recebidas) tabelas[tabela] = recebidas.filter(linha => !ehDeClienteApagado(tabela, linha, apagadosAgora))
+  }
   const remocoes = resposta.remocoes ?? []
   const fresco = lerEstado()
   const antes = impressoes(linhasLocais(fresco))
@@ -310,7 +342,8 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
     if (!atual || Date.parse(ate) > Date.parse(atual)) doEscopo[tabela] = ate
   }
   for (const tabela of NOMES_DAS_TABELAS) {
-    const recebidas = tabelas[tabela]
+    // Pela resposta inteira, não pela filtrada: o que foi ignorado também já foi "visto".
+    const recebidas = resposta.tabelas?.[tabela]
     avancar(tabela, recebidas?.[recebidas.length - 1]?.atualizado_em)
   }
   avancar('remocoes', remocoes[remocoes.length - 1]?.removido_em)

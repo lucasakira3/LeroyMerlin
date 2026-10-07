@@ -218,6 +218,34 @@ export function mesclarRemoto(
 ): { estado: EstadoLocal; alteradas: ParteLocal[] } {
   const estado: EstadoLocal = JSON.parse(JSON.stringify(estadoAtual))
 
+  // Quando cada coisa foi apagada, pra descartar linha que chegou na mesma resposta mas é
+  // ANTERIOR ao apagamento. Acontece quando o aparelho pergunta no meio de um apagamento: a
+  // consulta de mensagens roda antes dele e a de remoções, depois. Sem isto a conversa era
+  // removida no passo 1 e recriada, vazia, no passo 2.
+  const apagadoEm = new Map<string, number>()
+  for (const remocao of remocoes) {
+    const quando = ms(remocao.removido_em)
+    if (!Number.isNaN(quando)) apagadoEm.set(chaveDaLinha(remocao.tabela, remocao.id), quando)
+  }
+  // `dono` = o que precisa continuar existindo pra linha fazer sentido (a etapa depende do
+  // pedido, a mensagem depende da conversa...).
+  const sobreviveu = (tabelaDoDono: string, idDoDono: unknown, linha: Linha): boolean => {
+    const quando = typeof idDoDono === 'string' ? apagadoEm.get(chaveDaLinha(tabelaDoDono, idDoDono)) : undefined
+    const gravadaEm = ms(linha.atualizado_em)
+    return quando === undefined || Number.isNaN(gravadaEm) || gravadaEm > quando
+  }
+  const vivas: Lote = {
+    clientes: tabelas.clientes?.filter(l => sobreviveu('clientes', l.id, l)),
+    pedidos: tabelas.pedidos?.filter(l => sobreviveu('pedidos', l.id, l)),
+    pedidos_status: tabelas.pedidos_status?.filter(l => sobreviveu('pedidos', l.id, l)),
+    ajuda_corredor: tabelas.ajuda_corredor,
+    agendamentos: tabelas.agendamentos?.filter(l => sobreviveu('agendamentos', l.id, l)),
+    chamados: tabelas.chamados?.filter(l => sobreviveu('agendamentos', l.id, l)),
+    conversas: tabelas.conversas?.filter(l => sobreviveu('conversas', l.id, l)),
+    mensagens: tabelas.mensagens?.filter(l => sobreviveu('conversas', l.cliente_email, l)),
+  }
+  tabelas = vivas
+
   // 1) O que foi apagado em outro aparelho sai daqui também.
   for (const remocao of remocoes) {
     if (remocao.tabela === 'pedidos') {

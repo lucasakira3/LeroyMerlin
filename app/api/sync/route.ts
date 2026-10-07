@@ -134,7 +134,8 @@ async function removerAgendamentos(sb: SupabaseClient, agora: number, ids: strin
   await registrarRemocoes(sb, agora, ids.map(id => ({ tabela: 'agendamentos', id, cliente_email: emailPorId.get(id) ?? null })))
 }
 
-async function gravar(sb: SupabaseClient, tabela: Tabela, linhas: Linha[]) {
+// `mensagensDoEnvio`: as mensagens que vieram na mesma chamada (já com a hora corrigida).
+async function gravar(sb: SupabaseClient, tabela: Tabela, linhas: Linha[], mensagensDoEnvio: Linha[] = []) {
   if (linhas.length === 0) return
   let aceitas = linhas
 
@@ -146,6 +147,23 @@ async function gravar(sb: SupabaseClient, tabela: Tabela, linhas: Linha[]) {
     conferir(apagadas.error)
     const ids = new Set((apagadas.data ?? []).map(r => r.id as string))
     aceitas = linhas.filter(l => !ids.has(l.id))
+  } else if (tabela === 'conversas') {
+    // Conversa de quem pediu "apagar meus dados" só é recriada se vier com mensagem nova
+    // (o cliente voltou a escrever). Sozinha, é sobra de um aparelho que ainda tinha a cópia
+    // — foi assim que uma conversa vazia reapareceu no banco no teste do site publicado.
+    const apagadas = await sb.from('remocoes').select('id, removido_em').eq('tabela', 'conversas').in('id', linhas.map(l => l.id))
+    conferir(apagadas.error)
+    const apagadaEm = new Map((apagadas.data ?? []).map(r => [r.id as string, new Date(r.removido_em as string).getTime()]))
+    if (apagadaEm.size > 0) {
+      const jaTemMensagem = await sb.from('mensagens').select('cliente_email').in('cliente_email', Array.from(apagadaEm.keys()))
+      conferir(jaTemMensagem.error)
+      const comMensagem = new Set((jaTemMensagem.data ?? []).map(m => m.cliente_email as string))
+      for (const m of mensagensDoEnvio) {
+        const corte = apagadaEm.get(String(m.cliente_email ?? ''))
+        if (corte !== undefined && new Date(String(m.enviada_em)).getTime() > corte) comMensagem.add(String(m.cliente_email))
+      }
+      aceitas = linhas.filter(l => !apagadaEm.has(l.id) || comMensagem.has(l.id))
+    }
   } else if (tabela === 'mensagens') {
     // Mensagem anterior ao "apagar meus dados" do cliente também não volta; as novas sim.
     const emails = Array.from(new Set(linhas.map(l => String(l.cliente_email ?? ''))))
@@ -228,6 +246,9 @@ export async function POST(req: NextRequest) {
       await removerAgendamentos(sb, agora, idsAgendamentos.filter(id => typeof id === 'string').slice(0, 100))
     }
 
+    // Primeiro limpa e conta tudo; só depois grava — a conversa precisa saber quais
+    // mensagens vieram junto (ver `gravar`).
+    const lotes: [Tabela, Linha[]][] = []
     let total = 0
     for (const [nome, brutas] of Object.entries(corpo.gravar ?? {})) {
       if (!ehTabela(nome) || !Array.isArray(brutas)) continue
@@ -236,8 +257,10 @@ export async function POST(req: NextRequest) {
       if (total > MAX_LINHAS_POR_CHAMADA) {
         return NextResponse.json({ ativo: true, erro: 'linhas demais numa chamada' }, { status: 413 })
       }
-      await gravar(sb, nome, acertarHoras(nome, linhas, desvio))
+      lotes.push([nome, acertarHoras(nome, linhas, desvio)])
     }
+    const mensagensDoEnvio = lotes.find(([nome]) => nome === 'mensagens')?.[1] ?? []
+    for (const [nome, linhas] of lotes) await gravar(sb, nome, linhas, mensagensDoEnvio)
 
     if (papel === 'visitante') return NextResponse.json<RespostaDeSync>({ ativo: true })
     const desde = corpo.desde && typeof corpo.desde === 'object' ? (corpo.desde as Record<string, unknown>) : {}
