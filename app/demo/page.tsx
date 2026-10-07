@@ -6,6 +6,7 @@ import { Sparkles, PlayCircle, Trash2, ArrowRight, Copy, Check } from 'lucide-re
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import { ativarModoDemo, desativarModoDemo, DEMO_EMAIL, DEMO_SENHA } from '@/lib/demoSeed'
+import { entrarCliente, sairDoServidor } from '@/lib/authServidor'
 
 const ROTEIRO = [
   { tela: 'Home', mostrar: 'Busca inteligente, categorias, vitrine de ofertas' },
@@ -20,13 +21,18 @@ export default function DemoPage() {
   const [ativo, setAtivo] = useState(false)
   const [copiado, setCopiado] = useState(false)
 
-  function ativar() {
+  async function ativar() {
     ativarModoDemo()
+    // O modo demo deixa a conta logada neste aparelho; isto faz o login valer também no
+    // servidor (a conta demo é criada lá na primeira vez). Sem isso a sincronização
+    // recusaria a conta e ela seria deslogada sozinha.
+    await entrarCliente(DEMO_EMAIL, DEMO_SENHA)
     setAtivo(true)
   }
 
   function desativar() {
     desativarModoDemo()
+    sairDoServidor('cliente')
     setAtivo(false)
   }
 

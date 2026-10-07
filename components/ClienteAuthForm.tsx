@@ -4,13 +4,15 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { KeyRound, Mail, ArrowRight } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import { contaExiste, criarConta, getConta } from '@/lib/clientContas'
+import { contaExiste, criarConta, esquecerSenhaLocal, getConta } from '@/lib/clientContas'
 import { loginUsuario } from '@/lib/clientAuth'
+import { entrarCliente } from '@/lib/authServidor'
 
-// Login de cliente do MVP: qualquer e-mail/senha entram (sem cadastro nem "esqueci a
-// senha" — não há o que recuperar). Ainda assim garantimos um registro em clientContas
-// pro e-mail, porque Minha Conta (dados, segurança, privacidade) e o painel do
-// funcionário leem essa conta.
+// Login de cliente. Não tem tela de cadastro: o primeiro login com um e-mail novo cria a
+// conta com a senha digitada; daí em diante só aquela senha entra (conferida no servidor,
+// ver lib/authServidor.ts). Não há "esqueci a senha" porque o site não envia e-mail.
+// Além da sessão no servidor, garantimos um registro em clientContas pro e-mail, porque
+// Minha Conta (dados, segurança, privacidade) lê essa conta.
 export default function ClienteAuthForm() {
   const searchParams = useSearchParams()
   // ?next=/carrinho, por ex — volta pra onde o usuário estava tentando ir antes do
@@ -20,19 +22,32 @@ export default function ClienteAuthForm() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [loading, setLoading] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
+    setErro(null)
     setLoading(true)
-    setTimeout(() => {
-      if (!contaExiste(email)) {
-        // Nome provisório a partir do e-mail ("maria.silva@x.com" -> "maria.silva"); o
-        // cliente pode trocar em Minha Conta > Meus dados.
-        criarConta(email.trim().split('@')[0], email, senha)
-      }
-      loginUsuario(email, getConta(email)?.nome)
-      window.location.href = destino
-    }, 1000)
+    // Sempre em minúsculas: o e-mail é a chave de tudo que é do cliente, aqui e no banco.
+    const emailLimpo = email.trim().toLowerCase()
+    const resultado = await entrarCliente(emailLimpo, senha)
+    if (resultado.tipo === 'senha_incorreta' || resultado.tipo === 'invalido') {
+      setErro(resultado.tipo === 'invalido' ? resultado.mensagem : 'Senha incorreta para este e-mail.')
+      setLoading(false)
+      return
+    }
+    // 'ok' = senha conferida no servidor. 'sem-banco' = plano B: login só deste aparelho,
+    // como era antes — único caso em que a senha ainda é guardada aqui.
+    const noServidor = resultado.tipo === 'ok'
+    if (!contaExiste(emailLimpo)) {
+      // Nome provisório a partir do e-mail ("maria.silva@x.com" -> "maria.silva"); o
+      // cliente pode trocar em Minha Conta > Meus dados.
+      criarConta(emailLimpo.split('@')[0], emailLimpo, noServidor ? '' : senha)
+    } else if (noServidor) {
+      esquecerSenhaLocal(emailLimpo)
+    }
+    loginUsuario(emailLimpo, getConta(emailLimpo)?.nome)
+    window.location.href = destino
   }
 
   return (
@@ -70,17 +85,21 @@ export default function ClienteAuthForm() {
               type="password"
               required
               value={senha}
-              onChange={(e) => setSenha(e.target.value)}
+              onChange={(e) => { setSenha(e.target.value); setErro(null) }}
               className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-500 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
               placeholder="••••••••"
             />
           </div>
+          {erro && <p role="alert" className="text-sm text-red-600 mt-2">{erro}</p>}
         </div>
 
         <Button type="submit" variant="primary" disabled={loading} className="w-full mt-2">
           {loading ? 'Entrando...' : 'Entrar no Sistema'}
           {!loading && <ArrowRight size={18} />}
         </Button>
+        <p className="text-sm text-gray-700 text-center">
+          Primeiro acesso? É só entrar: sua conta é criada com a senha que você digitar.
+        </p>
       </form>
     </>
   )

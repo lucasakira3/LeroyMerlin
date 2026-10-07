@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { horaCerta, supabaseServidor } from '@/lib/supabaseServidor'
+import { horaCerta, loginDeVerdadeAtivo, supabaseServidor, tabelaNaoExiste } from '@/lib/supabaseServidor'
+import { cookieDeSaida, normalizarEmail, sessaoDaRequisicao } from '@/lib/servidor/sessao'
 import {
-  NOMES_DAS_TABELAS, TABELAS, ehTabela,
+  NOMES_DAS_TABELAS, TABELAS, ehTabela, podeGravar,
   type Linha, type PedidoDeSync, type Remocao, type RespostaDeSync, type Tabela,
 } from '@/lib/sync/tabelas'
 
@@ -10,11 +11,12 @@ import {
 // Cada chamada faz, nesta ordem: apaga o que o aparelho pediu pra apagar, grava o que mudou
 // nele, e devolve o que mudou nos outros aparelhos desde a última vez.
 //
-// LIMITE CONHECIDO: o login do site ainda é de mentira (qualquer senha entra), então esta
-// rota não tem como conferir quem está chamando — quem souber o endereço consegue ler e
-// gravar como "funcionario". É o mesmo nível de proteção do resto do MVP; fecha quando o
-// login virar de verdade (etapa 2). Enquanto isso, o que dá pra garantir aqui: só as tabelas
-// e colunas da lista, e tamanho limitado por chamada.
+// Quem está chamando é decidido pelo cookie de sessão (lib/servidor/sessao.ts), nunca pelo
+// que o aparelho diz no corpo: sem o cookie de funcionário ninguém lê o painel, e um cliente
+// só lê e grava o que é do e-mail com que fez login. O que cada papel pode gravar está em
+// `podeGravar` (lib/sync/tabelas.ts). Sem login dá pra pedir ajuda no corredor e agendar
+// visita, como sempre deu — por isso essas duas gravações (e remover um agendamento pelo id)
+// seguem abertas; é o limite conhecido que sobra.
 export const dynamic = 'force-dynamic'
 
 const MAX_LINHAS_POR_CHAMADA = 600
@@ -44,10 +46,6 @@ const DEPENDE_DE: Partial<Record<Tabela, string>> = {
 }
 
 type Erro = { code?: string; message?: string } | null
-
-function tabelaNaoExiste(erro: Erro): boolean {
-  return erro?.code === 'PGRST205' || erro?.code === '42P01'
-}
 
 class TabelasAusentes extends Error {}
 
@@ -108,7 +106,8 @@ async function registrarRemocoes(sb: SupabaseClient, agora: number, remocoes: { 
 
 // "Apagar meus dados": some com o que é desse e-mail e deixa o aviso pros outros aparelhos
 // apagarem a cópia deles. Apaga o mesmo que lib/privacidadeDados.ts já apagava no aparelho
-// (pedidos, conversa e conta); os agendamentos ficam, como lá.
+// (pedidos, conversa e conta) mais a senha; os agendamentos ficam, como lá. Com a senha
+// apagada, o mesmo e-mail pode se cadastrar de novo depois.
 async function apagarCliente(sb: SupabaseClient, agora: number, email: string) {
   const idCliente = email.trim().toLowerCase()
   const pedidos = await sb.from('pedidos').delete().eq('cliente_email', email).select('id')
@@ -117,6 +116,8 @@ async function apagarCliente(sb: SupabaseClient, agora: number, email: string) {
   conferir((await sb.from('mensagens').delete().eq('cliente_email', email)).error)
   conferir((await sb.from('conversas').delete().eq('id', email)).error)
   conferir((await sb.from('clientes').delete().eq('id', idCliente)).error)
+  const senha = await sb.from('credenciais').delete().eq('email', idCliente)
+  if (!tabelaNaoExiste(senha.error)) conferir(senha.error)
 
   await registrarRemocoes(sb, agora, [
     ...(pedidos.data ?? []).map(p => ({ tabela: 'pedidos', id: p.id as string, cliente_email: email })),
@@ -228,17 +229,49 @@ export async function POST(req: NextRequest) {
   if (papel !== 'funcionario' && papel !== 'cliente' && papel !== 'visitante') {
     return NextResponse.json({ ativo: true, erro: 'papel inválido' }, { status: 400 })
   }
-  const email = typeof corpo.email === 'string' ? corpo.email.slice(0, 300) : ''
-  if (papel === 'cliente' && !email) {
-    return NextResponse.json({ ativo: true, erro: 'cliente sem e-mail' }, { status: 400 })
+  // Quem é, de verdade: o que o aparelho diz ser precisa bater com o cookie de sessão.
+  // Exceção: enquanto as tabelas do login de verdade não existem no banco, vale o que o
+  // aparelho diz, como era na etapa 1 (ver loginDeVerdadeAtivo).
+  const semSessao = () => NextResponse.json({ ativo: true, erro: 'sem-sessao' }, { status: 401 })
+  const exigirSessao = await loginDeVerdadeAtivo(sb)
+  const emailDeclarado = normalizarEmail(corpo.email)
+  const sessaoCliente = exigirSessao
+    ? sessaoDaRequisicao(req, 'cliente')
+    : emailDeclarado ? { email: emailDeclarado } : null
+  let email = ''
+  // O e-mail usado pra LER as linhas do cliente. Com o login de verdade é sempre o da
+  // sessão (minúsculas). Sem ele, é o que o aparelho mandou, do jeito que mandou: o login
+  // antigo não passava o e-mail pra minúsculas, e as linhas foram gravadas assim.
+  let emailDeLeitura = ''
+  if (papel === 'funcionario') {
+    if (exigirSessao && !sessaoDaRequisicao(req, 'funcionario')) return semSessao()
+  } else if (papel === 'cliente') {
+    if (!sessaoCliente || sessaoCliente.email !== emailDeclarado) return semSessao()
+    email = sessaoCliente.email
+    emailDeLeitura = exigirSessao ? email : String(corpo.email ?? '').trim()
   }
 
   try {
     const agora = await horaCerta()
     const desvio = desvioDoAparelho(corpo.agora, agora)
 
+    // "Apagar meus dados": só a própria conta, e só com a sessão dela. O pedido chega logo
+    // depois de a tela deslogar (por isso vale pra qualquer papel declarado), mas o cookie
+    // ainda está aqui — e sai junto, no fim, porque a conta deixou de existir.
+    let apagouAPropriaConta = false
     for (const emailApagar of (Array.isArray(corpo.apagarClientes) ? corpo.apagarClientes : []).slice(0, 5)) {
-      if (typeof emailApagar === 'string' && emailApagar.trim()) await apagarCliente(sb, agora, emailApagar)
+      const alvo = normalizarEmail(emailApagar)
+      if (!alvo) continue
+      if (!exigirSessao) {
+        await apagarCliente(sb, agora, String(emailApagar).trim())
+      } else if (sessaoCliente && alvo === sessaoCliente.email) {
+        await apagarCliente(sb, agora, alvo)
+        apagouAPropriaConta = true
+      }
+    }
+    const comSaida = <T extends NextResponse>(resposta: T): T => {
+      if (apagouAPropriaConta) resposta.cookies.set(cookieDeSaida('cliente'))
+      return resposta
     }
 
     const idsAgendamentos = corpo.remover?.agendamentos
@@ -252,7 +285,16 @@ export async function POST(req: NextRequest) {
     let total = 0
     for (const [nome, brutas] of Object.entries(corpo.gravar ?? {})) {
       if (!ehTabela(nome) || !Array.isArray(brutas)) continue
-      const linhas = brutas.map(b => limpar(nome, b)).filter((l): l is Linha => l !== null)
+      const linhas = brutas
+        .map(b => limpar(nome, b))
+        .filter((l): l is Linha => l !== null && podeGravar(papel, email, nome, l))
+        .map(l => {
+          // Encerrar a conversa é do funcionário: a hora do encerramento vinda do cliente é
+          // descartada (a coluna some do envio, então o valor guardado no banco não muda).
+          if (nome !== 'conversas' || papel === 'funcionario') return l
+          const { atendida_em: _descartada, ...resto } = l
+          return resto as Linha
+        })
       total += linhas.length
       if (total > MAX_LINHAS_POR_CHAMADA) {
         return NextResponse.json({ ativo: true, erro: 'linhas demais numa chamada' }, { status: 413 })
@@ -262,9 +304,9 @@ export async function POST(req: NextRequest) {
     const mensagensDoEnvio = lotes.find(([nome]) => nome === 'mensagens')?.[1] ?? []
     for (const [nome, linhas] of lotes) await gravar(sb, nome, linhas, mensagensDoEnvio)
 
-    if (papel === 'visitante') return NextResponse.json<RespostaDeSync>({ ativo: true })
+    if (papel === 'visitante') return comSaida(NextResponse.json<RespostaDeSync>({ ativo: true }))
     const desde = corpo.desde && typeof corpo.desde === 'object' ? (corpo.desde as Record<string, unknown>) : {}
-    return NextResponse.json<RespostaDeSync>({ ativo: true, ...(await puxar(sb, agora, papel, email, desde)) })
+    return comSaida(NextResponse.json<RespostaDeSync>({ ativo: true, ...(await puxar(sb, agora, papel, emailDeLeitura, desde)) }))
   } catch (erro) {
     if (erro instanceof TabelasAusentes) return inativo('tabelas-ausentes')
     const mensagem = erro instanceof Error ? erro.message : 'erro desconhecido'

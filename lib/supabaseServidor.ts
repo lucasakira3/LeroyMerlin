@@ -7,6 +7,13 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 let cliente: SupabaseClient | null | undefined
 let desvioDoRelogio: { ms: number; medidoEm: number } | null = null
+let loginDeVerdade: { ativo: boolean; conferidoEm: number } | null = null
+
+// "Tabela não existe": o SQL daquela etapa ainda não foi rodado no Supabase. PGRST205 é o
+// PostgREST dizendo que não conhece a tabela; 42P01 é o próprio Postgres.
+export function tabelaNaoExiste(erro: { code?: string } | null | undefined): boolean {
+  return erro?.code === 'PGRST205' || erro?.code === '42P01'
+}
 
 // null = variáveis não preenchidas (ex.: ainda não cadastradas na Vercel). Quem chama trata
 // isso como "banco desligado" e o site segue só com os dados do aparelho.
@@ -18,6 +25,21 @@ export function supabaseServidor(): SupabaseClient | null {
     ? createClient(url, chave, { auth: { persistSession: false, autoRefreshToken: false } })
     : null
   return cliente
+}
+
+// O login de verdade (etapa 2) está valendo? Está quando a tabela `credenciais` existe no
+// banco — é ela que as rotas de login usam. Enquanto não existir, as rotas de login
+// respondem "sem banco" e as telas caem no login antigo, só do aparelho; a sincronização
+// precisa acompanhar e NÃO exigir sessão nesse caso, senão todo mundo seria deslogado em
+// laço (entra pelo login antigo, o servidor não reconhece, desloga, entra de novo...).
+// A resposta fica guardada por 1 minuto pra não custar uma consulta a mais por chamada.
+export async function loginDeVerdadeAtivo(sb: SupabaseClient): Promise<boolean> {
+  if (loginDeVerdade && Date.now() - loginDeVerdade.conferidoEm < 60 * 1000) return loginDeVerdade.ativo
+  const { error } = await sb.from('credenciais').select('email').limit(1)
+  // Erro que não seja "tabela não existe" (ex.: rede) não muda o que já se sabia.
+  if (error && !tabelaNaoExiste(error)) return loginDeVerdade?.ativo ?? true
+  loginDeVerdade = { ativo: !error, conferidoEm: Date.now() }
+  return loginDeVerdade.ativo
 }
 
 // Que horas são de verdade, em milissegundos. Não dá pra confiar no relógio da máquina onde

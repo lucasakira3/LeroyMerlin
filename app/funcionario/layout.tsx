@@ -7,6 +7,8 @@ import { LayoutDashboard, Users, Package, MessageSquare, LogOut, Menu, X, Search
 import ThemeToggle from '@/components/ThemeToggle'
 import Logo from '@/components/Logo'
 import { getFuncionarioLogado, logoutFuncionario } from '@/lib/funcionarioAuth'
+import { sairDoServidor } from '@/lib/authServidor'
+import TrocarSenhaPainel from '@/components/TrocarSenhaPainel'
 import { useSituacaoSync } from '@/lib/hooks/useAoSincronizar'
 
 export default function FuncionarioLayout({ children }: { children: React.ReactNode }) {
@@ -44,6 +46,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
 
   function handleSair() {
     logoutFuncionario()
+    sairDoServidor('funcionario')
     router.push('/funcionario/login')
   }
 
@@ -123,6 +126,8 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
           })}
         </nav>
         <div className="p-4 border-t border-gray-200 dark:border-gray-500 bg-gray-50">
+          {/* Só faz sentido com o banco ligado: sem ele o painel não tem senha (plano B). */}
+          {situacaoSync === 'conectado' && <TrocarSenhaPainel />}
           <button
             type="button"
             onClick={handleSair}

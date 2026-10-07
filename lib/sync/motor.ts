@@ -15,9 +15,15 @@
 //
 // Um ciclo = uma chamada a /api/sync (ver app/api/sync/route.ts).
 import { CHAVES, type EstadoLocal, type ParteLocal, chaveDaLinha, estadoVazio, hashDaLinha, linhasLocais, mesclarRemoto } from './espelho'
-import { NOMES_DAS_TABELAS, type Linha, type Lote, type PedidoDeSync, type RespostaDeSync, type Tabela } from './tabelas'
+import { NOMES_DAS_TABELAS, podeGravar, type Linha, type Lote, type PedidoDeSync, type RespostaDeSync, type Tabela } from './tabelas'
 
-const CHAVE_ENVIADOS = 'lm_sync_enviados' // { "tabela:id": impressão digital da linha já em dia com o banco }
+// { "tabela:id": impressão digital da linha já em dia com o banco }. Uma lista pro lado do
+// cliente e outra pro painel: o mesmo navegador pode estar logado nos dois papéis, e cada
+// papel só consegue gravar parte das colunas (ex.: só o funcionário encerra a conversa). Com
+// uma lista só, o envio do cliente marcaria a linha como "em dia" e a parte do funcionário
+// nunca subiria.
+const CHAVE_ENVIADOS = 'lm_sync_enviados'
+const CHAVE_ENVIADOS_PAINEL = 'lm_sync_enviados_painel'
 const CHAVE_CURSORES = 'lm_sync_cursores' // { escopo: { tabela: até que hora este aparelho já recebeu } }
 const CHAVE_PENDENCIAS = 'lm_sync_pendencias' // o que foi apagado aqui e o banco ainda não sabe
 const CHAVE_APAGADOS = 'lm_sync_apagados_aqui' // { e-mail: quando "apagar meus dados" foi pedido neste aparelho }
@@ -37,7 +43,8 @@ const TABELAS_DO_APAGAMENTO: Tabela[] = ['clientes', 'pedidos', 'pedidos_status'
 
 export type Escopo = { papel: 'funcionario' } | { papel: 'cliente'; email: string } | { papel: 'visitante' }
 export type SituacaoSync = 'verificando' | 'conectado' | 'local'
-export type ResultadoDoCiclo = 'ok' | 'inativo' | 'falhou' | 'ocupado'
+// 'sem-sessao' = o servidor não reconhece o login deste aparelho (ver RespostaDeSync.erro).
+export type ResultadoDoCiclo = 'ok' | 'inativo' | 'falhou' | 'ocupado' | 'sem-sessao'
 
 interface Pendencias {
   remover: Partial<Record<Tabela, string[]>>
@@ -209,7 +216,9 @@ export async function sincronizar(escopo: Escopo): Promise<ResultadoDoCiclo> {
 async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
   const linhas = linhasLocais(lerEstado())
   const atuais = impressoes(linhas)
-  const enviados = lerJSON<Record<string, string>>(CHAVE_ENVIADOS, {})
+  const chaveEnviados = escopo.papel === 'funcionario' ? CHAVE_ENVIADOS_PAINEL : CHAVE_ENVIADOS
+  const emailDoEscopo = escopo.papel === 'cliente' ? escopo.email.trim().toLowerCase() : ''
+  const enviados = lerJSON<Record<string, string>>(chaveEnviados, {})
   const cursores = lerJSON<Record<string, Record<string, string>>>(CHAVE_CURSORES, {})
   const pendencias = lerPendencias()
 
@@ -240,6 +249,8 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
     for (const linha of linhas[tabela]) {
       if (total >= MAX_LINHAS_POR_CICLO) break
       if (ehDeClienteApagado(tabela, linha, apagados)) continue
+      // O que não é deste papel fica esperando o ciclo do papel certo (ver podeGravar).
+      if (!podeGravar(escopo.papel, emailDoEscopo, tabela, linha)) continue
       const chave = chaveDaLinha(tabela, linha.id)
       const impressao = atuais.get(chave)!
       if (enviados[chave] === impressao) continue
@@ -252,14 +263,14 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
   const temRemocao = Object.values(pendencias.remover).some(ids => (ids?.length ?? 0) > 0) || pendencias.apagarClientes.length > 0
   // Visitante não recebe nada: sem o que mandar, nem chama o servidor.
   if (escopo.papel === 'visitante' && total === 0 && !temRemocao) {
-    gravarJSON(CHAVE_ENVIADOS, enviados)
+    gravarJSON(chaveEnviados, enviados)
     return 'ok'
   }
 
   const idEscopo = idDoEscopo(escopo)
   const pedido: PedidoDeSync = {
     papel: escopo.papel,
-    email: escopo.papel === 'cliente' ? escopo.email : undefined,
+    email: escopo.papel === 'cliente' ? emailDoEscopo : undefined,
     agora: new Date().toISOString(),
     desde: cursores[idEscopo] ?? {},
     gravar,
@@ -277,6 +288,10 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
       body: JSON.stringify(pedido),
       signal: controle.signal,
     })
+    if (res.status === 401) {
+      mudarSituacao('local')
+      return 'sem-sessao'
+    }
     if (!res.ok) {
       mudarSituacao('local')
       return 'falhou'
@@ -329,7 +344,7 @@ async function ciclo(escopo: Escopo): Promise<ResultadoDoCiclo> {
     }
   }
   for (const remocao of remocoes) delete enviados[chaveDaLinha(remocao.tabela, remocao.id)]
-  gravarJSON(CHAVE_ENVIADOS, enviados)
+  gravarJSON(chaveEnviados, enviados)
 
   // Avança o relógio de cada tabela até a última linha recebida (o servidor manda em
   // ordem), mas nunca além de `seguroAte` — ver o comentário desse campo em tabelas.ts.

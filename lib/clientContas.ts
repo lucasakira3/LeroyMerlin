@@ -1,6 +1,9 @@
-// Cadastro de cliente sem backend: senha fica em texto puro no localStorage (aceitável só
-// porque é um MVP local/acadêmico, nunca faria isso com dado real). validarLogin distingue
-// 'nao_encontrada' de 'senha_incorreta' pra dar mensagem de erro específica no formulário.
+// Dados da conta do cliente guardados neste aparelho (nome e data de cadastro).
+//
+// A SENHA: desde o login de verdade (lib/authServidor.ts) ela é conferida no servidor e NÃO
+// fica mais aqui — o campo `senha` fica vazio. Ele só é preenchido no plano B, quando o banco
+// está fora do ar e o site cai no login antigo, só deste aparelho (aí sim em texto puro, como
+// era antes; aceitável só por ser um MVP acadêmico). validarLogin serve só a esse plano B.
 import { pedirSincronizacao } from './sync/motor'
 
 const CHAVE = 'lm_contas_cliente'
@@ -54,6 +57,15 @@ export function validarLogin(email: string, senha: string): 'ok' | 'nao_encontra
   if (!conta) return 'nao_encontrada'
   if (conta.senha !== senha) return 'senha_incorreta'
   return 'ok'
+}
+
+// Login conferido no servidor: a cópia local da senha (de quando o login era só local) sai.
+export function esquecerSenhaLocal(email: string): void {
+  const mapa = lerMapa()
+  const chave = normalizar(email)
+  if (!mapa[chave] || mapa[chave].senha === '') return
+  mapa[chave] = { ...mapa[chave], senha: '' }
+  salvarMapa(mapa)
 }
 
 export function getConta(email: string): ContaCliente | null {

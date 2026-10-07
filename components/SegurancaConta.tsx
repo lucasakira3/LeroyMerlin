@@ -5,6 +5,8 @@ import { Lock, Check, X, ShieldCheck } from 'lucide-react'
 import Card from './ui/Card'
 import Button from './ui/Button'
 import { atualizarConta, validarLogin, getConta } from '@/lib/clientContas'
+import { trocarSenha } from '@/lib/authServidor'
+import { SENHA_MINIMA } from '@/lib/authTipos'
 import { showToast } from '@/lib/toast'
 
 // Extraído de MeusDados.tsx — troca de senha vira sua própria seção "Segurança",
@@ -23,7 +25,7 @@ export default function SegurancaConta({ email }: { email: string }) {
     setErro(null)
   }
 
-  function salvar(e: React.FormEvent) {
+  async function salvar(e: React.FormEvent) {
     e.preventDefault()
     setErro(null)
 
@@ -31,12 +33,29 @@ export default function SegurancaConta({ email }: { email: string }) {
       setErro('Preencha a senha atual e a nova senha.')
       return
     }
-    if (validarLogin(email, senhaAtual) !== 'ok') {
-      setErro('Senha atual incorreta.')
+    if (novaSenha.length < SENHA_MINIMA) {
+      setErro(`A nova senha precisa ter pelo menos ${SENHA_MINIMA} caracteres.`)
       return
     }
 
-    atualizarConta(email, { senha: novaSenha })
+    // A senha é conferida e trocada no servidor (lib/authServidor.ts).
+    const resultado = await trocarSenha('cliente', senhaAtual, novaSenha)
+    if (resultado === 'sem-banco') {
+      // Plano B (banco fora do ar): a senha desta conta só existe neste aparelho.
+      if (validarLogin(email, senhaAtual) !== 'ok') {
+        setErro('Senha atual incorreta.')
+        return
+      }
+      atualizarConta(email, { senha: novaSenha })
+    } else if (resultado !== 'ok') {
+      setErro(
+        resultado === 'senha_incorreta' ? 'Senha atual incorreta.'
+          : resultado === 'sem_sessao' ? 'Sua sessão terminou. Saia e entre de novo para trocar a senha.'
+          : 'Não foi possível trocar a senha agora. Tente de novo.'
+      )
+      return
+    }
+
     showToast('Senha atualizada')
     cancelar()
   }

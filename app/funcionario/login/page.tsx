@@ -6,8 +6,9 @@ import Link from 'next/link'
 import { KeyRound, Mail, ArrowRight } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
-import { loginUsuario } from '@/lib/clientAuth'
 import { loginFuncionario } from '@/lib/funcionarioAuth'
+import { entrarFuncionario } from '@/lib/authServidor'
+import { showToast } from '@/lib/toast'
 import ClienteAuthForm from '@/components/ClienteAuthForm'
 import Logo from '@/components/Logo'
 
@@ -40,22 +41,30 @@ export default function LoginFuncionario() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
   const textos = TEXTOS[tipo]
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Só o login do funcionário passa por aqui; o do cliente é o ClienteAuthForm. O painel
+  // tem uma senha só, do time todo (ver app/api/auth/funcionario/route.ts).
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErro(null)
     setLoading(true)
-    // Simular delay de rede
-    setTimeout(() => {
-      if (tipo === 'funcionario') {
-        loginFuncionario(email)
-        setLoading(false)
-        router.push('/funcionario/dashboard')
-        return
-      }
-      loginUsuario(email)
-      window.location.href = '/'
-    }, 1000)
+    const emailLimpo = email.trim().toLowerCase()
+    const resultado = await entrarFuncionario(emailLimpo, password)
+    if (resultado.tipo === 'senha_incorreta' || resultado.tipo === 'invalido') {
+      setErro(resultado.tipo === 'invalido' ? resultado.mensagem : 'Senha do painel incorreta.')
+      setLoading(false)
+      return
+    }
+    // 'sem-banco' = plano B: sem banco não há o que proteger nem sincronizar, o painel
+    // abre só com os dados deste aparelho, como era antes.
+    loginFuncionario(emailLimpo)
+    setLoading(false)
+    router.push('/funcionario/dashboard')
+    if (resultado.tipo === 'ok' && resultado.criado) {
+      showToast('Senha do painel definida. Guarde-a: é a mesma para todo o time.')
+    }
   }
 
   return (
@@ -147,11 +156,12 @@ export default function LoginFuncionario() {
                       type="password"
                       required
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => { setPassword(e.target.value); setErro(null) }}
                       className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-500 rounded-xl text-sm focus:ring-2 focus:ring-lm-green/30 focus:border-lm-green outline-none transition-all bg-gray-50 focus:bg-white"
                       placeholder="••••••••"
                     />
                   </div>
+                  {erro && <p role="alert" className="text-sm text-red-600 mt-2">{erro}</p>}
                 </div>
 
                 <Button type="submit" variant="primary" disabled={loading} className="w-full mt-2">
@@ -160,11 +170,9 @@ export default function LoginFuncionario() {
                 </Button>
               </form>
 
-              <div className="mt-6 text-center">
-                <a href="#" className="text-sm font-medium text-lm-green hover:underline">
-                  Esqueceu sua senha?
-                </a>
-              </div>
+              <p className="mt-6 text-center text-sm text-gray-700">
+                A senha do painel é a mesma para todo o time da loja.
+              </p>
             </>
           )}
         </div>

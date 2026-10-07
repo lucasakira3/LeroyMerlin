@@ -8,6 +8,7 @@ import Button from './ui/Button'
 import { exportarDadosCliente, apagarDadosCliente } from '@/lib/privacidadeDados'
 import { validarLogin } from '@/lib/clientContas'
 import { logoutUsuario } from '@/lib/clientAuth'
+import { entrarCliente } from '@/lib/authServidor'
 import { showToast } from '@/lib/toast'
 
 // Seção de LGPD em /conta: exportar e apagar tudo que o app guarda sobre o cliente (a lógica
@@ -38,9 +39,14 @@ export default function PrivacidadeDados({ email }: { email: string }) {
     showToast('Download iniciado')
   }
 
-  function confirmarExclusao(e: React.FormEvent) {
+  async function confirmarExclusao(e: React.FormEvent) {
     e.preventDefault()
-    if (validarLogin(email, senha) !== 'ok') {
+    // Confere a senha no servidor fazendo o login de novo — o que também renova a sessão que
+    // o servidor exige pra apagar a conta de lá (app/api/sync/route.ts). Plano B (banco fora
+    // do ar): confere contra a senha guardada neste aparelho, como era antes.
+    const resultado = await entrarCliente(email, senha)
+    const senhaConfere = resultado.tipo === 'ok' || (resultado.tipo === 'sem-banco' && validarLogin(email, senha) === 'ok')
+    if (!senhaConfere) {
       setErro('Senha incorreta.')
       return
     }

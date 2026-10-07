@@ -1,6 +1,7 @@
 -- ════════════════════════════════════════════════════════════════════════════════════
 -- Leroy Merlin MVP — banco de dados (Supabase / Postgres)
 -- Etapa 1: pedidos e atendimento (cliente no celular, funcionário no computador).
+-- Etapa 2: contas e login de verdade (fim do arquivo).
 --
 -- COMO USAR: no painel do Supabase abra "SQL Editor", cole este arquivo inteiro e clique
 -- em "Run". Pode rodar de novo quantas vezes quiser: nada é apagado nem duplicado.
@@ -246,3 +247,35 @@ revoke all on table
   public.clientes, public.pedidos, public.pedidos_status, public.ajuda_corredor,
   public.agendamentos, public.chamados, public.conversas, public.mensagens, public.remocoes
 from anon, authenticated;
+
+-- ════════════════════════════════════════════════════════════════════════════════════
+-- ETAPA 2 — contas e login de verdade
+--
+-- Até aqui o site aceitava qualquer senha. Agora a senha de cada cliente é conferida no
+-- servidor, e o painel do funcionário tem uma senha própria. Só o servidor do site lê estas
+-- duas tabelas (lib/servidor/ e app/api/auth/): elas nunca são enviadas a nenhum aparelho.
+-- Nenhuma senha é guardada: só o resultado de uma conta de mão única (scrypt, com sal), que
+-- serve pra conferir a senha digitada mas não pra descobri-la.
+-- ════════════════════════════════════════════════════════════════════════════════════
+
+create table if not exists public.credenciais (
+  email text primary key,                      -- e-mail em minúsculas
+  senha_hash text not null,                    -- "scrypt$N$r$p$sal$hash" — nunca a senha
+  criado_em timestamptz not null default now(),
+  atualizado_em timestamptz not null default now()
+);
+comment on table public.credenciais is 'Senha de cada cliente, embaralhada (scrypt). Só o servidor do site lê.';
+
+-- Uma linha só: a senha compartilhada do painel do funcionário. O `check (id)` junto com a
+-- chave primária garante que não existe segunda linha.
+create table if not exists public.painel (
+  id boolean primary key default true check (id),
+  senha_hash text not null,
+  atualizado_em timestamptz not null default now()
+);
+comment on table public.painel is 'Senha do painel do funcionário, embaralhada (scrypt). Uma linha só.';
+
+alter table public.credenciais enable row level security;
+alter table public.painel enable row level security;
+revoke all on table public.credenciais, public.painel from anon, authenticated;
+

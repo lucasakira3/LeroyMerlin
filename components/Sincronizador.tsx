@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect } from 'react'
-import { usePathname } from 'next/navigation'
-import { getUsuarioLogado } from '@/lib/clientAuth'
-import { getFuncionarioLogado } from '@/lib/funcionarioAuth'
+import { usePathname, useRouter } from 'next/navigation'
+import { getUsuarioLogado, logoutUsuario } from '@/lib/clientAuth'
+import { getFuncionarioLogado, logoutFuncionario } from '@/lib/funcionarioAuth'
+import { showToast } from '@/lib/toast'
 import { consumirPedidoPendente, estaAplicandoRemoto, sincronizar, type Escopo } from '@/lib/sync/motor'
 
 // De quanto em quanto tempo cada um pergunta ao banco "mudou alguma coisa?". O painel do
@@ -33,6 +34,7 @@ function escopoAtual(pathname: string): Escopo {
 // vez no layout raiz; não desenha nada.
 export default function Sincronizador() {
   const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     let desmontado = false
@@ -40,9 +42,27 @@ export default function Sincronizador() {
     let espera: number | undefined
     let ultimaAtividade = Date.now()
 
+    // O aparelho se diz logado, mas o servidor não reconhece: o cookie de sessão venceu, ou
+    // o login foi feito antes de a senha passar a ser conferida. Continuar "logado" só na
+    // tela deixaria a pessoa achando que os pedidos estão chegando à loja. Então desloga e
+    // pede o login de novo.
+    function semSessao(escopo: Escopo) {
+      if (escopo.papel === 'funcionario') {
+        logoutFuncionario()
+        showToast('Entre de novo no painel para continuar.')
+        router.push('/funcionario/login')
+      } else if (escopo.papel === 'cliente') {
+        logoutUsuario()
+        showToast('Sua sessão terminou. Entre de novo para continuar.')
+        // Telas da conta não fazem sentido sem login; nas outras a pessoa segue navegando.
+        if (pathname.startsWith('/conta')) router.push(`/funcionario/login?next=${encodeURIComponent(pathname)}`)
+      }
+    }
+
     async function rodar() {
       if (desmontado) return
-      await sincronizar(escopoAtual(pathname))
+      const escopo = escopoAtual(pathname)
+      if ((await sincronizar(escopo)) === 'sem-sessao' && !desmontado) semSessao(escopo)
       // Algo mudou aqui enquanto o ciclo estava no ar: roda mais um pra não esperar o relógio.
       if (!desmontado && consumirPedidoPendente()) agendarJa()
     }
@@ -102,7 +122,7 @@ export default function Sincronizador() {
       window.removeEventListener('pointerdown', aoMexer)
       window.removeEventListener('keydown', aoMexer)
     }
-  }, [pathname])
+  }, [pathname, router])
 
   return null
 }

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogOut, Package, HelpCircle, Star, Heart, Route, LayoutGrid } from 'lucide-react'
 import { logoutUsuario } from '@/lib/clientAuth'
+import { sairDoServidor } from '@/lib/authServidor'
 
 interface Props {
   nome: string
@@ -35,6 +36,7 @@ export default function ContaSidebar({ nome, email }: Props) {
 
   function sair() {
     logoutUsuario()
+    sairDoServidor('cliente')
     window.location.href = '/'
   }
 

@@ -38,6 +38,41 @@ export interface Remocao {
 // dele; o visitante (sem login) só envia — pedido de ajuda e agendamento funcionam sem conta.
 export type Papel = 'funcionario' | 'cliente' | 'visitante'
 
+// Quem pode gravar cada linha. A MESMA função roda dos dois lados:
+//   • no servidor (app/api/sync/route.ts) é a trava de verdade — o papel e o e-mail vêm do
+//     cookie de sessão, não do que o aparelho diz;
+//   • no aparelho (lib/sync/motor.ts) serve pra cada papel mandar só o que é dele. O mesmo
+//     navegador pode estar logado como cliente e como funcionário; sem isto o ciclo do
+//     cliente tentaria mandar a etapa que o funcionário acabou de mudar, o servidor
+//     recusaria, e a mudança se perderia.
+// `email` = e-mail em minúsculas de quem está logado como cliente ('' pros outros papéis).
+export function podeGravar(papel: Papel, email: string, tabela: Tabela, linha: Linha): boolean {
+  const meu = (valor: unknown) => email !== '' && typeof valor === 'string' && valor.trim().toLowerCase() === email
+  switch (tabela) {
+    case 'clientes':
+      return papel === 'cliente' && meu(linha.id)
+    case 'pedidos':
+      return papel === 'cliente' && meu(linha.cliente_email)
+    case 'pedidos_status':
+    case 'chamados':
+      return papel === 'funcionario'
+    case 'ajuda_corredor':
+      // Pedir ajuda funciona sem login; marcar como atendido é só do funcionário.
+      return papel === 'funcionario' || linha.atendido !== true
+    case 'agendamentos':
+      // Agendar também funciona sem login (o e-mail é o digitado no formulário). O painel
+      // nunca altera o agendamento em si: o que ele anota fica em `chamados`.
+      return papel !== 'funcionario'
+    case 'conversas':
+      return papel === 'funcionario' || (papel === 'cliente' && meu(linha.id))
+    case 'mensagens':
+      // Cada lado só envia as próprias mensagens.
+      return papel === 'funcionario'
+        ? linha.autor === 'funcionario'
+        : papel === 'cliente' && linha.autor === 'cliente' && meu(linha.cliente_email)
+  }
+}
+
 // Um ciclo de sincronização é UMA chamada: manda o que mudou neste aparelho e recebe o que
 // mudou nos outros desde a última vez (`desde`, um relógio por tabela).
 export interface PedidoDeSync {
@@ -65,5 +100,7 @@ export interface RespostaDeSync {
   // até "agora" nunca a receberia. O que é mais novo que isto volta de novo na próxima
   // consulta (sem efeito, ver lib/sync/espelho.ts) até ficar mais velho que a folga.
   seguroAte?: string
+  // 'sem-sessao' (com status 401) = o servidor não reconhece o login deste aparelho: o
+  // cookie venceu, ou o aparelho estava logado desde antes de o login ser de verdade.
   erro?: string
 }
