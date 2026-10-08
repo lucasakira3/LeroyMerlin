@@ -16,7 +16,7 @@ export default function BuscarView() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
-      <div className="grid grid-cols-2 gap-4 text-center text-sm font-semibold text-lm-dark mb-6">
+      <div className="hidden sm:grid grid-cols-2 gap-4 text-center text-sm font-semibold text-lm-dark mb-6">
         <Card padding="sm">
           <p className="font-black text-lm-dark text-2xl">5.000+</p>
           <p>produtos disponíveis</p>

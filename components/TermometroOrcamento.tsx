@@ -142,12 +142,14 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
 
   return (
     <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-card shadow-soft">
-      <div className="px-4 py-3 flex items-center gap-3">
+      {/* No celular (abaixo de sm:) a linha quebra em duas: valor e botões em cima, barra
+          embaixo ocupando a largura toda. Lado a lado a barra ficava com menos de 100px. */}
+      <div className="px-4 py-3 flex flex-wrap sm:flex-nowrap items-center gap-x-3 gap-y-2">
         <Wallet size={16} className="text-gray-600 dark:text-zinc-500 flex-shrink-0" />
         {!editando && orcamento !== null && (
           <button
             onClick={() => { setValorInput(String(orcamento)); setEditando(true) }}
-            className="text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
+            className="p-2.5 -m-2.5 text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
             aria-label="Editar orçamento"
           >
             <Pencil size={14} />
@@ -180,7 +182,7 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
           </form>
         ) : (
           <>
-            <div className="flex-1 h-2.5 rounded-full bg-gray-100 dark:bg-zinc-800 overflow-hidden flex">
+            <div className="order-last basis-full sm:order-none sm:basis-0 sm:flex-1 h-2.5 rounded-full bg-gray-100 dark:bg-zinc-800 overflow-hidden flex">
               {modoProjeto || itens.length === 0 ? (
                 <div className={`h-full transition-all duration-500 ${corBarra}`} style={{ width: `${Math.min(percentual * 100, 100)}%` }} />
               ) : (
@@ -197,13 +199,13 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
                 })
               )}
             </div>
-            <span className={`text-xs font-semibold whitespace-nowrap ${corTexto}`}>
+            <span className={`flex-1 sm:flex-none text-sm sm:text-xs font-semibold sm:whitespace-nowrap ${corTexto}`}>
               {modoProjeto && 'Lista do projeto: '}{formatarMoeda(total)} de {formatarMoeda(orcamento)}
             </span>
             {!modoProjeto && itens.length > 0 && (
               <button
                 onClick={() => setExpandido(v => !v)}
-                className="text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
+                className="p-2.5 -m-2.5 text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
                 aria-label={expandido ? 'Esconder itens' : 'Ver itens'}
               >
                 {expandido ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -249,12 +251,12 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
                   {item.produto.produto}
                   {item.quantidade > 1 && <span className="text-gray-600 dark:text-zinc-500"> ×{item.quantidade}</span>}
                 </span>
-                <span className="text-gray-700 dark:text-zinc-400 whitespace-nowrap">{fatia.toFixed(0)}% do orçamento</span>
+                <span className="hidden sm:inline text-gray-700 dark:text-zinc-400 whitespace-nowrap">{fatia.toFixed(0)}% do orçamento</span>
                 <span className="font-semibold text-gray-900 dark:text-zinc-50 whitespace-nowrap">{formatarMoeda(subtotal)}</span>
                 <div className="flex items-center gap-0.5 flex-shrink-0">
                   <button
                     onClick={() => mudarQuantidade(item.produto.id, -1)}
-                    className="w-5 h-5 rounded flex items-center justify-center text-gray-600 hover:text-lm-green hover:bg-lm-green/10"
+                    className="w-8 h-8 sm:w-5 sm:h-5 rounded flex items-center justify-center text-gray-600 hover:text-lm-green hover:bg-lm-green/10"
                     aria-label="Diminuir quantidade"
                   >
                     <Minus size={11} />
@@ -263,7 +265,7 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
                   <button
                     onClick={() => mudarQuantidade(item.produto.id, 1)}
                     disabled={item.quantidade >= item.produto.estoque}
-                    className="w-5 h-5 rounded flex items-center justify-center text-gray-600 hover:text-lm-green hover:bg-lm-green/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-8 h-8 sm:w-5 sm:h-5 rounded flex items-center justify-center text-gray-600 hover:text-lm-green hover:bg-lm-green/10 disabled:opacity-30 disabled:cursor-not-allowed"
                     aria-label="Aumentar quantidade"
                   >
                     <Plus size={11} />
@@ -276,7 +278,9 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
       )}
 
       {sugestao && !sugestaoDispensada && (
-        <div className="px-4 pb-3 flex items-center gap-3 text-xs">
+        // No celular a sugestão vira três faixas — fotos e o X de fechar; o texto; o botão
+        // "Trocar" na largura toda. Tudo numa linha só espremia o texto numa coluna de 90px.
+        <div className="px-4 pb-3 grid grid-cols-[auto_1fr_auto] sm:flex items-center gap-x-3 gap-y-2 text-xs">
           <TrendingDown size={14} className={`flex-shrink-0 ${percentual >= 1 ? 'text-red-500' : 'text-lm-green'}`} />
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <img
@@ -291,20 +295,20 @@ export default function TermometroOrcamento({ totalProjeto = null }: { totalProj
               className={`w-8 h-8 rounded-lg ${ajusteFoto(sugestao.alternativa, 'p-0.5')} ring-2 ring-lm-green/40`}
             />
           </div>
-          <p className="flex-1 text-gray-600 dark:text-zinc-300">
+          <p className="col-span-3 row-start-2 sm:flex-1 text-sm sm:text-xs text-gray-600 dark:text-zinc-300">
             {percentual >= 1 ? 'Você passou do limite do orçamento.' : 'Você está perto do limite.'} Troque <strong className="text-gray-900 dark:text-zinc-50">{sugestao.itemAtual.produto}</strong> por{' '}
             <strong className="text-gray-900 dark:text-zinc-50">{sugestao.alternativa.produto}</strong> e economize{' '}
             <strong className="text-lm-green">{formatarMoeda(sugestao.economia)}</strong>.
           </p>
           <button
             onClick={trocarItem}
-            className="bg-lm-green text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 flex-shrink-0"
+            className="col-span-3 row-start-3 h-10 sm:h-auto text-sm sm:text-xs bg-lm-green text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 flex-shrink-0"
           >
             Trocar
           </button>
           <button
             onClick={() => setSugestaoDispensada(true)}
-            className="text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
+            className="col-start-3 row-start-1 justify-self-end p-2.5 -m-2.5 text-gray-600 hover:text-gray-600 dark:hover:text-zinc-200 flex-shrink-0"
             aria-label="Dispensar sugestão"
           >
             <X size={14} />

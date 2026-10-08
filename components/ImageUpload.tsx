@@ -163,9 +163,13 @@ export default function ImageUpload({ onResults, loading, setLoading, onSelectPr
         >
           <Camera size={28} className="text-gray-600" />
           <p className="text-base font-semibold text-lm-dark text-center">
-            {modo === 'produto'
-              ? 'Arraste uma foto do produto ou clique para selecionar'
-              : 'Mostre o problema — cano vazando, parede rachada, tomada solta — e a IA identifica o que fazer'}
+            {modo === 'produto' ? (
+              // No celular não existe "arrastar": o toque abre a câmera ou a galeria.
+              <>
+                <span className="md:hidden">Toque para tirar uma foto do produto ou escolher da galeria</span>
+                <span className="hidden md:inline">Arraste uma foto do produto ou clique para selecionar</span>
+              </>
+            ) : 'Mostre o problema — cano vazando, parede rachada, tomada solta — e a IA identifica o que fazer'}
           </p>
           <input
             ref={inputRef}

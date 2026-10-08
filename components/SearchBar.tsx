@@ -47,7 +47,7 @@ export default function SearchBar({ onResults, loading, setLoading }: SearchBarP
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="O que você está procurando?"
+          placeholder="O que você procura?"
           disabled={loading}
           aria-label="Buscar produto na Leroy Merlin"
           className="w-full h-14 pl-12 pr-14 rounded-xl border border-gray-200 dark:border-gray-500 bg-white text-lm-dark placeholder-gray-400 text-base shadow-soft focus:outline-none focus:ring-2 focus:ring-lm-green/30 focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"

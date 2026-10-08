@@ -10,6 +10,7 @@ import CarrinhoIcon from './CarrinhoIcon'
 import FavoritosIcon from './FavoritosIcon'
 import NotificacoesBell from './NotificacoesBell'
 import HeaderSearch from './HeaderSearch'
+import { BotaoInstalarApp } from './InstalarApp'
 
 // Exportado pro Footer.tsx reaproveitar os mesmos links/rótulos — evita os dois listarem as
 // páginas do site de forma divergente se uma nova aba for adicionada aqui.
@@ -47,7 +48,7 @@ export default function NavBar() {
   return (
     <header className="bg-lm-green shadow-md relative z-30">
       {/* Linha 1 — logo, busca, ícones */}
-      <div className="px-4 md:px-6 flex lg:grid lg:grid-cols-[1fr_min(42rem,100%)_1fr] items-center gap-3 md:gap-4 h-16">
+      <div className="px-4 md:px-6 flex lg:grid lg:grid-cols-[1fr_min(42rem,100%)_1fr] items-center gap-2.5 md:gap-4 h-16">
 
         {/* Logo */}
         <Link href="/" className="flex-shrink-0 lg:justify-self-start">
@@ -73,16 +74,21 @@ export default function NavBar() {
           <CarrinhoIcon />
         </div>
 
-        {/* Botão hambúrguer — mobile/tablet (abaixo de lg:, faixa em que a linha de abas não cabe inteira) */}
-        <button
-          type="button"
-          onClick={() => setMenuAberto((v) => !v)}
-          aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'}
-          aria-expanded={menuAberto}
-          className="lg:hidden flex items-center justify-center w-10 h-10 -mr-2 text-white flex-shrink-0"
-        >
-          {menuAberto ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        {/* Carrinho + botão hambúrguer — mobile/tablet (abaixo de lg:, faixa em que a linha
+            de abas não cabe inteira). O carrinho fica fora do menu: dentro da loja é o que o
+            cliente mais abre, e escondido no menu ele nem via o contador de itens. */}
+        <div className="lg:hidden flex items-center flex-shrink-0 -mr-2">
+          <CarrinhoIcon />
+          <button
+            type="button"
+            onClick={() => setMenuAberto((v) => !v)}
+            aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={menuAberto}
+            className="flex items-center justify-center w-10 h-10 text-white"
+          >
+            {menuAberto ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
 
       {/* Linha 2 — abas de navegação (desktop) */}
@@ -127,12 +133,13 @@ export default function NavBar() {
             )
           })}
 
+          <BotaoInstalarApp />
+
           <div className="flex items-center justify-between gap-3 pt-3 mt-2 border-t border-white/15">
             <div className="flex items-center gap-1">
               {logado && <NotificacoesBell />}
               <ThemeToggle />
               <FavoritosIcon />
-              <CarrinhoIcon />
             </div>
             <Link href={loginHref} aria-label={logado ? 'Minha conta' : 'Entrar'} className={contaIconClass}>
               <User size={19} />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ShoppingCart, Check, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { SearchResult } from '@/types/produto'
@@ -19,6 +19,11 @@ const SHELF_H = 118
 
 const ROW1_Y = 118
 const ROW2_Y = 340
+
+// Celular: abaixo desta largura a planta inteira não dá pra ler, e ela passa a abrir "de
+// perto" com esta altura fixa (ver `dePerto` no componente).
+const LARGURA_ESTREITA = 560
+const ALTURA_DE_PERTO = 420
 
 // Mapeia lettered corredores para corredores numéricos próximos (para exibir no mapa principal)
 function specialToNumeric(slug: string): number | null {
@@ -136,8 +141,29 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
     }
   }
 
+  // ── Celular ──
+  // Numa tela estreita a planta inteira fica com ~150px de altura e os números dos
+  // corredores somem. Então no celular ela abre "de perto": altura fixa, mais larga que a
+  // tela, e o cliente desliza de lado com o dedo (rolagem normal do navegador, então a página
+  // continua rolando pra cima e pra baixo). O botão do canto alterna pra "loja inteira".
+  // O zoom com arraste, abaixo, fica só pras telas largas.
+  const moldura = useRef<HTMLDivElement>(null)
+  const [estreito, setEstreito] = useState(false)
+  const [lojaInteira, setLojaInteira] = useState(false)
+  const dePerto = estreito && !lojaInteira
+
+  useEffect(() => {
+    const el = moldura.current
+    if (!el) return
+    const medir = () => setEstreito(el.clientWidth < LARGURA_ESTREITA)
+    medir()
+    const observador = new ResizeObserver(medir)
+    observador.observe(el)
+    return () => observador.disconnect()
+  }, [])
+
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
-    if (zoom <= 1) return
+    if (estreito || zoom <= 1) return
     setArrastando(true)
     arrastoRef.current = { x: e.clientX, y: e.clientY, panX: pan.x, panY: pan.y }
     e.currentTarget.setPointerCapture(e.pointerId)
@@ -230,8 +256,8 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
           <line key={oy} x1={x+2} y1={y+oy} x2={x+SHELF_W-2} y2={y+oy} stroke={stroke} strokeWidth="0.5" opacity="0.5" />
         ))}
         <rect x={x+SHELF_W} y={y} width={AISLE_W} height={SHELF_H} fill="#f8fafc" />
-        <text x={x+SHELF_W+AISLE_W/2} y={y+13} textAnchor="middle"
-          fontSize="8.5" fontWeight="700" fill="#374151" fontFamily="Inter,sans-serif">{label}</text>
+        <text x={x+SHELF_W+AISLE_W/2} y={y+15} textAnchor="middle"
+          fontSize="11" fontWeight="800" fill="#1f2937" fontFamily="Inter,sans-serif">{label}</text>
         <text x={x+SHELF_W+AISLE_W/2} y={y+SHELF_H-5} textAnchor="middle"
           fontSize="7" fill="#94a3b8" fontFamily="Inter,sans-serif">↕</text>
         <rect x={x+SHELF_W+AISLE_W} y={y} width={SHELF_W} height={SHELF_H} fill={fill} stroke={stroke} strokeWidth="0.8" rx="1" />
@@ -242,14 +268,25 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
     )
   }
 
+  // No modo "de perto" a planta desliza sozinha até o produto escolhido (ou, ao abrir, até o
+  // primeiro da lista) ficar no meio da tela.
+  const alvo = pins.find(p => p.produto.id === selectedId) ?? pins[0]
+  const alvoX = alvo ? alvo.pos.x : null
+  useEffect(() => {
+    const el = moldura.current
+    if (!dePerto || !el || alvoX === null) return
+    const escala = ALTURA_DE_PERTO / VH
+    el.scrollTo({ left: alvoX * escala - el.clientWidth / 2, behavior: 'smooth' })
+  }, [dePerto, alvoX])
+
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 mb-2">
         <div>
           <span className="text-xs font-bold text-gray-700">{loja}</span>
-          <span className="ml-2 text-xs text-gray-600">Planta da loja · 50 corredores</span>
+          <span className="hidden sm:inline ml-2 text-xs text-gray-600">Planta da loja · 50 corredores</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {pins.length > 0 && (
             <span className="text-xs bg-lm-green/10 text-lm-green border border-lm-green/20 px-2 py-0.5 rounded-full font-semibold">
               {pins.length} produto{pins.length > 1 ? 's' : ''} localizado{pins.length > 1 ? 's' : ''}
@@ -263,21 +300,22 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
         </div>
       </div>
 
-      <div
-        className="border border-gray-200 dark:border-gray-500 rounded-card overflow-hidden shadow-soft bg-white relative select-none"
-        onDoubleClick={handleDoubleClick}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
-        style={{ touchAction: 'none', cursor: zoom > 1 ? (arrastando ? 'grabbing' : 'grab') : 'default' }}
-      >
+      <div className="border border-gray-200 dark:border-gray-500 rounded-card overflow-hidden shadow-soft bg-white relative select-none">
+        {estreito && (
+          <button
+            type="button"
+            onClick={() => setLojaInteira(v => !v)}
+            className="absolute z-30 top-2 right-2 h-9 px-3 rounded-full flex items-center gap-1.5 bg-gray-900/80 backdrop-blur-sm text-white text-xs font-semibold shadow-md"
+          >
+            {lojaInteira ? <><ZoomIn size={14} /> Ver de perto</> : <><Maximize2 size={13} /> Loja inteira</>}
+          </button>
+        )}
         {/* Controles de zoom — pílula flutuante escura sobre a planta clara (mesmo padrão
             visual dos ícones de favoritar/comparar sobre a foto do produto em
             ProdutoDrawer.tsx), em vez de quadrados soltos. Fixo em tom escuro de propósito:
             o SVG da planta da loja não inverte com o tema (ver [[project-dev-workflow]]),
             então um controle neutro em cima dela fica legível nos dois modos. */}
-        <div className="absolute z-30 top-2 right-2 flex flex-col gap-0.5 bg-gray-900/80 backdrop-blur-sm rounded-full p-1 shadow-md">
+        {!estreito && <div className="absolute z-30 top-2 right-2 flex flex-col gap-0.5 bg-gray-900/80 backdrop-blur-sm rounded-full p-1 shadow-md">
           <button
             type="button"
             onClick={() => aplicarZoom(0.5)}
@@ -305,16 +343,35 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
           >
             <Maximize2 size={13} />
           </button>
-        </div>
+        </div>}
 
+        {/* Moldura da planta: no celular "de perto" é ela que rola de lado; nas telas largas
+            é onde se arrasta a planta com zoom. O dedo só fica preso ao mapa quando há zoom —
+            com touch-action sempre desligado, a página não rolava com o dedo sobre a planta. */}
         <div
-          style={{
+          ref={moldura}
+          className={dePerto ? 'overflow-x-auto overscroll-x-contain' : undefined}
+          onDoubleClick={estreito ? undefined : handleDoubleClick}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+          style={estreito ? undefined : { touchAction: zoom > 1 ? 'none' : 'auto', cursor: zoom > 1 ? (arrastando ? 'grabbing' : 'grab') : 'default' }}
+        >
+        <div
+          style={estreito ? undefined : {
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transformOrigin: 'center center',
             transition: arrastando ? 'none' : 'transform 0.15s ease-out',
           }}
         >
-        <svg viewBox={`0 0 ${VW} ${VH}`} className="w-full" style={{ display: 'block' }}>
+        <svg
+          viewBox={`0 0 ${VW} ${VH}`}
+          className={dePerto ? undefined : 'w-full'}
+          style={dePerto
+            ? { display: 'block', height: ALTURA_DE_PERTO, width: (ALTURA_DE_PERTO * VW) / VH, maxWidth: 'none' }
+            : { display: 'block' }}
+        >
           <rect width={VW} height={VH} fill="#eef2f7" />
 
           {/* Jardim */}
@@ -348,8 +405,8 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             return (
               <g key={d.label}>
                 <rect x={x1} y={ROW1_Y-18} width={x2-x1} height="16" rx="2" fill={fill} stroke={stroke} strokeWidth="0.8" />
-                <text x={(x1+x2)/2} y={ROW1_Y-7} textAnchor="middle"
-                  fontSize="7.5" fontWeight="700" fill="#374151" fontFamily="Inter,sans-serif">{d.label}</text>
+                <text x={(x1+x2)/2} y={ROW1_Y-6.5} textAnchor="middle"
+                  fontSize="9.5" fontWeight="700" fill="#374151" fontFamily="Inter,sans-serif">{d.label}</text>
               </g>
             )
           })}
@@ -374,8 +431,8 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             return (
               <g key={d.label}>
                 <rect x={x1} y={ROW2_Y-18} width={x2-x1} height="16" rx="2" fill={fill} stroke={stroke} strokeWidth="0.8" />
-                <text x={(x1+x2)/2} y={ROW2_Y-7} textAnchor="middle"
-                  fontSize="7.5" fontWeight="700" fill="#374151" fontFamily="Inter,sans-serif">{d.label}</text>
+                <text x={(x1+x2)/2} y={ROW2_Y-6.5} textAnchor="middle"
+                  fontSize="9.5" fontWeight="700" fill="#374151" fontFamily="Inter,sans-serif">{d.label}</text>
               </g>
             )
           })}
@@ -425,6 +482,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
               <g key={pin.produto.id}
                 onClick={() => handlePinClick(pin)}
                 style={{ cursor: 'pointer' }}>
+                <circle cx={pin.pos.x} cy={pin.pos.y} r="24" fill="transparent" />
                 <circle cx={pin.pos.x} cy={pin.pos.y+2} r="11" fill="rgba(0,0,0,0.2)" />
                 {isSel && (
                   <circle cx={pin.pos.x} cy={pin.pos.y} r="18" fill={pin.color} opacity="0.25" />
@@ -442,7 +500,11 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
           })}
         </svg>
         </div>
+        </div>
       </div>
+      {dePerto && (
+        <p className="mt-1.5 text-xs text-gray-600 text-center">Deslize a planta para o lado para ver a loja toda</p>
+      )}
 
       {/* Legenda — quando há rota calculada, os cards já vêm na ordem de visita (ver
           `ordemPorCorredor` acima), então esse título é só um rótulo pro que já está
@@ -475,8 +537,8 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                   className={`w-9 h-9 rounded-md ${ajusteFoto(pin.produto, 'p-0.5')} flex-shrink-0`}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-gray-800 truncate">{pin.produto.produto}</p>
-                  <p className="text-gray-700 truncate">{pin.produto.corredor} · {pin.produto.categoria}</p>
+                  <p className="font-semibold text-gray-800 line-clamp-2 sm:line-clamp-1">{pin.produto.produto}</p>
+                  <p className="text-gray-700 truncate">{pin.produto.corredor}<span className="hidden sm:inline"> · {pin.produto.categoria}</span></p>
                   {(pin.produto as any).preco != null && (
                     <p className="text-xs font-bold text-lm-green mt-0.5">
                       {Number((pin.produto as any).preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
@@ -488,13 +550,13 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
                     onClick={(e) => handleAdicionar(pin.produto.id, pin.produto.estoque, e)}
                     disabled={pin.produto.estoque === 0}
                     aria-label="Adicionar ao carrinho"
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-9 h-9 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ backgroundColor: pin.color }}
                   >
-                    {adicionadoId === pin.produto.id ? <Check size={13} /> : <ShoppingCart size={13} />}
+                    {adicionadoId === pin.produto.id ? <Check size={14} /> : <ShoppingCart size={14} />}
                   </button>}
                   {onSelect && (
-                    <span className="text-[10px] font-bold shrink-0" style={{ color: pin.color }}>
+                    <span className="text-xs font-bold shrink-0" style={{ color: pin.color }}>
                       Ver →
                     </span>
                   )}

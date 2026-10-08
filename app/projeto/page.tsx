@@ -52,20 +52,21 @@ export default function ProjetoPage() {
         </Card>
 
         {/* Ferramentas — soltas, ao lado da bancada */}
-        <div className="flex flex-col items-center gap-10 pt-4 lg:sticky lg:top-6 lg:self-start">
+        {/* No celular as três cabem numa fileira; empilhadas, cada uma tomava um quarto da tela. */}
+        <div className="grid grid-cols-3 gap-3 lg:flex lg:flex-col lg:items-center lg:gap-10 lg:pt-4 lg:sticky lg:top-6 lg:self-start">
           {FERRAMENTAS.map(ferramenta => (
             <button
               key={ferramenta.id}
               type="button"
               onClick={() => setFerramentaAberta(ferramenta.id)}
-              className="group flex flex-col items-center text-center gap-3 w-full"
+              className="group flex flex-col items-center text-center gap-2 lg:gap-3 w-full"
             >
-              <div className={`w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105 group-hover:-rotate-3 ${ferramenta.bg}`}>
-                <ferramenta.icone size={36} className={ferramenta.cor} strokeWidth={1.75} />
+              <div className={`w-14 h-14 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105 group-hover:-rotate-3 ${ferramenta.bg}`}>
+                <ferramenta.icone size={36} className={`w-7 h-7 lg:w-9 lg:h-9 ${ferramenta.cor}`} strokeWidth={1.75} />
               </div>
               <div>
-                <p className="text-sm font-bold text-lm-dark">{ferramenta.label}</p>
-                <p className="text-sm text-gray-700 mt-0.5 max-w-[160px]">{ferramenta.texto}</p>
+                <p className="text-sm font-bold text-lm-dark leading-tight">{ferramenta.label}</p>
+                <p className="hidden lg:block text-sm text-gray-700 mt-0.5 max-w-[160px]">{ferramenta.texto}</p>
               </div>
             </button>
           ))}

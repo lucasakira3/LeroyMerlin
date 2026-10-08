@@ -349,17 +349,19 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
             <ShoppingBag size={18} className="text-lm-yellow flex-shrink-0" />
             <h2 className="font-bold text-xl">{projeto.titulo}</h2>
           </div>
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 w-full sm:w-auto">
             <p className="text-white/60 text-[10px] mb-1">Loja</p>
             <select value={loja} onChange={e => setLoja(e.target.value)}
-              className="text-xs bg-white/15 border border-white/30 text-white rounded-lg px-2 py-1.5 focus:outline-none max-w-[200px]">
+              className="w-full sm:w-auto sm:max-w-[200px] text-xs bg-white/15 border border-white/30 text-white rounded-lg px-2 py-1.5 focus:outline-none">
               {LOJAS.map(l => <option key={l} value={l} className="text-gray-800">{l}</option>)}
             </select>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-          <div className="bg-white/15 border border-white/25 rounded-xl px-4 py-3">
+        {/* No celular o total ocupa a 1ª linha e os outros dois números dividem a 2ª —
+            empilhados, os três tomavam uma tela inteira antes de a lista aparecer. */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 mt-4">
+          <div className="col-span-2 sm:col-span-1 bg-white/15 border border-white/25 rounded-xl px-3 sm:px-4 py-3">
             <p className="text-white/60 text-[10px] uppercase tracking-wide flex items-center gap-1"><Wallet size={11} /> Total estimado</p>
             <p className="text-2xl font-black">
               {totalEstimado > 0
@@ -368,14 +370,14 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
             </p>
             <p className="text-[11px] text-white/60">dos itens selecionados</p>
           </div>
-          <div className="bg-white/15 border border-white/25 rounded-xl px-4 py-3">
+          <div className="bg-white/15 border border-white/25 rounded-xl px-3 sm:px-4 py-3">
             <p className="text-white/60 text-[10px] uppercase tracking-wide flex items-center gap-1"><Package size={11} /> Materiais</p>
-            <p className="text-2xl font-black">{projeto.itens.length}</p>
+            <p className="text-xl sm:text-2xl font-black">{projeto.itens.length}</p>
             <p className="text-[11px] text-white/60">{mapResultados.length} selecionados na lista</p>
           </div>
-          <div className="bg-white/15 border border-white/25 rounded-xl px-4 py-3">
+          <div className="bg-white/15 border border-white/25 rounded-xl px-3 sm:px-4 py-3 min-w-0">
             <p className="text-white/60 text-[10px] uppercase tracking-wide flex items-center gap-1"><Wrench size={11} /> Complexidade</p>
-            <p className="text-2xl font-black">{projeto.complexidade}</p>
+            <p className="text-lg sm:text-2xl font-black leading-7 sm:leading-8 break-words">{projeto.complexidade}</p>
             <p className="text-[11px] text-white/60">previsto: {projeto.orcamento_estimado}</p>
           </div>
         </div>
@@ -405,7 +407,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
         <div className="flex flex-wrap gap-2 mt-4">
           <button
             onClick={compartilharWhatsApp}
-            className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-black text-sm font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-black text-sm font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm"
           >
             {/* WhatsApp icon */}
             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current flex-shrink-0">
@@ -415,7 +417,7 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
           </button>
           <button
             onClick={copiarLink}
-            className="flex items-center gap-2 bg-white/15 hover:bg-black/15 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white/15 hover:bg-black/15 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
           >
             <Share2 size={14} />
             {linkCopiado ? 'Link copiado ✓' : 'Copiar link'}
@@ -423,21 +425,21 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
           {salvoId ? (
             <Link
               href="/conta/projetos"
-              className="flex items-center gap-2 bg-lm-yellow text-black text-sm font-bold px-4 py-2.5 rounded-xl"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-lm-yellow text-black text-sm font-bold px-4 py-2.5 rounded-xl"
             >
               <BookmarkCheck size={15} /> Projeto salvo · ver meus projetos
             </Link>
           ) : emailUsuario ? (
             <button
               onClick={salvarNaConta}
-              className="flex items-center gap-2 bg-lm-yellow hover:brightness-95 text-black text-sm font-bold px-4 py-2.5 rounded-xl transition-all"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-lm-yellow hover:brightness-95 text-black text-sm font-bold px-4 py-2.5 rounded-xl transition-all"
             >
               <Bookmark size={15} /> Salvar projeto
             </button>
           ) : (
             <Link
               href="/funcionario/login?next=/projeto"
-              className="flex items-center gap-2 bg-white/15 hover:bg-black/15 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white/15 hover:bg-black/15 border border-white/30 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors"
             >
               <Bookmark size={15} /> Entre para salvar o projeto
             </Link>

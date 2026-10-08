@@ -514,15 +514,15 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
           <div className="border-t border-gray-200 dark:border-gray-500 p-4 flex items-center justify-between gap-2 flex-shrink-0">
             <button
               onClick={() => setViewMode('chat')}
-              className="flex items-center gap-1.5 text-sm font-semibold text-lm-green hover:underline"
+              className="flex items-center gap-1.5 text-sm font-semibold text-lm-green hover:underline text-left"
             >
-              <MessageCircle size={14} /> Conversar sobre este projeto
+              <MessageCircle size={14} className="flex-shrink-0" /> Conversar sobre este projeto
             </button>
             <button
               onClick={novoProjeto}
-              className="flex items-center gap-1.5 text-base font-semibold text-gray-700 hover:text-lm-green transition-colors"
+              className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-lm-green transition-colors text-right"
             >
-              <RotateCcw size={14} /> Começar um novo projeto
+              <RotateCcw size={14} className="flex-shrink-0" /> Começar um novo projeto
             </button>
           </div>
         </div>

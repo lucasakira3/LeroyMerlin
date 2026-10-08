@@ -388,48 +388,53 @@ export default function CarrinhoPage() {
 
             <div className="space-y-3 mb-6">
               {itensResolvidos.map(({ item, produto }) => (
-                <Card key={produto.id} padding="sm" className="flex items-center gap-3">
-                  <img
-                    src={getImagemProduto(produto)}
-                    alt={produto.categoria}
-                    className={`w-14 h-14 rounded-lg ${ajusteFoto(produto, 'p-1')} flex-shrink-0`}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{produto.produto}</p>
-                    <div className="flex items-center gap-3 mt-0.5">
-                      <span className="flex items-center gap-1 text-xs text-lm-green font-bold">
-                        <MapPin size={10} /> {produto.corredor}
-                      </span>
-                      <span className="text-sm text-gray-600">{produto.estoque} disp.</span>
+                // No celular o cartão tem duas faixas — foto e nome em cima; quantidade, preço e
+                // lixeira embaixo. Numa linha só não cabia: o nome virava "Fur..." e a
+                // quantidade ficava por cima do estoque. De sm: pra cima volta a ser uma linha.
+                <Card key={produto.id} padding="sm" className="flex flex-wrap sm:flex-nowrap items-center gap-x-3 gap-y-2">
+                  <div className="flex items-center gap-3 min-w-0 basis-full sm:basis-0 sm:flex-1">
+                    <img
+                      src={getImagemProduto(produto)}
+                      alt={produto.categoria}
+                      className={`w-14 h-14 rounded-lg ${ajusteFoto(produto, 'p-1')} flex-shrink-0`}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-900 line-clamp-2 sm:line-clamp-1">{produto.produto}</p>
+                      <div className="flex items-center gap-3 mt-0.5">
+                        <span className="flex items-center gap-1 text-xs text-lm-green font-bold whitespace-nowrap">
+                          <MapPin size={10} /> {produto.corredor}
+                        </span>
+                        <span className="text-sm text-gray-600 whitespace-nowrap">{produto.estoque} disp.</span>
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => mudarQuantidade(produto.id, -1)}
-                      className="w-6 h-6 rounded-md border border-gray-200 dark:border-gray-500 flex items-center justify-center text-gray-700 hover:bg-gray-50"
+                      className="w-9 h-9 sm:w-7 sm:h-7 rounded-lg sm:rounded-md border border-gray-200 dark:border-gray-500 flex items-center justify-center text-gray-700 hover:bg-gray-50"
                       aria-label="Diminuir quantidade"
                     >
-                      <Minus size={12} />
+                      <Minus size={14} />
                     </button>
-                    <span className="text-sm font-medium w-5 text-center">{item.quantidade}</span>
+                    <span className="text-sm font-semibold w-6 text-center">{item.quantidade}</span>
                     <button
                       onClick={() => mudarQuantidade(produto.id, 1)}
                       disabled={item.quantidade >= produto.estoque}
-                      className="w-6 h-6 rounded-md border border-gray-200 dark:border-gray-500 flex items-center justify-center text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-9 h-9 sm:w-7 sm:h-7 rounded-lg sm:rounded-md border border-gray-200 dark:border-gray-500 flex items-center justify-center text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label="Aumentar quantidade"
                     >
-                      <Plus size={12} />
+                      <Plus size={14} />
                     </button>
                   </div>
 
-                  <span className="text-sm font-bold text-gray-900 w-20 text-right flex-shrink-0">
+                  <span className="text-base sm:text-sm font-bold text-gray-900 ml-auto sm:ml-0 sm:w-20 text-right flex-shrink-0">
                     {(produto.preco * item.quantidade).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </span>
 
                   <button
                     onClick={() => remover(produto.id)}
-                    className="text-gray-300 hover:text-red-500 flex-shrink-0"
+                    className="w-9 h-9 -mr-1.5 sm:w-7 sm:h-7 sm:mr-0 flex items-center justify-center rounded-lg text-gray-500 hover:text-red-500 hover:bg-red-50 flex-shrink-0 transition-colors"
                     aria-label="Remover do carrinho"
                   >
                     <Trash2 size={16} />
@@ -671,19 +676,19 @@ export default function CarrinhoPage() {
                       )}
 
                       {cartaoSelecionado ? (
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                           <input
                             type="text"
                             value={cvv}
                             onChange={e => setCvv(formatarCvv(e.target.value))}
                             placeholder="CVV"
                             inputMode="numeric"
-                            className="w-20 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            className="w-full sm:w-20 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                           />
                           <select
                             value={parcelas}
                             onChange={e => setParcelas(Number(e.target.value))}
-                            className="flex-1 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                            className="w-full sm:w-auto sm:flex-1 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                           >
                             {opcoesParcelamento.map(op => (
                               <option key={op.parcelas} value={op.parcelas}>
@@ -710,14 +715,14 @@ export default function CarrinhoPage() {
                             placeholder="Nome impresso no cartão"
                             className="w-full h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                           />
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-2">
                             <input
                               type="text"
                               value={validadeCartao}
                               onChange={e => setValidadeCartao(formatarValidade(e.target.value))}
                               placeholder="MM/AA"
                               inputMode="numeric"
-                              className="w-24 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="flex-1 min-w-0 sm:flex-none sm:w-24 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                             <input
                               type="text"
@@ -725,12 +730,12 @@ export default function CarrinhoPage() {
                               onChange={e => setCvv(formatarCvv(e.target.value))}
                               placeholder="CVV"
                               inputMode="numeric"
-                              className="w-20 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="flex-1 min-w-0 sm:flex-none sm:w-20 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             />
                             <select
                               value={parcelas}
                               onChange={e => setParcelas(Number(e.target.value))}
-                              className="flex-1 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
+                              className="w-full sm:w-auto sm:flex-1 h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-500 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-lm-green/30"
                             >
                               {opcoesParcelamento.map(op => (
                                 <option key={op.parcelas} value={op.parcelas}>

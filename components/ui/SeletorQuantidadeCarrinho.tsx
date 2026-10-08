@@ -42,8 +42,11 @@ export default function SeletorQuantidadeCarrinho({ produtoId, estoque, size = '
     }
   }
 
-  const alturaBotao = size === 'lg' ? 'w-full py-2.5' : 'px-3 py-1.5'
-  const alturaStepper = size === 'lg' ? 'h-10' : 'h-8'
+  // No tamanho pequeno (cartões das vitrines) o botão e o contador ficam mais altos no
+  // celular: 28px era pouco pra acertar com o dedo.
+  const alturaBotao = size === 'lg' ? 'w-full py-2.5' : 'px-3 py-2.5 sm:py-1.5'
+  const alturaStepper = size === 'lg' ? 'h-10' : 'h-9 sm:h-8'
+  const botaoDoContador = size === 'lg' ? 'w-8 h-8' : 'w-7 h-7 sm:w-6 sm:h-6'
 
   if (quantidade === 0) {
     return (
@@ -72,7 +75,7 @@ export default function SeletorQuantidadeCarrinho({ produtoId, estoque, size = '
           type="button"
           onClick={e => mudar(-1, e)}
           aria-label="Diminuir quantidade"
-          className="w-6 h-6 flex-shrink-0 rounded-md flex items-center justify-center text-lm-green hover:bg-lm-green/15"
+          className={`${botaoDoContador} flex-shrink-0 rounded-md flex items-center justify-center text-lm-green hover:bg-lm-green/15`}
         >
           <Minus size={13} />
         </button>
@@ -82,7 +85,7 @@ export default function SeletorQuantidadeCarrinho({ produtoId, estoque, size = '
           onClick={e => mudar(1, e)}
           disabled={quantidade >= estoque}
           aria-label="Aumentar quantidade"
-          className="w-6 h-6 flex-shrink-0 rounded-md flex items-center justify-center text-lm-green hover:bg-lm-green/15 disabled:opacity-40 disabled:cursor-not-allowed"
+          className={`${botaoDoContador} flex-shrink-0 rounded-md flex items-center justify-center text-lm-green hover:bg-lm-green/15 disabled:opacity-40 disabled:cursor-not-allowed`}
         >
           <Plus size={13} />
         </button>

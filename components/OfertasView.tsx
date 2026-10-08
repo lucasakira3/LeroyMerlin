@@ -138,7 +138,7 @@ export default function OfertasView() {
       <>
         {cabecalho}
         {filtro}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
           {Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)}
         </div>
       </>
@@ -164,7 +164,7 @@ export default function OfertasView() {
       {filtro}
       {faixas}
       <p className="text-sm text-gray-600 mb-4">{produtosFiltrados.length} produtos em oferta</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6">
         {produtosPaginados.map(p => (
           <ProductCard key={p.id} produto={p} onDetalhes={() => setProdutoDrawer(p)} />
         ))}

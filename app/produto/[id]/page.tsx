@@ -8,6 +8,9 @@ import Card from '@/components/ui/Card'
 import PageHeader from '@/components/ui/PageHeader'
 import ProdutoAcoesCliente from '@/components/ProdutoAcoesCliente'
 import TrackProduct from '@/components/TrackProduct'
+import SeletorQuantidadeCarrinho from '@/components/ui/SeletorQuantidadeCarrinho'
+import { ajusteFoto, fundoFoto, getImagemProduto } from '@/lib/categoriaImagens'
+import { formatarParcelamento } from '@/lib/parcelamento'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -52,6 +55,32 @@ export default async function ProdutoPage({ params }: PageProps) {
           description={produto.categoria}
           action={<ProdutoAcoesCliente produtoId={produto.id} />}
         />
+
+        {/* Foto, preço e botão de compra. Sem este bloco a página dizia onde o produto fica,
+            mas não quanto custa nem deixava pôr no carrinho (a ficha que abre nas vitrines já
+            tinha tudo isso; esta página é a que abre pelos links da conta e dos favoritos). */}
+        <Card padding="none" className="sm:flex">
+          <div className={`sm:w-56 flex-shrink-0 ${fundoFoto(produto)}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={getImagemProduto(produto)}
+              alt={produto.categoria}
+              className={`w-full h-48 sm:h-full ${ajusteFoto(produto, 'p-3')}`}
+            />
+          </div>
+          <div className="flex-1 min-w-0 p-5 flex flex-col justify-center gap-3">
+            <div>
+              <p className="text-sm text-gray-600 uppercase tracking-wide">Preço</p>
+              <p className="text-2xl font-black text-lm-green leading-tight">
+                {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              </p>
+              {formatarParcelamento(produto.preco) && (
+                <p className="text-sm text-gray-600">{formatarParcelamento(produto.preco)}</p>
+              )}
+            </div>
+            <SeletorQuantidadeCarrinho produtoId={produto.id} estoque={produto.estoque} size="lg" />
+          </div>
+        </Card>
 
         {/* Corredor — seção mais proeminente */}
         <Card className="text-center">

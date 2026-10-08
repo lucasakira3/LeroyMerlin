@@ -226,12 +226,15 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
 
 
     <div className="flex-1 overflow-y-auto md:overflow-visible">
-      <div className="md:grid md:grid-cols-[minmax(0,42%)_minmax(0,58%)] md:gap-x-6 md:items-start md:p-5">
+      {/* Três blocos: foto, chat e detalhes. De md: pra cima viram duas colunas (foto e chat à
+          esquerda, detalhes à direita, ocupando as duas linhas — a linha de baixo é `1fr` pra
+          sobra de altura dos detalhes ir toda pra ela e o chat ficar colado na foto). No celular
+          é uma coluna só, na ordem foto → detalhes → chat (classes `order-*`): antes o chat vinha
+          logo depois da foto e era preciso rolar tudo pra descobrir o nome e o preço. */}
+      <div className="flex flex-col md:grid md:grid-cols-[minmax(0,42%)_minmax(0,58%)] md:grid-rows-[auto_1fr] md:gap-x-6 md:items-start md:p-5">
 
-        {/* Coluna esquerda — imagem + chat */}
-        <div className="flex flex-col md:h-full">
           {/* Foto da categoria, com ações flutuantes no canto */}
-          <div className={`relative flex-shrink-0 md:rounded-card ${fundoFoto(produto)}`}>
+          <div className={`relative flex-shrink-0 md:rounded-card md:col-start-1 md:row-start-1 ${fundoFoto(produto)}`}>
             <img
               src={galeria[fotoAtiva]}
               alt={produto.categoria}
@@ -255,11 +258,15 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                 ))}
               </div>
             )}
-            {/* Favoritar / comparar / fechar — canto superior direito, como no modelo */}
-            <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-lm-green/90 backdrop-blur-sm rounded-full p-1.5 shadow-md">
+            {/* Favoritar / comparar / fechar — canto superior direito, como no modelo. No
+                celular a ficha ocupa a tela toda e rola: `fixed` deixa os botões presos no canto
+                (senão, pra fechar, era preciso rolar de volta até a foto). Funciona porque a
+                caixa da ficha tem `transform` (scale-100 em ProdutoDrawer), então o `fixed` se
+                prende a ela, que não rola — quem rola é o conteúdo de dentro. */}
+            <div className="fixed md:absolute z-10 top-3 right-3 flex items-center gap-1.5 bg-lm-green/90 backdrop-blur-sm rounded-full p-1.5 shadow-md">
               <button
                 onClick={handleFavorito}
-                className="w-8 h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors"
+                className="w-9 h-9 md:w-8 md:h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors"
                 aria-label={favorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
                 aria-pressed={favorito}
               >
@@ -267,7 +274,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               </button>
               <button
                 onClick={handleComparar}
-                className="w-8 h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors"
+                className="w-9 h-9 md:w-8 md:h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors"
                 aria-label={noComparador ? 'Remover da comparação' : 'Adicionar à comparação'}
                 aria-pressed={noComparador}
               >
@@ -275,7 +282,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
               </button>
               <button
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors"
+                className="w-9 h-9 md:w-8 md:h-8 rounded-full bg-white/15 hover:bg-black/15 flex items-center justify-center transition-colors text-white"
                 aria-label="Fechar"
               >
                 <X size={16} />
@@ -288,7 +295,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
             )}
           </div>
 
-          <div className="px-5 py-3 md:px-0 md:pt-3 flex flex-col flex-shrink-0">
+          <div className="order-2 md:order-none md:col-start-1 md:row-start-2 px-5 py-3 md:px-0 md:pt-3 flex flex-col flex-shrink-0">
             <h3 className="text-xs font-bold text-lm-green uppercase tracking-widest mb-2 flex items-center gap-1.5 flex-shrink-0">
               <Bot size={13} /> Pergunte sobre este produto
             </h3>
@@ -325,7 +332,7 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                   <>
                     {mensagens.map((m, i) => (
                       <div key={i} data-mensagem className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-xs leading-relaxed whitespace-pre-wrap ${
+                        <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm md:text-xs leading-relaxed whitespace-pre-wrap ${
                           m.role === 'user'
                             ? 'bg-lm-green text-white rounded-br-sm'
                             : 'bg-white text-gray-800 rounded-bl-sm shadow-sm'
@@ -372,11 +379,10 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
 
             <VerificarCompatibilidade produtoId={produto.id} />
           </div>
-        </div>
 
         {/* Coluna direita — nome, preço, especificações, tags, avaliações — tudo em
             blocos compactos e agrupados */}
-        <div className="px-5 py-4 md:px-0 md:py-0 space-y-3">
+        <div className="order-1 md:order-none md:col-start-2 md:row-start-1 md:row-span-2 px-5 py-4 md:px-0 md:py-0 space-y-3">
           {/* Nome + id/categoria + marca/unidade */}
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -462,8 +468,8 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
                         <Icone size={13} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[9px] text-gray-600 truncate leading-tight">{item.rotulo}</p>
-                        <p className="text-[11px] font-semibold text-gray-800 truncate leading-tight">{item.valor}</p>
+                        <p className="text-[11px] md:text-[9px] text-gray-600 truncate leading-tight">{item.rotulo}</p>
+                        <p className="text-xs md:text-[11px] font-semibold text-gray-800 truncate leading-tight">{item.valor}</p>
                       </div>
                     </div>
                   )

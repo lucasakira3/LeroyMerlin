@@ -20,6 +20,7 @@ interface SearchSectionProps {
 
 export default function SearchSection({ initialQuery }: SearchSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const resultadosRef = useRef<HTMLDivElement>(null)
   const [resultados, setResultados] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
   const [queryProcessada, setQueryProcessada] = useState('')
@@ -41,6 +42,13 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialQuery])
+
+  // No celular os resultados ficam abaixo do formulário e da caixa de foto: sem levar a tela
+  // até eles, o cliente tocava em "Buscar" e nada parecia mudar.
+  useEffect(() => {
+    if (resultados.length === 0 || !window.matchMedia('(max-width: 767px)').matches) return
+    resultadosRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [resultados])
 
   const handleSearchResults = (results: SearchResult[], query: string) => {
     setResultados(results)
@@ -117,7 +125,7 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
 
       {/* Mapa com resultados */}
       {!loading && resultados.length > 0 && (
-        <div key={queryProcessada} className="space-y-4 animate-fade-in-up">
+        <div key={queryProcessada} ref={resultadosRef} className="space-y-4 animate-fade-in-up scroll-mt-4">
           <p className="text-sm text-gray-700">
             Resultados para: <span className="font-bold text-lm-dark">{queryProcessada}</span>
           </p>

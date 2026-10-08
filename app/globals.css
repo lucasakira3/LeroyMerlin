@@ -230,3 +230,54 @@ html.dark {
 .roadmap-trilha {
   justify-content: safe center;
 }
+
+/* ── Celular ────────────────────────────────────────────────────────────────────────── */
+
+/* Um <select> nunca fica mais largo que o espaço que tem. Sem isto, dentro de uma linha
+   flex ele cresce até caber a opção mais comprida e empurra a tela inteira pro lado no
+   celular (acontecia no seletor de loja da Busca e no parcelamento do Carrinho). */
+select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  /* No iPhone, tocar num campo com letra menor que 16px dá zoom na página sozinho, e ela não
+     volta ao tamanho normal depois. Os campos do site usam 14px (text-sm); no celular sobem
+     pra 16px. O !important é pra regra ganhar das classes do Tailwind. */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* O texto de exemplo dentro do campo continua em 14px: quem dispara o zoom é o tamanho do
+     que se digita, não o do exemplo, e assim os exemplos seguem cabendo nos campos. */
+  input::placeholder,
+  textarea::placeholder {
+    font-size: 14px;
+  }
+}
+
+/* Cartão de produto estreito. No celular as vitrines mostram dois produtos por linha, e cada
+   cartão fica com ~160px: aí o preço e o botão "Adicionar" deixam de caber lado a lado e a
+   miniatura do mapa não tem espaço. A regra olha a largura do PRÓPRIO cartão (container
+   query), não a da tela — assim vale em qualquer grade onde ele for usado. */
+.cartao-produto {
+  container-type: inline-size;
+}
+
+@container (max-width: 190px) {
+  .cartao-produto-preco {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cartao-produto-comprar {
+    width: 100%;
+  }
+
+  .cartao-produto-minimapa {
+    display: none;
+  }
+}

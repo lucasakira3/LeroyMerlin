@@ -75,7 +75,7 @@ export default function ProductCard({
     onSelect?.()
   }
 
-  const wrapperClass = `group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white shadow-soft transition-all hover:shadow-md hover:-translate-y-0.5 ${
+  const wrapperClass = `cartao-produto group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white shadow-soft transition-all hover:shadow-md hover:-translate-y-0.5 ${
     selected ? 'border-lm-green shadow-md' : 'border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
   } ${className}`
 
@@ -88,7 +88,7 @@ export default function ProductCard({
           className={`w-full h-36 ${ajusteFoto(produto, 'p-2')} transition-transform duration-300 group-hover:scale-105`}
         />
         {emOferta && (
-          <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-md">
+          <span className="absolute top-2 left-2 bg-red-600 text-white text-[11px] font-bold px-2 py-1 rounded-md">
             -{Math.round((1 - produto.preco / produto.precoOriginal!) * 100)}%
           </span>
         )}
@@ -99,7 +99,7 @@ export default function ProductCard({
               onClick={handleToggleSelecao}
               aria-label={selected ? 'Remover da seleção' : 'Selecionar produto'}
               aria-pressed={selected}
-              className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors ${
+              className={`w-9 h-9 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shadow-md transition-colors ${
                 selected ? 'bg-lm-green text-white' : 'bg-white/90 text-gray-600 hover:text-lm-green'
               }`}
             >
@@ -111,7 +111,7 @@ export default function ProductCard({
             onClick={handleFavorito}
             aria-label={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
             aria-pressed={favoritado}
-            className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors bg-white/90 ${
+            className={`w-9 h-9 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shadow-md transition-colors bg-white/90 ${
               favoritado ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
             }`}
           >
@@ -124,12 +124,12 @@ export default function ProductCard({
         <div className="flex items-center gap-2 mb-1.5">
           {/* Selo com a cor da faixa do corredor no mapa da loja (lib/corredorCores.ts) */}
           <div
-            className={`flex items-center gap-1 text-[10px] font-bold flex-shrink-0 px-1.5 py-0.5 rounded-md border ${corCorredor ? '' : 'text-lm-green border-transparent'}`}
+            className={`flex items-center gap-1 text-[11px] font-bold flex-shrink-0 px-1.5 py-0.5 rounded-md border ${corCorredor ? '' : 'text-lm-green border-transparent'}`}
             style={corCorredor ? { backgroundColor: corCorredor.fill, borderColor: corCorredor.stroke, color: corCorredor.stroke } : undefined}
           >
             <MapPin size={10} strokeWidth={2.5} /> {produto.corredor}
           </div>
-          <div className="w-14 flex-shrink-0">
+          <div className="cartao-produto-minimapa w-14 flex-shrink-0">
             <MiniMapaCorredor corredorNormalizado={produto.corredor_normalizado} />
           </div>
         </div>
@@ -147,15 +147,16 @@ export default function ProductCard({
             {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
         )}
-        <div className="flex items-end justify-between gap-2 mb-2">
+        {/* As classes cartao-produto-* mudam esta linha quando o cartão é estreito (ver globals.css) */}
+        <div className="cartao-produto-preco flex items-end justify-between gap-2 mb-2">
           <div>
             <p className="text-base font-black text-lm-dark">
               {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </p>
             {parcelamentoStr && <p className="text-xs text-gray-600">{parcelamentoStr}</p>}
           </div>
-          <div className="w-28 flex-shrink-0">
-            <SeletorQuantidadeCarrinho produtoId={produto.id} estoque={produto.estoque} />
+          <div className="cartao-produto-comprar w-28 flex-shrink-0">
+            <SeletorQuantidadeCarrinho produtoId={produto.id} estoque={produto.estoque} className="w-full" />
           </div>
         </div>
         <div className="flex items-center justify-between gap-1.5 flex-wrap">

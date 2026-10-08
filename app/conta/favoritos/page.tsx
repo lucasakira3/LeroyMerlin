@@ -249,11 +249,11 @@ export default function FavoritosPage() {
                   } as React.CSSProperties
                 }
                 extra={
-                  <div className="flex items-center gap-1.5 pr-1 flex-shrink-0">
+                  <div className="flex items-center justify-end gap-1.5 pr-1 flex-shrink-0 basis-full sm:basis-auto">
                     <select
                       value={atribuicoes[produto.id] ?? SEM_GRUPO}
                       onChange={(e) => mudarGrupo(produto.id, e.target.value)}
-                      className="text-xs border border-gray-200 dark:border-gray-500 rounded-lg px-2 py-1.5 bg-white text-gray-600 max-w-[110px] focus:border-lm-green outline-none"
+                      className="text-xs border border-gray-200 dark:border-gray-500 rounded-lg px-2 py-1.5 bg-white text-gray-600 max-w-[180px] sm:max-w-[110px] focus:border-lm-green outline-none"
                     >
                       <option value={SEM_GRUPO}>Sem grupo</option>
                       {grupos.map((g) => (
@@ -266,7 +266,7 @@ export default function FavoritosPage() {
                       type="button"
                       onClick={() => removerFavorito(produto.id)}
                       aria-label="Remover dos favoritos"
-                      className="w-8 h-8 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
+                      className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
                     >
                       <Heart size={15} fill="currentColor" />
                     </button>

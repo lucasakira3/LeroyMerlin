@@ -140,7 +140,7 @@ export default function ProdutosView() {
               Ver todas as ofertas <Tag size={13} />
             </Link>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory">
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scroll-px-4 sm:mx-0 sm:px-0 sm:scroll-px-0 snap-x snap-mandatory">
             {destaques.map((produto, i) => (
               <div key={produto.id} className="w-52 flex-shrink-0 snap-start">
                 <ProductCard

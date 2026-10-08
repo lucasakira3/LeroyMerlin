@@ -278,7 +278,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
 
       {/* Loading */}
       {loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="p-4 rounded-xl border-2 border-gray-200 dark:border-gray-500 bg-white shadow-soft space-y-2">
               <div className="flex items-center justify-between">
@@ -301,7 +301,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
       {/* Grid de produtos */}
       {!loading && (
         <>
-          <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6 scroll-mt-4">
+          <div ref={gridRef} className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mb-6 scroll-mt-4">
             {produtosPaginados.map((p, i) => (
               <ProductCard
                 key={p.id}
