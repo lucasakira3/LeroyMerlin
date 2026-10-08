@@ -42,11 +42,15 @@ export default function SeletorQuantidadeCarrinho({ produtoId, estoque, size = '
     }
   }
 
-  // No tamanho pequeno (cartões das vitrines) o botão e o contador ficam mais altos no
-  // celular: 28px era pouco pra acertar com o dedo.
-  const alturaBotao = size === 'lg' ? 'w-full py-2.5' : 'px-3 py-2.5 sm:py-1.5'
+  // No tamanho pequeno (cartões das vitrines) o botão é só o ícone do carrinho: com o texto
+  // "Adicionar" ele encostava nas bordas do cartão. Fica quadrado e maior no celular (40px)
+  // pra acertar com o dedo; o contador também.
+  const alturaBotao = size === 'lg' ? 'w-full py-2.5' : 'w-10 h-10 sm:w-9 sm:h-9'
   const alturaStepper = size === 'lg' ? 'h-10' : 'h-9 sm:h-8'
   const botaoDoContador = size === 'lg' ? 'w-8 h-8' : 'w-7 h-7 sm:w-6 sm:h-6'
+
+  // Contador do tamanho pequeno tem largura própria (o botão só com ícone é estreito demais pra ele)
+  const larguraStepper = className || (size === 'lg' ? '' : 'w-24')
 
   if (quantidade === 0) {
     return (
@@ -54,23 +58,25 @@ export default function SeletorQuantidadeCarrinho({ produtoId, estoque, size = '
         type="button"
         onClick={e => mudar(1, e)}
         disabled={estoque === 0}
+        aria-label="Adicionar ao carrinho"
+        title="Adicionar ao carrinho"
         className={`flex items-center justify-center gap-1.5 text-white font-semibold rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-lm-dark hover:bg-lm-green ${
           size === 'lg' ? 'text-sm rounded-xl bg-lm-green hover:bg-green-700' : 'text-xs'
         } ${alturaBotao} ${className}`}
       >
-        <ShoppingCart size={size === 'lg' ? 15 : 13} />
-        {size === 'lg' ? 'Adicionar ao carrinho' : 'Adicionar'}
+        <ShoppingCart size={size === 'lg' ? 15 : 17} />
+        {size === 'lg' && 'Adicionar ao carrinho'}
       </button>
     )
   }
 
   return (
-    <div className={size === 'lg' ? 'w-full' : className} onClick={e => e.stopPropagation()}>
+    <div className={size === 'lg' ? 'w-full' : larguraStepper} onClick={e => e.stopPropagation()}>
       <p className={`flex items-center gap-1 font-semibold text-lm-green mb-1 ${size === 'lg' ? 'text-[11px]' : 'text-[9px] whitespace-nowrap overflow-hidden text-ellipsis'}`}>
         <Check size={size === 'lg' ? 11 : 9} className="flex-shrink-0" />
         {size === 'lg' ? 'Já adicionado ao carrinho' : 'Já no carrinho'}
       </p>
-      <div className={`flex items-center justify-between gap-1 bg-lm-green/10 border border-lm-green/30 rounded-lg ${alturaStepper} ${size === 'lg' ? 'w-full px-2' : `px-1.5 ${className}`}`}>
+      <div className={`flex items-center justify-between gap-1 bg-lm-green/10 border border-lm-green/30 rounded-lg ${alturaStepper} ${size === 'lg' ? 'w-full px-2' : `px-1.5 ${larguraStepper}`}`}>
         <button
           type="button"
           onClick={e => mudar(-1, e)}
