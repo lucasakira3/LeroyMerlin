@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#00843d">
+  <title>Sem conexão — Leroy Merlin</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 24px; background: #d1d5db; color: #1a1a1a;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+    main {
+      width: 100%; max-width: 380px; background: #fff; border-radius: 20px; padding: 32px 24px;
+      text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+    }
+    img { width: 88px; height: 88px; border-radius: 20px; }
+    h1 { font-size: 22px; margin: 20px 0 8px; }
+    p { font-size: 16px; line-height: 1.5; margin: 0 0 24px; color: #374151; }
+    button {
+      width: 100%; height: 48px; border: 0; border-radius: 12px; background: #00843d; color: #fff;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { background: #111827; color: #f9fafb; }
+      main { background: #1f2937; }
+      p { color: #d1d5db; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/icons/icon-192.png" alt="Leroy Merlin">
+    <h1>Você está sem conexão</h1>
+    <p>Não deu para abrir esta página agora. Confira o Wi-Fi ou os dados do celular e tente de novo.</p>
+    <button type="button" onclick="location.reload()">Tentar de novo</button>
+  </main>
+</body>
+</html>

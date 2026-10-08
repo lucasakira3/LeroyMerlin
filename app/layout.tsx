@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
@@ -8,6 +8,7 @@ import PageTransition from "@/components/PageTransition";
 import CompareToast from "@/components/CompareToast";
 import UndoToast from "@/components/UndoToast";
 import Sincronizador from "@/components/Sincronizador";
+import InstalarApp from "@/components/InstalarApp";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,6 +16,19 @@ export const metadata: Metadata = {
   title: "Leroy Merlin — Encontre na loja",
   description:
     "Busque produtos, tire dúvidas e agende visitas nas lojas Leroy Merlin",
+  // Nome e comportamento quando o site é instalado como aplicativo (ver app/manifest.ts).
+  // O ícone vem de app/icon.png e app/apple-icon.png, que o Next liga sozinho.
+  applicationName: "Leroy Merlin",
+  appleWebApp: { capable: true, title: "Leroy Merlin", statusBarStyle: "default" },
+  // Sem isto o iPhone transforma qualquer sequência de números (código de produto, número
+  // de pedido) em link de telefone.
+  formatDetection: { telephone: false },
+};
+
+// Cor da barra do navegador no celular (e da barra de status do aplicativo instalado): o
+// verde do cabeçalho, que é o mesmo no modo claro e no escuro.
+export const viewport: Viewport = {
+  themeColor: "#00843d",
 };
 
 const THEME_INIT_SCRIPT = `
@@ -54,6 +68,8 @@ export default function RootLayout({
         <UndoToast />
         {/* Espelha pedidos e atendimento no Supabase (lib/sync). Não desenha nada. */}
         <Sincronizador />
+        {/* Deixa o site ser instalado como aplicativo (lib/instalacaoApp.ts). Não desenha nada. */}
+        <InstalarApp />
       </body>
     </html>
   );
