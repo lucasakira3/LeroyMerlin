@@ -18,6 +18,8 @@ module.exports = {
         'lm-dark': '#1a1a1a',
         'lm-light': '#d1d5db',
         'lm-orange': '#e87722',
+        // Borda dos cartões de produto: o valor muda com o tema (--card-border no globals.css)
+        'card-border': 'var(--card-border)',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

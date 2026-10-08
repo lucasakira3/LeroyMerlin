@@ -75,8 +75,8 @@ export default function ProductCard({
     onSelect?.()
   }
 
-  const wrapperClass = `cartao-produto group relative block text-left w-full rounded-card overflow-hidden border-2 bg-white shadow-soft transition-all hover:shadow-md hover:-translate-y-0.5 ${
-    selected ? 'border-lm-green shadow-md' : 'border-gray-200 dark:border-gray-500 hover:border-lm-green/40'
+  const wrapperClass = `cartao-produto group relative flex flex-col text-left w-full rounded-card overflow-hidden border-2 bg-white shadow-soft transition-all hover:shadow-md hover:-translate-y-0.5 ${
+    selected ? 'border-lm-green shadow-md' : 'border-card-border hover:border-lm-green/40'
   } ${className}`
 
   const conteudo = (
@@ -120,7 +120,7 @@ export default function ProductCard({
         </div>
       </div>
 
-      <div className="p-3">
+      <div className="p-3 flex-1 flex flex-col">
         <div className="flex items-center gap-2 mb-1.5">
           {/* Selo com a cor da faixa do corredor no mapa da loja (lib/corredorCores.ts) */}
           <div
@@ -142,26 +142,31 @@ export default function ProductCard({
             <span className="text-xs text-gray-600">({totalAvaliacoes})</span>
           </div>
         )}
-        {emOferta && (
-          <p className="text-sm text-gray-600 line-through">
-            {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </p>
-        )}
-        {/* As classes cartao-produto-* mudam esta linha quando o cartão é estreito (ver globals.css) */}
-        <div className="cartao-produto-preco flex items-end justify-between gap-2 mb-2">
-          <div>
-            <p className="text-base font-black text-lm-dark">
-              {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        {/* Preço, botão e selos ficam presos ao rodapé do cartão (mt-auto): assim o botão
+            "Adicionar" fica na mesma altura em todos os cartões da linha, tenha o produto
+            parcelamento, preço riscado ou título curto ou não. */}
+        <div className="mt-auto flex flex-col">
+          {emOferta && (
+            <p className="text-sm text-gray-600 line-through">
+              {produto.precoOriginal!.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </p>
-            {parcelamentoStr && <p className="text-xs text-gray-600">{parcelamentoStr}</p>}
+          )}
+          {/* As classes cartao-produto-* mudam esta linha quando o cartão é estreito (ver globals.css) */}
+          <div className="cartao-produto-preco flex items-end justify-between gap-2 mb-2">
+            <div>
+              <p className="text-base font-black text-lm-dark">
+                {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              </p>
+              {parcelamentoStr && <p className="text-xs text-gray-600">{parcelamentoStr}</p>}
+            </div>
+            <div className="cartao-produto-comprar flex-shrink-0">
+              <SeletorQuantidadeCarrinho produtoId={produto.id} estoque={produto.estoque} />
+            </div>
           </div>
-          <div className="cartao-produto-comprar w-28 flex-shrink-0">
-            <SeletorQuantidadeCarrinho produtoId={produto.id} estoque={produto.estoque} className="w-full" />
+          <div className="cartao-produto-selos flex items-center justify-between gap-1.5 flex-wrap">
+            <StockIndicator estoque={produto.estoque} />
+            <SustainabilityBadge sustentabilidade={produto.sustentabilidade} />
           </div>
-        </div>
-        <div className="flex items-center justify-between gap-1.5 flex-wrap">
-          <StockIndicator estoque={produto.estoque} />
-          <SustainabilityBadge sustentabilidade={produto.sustentabilidade} />
         </div>
       </div>
     </>
