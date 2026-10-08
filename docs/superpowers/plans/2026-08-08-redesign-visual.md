@@ -658,7 +658,7 @@ git commit -m "style: redesign agendamento"
 
 - [ ] **Step 1: Atualizar `app/funcionario/layout.tsx`**
 
-A sidebar já usa `rounded-xl`/`shadow-sm` (mais próxima do alvo). Ajustar: fundo do `<main>` de `bg-lm-light` (hex `#f5f5f5`) para `bg-gray-50` (consistente com o novo fundo global definido na Task 1), e aumentar o padding interno dos itens de menu (`px-4 py-3` → manter, já está adequado):
+A sidebar já usa `rounded-xl`/`shadow-sm` (mais próxima do alvo). Ajustar: fundo do `<main>` de `bg-white` (hex `#f5f5f5`) para `bg-gray-50` (consistente com o novo fundo global definido na Task 1), e aumentar o padding interno dos itens de menu (`px-4 py-3` → manter, já está adequado):
 
 ```tsx
 'use client'

@@ -101,7 +101,7 @@ html.dark {
   color: #f9fafb;
 }
 
-.dark .bg-lm-light { background-color: #0b0f14; }
+.dark .bg-white { background-color: #0b0f14; }
 
 /* Superfícies (cards, inputs, painéis) que usam branco opaco */
 .dark .bg-white { background-color: #1f2937; }

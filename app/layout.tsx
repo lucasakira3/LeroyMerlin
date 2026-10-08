@@ -52,7 +52,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body
-        className={`${inter.className} bg-lm-light min-h-screen flex flex-col`}
+        className={`${inter.className} bg-white min-h-screen flex flex-col`}
         suppressHydrationWarning
       >
         <NavBar />
