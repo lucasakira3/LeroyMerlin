@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
+import { useTravarRolagem } from '@/lib/hooks/useTravarRolagem'
 
 interface ModalProps {
   open: boolean
@@ -34,6 +35,8 @@ export default function Modal({ open, onClose, title, children, maxWidthClass = 
     return () => document.removeEventListener('keydown', handler)
   }, [open, onClose])
 
+  useTravarRolagem(open)
+
   if (!mounted || !open) return null
 
   return createPortal(
@@ -56,7 +59,7 @@ export default function Modal({ open, onClose, title, children, maxWidthClass = 
               <X size={20} />
             </button>
           </div>
-          <div className="overflow-y-auto flex-1 min-h-0">{children}</div>
+          <div className="overflow-y-auto overscroll-contain flex-1 min-h-0">{children}</div>
         </div>
       </div>
     </>,

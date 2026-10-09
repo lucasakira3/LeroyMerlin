@@ -26,6 +26,7 @@ import StarRating from './ui/StarRating'
 import BotaoNovasMensagens from './ui/BotaoNovasMensagens'
 import { useChatScroll } from '@/lib/hooks/useChatScroll'
 import type { SearchResult } from '@/types/produto'
+import { useTravarRolagem } from '@/lib/hooks/useTravarRolagem'
 
 interface Mensagem {
   role: 'user' | 'ai'
@@ -75,6 +76,8 @@ export default function ProdutoDrawer({ produto, onClose }: Props) {
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
   }, [produto, onClose])
+
+  useTravarRolagem(produto !== null)
 
   const visible = produto !== null
 
@@ -225,7 +228,11 @@ function DrawerContent({ produto, onClose }: { produto: Produto; onClose: () => 
     )}
 
 
-    <div className="flex-1 overflow-y-auto md:overflow-visible">
+    {/* O miolo rola em qualquer tela. Antes, no computador, ele não rolava: a ficha foi
+        desenhada pra caber inteira, mas numa janela baixa — ou ao abrir as avaliações ou a
+        verificação por foto — o que passava da altura ficava cortado e não dava pra chegar lá.
+        overscroll-contain: ao bater no fim, a rolagem não "vaza" pra página de trás. */}
+    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
       {/* Três blocos: foto, chat e detalhes. De md: pra cima viram duas colunas (foto e chat à
           esquerda, detalhes à direita, ocupando as duas linhas — a linha de baixo é `1fr` pra
           sobra de altura dos detalhes ir toda pra ela e o chat ficar colado na foto). No celular
