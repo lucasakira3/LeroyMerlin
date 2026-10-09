@@ -17,7 +17,7 @@ export default function FavoritosIcon() {
 
   return (
     <Link
-      href="/conta"
+      href="/conta/favoritos"
       className="relative flex items-center justify-center w-10 h-10 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
       aria-label={`Favoritos${quantidade > 0 ? ` (${quantidade} ${quantidade === 1 ? 'item' : 'itens'})` : ''}`}
     >
