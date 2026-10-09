@@ -140,7 +140,7 @@ export default function CategoriaView({ slug, label, onBack }: Props) {
         </ol>
       </nav>
       {/* Faixa da categoria com foto de fundo e contagem de itens */}
-      <div className="relative overflow-hidden rounded-card bg-gray-800 h-32 sm:h-40 mb-5">
+      <div className="relative overflow-hidden rounded-card bg-lm-green h-32 sm:h-40 mb-5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={getImagemCategoria(label)}
