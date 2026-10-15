@@ -1,7 +1,7 @@
 # O deploy da raiz é o backend/site Next.js. O app é compilado pelo EAS.
-mobile/
-docs/mobile/previews/
-.mobile-data/
+/mobile/
+/docs/mobile/previews/
+/.mobile-data/
 
 # Configuração de produção é cadastrada no painel da Vercel.
 .env*
