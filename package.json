@@ -11,7 +11,13 @@
     "processar-csv": "tsx scripts/processar-csv.ts",
     "testar-projeto": "tsx scripts/testar-projeto-guiado.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev:lan": "next dev --hostname 0.0.0.0",
+    "mobile:setup": "node scripts/configurar-mobile.mjs",
+    "mobile:dev": "npm --prefix mobile start",
+    "mobile:check": "npm --prefix mobile run typecheck",
+    "mobile:qr": "node scripts/gerar-qr-mobile.mjs",
+    "mobile:preparar-git": "node scripts/verificar-arquivos-mobile.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",
@@ -34,6 +40,7 @@
     "tailwindcss": "^3.4.19",
     "tsx": "^4.23.12",
     "typescript": "^5.4.2",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.3",
+    "qrcode": "^1.5.4"
   }
 }

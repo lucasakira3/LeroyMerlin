@@ -1,4 +1,4 @@
-import { getCorredorRowIndex } from '@/components/StoreMap'
+import { getCorredorRowIndex } from './corredores'
 
 // Rota de Compra Inteligente (ver docs/backlog-fluxo-loja-fisica.md, Grupo A, item 1):
 // dado o conjunto de corredores que o cliente precisa visitar, devolve a ordem de

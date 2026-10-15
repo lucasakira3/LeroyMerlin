@@ -58,6 +58,7 @@ export default function FuncionarioLayout({ children }: { children: React.ReactN
     { href: '/funcionario/clientes', icon: Users, label: 'Clientes' },
     { href: '/funcionario/produtos', icon: Package, label: 'Estoque / Produtos' },
     { href: '/funcionario/chamados', icon: MessageSquare, label: 'Chamados Chat' },
+    { href: '/funcionario/mobile', icon: MessageSquare, label: 'Atendimento Mobile' },
   ]
 
   return (

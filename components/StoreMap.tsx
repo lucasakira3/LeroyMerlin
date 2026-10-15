@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { getCorredorRowIndex } from '@/lib/corredores'
+export { getCorredorRowIndex } from '@/lib/corredores'
 import { ShoppingCart, Check, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { SearchResult } from '@/types/produto'
@@ -24,47 +26,6 @@ const ROW2_Y = 340
 // perto" com esta altura fixa (ver `dePerto` no componente).
 const LARGURA_ESTREITA = 560
 const ALTURA_DE_PERTO = 420
-
-// Mapeia lettered corredores para corredores numéricos próximos (para exibir no mapa principal)
-function specialToNumeric(slug: string): number | null {
-  const m = slug.match(/^([a-z])-(\d+)$/)
-  if (!m) return null
-  const [, prefix, numStr] = m
-  const n = parseInt(numStr)
-  const map: Record<string, [number, number]> = {
-    e: [9, 15],    // Elétrica
-    c: [16, 22],   // Hidráulica/Cozinhas
-    d: [48, 50],   // Decoração
-    t: [44, 47],   // Técnico → Banheiros
-    p: [36, 43],   // Projeto → Pisos
-    s: [29, 35],   // Sustentável → Jardim
-    x: [48, 50],   // Especialista → Pintura
-  }
-  const range = map[prefix]
-  if (!range) return null
-  const [min, max] = range
-  const ratio = Math.min((n - 1) / 20, 1)
-  return Math.round(min + ratio * (max - min))
-}
-
-
-export function getCorredorRowIndex(corridorNorm: string): { row: 1 | 2; idx: number } | null {
-  const slug = corridorNorm.toLowerCase().trim()
-
-  const numM = slug.match(/^corredor-(\d+)$/)
-  if (numM) {
-    const n = parseInt(numM[1])
-    if (n < 1 || n > 50) return null
-    return { row: n <= 25 ? 1 : 2, idx: n <= 25 ? n - 1 : n - 26 }
-  }
-
-  const mapped = specialToNumeric(slug)
-  if (mapped) {
-    return { row: mapped <= 25 ? 1 : 2, idx: mapped <= 25 ? mapped - 1 : mapped - 26 }
-  }
-
-  return null
-}
 
 function getPos(corridorNorm: string): { x: number; y: number } | null {
   const pos = getCorredorRowIndex(corridorNorm)

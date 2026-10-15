@@ -1,5 +1,7 @@
 # Leroy Merlin — MVP FIAP Challenge 2026
 
+**App Android para o NEXT:** código React Native + Expo em `mobile/`. Veja [como executar o app](mobile/README.md), [publicar o backend na Vercel](docs/mobile/PUBLICACAO.md) e a [folha de etiquetas com QR](docs/mobile/etiquetas.html).
+
 Assistente de loja com IA para otimizar a jornada do cliente em lojas físicas da Leroy Merlin. O sistema é dividido em duas frentes: um aplicativo interativo para o **cliente final** (focado em localização, IA e autoatendimento) e um painel de controle completo para o **funcionário da loja**.
 
 ---
