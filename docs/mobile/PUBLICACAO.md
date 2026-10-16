@@ -37,7 +37,7 @@ Preserve ainda `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KE
 
 `MOBILE_STORAGE=file` é apenas para desenvolvimento e não precisa ser cadastrado na Vercel. Em produção o atendimento usa Supabase. Não é preciso cadastrar a chave pública do Supabase neste fluxo.
 
-Quando existir um APK pronto, cadastre `MOBILE_ANDROID_URL` com seu link HTTPS. Até lá, `/instalar` mostra que a versão ainda não está disponível. `EXPO_ACCESS_TOKEN` é opcional e só é usado se você habilitar a proteção do serviço de push no Expo.
+O link público do APK pronto pode ser registrado em `data/mobile-release.json`; a página `/instalar` o utiliza enquanto estiver disponível. `MOBILE_ANDROID_URL` é uma opção para substituir esse link por outro HTTPS, como uma hospedagem permanente. Sem APK pronto, a página informa que a versão ainda não está disponível. `EXPO_ACCESS_TOKEN` é opcional e só é usado se você habilitar a proteção do serviço de push no Expo.
 
 ## 3. Enviar o código e publicar
 
@@ -56,11 +56,11 @@ Variáveis novas só passam a valer em um novo deployment. Se as cadastrar depoi
 
 As tabelas são criadas com [`supabase.sql`](./supabase.sql). Esse arquivo não é executado automaticamente pelo deploy. O app precisa das tabelas `mobile_chamados` e `mobile_dispositivos`.
 
-## 5. Vincular Expo e configurar o Firebase
+## 5. Vincular Expo
 
-Siga [o guia do app](../../mobile/README.md#gerar-o-apk-e-configurar-push). Precisamos da conta Expo, do ID real do projeto EAS, do projeto Firebase para Android e da credencial FCM v1.
+Siga [o guia do app](../../mobile/README.md#gerar-o-apk-e-configurar-push). Para a primeira versão precisamos da conta Expo e do ID real do projeto EAS. Firebase não é necessário: push remoto fica desativado e o visitante acompanha o atendimento dentro do app.
 
-O identificador do aplicativo é `br.com.fiap.leroynext`. Use exatamente esse identificador ao cadastrar o Android no Firebase. Arquivos de conta de serviço e assinatura ficam fora do GitHub e do aplicativo. No app Android, apenas o `google-services.json` é incorporado à build; a credencial privada FCM é cadastrada no EAS.
+O identificador do aplicativo é `br.com.fiap.leroynext`. Se ativarmos push em outra versão, usaremos esse identificador no Firebase e configuraremos a credencial FCM v1 no EAS. Credenciais privadas ficam fora do GitHub e do aplicativo.
 
 ## 6. APK, instalação e QR do evento
 
@@ -71,7 +71,7 @@ Depois de configurar o projeto Expo e as credenciais:
 npx eas-cli@latest build --platform android --profile preview
 ```
 
-Essa build gera um APK autônomo. Teste em um Android físico com dados móveis: fotografia, QR, lista offline e atualização do atendimento com a tela bloqueada.
+Essa build gera um APK autônomo. Teste em um Android físico com dados móveis: fotografia, QR, lista offline e atualização do atendimento na tela aberta. Nesta versão não há aviso remoto com a tela bloqueada.
 
 Com o link HTTPS do APK pronto, cadastre `MOBILE_ANDROID_URL` na Vercel e faça Redeploy. Na raiz do repositório, gere a folha de QRs:
 

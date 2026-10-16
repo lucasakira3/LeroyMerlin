@@ -41,7 +41,7 @@ Depois de instalar uma development build, execute `npm run start:dev-client` den
 - Calculadora offline de tinta e piso reutilizando as fórmulas do site.
 - Sessão anônima de sete dias, guardada em SecureStore.
 - Atendimento entre dispositivos, com atualização periódica quando a tela está aberta.
-- Registro de push remoto, navegação pelo toque na notificação e lembrete local da lista.
+- Lembrete local da lista e navegação pelo toque na notificação. Registro de push remoto disponível como opção futura, desligada por padrão.
 - Feedback tátil ao adicionar/coletar produtos e ler QR.
 
 Os projetos adicionam uma unidade de cada produto escolhido à lista: as quantidades recomendadas ficam visíveis para conferência manual. Preços e estoque são do catálogo acadêmico. A planta é ilustrativa e não há rastreamento indoor, AR, pagamento ou sincronização de conta/carrinho com o site.
@@ -73,6 +73,8 @@ Em `mobile/.env`, configure `EXPO_PUBLIC_API_URL=https://leroy-merlin.vercel.app
 
 ## Gerar o APK e configurar push
 
+**A primeira versão não exige Firebase.** Push remoto fica desligado por padrão (`EXPO_PUBLIC_PUSH_ENABLED=false` ou ausente). O atendimento atualiza pela própria tela enquanto aberta; o lembrete local da lista pode ser usado na build instalada, com autorização do aparelho.
+
 Dentro de `mobile/`:
 
 ```powershell
@@ -80,9 +82,9 @@ npx eas-cli@latest login
 npx eas-cli@latest init
 ```
 
-Defina `EXPO_PUBLIC_EAS_PROJECT_ID` em `mobile/.env` com o ID real do projeto Expo. Como `app.config.ts` é dinâmico, o vínculo pode precisar ser preenchido manualmente. Defina também a URL pública do backend e essas variáveis no ambiente usado pela build EAS. Confira o identificador `br.com.fiap.leroynext` antes de criar certificados/Firebase.
+O projeto já está vinculado a `@fbrcmgg/leroy-next-mobile`; o ID público está em `app.config.ts` e pode ser sobrescrito por `EXPO_PUBLIC_EAS_PROJECT_ID`. Os perfis preview/production já usam o backend `https://leroy-merlin.vercel.app` e mantêm o push remoto desligado. Confira o identificador `br.com.fiap.leroynext` antes de criar outra configuração de assinatura.
 
-Para push Android, configure um projeto Firebase, baixe o `google-services.json`, mantenha fora do Git, e defina `GOOGLE_SERVICES_JSON=./google-services.json` no ambiente da build. Configure também a credencial FCM v1 no EAS. Como esse arquivo é ignorado pelo Git, para builds na nuvem prefira uma variável de arquivo no EAS chamada `GOOGLE_SERVICES_JSON`, que apontará para o arquivo provisionado. O JSON privado da conta de serviço FCM é outra credencial e fica somente no EAS; não deve ser incluído no app. Teste em celular físico.
+**Opcional, para uma versão futura com push:** configure um projeto Firebase, baixe o `google-services.json`, mantenha fora do Git, e defina `GOOGLE_SERVICES_JSON` como variável de arquivo no ambiente da build EAS. Configure também a credencial FCM v1 no EAS e defina `EXPO_PUBLIC_PUSH_ENABLED=true` no ambiente usado para gerar o app, alterando também o valor do perfil escolhido em `mobile/eas.json`. O JSON privado da conta de serviço FCM fica somente no EAS; não deve ser incluído no app. Gere uma nova build e teste em celular físico.
 
 ```powershell
 # Desenvolvimento com recursos nativos e ferramentas de depuração
@@ -117,6 +119,6 @@ npx expo install --check
 npm run export:android
 ```
 
-Exportar bundles valida código/assets; não gera o APK e não substitui teste em aparelho. Antes da feira: instalar a build final em um Android físico, usar dados móveis para alcançar o backend hospedado, pedir ajuda, bloquear a tela, assumir pelo notebook, conferir o push e tocar nele. Testar também permissão negada, QR desconhecido e lista offline.
+Exportar bundles valida código/assets; não gera o APK e não substitui teste em aparelho. Antes da feira: instalar a build final em um Android físico, usar dados móveis para alcançar o backend hospedado, pedir ajuda, assumir pelo notebook e conferir a atualização na tela aberta do atendimento. Testar também lembrete local da lista, permissão negada, QR desconhecido e lista offline. Quando o push for habilitado em uma versão futura, testar também recebimento com a tela bloqueada e abertura pelo toque.
 
 Referências oficiais: [câmera](https://docs.expo.dev/versions/latest/sdk/camera/), [push](https://docs.expo.dev/push-notifications/push-notifications-setup/) e [distribuição](https://docs.expo.dev/build/internal-distribution/).

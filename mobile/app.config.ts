@@ -1,6 +1,8 @@
 import type { ExpoConfig } from "expo/config";
 
-const projectId = process.env.EXPO_PUBLIC_EAS_PROJECT_ID;
+const projectId =
+  process.env.EXPO_PUBLIC_EAS_PROJECT_ID ||
+  "76e68937-b847-4698-afdb-262e8d8e772b";
 if (["preview", "production"].includes(process.env.EAS_BUILD_PROFILE ?? "")) {
   if (!process.env.EXPO_PUBLIC_API_URL?.startsWith("https://")) {
     throw new Error(
@@ -15,6 +17,7 @@ if (["preview", "production"].includes(process.env.EAS_BUILD_PROFILE ?? "")) {
 const config: ExpoConfig = {
   name: "Leroy • NEXT",
   slug: "leroy-next-mobile",
+  owner: "fbrcmgg",
   version: "1.0.0",
   icon: "./assets/icon.png",
   scheme: "leroynext",

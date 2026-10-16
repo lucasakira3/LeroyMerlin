@@ -3,7 +3,7 @@ import { Alert, AppState, Text } from "react-native";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import type { ChamadoMobile } from "../../types/mobile";
 import { api, ApiError, mensagemErro } from "../src/api";
-import { registrarPush } from "../src/notifications";
+import { pushEnabled, registrarPush } from "../src/notifications";
 import { useApp } from "../src/storage";
 import { Button, Card, Heading, Input, Notice, Screen, s } from "../src/ui";
 
@@ -107,7 +107,11 @@ export default function Atendimento() {
       <Heading
         eyebrow="AJUDA DE VERDADE"
         title="A equipe\nvem até você."
-        subtitle="O pedido chega ao painel do estande. Acompanhe por aqui ou ative as notificações."
+        subtitle={
+          pushEnabled
+            ? "O pedido chega ao painel do estande. Acompanhe por aqui ou ative as notificações."
+            : "O pedido chega ao painel do estande. Acompanhe as atualizações por esta tela."
+        }
       />
       {error ? <Notice error>{error}</Notice> : null}
       {info ? <Notice>{info}</Notice> : null}
@@ -146,12 +150,14 @@ export default function Atendimento() {
               onPress={() => void sendPending()}
             />
           )}
-          <Button
-            title="Ativar notificações de atendimento"
-            secondary
-            loading={busy}
-            onPress={() => void enablePush()}
-          />
+          {pushEnabled && (
+            <Button
+              title="Ativar notificações de atendimento"
+              secondary
+              loading={busy}
+              onPress={() => void enablePush()}
+            />
+          )}
           {chamados.length === 0 && !error ? (
             <Notice>
               Você ainda não pediu ajuda. Abra um produto e toque em Pedir ajuda

@@ -8,7 +8,7 @@ O código do app Android e o passo a passo local estão em [`mobile/README.md`](
 
 ## O que ainda exige configuração externa
 
-O escopo de distribuição é Android por APK. Ainda é necessário configurar as variáveis na Vercel, publicar as alterações do backend, vincular o EAS à conta Expo, configurar o Firebase/FCM e gerar a build. O QR final de instalação depende do link do APK.
+O escopo de distribuição é Android por APK. Depois de publicar o backend e configurar a Vercel, basta vincular o EAS à conta Expo e gerar a build. Firebase/FCM é opcional para uma versão futura; o push remoto está desativado por padrão. O QR final de instalação depende do link do APK.
 
 O código preparado não significa que já exista um APK publicado. A validação por bundle, testes e preview web não substitui testar câmera, push e instalação em um Android físico.
 
@@ -18,7 +18,7 @@ O código preparado não significa que já exista um APK publicado. A validaçã
 2. Escanear a etiqueta `LM-0001` no app e abrir a furadeira.
 3. Adicionar à lista e consultar o corredor no mapa.
 4. Pedir ajuda e informar o primeiro nome.
-5. Ativar notificações na build própria.
-6. A equipe assume em `/funcionario/mobile` e o visitante recebe o aviso.
-7. Bloquear a tela, repetir uma atualização e tocar no push para abrir atendimento.
+5. Manter a tela de atendimento aberta.
+6. A equipe assume em `/funcionario/mobile` e o visitante vê o status atualizado.
+7. Na lista, experimentar o lembrete local na build instalada e autorizar a notificação.
 8. Desligar a conexão e conferir que a lista continua disponível.

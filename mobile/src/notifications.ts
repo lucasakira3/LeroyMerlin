@@ -5,6 +5,8 @@ import { request } from "./api";
 
 export const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+// A primeira versão funciona sem Firebase. Push remoto é uma opção futura.
+export const pushEnabled = process.env.EXPO_PUBLIC_PUSH_ENABLED === "true";
 export async function notifications() {
   // Android Expo Go não carrega o módulo de push remoto.
   if (isExpoGo || Platform.OS === "web")
@@ -31,6 +33,8 @@ async function permissions() {
   return module;
 }
 export async function registrarPush(token: string): Promise<void> {
+  if (!pushEnabled)
+    throw new Error("Acompanhe as atualizações pela tela de atendimento.");
   if (!Device.isDevice) throw new Error("Ative o push em um celular físico.");
   const projectId =
     Constants.easConfig?.projectId ??

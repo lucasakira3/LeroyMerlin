@@ -4,12 +4,18 @@
     "development": { "developmentClient": true, "distribution": "internal" },
     "preview": {
       "distribution": "internal",
-      "env": { "EXPO_PUBLIC_API_URL": "https://leroy-merlin.vercel.app" },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://leroy-merlin.vercel.app",
+        "EXPO_PUBLIC_PUSH_ENABLED": "false"
+      },
       "android": { "buildType": "apk" }
     },
     "production": {
       "autoIncrement": true,
-      "env": { "EXPO_PUBLIC_API_URL": "https://leroy-merlin.vercel.app" },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://leroy-merlin.vercel.app",
+        "EXPO_PUBLIC_PUSH_ENABLED": "false"
+      },
       "android": { "buildType": "apk" }
     }
   }

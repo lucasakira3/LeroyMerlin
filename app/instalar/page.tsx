@@ -1,4 +1,5 @@
 import Link from "next/link";
+import mobileRelease from "@/data/mobile-release.json";
 
 export const dynamic = "force-dynamic";
 function installUrl(value: string | undefined): string | null {
@@ -12,7 +13,12 @@ function installUrl(value: string | undefined): string | null {
   }
 }
 export default function Instalar() {
-  const android = installUrl(process.env.MOBILE_ANDROID_URL);
+  const releaseAvailable =
+    !mobileRelease.expiresAt ||
+    Date.parse(mobileRelease.expiresAt) > Date.now();
+  const android =
+    installUrl(process.env.MOBILE_ANDROID_URL) ??
+    (releaseAvailable ? installUrl(mobileRelease.apkUrl ?? undefined) : null);
   return (
     <main className="max-w-xl w-full mx-auto px-6 py-14">
       <p className="text-lm-green font-bold mb-3">
