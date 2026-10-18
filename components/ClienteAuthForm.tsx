@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { KeyRound, Mail, ArrowRight } from 'lucide-react'
 import Button from '@/components/ui/Button'
@@ -10,7 +11,8 @@ import { entrarCliente } from '@/lib/authServidor'
 
 // Login de cliente. Não tem tela de cadastro: o primeiro login com um e-mail novo cria a
 // conta com a senha digitada; daí em diante só aquela senha entra (conferida no servidor,
-// ver lib/authServidor.ts). Não há "esqueci a senha" porque o site não envia e-mail.
+// ver lib/authServidor.ts). "Esqueci minha senha" leva pra /redefinir-senha, que manda um link
+// por e-mail (components/RedefinirSenha.tsx).
 // Além da sessão no servidor, garantimos um registro em clientContas pro e-mail, porque
 // Minha Conta (dados, segurança, privacidade) lê essa conta.
 export default function ClienteAuthForm() {
@@ -76,7 +78,16 @@ export default function ClienteAuthForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1.5">Senha</label>
+          <div className="flex items-center justify-between gap-3 mb-1.5">
+            <label className="text-sm font-bold text-gray-700">Senha</label>
+            {/* Leva o e-mail já digitado, pra pessoa não precisar digitar de novo. */}
+            <Link
+              href={`/redefinir-senha${email.trim() ? `?email=${encodeURIComponent(email.trim().toLowerCase())}` : ''}`}
+              className="text-sm font-semibold text-lm-green hover:underline"
+            >
+              Esqueci minha senha
+            </Link>
+          </div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <KeyRound size={18} className="text-gray-600" />

@@ -64,3 +64,38 @@ export async function trocarSenha(papel: 'cliente' | 'funcionario', senhaAtual: 
   if (!erro) return 'ok'
   return erro === 'senha_incorreta' || erro === 'senha_invalida' || erro === 'sem_sessao' ? erro : 'falha'
 }
+
+// ── Esqueci minha senha (app/api/auth/esqueci e app/api/auth/redefinir) ──
+
+export type ResultadoPedidoDeLink = 'enviado' | 'invalido' | 'email_indisponivel' | 'sem-banco' | 'falha'
+
+// Pede o e-mail com o link. 'enviado' não quer dizer que a conta existe: o servidor responde
+// igual nos dois casos, de propósito.
+export async function pedirLinkDeRedefinicao(email: string): Promise<ResultadoPedidoDeLink> {
+  const resposta = await chamar('/api/auth/esqueci', { email })
+  if (!resposta || !resposta.dados.ativo) return 'sem-banco'
+  const erro = resposta.dados.erro
+  if (!erro) return 'enviado'
+  if (erro === 'email_invalido') return 'invalido'
+  if (erro === 'email_indisponivel') return 'email_indisponivel'
+  return 'falha'
+}
+
+export type ResultadoRedefinicao =
+  | { tipo: 'ok'; email: string }
+  | { tipo: 'link_invalido' }
+  | { tipo: 'senha_invalida' }
+  | { tipo: 'sem-banco' }
+  | { tipo: 'falha' }
+
+// Sem `novaSenha`: só confere se o link ainda vale. Com ela: troca a senha e o servidor já
+// devolve o cookie de sessão (a pessoa sai logada).
+export async function redefinirSenha(token: string, novaSenha?: string): Promise<ResultadoRedefinicao> {
+  const resposta = await chamar('/api/auth/redefinir', novaSenha === undefined ? { token } : { token, novaSenha })
+  if (!resposta || !resposta.dados.ativo) return { tipo: 'sem-banco' }
+  const { erro, email } = resposta.dados
+  if (!erro && email) return { tipo: 'ok', email }
+  if (erro === 'link_invalido') return { tipo: 'link_invalido' }
+  if (erro === 'senha_invalida') return { tipo: 'senha_invalida' }
+  return { tipo: 'falha' }
+}
