@@ -4,6 +4,7 @@
 // projeto não tem esse pacote; a proteção é a variável não começar com NEXT_PUBLIC_ (o Next
 // não a entrega ao navegador).
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { chaveSecretaDoSupabase, urlDoSupabase } from '@/lib/servidor/ambiente'
 
 let cliente: SupabaseClient | null | undefined
 let desvioDoRelogio: { ms: number; medidoEm: number } | null = null
@@ -19,8 +20,8 @@ export function tabelaNaoExiste(erro: { code?: string } | null | undefined): boo
 // isso como "banco desligado" e o site segue só com os dados do aparelho.
 export function supabaseServidor(): SupabaseClient | null {
   if (cliente !== undefined) return cliente
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
-  const chave = process.env.SUPABASE_SECRET_KEY?.trim()
+  const url = urlDoSupabase()
+  const chave = chaveSecretaDoSupabase()
   cliente = url && chave
     ? createClient(url, chave, { auth: { persistSession: false, autoRefreshToken: false } })
     : null
@@ -48,8 +49,8 @@ export async function loginDeVerdadeAtivo(sb: SupabaseClient): Promise<boolean> 
 // A referência é o cabeçalho Date que o Supabase devolve; a diferença é medida uma vez e
 // reaproveitada por 10 minutos. Se a medida falhar, vale o relógio local.
 export async function horaCerta(): Promise<number> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, '')
-  const chave = process.env.SUPABASE_SECRET_KEY?.trim()
+  const url = urlDoSupabase()
+  const chave = chaveSecretaDoSupabase()
   const vencido = !desvioDoRelogio || Date.now() - desvioDoRelogio.medidoEm > 10 * 60 * 1000
   if (vencido && url && chave) {
     let ms = desvioDoRelogio?.ms ?? 0

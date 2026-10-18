@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { horaCerta, loginDeVerdadeAtivo, supabaseServidor, tabelaNaoExiste } from '@/lib/supabaseServidor'
+import { configuracaoFaltando } from '@/lib/servidor/ambiente'
 import { cookieDeSaida, normalizarEmail, sessaoDaRequisicao } from '@/lib/servidor/sessao'
 import {
   NOMES_DAS_TABELAS, TABELAS, ehTabela, podeGravar,
@@ -319,7 +320,7 @@ export async function POST(req: NextRequest) {
 // tabelas existem. Não devolve dado nenhum, só a situação.
 export async function GET() {
   const sb = supabaseServidor()
-  if (!sb) return NextResponse.json({ ativo: false, motivo: 'sem-configuracao' })
+  if (!sb) return NextResponse.json({ ativo: false, motivo: 'sem-configuracao', variaveisFaltando: configuracaoFaltando() })
   const faltando: string[] = []
   const erros: string[] = []
   await Promise.all(

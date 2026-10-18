@@ -14,6 +14,7 @@
 // funcionário ao mesmo tempo (é assim que o time demonstra os dois lados em duas abas).
 import { createHmac, timingSafeEqual } from 'crypto'
 import type { NextRequest } from 'next/server'
+import { chaveSecretaDoSupabase } from './ambiente'
 
 export type PapelLogado = 'cliente' | 'funcionario'
 
@@ -34,7 +35,7 @@ export function emailValido(email: string): boolean {
 // A chave da assinatura é derivada da chave secreta do Supabase, pra não exigir mais uma
 // variável de ambiente. Sem a chave secreta não há banco nem login de verdade.
 function chave(): Buffer | null {
-  const segredo = process.env.SUPABASE_SECRET_KEY?.trim()
+  const segredo = chaveSecretaDoSupabase()
   return segredo ? createHmac('sha256', segredo).update('lm-sessao-v1').digest() : null
 }
 

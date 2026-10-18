@@ -8,11 +8,12 @@
 //     Quando a senha é trocada, a impressão muda e o mesmo link para de funcionar — ou seja,
 //     cada link só serve uma vez, e um link antigo não serve depois de a pessoa trocar a senha.
 import { createHmac, timingSafeEqual } from 'crypto'
+import { chaveSecretaDoSupabase } from './ambiente'
 
 const VALIDADE_MS = 30 * 60 * 1000
 
 function chave(): Buffer | null {
-  const segredo = process.env.SUPABASE_SECRET_KEY?.trim()
+  const segredo = chaveSecretaDoSupabase()
   return segredo ? createHmac('sha256', segredo).update('lm-redefinir-senha-v1').digest() : null
 }
 
