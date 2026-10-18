@@ -10,6 +10,7 @@ import { trackProductView } from '@/lib/hooks/useProductTracker'
 import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import type { ParadaRota } from '@/lib/rotaLoja'
 import { shelfColor } from '@/lib/corredorCores'
+import Pagination from '@/components/ui/Pagination'
 
 const VW = 1200
 const VH = 590
@@ -26,6 +27,9 @@ const ROW2_Y = 340
 // perto" com esta altura fixa (ver `dePerto` no componente).
 const LARGURA_ESTREITA = 560
 const ALTURA_DE_PERTO = 420
+
+// Quantos produtos a lista embaixo do mapa mostra de cada vez (ver `pinsDaPagina`).
+const PRODUTOS_POR_PAGINA = 10
 
 function getPos(corridorNorm: string): { x: number; y: number } | null {
   const pos = getCorredorRowIndex(corridorNorm)
@@ -62,6 +66,14 @@ interface Props {
 export default function StoreMap({ resultados, loja, totalEstimado, onSelect, rota, semCarrinho }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
+
+  // A lista embaixo do mapa (e os pins) vai em páginas de 10: numa busca ampla ou num projeto
+  // grande eram 20, 30 cartões numa tela só. Volta pra página 1 sempre que os produtos mudam
+  // (busca nova, filtro, item marcado ou trocado no Projeto Guiado).
+  const [pagina, setPagina] = useState(1)
+  const raiz = useRef<HTMLDivElement>(null)
+  const chaveDosResultados = resultados.map(r => r.produto.id).join('|')
+  useEffect(() => { setPagina(1) }, [chaveDosResultados])
 
   // Zoom/pan do mapa — permite aproximar de um corredor específico e arrastar pra
   // navegar, útil quando o carrinho tem muitos itens espalhados pela loja inteira.
@@ -150,6 +162,14 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
     setTimeout(() => setAdicionadoId(prev => prev === produtoId ? null : prev), 1500)
   }
 
+  function mudarPagina(nova: number) {
+    setPagina(nova)
+    // Os botões de página ficam no fim da lista. Se o topo do mapa já saiu da tela, volta até
+    // ele: é lá que aparecem os pins da página nova, com a lista dela logo abaixo.
+    const el = raiz.current
+    if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const ordemPorCorredor = rota
     ? new Map(rota.map((p, i) => [p.corredorNormalizado, i + 1]))
     : null
@@ -167,6 +187,15 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
   // visita (não a ordem em que os produtos entraram na busca/carrinho).
   if (ordemPorCorredor) pins.sort((a, b) => a.idx - b.idx)
 
+  const totalPaginas = Math.max(1, Math.ceil(pins.length / PRODUTOS_POR_PAGINA))
+  const paginaAtual = Math.min(pagina, totalPaginas)
+  const pinsDaPagina = pins.slice((paginaAtual - 1) * PRODUTOS_POR_PAGINA, paginaAtual * PRODUTOS_POR_PAGINA)
+  // No mapa entram só os pins da página (a numeração continua: 11 a 20 na página 2), pra
+  // planta não virar um amontoado e os números baterem com a lista que está na tela.
+  // Exceção: com rota desenhada (carrinho) ficam todos, senão a linha da rota passaria por
+  // corredores sem pin.
+  const pinsNoMapa = rota && rota.length > 0 ? pins : pinsDaPagina
+
   const pontosRota = rota
     ? (rota.map(p => getPos(p.corredorNormalizado)).filter(Boolean) as Array<{ x: number; y: number }>)
     : []
@@ -179,7 +208,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
   // mesmo corredor (comum quando a busca traz muitas variações do mesmo item) continuavam
   // se sobrepondo bastante mesmo espalhados.
   const gruposPorPosicao = new Map<string, typeof pins>()
-  pins.forEach(p => {
+  pinsNoMapa.forEach(p => {
     const chave = `${p.pos.x},${p.pos.y}`
     gruposPorPosicao.set(chave, [...(gruposPorPosicao.get(chave) ?? []), p])
   })
@@ -231,7 +260,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
 
   // No modo "de perto" a planta desliza sozinha até o produto escolhido (ou, ao abrir, até o
   // primeiro da lista) ficar no meio da tela.
-  const alvo = pins.find(p => p.produto.id === selectedId) ?? pins[0]
+  const alvo = pinsNoMapa.find(p => p.produto.id === selectedId) ?? pinsDaPagina[0]
   const alvoX = alvo ? alvo.pos.x : null
   useEffect(() => {
     const el = moldura.current
@@ -241,7 +270,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
   }, [dePerto, alvoX])
 
   return (
-    <div className="w-full">
+    <div ref={raiz} className="w-full scroll-mt-4">
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 mb-2">
         <div>
           <span className="text-xs font-bold text-gray-700">{loja}</span>
@@ -437,7 +466,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
 
           {/* Pins — o selecionado é redesenhado por último (SVG pinta na ordem do DOM) pra
               nunca ficar escondido embaixo de outros pins do mesmo corredor. */}
-          {[...pins].sort((a, b) => Number(a.produto.id === selectedId) - Number(b.produto.id === selectedId)).map(pin => {
+          {[...pinsNoMapa].sort((a, b) => Number(a.produto.id === selectedId) - Number(b.produto.id === selectedId)).map(pin => {
             const isSel = selectedId === pin.produto.id
             return (
               <g key={pin.produto.id}
@@ -481,7 +510,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
         // 340px é o mínimo pra caber nome + marca sem cortar; o min(100%, …) evita que a coluna
         // estoure a tela em celular, onde o espaço é menor que isso.
         <div className={`${rota && rota.length > 0 ? 'mt-1.5' : 'mt-3'} grid grid-cols-[repeat(auto-fill,minmax(min(100%,340px),1fr))] gap-2`}>
-          {pins.map((pin, i) => {
+          {pinsDaPagina.map((pin, i) => {
             const isSel = selectedId === pin.produto.id
             return (
               <div key={pin.produto.id}
@@ -525,6 +554,14 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
               </div>
             )
           })}
+        </div>
+      )}
+      {totalPaginas > 1 && (
+        <div className="mt-3 flex flex-col items-center gap-2">
+          <p className="text-xs text-gray-600">
+            Produtos {(paginaAtual - 1) * PRODUTOS_POR_PAGINA + 1}–{Math.min(paginaAtual * PRODUTOS_POR_PAGINA, pins.length)} de {pins.length}
+          </p>
+          <Pagination page={paginaAtual} totalPages={totalPaginas} onChange={mudarPagina} />
         </div>
       )}
 
