@@ -84,7 +84,7 @@ export default function Footer() {
       <div className="border-t border-gray-200 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-600 dark:text-zinc-500">
           <p>© {new Date().getFullYear()} Leroy Merlin. Loja fictícia para fins de demonstração.</p>
-          <p>Projeto acadêmico — FIAP Challenge 2026</p>
+          <b><p>Projeto desenvolvido pelo grupo Code Crew — Turma 2ESOA 2026 — FIAP Challenge 2026</p></b>
         </div>
       </div>
     </footer>
