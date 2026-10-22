@@ -1,27 +1,17 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { getCorredorRowIndex } from '@/lib/corredores'
 export { getCorredorRowIndex } from '@/lib/corredores'
-import { ShoppingCart, Check, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
+import Link from 'next/link'
+import { ShoppingCart, Check, ZoomIn, ZoomOut, Maximize2, QrCode, Navigation } from 'lucide-react'
+import Modal from '@/components/ui/Modal'
 import { adicionarAoCarrinho } from '@/lib/clientCarrinho'
 import type { SearchResult } from '@/types/produto'
 import { trackProductView } from '@/lib/hooks/useProductTracker'
 import { getImagemProduto, ajusteFoto } from '@/lib/categoriaImagens'
 import type { ParadaRota } from '@/lib/rotaLoja'
-import { shelfColor } from '@/lib/corredorCores'
 import Pagination from '@/components/ui/Pagination'
-
-const VW = 1200
-const VH = 590
-const LMARG = 14
-const CORR_W = 46
-const SHELF_W = 14
-const AISLE_W = 18
-const SHELF_H = 118
-
-const ROW1_Y = 118
-const ROW2_Y = 340
+import { VW, VH, DesenhoPlantaLoja, CORES_DOS_PINS as PIN_COLORS, posicaoDoCorredor as getPos } from './PlantaLoja'
 
 // Celular: abaixo desta largura a planta inteira não dá pra ler, e ela passa a abrir "de
 // perto" com esta altura fixa (ver `dePerto` no componente).
@@ -31,27 +21,6 @@ const ALTURA_DE_PERTO = 420
 // Quantos produtos a lista embaixo do mapa mostra de cada vez (ver `pinsDaPagina`).
 const PRODUTOS_POR_PAGINA = 10
 
-function getPos(corridorNorm: string): { x: number; y: number } | null {
-  const pos = getCorredorRowIndex(corridorNorm)
-  if (!pos) return null
-  return {
-    x: LMARG + pos.idx * CORR_W + CORR_W / 2,
-    y: (pos.row === 1 ? ROW1_Y : ROW2_Y) + SHELF_H / 2,
-  }
-}
-
-const PIN_COLORS = ['#ef4444','#3b82f6','#f59e0b','#10b981','#8b5cf6','#ec4899','#06b6d4','#84cc16']
-
-const DEPT_LABELS = [
-  { label: 'FERRAMENTAS', n1: 1,  n2: 8,  row: 1 as const },
-  { label: 'ELÉTRICA',    n1: 9,  n2: 15, row: 1 as const },
-  { label: 'HIDRÁULICA',  n1: 16, n2: 22, row: 1 as const },
-  { label: 'ILUMINAÇÃO',  n1: 23, n2: 25, row: 1 as const },
-  { label: 'JARDIM',      n1: 26, n2: 32, row: 2 as const },
-  { label: 'PISOS & CERÂMICA', n1: 33, n2: 43, row: 2 as const },
-  { label: 'BANHEIROS',   n1: 44, n2: 47, row: 2 as const },
-  { label: 'PINTURA & DEC.', n1: 48, n2: 50, row: 2 as const },
-]
 
 interface Props {
   resultados: SearchResult[]
@@ -61,9 +30,19 @@ interface Props {
   rota?: ParadaRota[]
   /** Esconde o botão de carrinho (uso do funcionário, que não compra pelo mapa). */
   semCarrinho?: boolean
+  /** Mostra o botão "Navegar no celular" (QR code que abre /navegar com os produtos da página). */
+  navegacaoNoCelular?: boolean
 }
 
-export default function StoreMap({ resultados, loja, totalEstimado, onSelect, rota, semCarrinho }: Props) {
+// Endereço que o QR code abre. Rodando no computador de quem desenvolve (localhost), o celular
+// não alcançaria esse endereço — então aponta pro site publicado.
+function enderecoDoSite(): string {
+  if (typeof window === 'undefined') return ''
+  const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname)
+  return local ? 'https://leroy-merlin.vercel.app' : window.location.origin
+}
+
+export default function StoreMap({ resultados, loja, totalEstimado, onSelect, rota, semCarrinho, navegacaoNoCelular }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
 
@@ -72,6 +51,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
   // (busca nova, filtro, item marcado ou trocado no Projeto Guiado).
   const [pagina, setPagina] = useState(1)
   const raiz = useRef<HTMLDivElement>(null)
+  const [qr, setQr] = useState<{ imagem: string; endereco: string } | null>(null)
   const chaveDosResultados = resultados.map(r => r.produto.id).join('|')
   useEffect(() => { setPagina(1) }, [chaveDosResultados])
 
@@ -162,6 +142,17 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
     setTimeout(() => setAdicionadoId(prev => prev === produtoId ? null : prev), 1500)
   }
 
+  // QR code da navegação guiada: leva a loja e os produtos da página que está na tela, cada um
+  // com o número do pin, pra a tela do celular (components/NavegacaoLoja.tsx) mostrar os mesmos.
+  async function abrirQrDaNavegacao() {
+    const produtos = pinsDaPagina.map(p => `${p.produto.id}:${p.idx}`).join(',')
+    const caminho = `/navegar?loja=${encodeURIComponent(loja)}&p=${encodeURIComponent(produtos)}`
+    const endereco = enderecoDoSite() + caminho
+    const QRCode = (await import('qrcode')).default
+    const imagem = await QRCode.toDataURL(endereco, { margin: 1, width: 280, color: { dark: '#111827', light: '#ffffff' } })
+    setQr({ imagem, endereco: caminho })
+  }
+
   function mudarPagina(nova: number) {
     setPagina(nova)
     // Os botões de página ficam no fim da lista. Se o topo do mapa já saiu da tela, volta até
@@ -233,31 +224,6 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
     setSelectedId(prev => prev === pin.produto.id ? null : pin.produto.id)
   }
 
-  const renderCorredor = (n: number, row: 1 | 2) => {
-    const idx = row === 1 ? n - 1 : n - 26
-    const x = LMARG + idx * CORR_W
-    const y = row === 1 ? ROW1_Y : ROW2_Y
-    const { fill, stroke } = shelfColor(n)
-    const label = String(n).padStart(2, '0')
-    return (
-      <g key={`c${n}`}>
-        <rect x={x} y={y} width={SHELF_W} height={SHELF_H} fill={fill} stroke={stroke} strokeWidth="0.8" rx="1" />
-        {[25,50,75,100].filter(oy => oy < SHELF_H).map(oy => (
-          <line key={oy} x1={x+2} y1={y+oy} x2={x+SHELF_W-2} y2={y+oy} stroke={stroke} strokeWidth="0.5" opacity="0.5" />
-        ))}
-        <rect x={x+SHELF_W} y={y} width={AISLE_W} height={SHELF_H} fill="#f8fafc" />
-        <text x={x+SHELF_W+AISLE_W/2} y={y+15} textAnchor="middle"
-          fontSize="11" fontWeight="800" fill="#1f2937" fontFamily="Inter,sans-serif">{label}</text>
-        <text x={x+SHELF_W+AISLE_W/2} y={y+SHELF_H-5} textAnchor="middle"
-          fontSize="7" fill="#94a3b8" fontFamily="Inter,sans-serif">↕</text>
-        <rect x={x+SHELF_W+AISLE_W} y={y} width={SHELF_W} height={SHELF_H} fill={fill} stroke={stroke} strokeWidth="0.8" rx="1" />
-        {[25,50,75,100].filter(oy => oy < SHELF_H).map(oy => (
-          <line key={oy} x1={x+SHELF_W+AISLE_W+2} y1={y+oy} x2={x+CORR_W-2} y2={y+oy} stroke={stroke} strokeWidth="0.5" opacity="0.5" />
-        ))}
-      </g>
-    )
-  }
-
   // No modo "de perto" a planta desliza sozinha até o produto escolhido (ou, ao abrir, até o
   // primeiro da lista) ficar no meio da tela.
   const alvo = pinsNoMapa.find(p => p.produto.id === selectedId) ?? pinsDaPagina[0]
@@ -277,6 +243,15 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
           <span className="hidden sm:inline ml-2 text-xs text-gray-600">Planta da loja · 50 corredores</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {navegacaoNoCelular && pinsDaPagina.length > 0 && (
+            <button
+              type="button"
+              onClick={abrirQrDaNavegacao}
+              className="text-xs font-semibold flex items-center gap-1.5 px-3 h-8 rounded-full bg-gray-900 text-white hover:bg-lm-green transition-colors"
+            >
+              <QrCode size={14} /> Navegar no celular
+            </button>
+          )}
           {pins.length > 0 && (
             <span className="text-xs bg-lm-green/10 text-lm-green border border-lm-green/20 px-2 py-0.5 rounded-full font-semibold">
               {pins.length} produto{pins.length > 1 ? 's' : ''} localizado{pins.length > 1 ? 's' : ''}
@@ -362,93 +337,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             ? { display: 'block', height: ALTURA_DE_PERTO, width: (ALTURA_DE_PERTO * VW) / VH, maxWidth: 'none' }
             : { display: 'block' }}
         >
-          <rect width={VW} height={VH} fill="#eef2f7" />
-
-          {/* Jardim */}
-          <rect x="0" y="0" width={VW} height="110" fill="#f0fdf4" />
-          <rect x="0" y="109" width={VW} height="1" fill="#bbf7d0" />
-          <text x="600" y="34" textAnchor="middle" fontSize="12" fontWeight="700"
-            fill="#16a34a" fontFamily="Inter,sans-serif" letterSpacing="2">🌿  JARDIM / ÁREA EXTERNA</text>
-          <text x="600" y="52" textAnchor="middle" fontSize="9" fill="#86efac" fontFamily="Inter,sans-serif">
-            Plantas · Sementes · Ferramentas de Jardim · Vasos · Mangueiras
-          </text>
-          {[120,260,410,570,730,880,1050].map(tx => (
-            <g key={tx}>
-              <ellipse cx={tx} cy={82} rx="18" ry="14" fill="#86efac" opacity="0.6" />
-              <line x1={tx} y1={90} x2={tx} y2={108} stroke="#6b7280" strokeWidth="2" />
-            </g>
-          ))}
-
-          {/* Corredor traseiro */}
-          <rect x="0" y="110" width={VW} height="8" fill="#cbd5e1" />
-          <text x="600" y="117" textAnchor="middle" fontSize="7" fill="#94a3b8"
-            fontFamily="Inter,sans-serif" letterSpacing="1">— CORREDOR TRASEIRO —</text>
-
-          {/* Linha 1 (01-25) */}
-          <rect x={LMARG-2} y={ROW1_Y-2} width={25*CORR_W+4} height={SHELF_H+4}
-            fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" rx="3" />
-          {Array.from({length:25}, (_,i) => renderCorredor(i+1, 1))}
-          {DEPT_LABELS.filter(d => d.row === 1).map(d => {
-            const x1 = LMARG + (d.n1-1)*CORR_W
-            const x2 = LMARG + (d.n2-1)*CORR_W + CORR_W
-            const { stroke, fill } = shelfColor(d.n1)
-            return (
-              <g key={d.label}>
-                <rect x={x1} y={ROW1_Y-18} width={x2-x1} height="16" rx="2" fill={fill} stroke={stroke} strokeWidth="0.8" />
-                <text x={(x1+x2)/2} y={ROW1_Y-6.5} textAnchor="middle"
-                  fontSize="9.5" fontWeight="700" fill="#374151" fontFamily="Inter,sans-serif">{d.label}</text>
-              </g>
-            )
-          })}
-
-          {/* Corredor central */}
-          <rect x="0" y={ROW1_Y+SHELF_H+2} width={VW} height="35" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="0.5" />
-          <line x1="20" y1={ROW1_Y+SHELF_H+19} x2={VW-20} y2={ROW1_Y+SHELF_H+19}
-            stroke="#94a3b8" strokeWidth="1" strokeDasharray="6 4" />
-          <text x="600" y={ROW1_Y+SHELF_H+22} textAnchor="middle" fontSize="8" fontWeight="600"
-            fill="#94a3b8" fontFamily="Inter,sans-serif" letterSpacing="3">
-            ← CORREDOR CENTRAL (PASSAGEM PRINCIPAL) →
-          </text>
-
-          {/* Linha 2 (26-50) */}
-          <rect x={LMARG-2} y={ROW2_Y-2} width={25*CORR_W+4} height={SHELF_H+4}
-            fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" rx="3" />
-          {Array.from({length:25}, (_,i) => renderCorredor(i+26, 2))}
-          {DEPT_LABELS.filter(d => d.row === 2).map(d => {
-            const x1 = LMARG + (d.n1-26)*CORR_W
-            const x2 = LMARG + (d.n2-26)*CORR_W + CORR_W
-            const { stroke, fill } = shelfColor(d.n1)
-            return (
-              <g key={d.label}>
-                <rect x={x1} y={ROW2_Y-18} width={x2-x1} height="16" rx="2" fill={fill} stroke={stroke} strokeWidth="0.8" />
-                <text x={(x1+x2)/2} y={ROW2_Y-6.5} textAnchor="middle"
-                  fontSize="9.5" fontWeight="700" fill="#374151" fontFamily="Inter,sans-serif">{d.label}</text>
-              </g>
-            )
-          })}
-
-          {/* Corredor frontal */}
-          <rect x="0" y={ROW2_Y+SHELF_H+2} width={VW} height="35" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="0.5" />
-          <text x="600" y={ROW2_Y+SHELF_H+22} textAnchor="middle" fontSize="8" fontWeight="600"
-            fill="#94a3b8" fontFamily="Inter,sans-serif" letterSpacing="3">← CORREDOR FRONTAL →</text>
-
-          {/* Checkout / Entrada */}
-          <rect x="0" y={VH-66} width={VW} height="66" fill="#e2e8f0" />
-          <rect x="0" y={VH-66} width={VW} height="2" fill="#94a3b8" />
-          {Array.from({length:10}, (_,i) => (
-            <g key={i}>
-              <rect x={40+i*110} y={VH-58} width="80" height="44" fill="white"
-                stroke="#94a3b8" strokeWidth="1" rx="3" />
-              <text x={80+i*110} y={VH-40} textAnchor="middle" fontSize="8"
-                fill="#64748b" fontFamily="Inter,sans-serif" fontWeight="600">CAIXA</text>
-              <text x={80+i*110} y={VH-28} textAnchor="middle" fontSize="9"
-                fill="#374151" fontFamily="Inter,sans-serif" fontWeight="700">{String(i+1).padStart(2,'0')}</text>
-            </g>
-          ))}
-          <rect x="1140" y={VH-58} width="48" height="44" fill="#fef3c7" stroke="#d97706" strokeWidth="1" rx="3" />
-          <text x="1164" y={VH-34} textAnchor="middle" fontSize="8" fill="#92400e" fontFamily="Inter,sans-serif" fontWeight="700">INFO</text>
-          <text x="600" y={VH-6} textAnchor="middle" fontSize="10" fontWeight="800"
-            fill="#475569" fontFamily="Inter,sans-serif" letterSpacing="4">ENTRADA PRINCIPAL</text>
+          <DesenhoPlantaLoja />
 
           {/* Rota de compra sugerida */}
           {pontosRota.length > 1 && (
@@ -556,6 +445,25 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
           })}
         </div>
       )}
+      <Modal open={qr !== null} onClose={() => setQr(null)} title="Navegar na loja pelo celular" maxWidthClass="md:max-w-md">
+        {qr && (
+          <div className="p-6 flex flex-col items-center text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={qr.imagem} alt="QR code da navegação na loja" className="w-60 h-60 rounded-xl border border-gray-200 bg-[#ffffff] p-2" />
+            <p className="text-base text-gray-800 mt-4">
+              Aponte a câmera do celular para o QR code. Abre o mapa da loja <strong>{loja}</strong> com a rota até
+              {pinsDaPagina.length === 1 ? ' o produto' : ` os ${pinsDaPagina.length} produtos`} desta página, como num aplicativo de trânsito.
+            </p>
+            <p className="text-sm text-gray-600 mt-2">Simulação: o ponto azul anda sozinho pelos corredores, sem GPS.</p>
+            <Link
+              href={qr.endereco}
+              className="mt-5 w-full h-11 rounded-xl bg-lm-green text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-green-700 transition-colors"
+            >
+              <Navigation size={16} /> Abrir neste aparelho
+            </Link>
+          </div>
+        )}
+      </Modal>
       {totalPaginas > 1 && (
         <div className="mt-3 flex flex-col items-center gap-2">
           <p className="text-xs text-gray-600">

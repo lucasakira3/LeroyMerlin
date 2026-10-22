@@ -41,7 +41,9 @@ export default function TourGuiado() {
   }
 
   const pathname = usePathname()
-  if (pathname.startsWith('/funcionario')) return null;
+  // Na navegação na loja (/navegar) o tour cobriria o mapa: quem chega pelo QR code num
+  // celular novo nunca viu o tour, e ele abriria por cima da navegação.
+  if (pathname.startsWith('/funcionario') || pathname.startsWith('/navegar')) return null;
   if (!visivel) return null
 
   const isUltimo = passo === 3

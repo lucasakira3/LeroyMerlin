@@ -14,7 +14,7 @@ import Logo from './Logo'
 // duplicar com valores diferentes, sempre copiar de lá se precisar ajustar.
 export default function Footer() {
   const pathname = usePathname()
-  if (pathname.startsWith('/funcionario')) return null
+  if (pathname.startsWith('/funcionario') || pathname.startsWith('/navegar')) return null
 
   return (
     <footer className="bg-white dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-800 mt-12">

@@ -139,6 +139,7 @@ export default function SearchSection({ initialQuery }: SearchSectionProps) {
               loja={loja}
               totalEstimado={resultadosFiltrados.reduce((sum, r) => sum + ((r.produto as any).preco ?? 0), 0)}
               onSelect={setProdutoDrawer}
+              navegacaoNoCelular
             />
           ) : (
             <div className="text-center py-10">

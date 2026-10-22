@@ -36,7 +36,8 @@ export default function NavBar() {
     setMenuAberto(false)
   }, [pathname])
 
-  if (pathname.startsWith('/funcionario')) return null;
+  // Painel do funcionário tem cabeçalho próprio; a navegação na loja (/navegar) é tela cheia.
+  if (pathname.startsWith('/funcionario') || pathname.startsWith('/navegar')) return null;
 
   const contaIconClass = `flex items-center justify-center w-10 h-10 rounded-xl transition-colors ${
     pathname === '/conta'
