@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import {
   ArrowUp, CornerUpLeft, CornerUpRight, Undo2, MapPin, Flag, Play, Pause, Check, Map as MapaIcone,
-  Navigation, X, ShoppingCart, Footprints,
+  Navigation, X, ShoppingCart, Footprints, ListChecks, Route,
 } from 'lucide-react'
 import { VW, VH, DesenhoPlantaLoja, CORES_DOS_PINS } from './PlantaLoja'
 import { buscarProdutosPorIds, type ProdutoResolvido } from '@/lib/produtosCliente'
@@ -33,7 +33,9 @@ const ANCORA_Y = '58%'        // altura da tela onde fica o ponto azul (acima do
 const VELOCIDADE_BASE = 55    // unidades do desenho por segundo na simulação (~3,6 m/s: acelerado)
 const CAMINHADA_M_POR_S = 1.1 // ritmo de uma pessoa andando, pra estimar o tempo de verdade
 
-type Estado = 'carregando' | 'vazio' | 'pronto' | 'andando' | 'pausado' | 'chegou' | 'fim'
+// 'escolhendo' = tela "Monte sua rota": o cliente marca os produtos que vai buscar antes de
+// a simulação começar.
+type Estado = 'carregando' | 'vazio' | 'escolhendo' | 'pronto' | 'andando' | 'pausado' | 'chegou' | 'fim'
 
 function lerProdutosDoEndereco(p: string | null): { id: string; numero: number }[] {
   if (!p) return []
@@ -66,6 +68,7 @@ export default function NavegacaoLoja() {
   const [visaoGeral, setVisaoGeral] = useState(false)
   const [coletados, setColetados] = useState<Set<string>>(new Set())
   const [noCarrinho, setNoCarrinho] = useState<Set<string>>(new Set())
+  const [escolhidos, setEscolhidos] = useState<Set<string>>(new Set())
   const [instrucao, setInstrucao] = useState<Instrucao>({ manobra: 'siga', metros: 0, rua: '' })
   const [faltaMetros, setFaltaMetros] = useState(0)
 
@@ -78,17 +81,22 @@ export default function NavegacaoLoja() {
     if (pedidos.length === 0) { setEstado('vazio'); return }
     buscarProdutosPorIds(pedidos.map(p => p.id)).then(lista => {
       setProdutos(lista)
-      setEstado(lista.length ? 'pronto' : 'vazio')
+      // Começa com todos marcados; o cliente desmarca o que não vai buscar.
+      setEscolhidos(new Set(lista.map(p => p.id)))
+      setEstado(lista.length ? 'escolhendo' : 'vazio')
     })
   }, [pedidos])
 
-  const { paradas, foraDoMapa, trechos } = useMemo(() => {
-    if (!produtos) return { paradas: [] as Parada[], foraDoMapa: [] as ProdutoResolvido[], trechos: [] as Trecho[] }
+  // Lugar de cada produto: calculado com TODOS os da busca (assim um produto não muda de
+  // lugar no corredor quando outro é desmarcado); a rota usa só os escolhidos.
+  const { todasAsParadas, foraDoMapa } = useMemo(() => {
+    if (!produtos) return { todasAsParadas: [] as Parada[], foraDoMapa: [] as ProdutoResolvido[] }
     const numeroDe = new Map(pedidos.map(p => [p.id, p.numero]))
     const r = paradasDosProdutos(produtos.map(p => ({ id: p.id, numero: numeroDe.get(p.id) ?? 0, corredorNormalizado: p.corredor_normalizado })))
-    const fora = produtos.filter(p => r.foraDoMapa.some(f => f.id === p.id))
-    return { paradas: r.paradas, foraDoMapa: fora, trechos: montarRoteiro(r.paradas) }
+    return { todasAsParadas: r.paradas, foraDoMapa: produtos.filter(p => r.foraDoMapa.some(f => f.id === p.id)) }
   }, [produtos, pedidos])
+  const paradas = useMemo(() => todasAsParadas.filter(p => escolhidos.has(p.id)), [todasAsParadas, escolhidos])
+  const trechos = useMemo<Trecho[]>(() => montarRoteiro(paradas), [paradas])
 
   const produtoPorId = useMemo(() => new Map((produtos ?? []).map(p => [p.id, p])), [produtos])
   const trecho = trechos[trechoAtual]
@@ -122,12 +130,16 @@ export default function NavegacaoLoja() {
     setFaltaMetros(emMetros(totalDoTrecho - andadoRef.current))
   }, [trecho, totalDoTrecho])
 
-  // Trecho novo: câmera e textos no começo dele, já virada pro lado certo.
+  // Trecho novo — ou o mapa acabou de aparecer (saindo de "Monte sua rota") —: câmera e
+  // textos no começo dele, já virada pro lado certo. Sem o mapaNaTela, voltar da escolha sem
+  // mudar a rota deixava a planta fora do lugar (a câmera só era posta quando o trecho mudava,
+  // e na tela de escolha o mapa nem existe).
+  const mapaNaTela = estado !== 'carregando' && estado !== 'vazio' && estado !== 'escolhendo'
   useEffect(() => {
-    if (!trecho) return
+    if (!trecho || !mapaNaTela) return
     aplicarCamera(0)
     atualizarTextos()
-  }, [trecho, aplicarCamera, atualizarTextos])
+  }, [trecho, mapaNaTela, aplicarCamera, atualizarTextos])
 
   // A caminhada simulada.
   useEffect(() => {
@@ -174,6 +186,28 @@ export default function NavegacaoLoja() {
 
   if (estado === 'carregando') {
     return <div className="h-[100dvh] flex items-center justify-center bg-[#dfe6ee] text-gray-700">Montando a rota na loja...</div>
+  }
+
+  if (estado === 'escolhendo') {
+    return (
+      <MonteSuaRota
+        loja={loja}
+        produtos={(produtos ?? []).filter(p => !foraDoMapa.includes(p))}
+        foraDoMapa={foraDoMapa}
+        paradas={todasAsParadas}
+        escolhidos={escolhidos}
+        trechos={trechos}
+        onAlternar={id => setEscolhidos(prev => { const novo = new Set(prev); if (novo.has(id)) novo.delete(id); else novo.add(id); return novo })}
+        onTodos={todos => setEscolhidos(todos ? new Set(todasAsParadas.map(p => p.id)) : new Set())}
+        onConfirmar={() => {
+          andadoRef.current = 0
+          setColetados(new Set())
+          setNoCarrinho(new Set())
+          setTrechoAtual(0)
+          setEstado('pronto')
+        }}
+      />
+    )
   }
 
   if (estado === 'vazio' || !trecho) {
@@ -377,6 +411,16 @@ export default function NavegacaoLoja() {
                   >
                     {estado === 'andando' ? <><Pause size={18} /> Pausar</> : <><Play size={18} /> {estado === 'pronto' ? 'Iniciar navegação' : 'Continuar'}</>}
                   </button>
+                  {estado === 'pronto' && (
+                    <button
+                      type="button"
+                      onClick={() => setEstado('escolhendo')}
+                      aria-label="Editar os produtos da rota"
+                      className="h-12 w-12 rounded-xl border border-gray-200 text-gray-800 flex items-center justify-center"
+                    >
+                      <ListChecks size={20} />
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => setVelocidade(v => (v === 1 ? 2 : 1))}
@@ -395,6 +439,130 @@ export default function NavegacaoLoja() {
             )}
           </>
         )}
+      </div>
+    </div>
+  )
+}
+
+// ── Monte sua rota ──────────────────────────────────────────────────────────────
+// Antes da simulação: o cliente marca o que vai buscar. O mapinha mostra onde fica cada
+// produto (marcados coloridos, desmarcados em cinza) e a rota que vai ser feita; embaixo, a
+// distância e o tempo a pé estimados.
+function MonteSuaRota({ loja, produtos, foraDoMapa, paradas, escolhidos, trechos, onAlternar, onTodos, onConfirmar }: {
+  loja: string
+  produtos: ProdutoResolvido[]
+  foraDoMapa: ProdutoResolvido[]
+  paradas: Parada[]
+  escolhidos: Set<string>
+  trechos: Trecho[]
+  onAlternar: (id: string) => void
+  onTodos: (todos: boolean) => void
+  onConfirmar: () => void
+}) {
+  const numeroDe = new Map(paradas.map(p => [p.id, p.numero]))
+  const ordenados = [...produtos].sort((a, b) => (numeroDe.get(a.id) ?? 0) - (numeroDe.get(b.id) ?? 0))
+  const quantos = ordenados.filter(p => escolhidos.has(p.id)).length
+  const metros = emMetros(trechos.reduce((s, t) => s + comprimento(t.pontos), 0))
+  const minutos = Math.max(1, Math.round(metros / CAMINHADA_M_POR_S / 60))
+  const todosMarcados = quantos === ordenados.length
+
+  return (
+    <div className="h-[100dvh] flex flex-col bg-white">
+      <div className="bg-lm-green text-white px-4 pt-3 pb-4">
+        <div className="max-w-lg mx-auto">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold bg-white/15 rounded-full px-3 py-1">Simulação · {loja.split(' — ')[0]}</span>
+            <Link href="/buscar" aria-label="Sair" className="w-9 h-9 -mr-2 flex items-center justify-center rounded-full hover:bg-black/15">
+              <X size={20} />
+            </Link>
+          </div>
+          <h1 className="text-2xl font-black mt-2">Monte sua rota</h1>
+          <p className="text-sm text-white/85">Marque os produtos que você vai buscar na loja. A rota passa só por eles.</p>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-lg mx-auto px-4">
+          {/* Mapinha: onde fica cada produto e a rota com os marcados */}
+          <div className="mt-4 rounded-2xl overflow-hidden border border-gray-200 bg-[#ffffff]">
+            <svg viewBox={`0 0 ${VW} ${VH}`} className="w-full block">
+              <DesenhoPlantaLoja />
+              {trechos.map((t, i) => (
+                <polyline key={i} points={t.pontos.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#1d4ed8"
+                  strokeOpacity="0.55" strokeWidth="5" strokeDasharray="12 8" strokeLinecap="round" strokeLinejoin="round" />
+              ))}
+              <circle cx={ENTRADA.x} cy={ENTRADA.y - 4} r="11" fill="#2563eb" stroke="white" strokeWidth="4" />
+              {paradas.map(p => {
+                const marcado = escolhidos.has(p.id)
+                return (
+                  <g key={p.id} opacity={marcado ? 1 : 0.7}>
+                    <circle cx={p.ponto.x} cy={p.ponto.y} r={marcado ? 15 : 11} fill={marcado ? corDoNumero(p.numero) : '#cbd5e1'} stroke="white" strokeWidth="3" />
+                    <text x={p.ponto.x} y={p.ponto.y + (marcado ? 5 : 4)} textAnchor="middle" fontSize={marcado ? 14 : 11} fontWeight="800"
+                      fill={marcado ? 'white' : '#475569'} fontFamily="Inter,sans-serif">{p.numero}</text>
+                  </g>
+                )
+              })}
+            </svg>
+          </div>
+
+          <div className="flex items-center justify-between mt-4 mb-2">
+            <p className="text-sm font-bold text-gray-900">{quantos} de {ordenados.length} produtos marcados</p>
+            <button type="button" onClick={() => onTodos(!todosMarcados)} className="text-sm font-semibold text-lm-green hover:underline">
+              {todosMarcados ? 'Desmarcar todos' : 'Marcar todos'}
+            </button>
+          </div>
+
+          <ul className="space-y-2 pb-4">
+            {ordenados.map(p => {
+              const numero = numeroDe.get(p.id) ?? 0
+              const marcado = escolhidos.has(p.id)
+              return (
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    onClick={() => onAlternar(p.id)}
+                    aria-pressed={marcado}
+                    className={`w-full flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left transition-colors ${marcado ? 'border-lm-green bg-lm-green/5' : 'border-gray-200 bg-white'}`}
+                  >
+                    <span className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center flex-shrink-0 ${marcado ? 'bg-lm-green border-lm-green text-white' : 'border-gray-300 text-transparent'}`}>
+                      <Check size={16} strokeWidth={3} />
+                    </span>
+                    <span className="w-7 h-7 rounded-full text-xs font-black text-white flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: marcado ? corDoNumero(numero) : '#94a3b8' }}>{numero}</span>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={getImagemProduto(p)} alt="" className={`w-11 h-11 rounded-lg flex-shrink-0 ${ajusteFoto(p, 'p-0.5')}`} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-gray-900 line-clamp-2">{p.produto}</span>
+                      <span className="block text-xs text-gray-700"><span className="font-semibold text-lm-green">{p.corredor}</span> · {p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    </span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+          {foraDoMapa.length > 0 && (
+            <p className="text-xs text-gray-600 pb-4">
+              Sem corredor no mapa (não entram na rota): {foraDoMapa.map(p => p.produto).join(', ')}.
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="border-t border-gray-200 bg-white px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="max-w-lg mx-auto">
+          <p className="text-xs text-gray-600 flex items-center gap-1.5 mb-2">
+            <Footprints size={14} />
+            {quantos === 0 ? 'Marque pelo menos um produto.' : `Rota da entrada até os caixas: ~${metros} m · ~${minutos} min a pé`}
+          </p>
+          <button
+            type="button"
+            onClick={onConfirmar}
+            disabled={quantos === 0}
+            className="w-full h-12 rounded-xl bg-lm-green text-white font-bold flex items-center justify-center gap-2 hover:bg-lm-green-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <Route size={18} /> Traçar rota{quantos > 0 ? ` com ${quantos} ${quantos === 1 ? 'produto' : 'produtos'}` : ''}
+          </button>
+        </div>
       </div>
     </div>
   )

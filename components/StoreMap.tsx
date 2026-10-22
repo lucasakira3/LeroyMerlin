@@ -51,7 +51,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
   // (busca nova, filtro, item marcado ou trocado no Projeto Guiado).
   const [pagina, setPagina] = useState(1)
   const raiz = useRef<HTMLDivElement>(null)
-  const [qr, setQr] = useState<{ imagem: string; endereco: string } | null>(null)
+  const [qr, setQr] = useState<{ imagem: string; endereco: string; quantidade: number } | null>(null)
   const chaveDosResultados = resultados.map(r => r.produto.id).join('|')
   useEffect(() => { setPagina(1) }, [chaveDosResultados])
 
@@ -142,15 +142,17 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
     setTimeout(() => setAdicionadoId(prev => prev === produtoId ? null : prev), 1500)
   }
 
-  // QR code da navegação guiada: leva a loja e os produtos da página que está na tela, cada um
-  // com o número do pin, pra a tela do celular (components/NavegacaoLoja.tsx) mostrar os mesmos.
+  // QR code da navegação guiada: leva a loja e os produtos da busca (até 20, de todas as
+  // páginas), cada um com o número do pin, pra a tela do celular (components/NavegacaoLoja.tsx)
+  // mostrar os mesmos. Lá o cliente escolhe quais vai buscar antes de começar.
   async function abrirQrDaNavegacao() {
-    const produtos = pinsDaPagina.map(p => `${p.produto.id}:${p.idx}`).join(',')
+    const paraONavegador = pins.slice(0, 20)
+    const produtos = paraONavegador.map(p => `${p.produto.id}:${p.idx}`).join(',')
     const caminho = `/navegar?loja=${encodeURIComponent(loja)}&p=${encodeURIComponent(produtos)}`
     const endereco = enderecoDoSite() + caminho
     const QRCode = (await import('qrcode')).default
     const imagem = await QRCode.toDataURL(endereco, { margin: 1, width: 280, color: { dark: '#111827', light: '#ffffff' } })
-    setQr({ imagem, endereco: caminho })
+    setQr({ imagem, endereco: caminho, quantidade: paraONavegador.length })
   }
 
   function mudarPagina(nova: number) {
@@ -243,15 +245,6 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
           <span className="hidden sm:inline ml-2 text-xs text-gray-600">Planta da loja · 50 corredores</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {navegacaoNoCelular && pinsDaPagina.length > 0 && (
-            <button
-              type="button"
-              onClick={abrirQrDaNavegacao}
-              className="text-xs font-semibold flex items-center gap-1.5 px-3 h-8 rounded-full bg-gray-900 text-white hover:bg-lm-green transition-colors"
-            >
-              <QrCode size={14} /> Navegar no celular
-            </button>
-          )}
           {pins.length > 0 && (
             <span className="text-xs bg-lm-green/10 text-lm-green border border-lm-green/20 px-2 py-0.5 rounded-full font-semibold">
               {pins.length} produto{pins.length > 1 ? 's' : ''} localizado{pins.length > 1 ? 's' : ''}
@@ -264,6 +257,27 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
           )}
         </div>
       </div>
+
+      {navegacaoNoCelular && pins.length > 0 && (
+        // Chamada da navegação guiada no celular: grande de propósito — é o que leva a busca até
+        // a prateleira (o "último metro" do desafio).
+        <button
+          type="button"
+          onClick={abrirQrDaNavegacao}
+          className="w-full mb-3 flex items-center gap-3 sm:gap-4 rounded-card bg-lm-green text-white px-4 py-3 sm:px-5 sm:py-4 text-left shadow-soft hover:bg-lm-green-dark transition-colors"
+        >
+          <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
+            <QrCode size={26} />
+          </span>
+          <span className="flex-1 min-w-0">
+            <span className="block text-base sm:text-lg font-black leading-tight">Navegar na loja pelo celular</span>
+            <span className="block text-sm text-white/85 mt-0.5">Pelo QR code: escolha os produtos e siga a rota até a prateleira</span>
+          </span>
+          <span className="hidden sm:flex items-center gap-1.5 bg-white text-lm-green font-bold text-sm rounded-xl px-4 h-10 flex-shrink-0">
+            <Navigation size={16} /> Gerar QR code
+          </span>
+        </button>
+      )}
 
       <div className="border border-gray-200 dark:border-gray-500 rounded-card overflow-hidden shadow-soft bg-white relative select-none">
         {estreito && (
@@ -451,8 +465,9 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={qr.imagem} alt="QR code da navegação na loja" className="w-60 h-60 rounded-xl border border-gray-200 bg-[#ffffff] p-2" />
             <p className="text-base text-gray-800 mt-4">
-              Aponte a câmera do celular para o QR code. Abre o mapa da loja <strong>{loja}</strong> com a rota até
-              {pinsDaPagina.length === 1 ? ' o produto' : ` os ${pinsDaPagina.length} produtos`} desta página, como num aplicativo de trânsito.
+              Aponte a câmera do celular para o QR code. Abre o mapa da loja <strong>{loja}</strong> com
+              {qr.quantidade === 1 ? ' o produto' : ` os ${qr.quantidade} produtos`} desta busca: o cliente escolhe quais vai
+              buscar e segue a rota, como num aplicativo de trânsito.
             </p>
             <p className="text-sm text-gray-600 mt-2">Simulação: o ponto azul anda sozinho pelos corredores, sem GPS.</p>
             <Link
