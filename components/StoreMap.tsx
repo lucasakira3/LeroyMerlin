@@ -32,6 +32,8 @@ interface Props {
   semCarrinho?: boolean
   /** Mostra o botão "Navegar no celular" (QR code que abre /navegar com os produtos da página). */
   navegacaoNoCelular?: boolean
+  /** De onde vêm os produtos, pro texto da janela do QR: "desta busca", "deste projeto". */
+  origemDaLista?: string
 }
 
 // Endereço que o QR code abre. Rodando no computador de quem desenvolve (localhost), o celular
@@ -42,7 +44,7 @@ function enderecoDoSite(): string {
   return local ? 'https://leroy-merlin.vercel.app' : window.location.origin
 }
 
-export default function StoreMap({ resultados, loja, totalEstimado, onSelect, rota, semCarrinho, navegacaoNoCelular }: Props) {
+export default function StoreMap({ resultados, loja, totalEstimado, onSelect, rota, semCarrinho, navegacaoNoCelular, origemDaLista = 'desta busca' }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [adicionadoId, setAdicionadoId] = useState<string | null>(null)
 
@@ -466,7 +468,7 @@ export default function StoreMap({ resultados, loja, totalEstimado, onSelect, ro
             <img src={qr.imagem} alt="QR code da navegação na loja" className="w-60 h-60 rounded-xl border border-gray-200 bg-[#ffffff] p-2" />
             <p className="text-base text-gray-800 mt-4">
               Aponte a câmera do celular para o QR code. Abre o mapa da loja <strong>{loja}</strong> com
-              {qr.quantidade === 1 ? ' o produto' : ` os ${qr.quantidade} produtos`} desta busca: o cliente escolhe quais vai
+              {qr.quantidade === 1 ? ' o produto' : ` os ${qr.quantidade} produtos`} {origemDaLista}: o cliente escolhe quais vai
               buscar e segue a rota, como num aplicativo de trânsito.
             </p>
             <p className="text-sm text-gray-600 mt-2">Simulação: o ponto azul anda sozinho pelos corredores, sem GPS.</p>

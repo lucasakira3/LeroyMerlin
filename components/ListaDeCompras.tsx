@@ -497,6 +497,8 @@ const ListaDeCompras = forwardRef<ListaDeComprasHandle, ListaDeComprasProps>(fun
             loja={loja}
             totalEstimado={totalEstimado}
             onSelect={setProdutoDrawer}
+            navegacaoNoCelular
+            origemDaLista="deste projeto"
           />
         ) : (
           <Card className="text-center py-10">
