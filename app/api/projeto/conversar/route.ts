@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { carregarProdutos } from "@/lib/produtos";
+import { casarMateriaisComCatalogo } from "@/lib/rag";
 import {
   conversarProjetoIA,
-  buscaTextoSimples,
   type MensagemConversaProjeto,
   type ProjetoIA,
 } from "@/lib/projetoGuiado";
@@ -29,10 +28,12 @@ export async function POST(req: NextRequest) {
     // Só "resultado" e "atualizacao" trazem itens de material — precisam ser cruzados com o
     // catálogo real pra virar produtos buscáveis (mesmo passo que /api/projeto já fazia).
     if (resposta.tipo === "resultado" || resposta.tipo === "atualizacao") {
-      const produtos = await carregarProdutos();
-      const itensComProduto = resposta.itens.map((item) => ({
+      // Casamento por significado + palavras + categoria (lib/rag.ts), uma chamada de vetores
+      // pra lista toda; materiais já vistos saem do cache e não gastam cota de novo.
+      const resultados = await casarMateriaisComCatalogo(resposta.itens, 3);
+      const itensComProduto = resposta.itens.map((item, i) => ({
         ...item,
-        resultados: buscaTextoSimples(produtos, item.material, 3),
+        resultados: resultados[i],
       }));
       return NextResponse.json({ ...resposta, itens: itensComProduto });
     }
