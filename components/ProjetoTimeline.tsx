@@ -67,6 +67,19 @@ function quantidadeDoItem(quantidade: string | undefined): number {
   return Number.isFinite(n) && n > 0 ? n : 1
 }
 
+const semAcento = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+// O título do passo é o material como a IA escreveu; embaixo vem o produto da loja. Quando o
+// nome da loja só repete o título (todas as palavras do material estão nele — "Óculos de
+// Proteção Incolor" x "Óculos de Proteção Incolor Vonder"), ele some e ficam só preço e
+// corredor. Quando diz algo diferente, continua: "Talhadeira e Marreta" x "Talhadeira
+// Sextavada Tramontina" avisa que a loja tem só a talhadeira.
+function nomeDaLojaRepeteOTitulo(material: string, nomeNaLoja: string): boolean {
+  const loja = semAcento(nomeNaLoja)
+  const palavras = semAcento(material).split(/[^a-z0-9]+/).filter(p => p.length > 2 || /\d/.test(p))
+  return palavras.length > 0 && palavras.every(p => loja.includes(p))
+}
+
 // Road map do projeto: uma trilha de cartões (um por etapa, em ordem). Clicar num cartão
 // abre embaixo o passo a passo daquela etapa — cada material vira um passo numerado, com a
 // quantidade e a observação que a IA deu, mais o produto escolhido (foto, preço, corredor),
@@ -289,7 +302,9 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                         onClick={() => onSelecionarProduto(produto)}
                         className="flex items-center gap-x-2 gap-y-0.5 flex-wrap text-left text-sm text-gray-700 hover:text-lm-green transition-colors max-w-full"
                       >
-                        <span className="font-semibold text-gray-700 truncate max-w-full">{produto.produto}</span>
+                        {!nomeDaLojaRepeteOTitulo(item.material, produto.produto) && (
+                          <span className="font-semibold text-gray-700 truncate max-w-full">{produto.produto}</span>
+                        )}
                         {preco != null && <span className="font-bold text-lm-green">{moeda(Number(preco))}</span>}
                         <span className="flex items-center gap-0.5"><MapPin size={10} /> {produto.corredor}</span>
                       </button>
