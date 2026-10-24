@@ -67,19 +67,6 @@ function quantidadeDoItem(quantidade: string | undefined): number {
   return Number.isFinite(n) && n > 0 ? n : 1
 }
 
-const semAcento = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
-
-// O título do passo é o material como a IA escreveu; embaixo vem o produto da loja. Quando o
-// nome da loja só repete o título (todas as palavras do material estão nele — "Óculos de
-// Proteção Incolor" x "Óculos de Proteção Incolor Vonder"), ele some e ficam só preço e
-// corredor. Quando diz algo diferente, continua: "Talhadeira e Marreta" x "Talhadeira
-// Sextavada Tramontina" avisa que a loja tem só a talhadeira.
-function nomeDaLojaRepeteOTitulo(material: string, nomeNaLoja: string): boolean {
-  const loja = semAcento(nomeNaLoja)
-  const palavras = semAcento(material).split(/[^a-z0-9]+/).filter(p => p.length > 2 || /\d/.test(p))
-  return palavras.length > 0 && palavras.every(p => loja.includes(p))
-}
-
 // Road map do projeto: uma trilha de cartões (um por etapa, em ordem). Clicar num cartão
 // abre embaixo o passo a passo daquela etapa — cada material vira um passo numerado, com a
 // quantidade e a observação que a IA deu, mais o produto escolhido (foto, preço, corredor),
@@ -294,17 +281,27 @@ export default function ProjetoTimeline({ itens, selecionados, itensConcluidos, 
                     </div>
                   </div>
 
+                  {/* Material sem produto na loja (lib/rag.ts não achou nada parecido o bastante,
+                      ou só achou com medida elétrica diferente) — melhor avisar do que sugerir errado */}
+                  {!produto && (
+                    <p className="mt-2 sm:mt-1 text-sm text-gray-600">
+                      Não temos este item no catálogo da loja. Peça ajuda a um vendedor.
+                    </p>
+                  )}
+
                   {/* Em tela larga, alinhado com o texto de cima (foto de 56px + espaço de 12px) */}
                   {produto && (
                     <div className="mt-2 sm:mt-1 sm:pl-[68px]">
+                      {/* Só preço e corredor: o título do passo já diz o que é (pedido do usuário
+                          em 24/10/2026 — o nome da loja repetia o título). O nome completo fica no
+                          passar do mouse e na ficha que abre no clique. */}
                       <button
                         type="button"
                         onClick={() => onSelecionarProduto(produto)}
+                        title={produto.produto}
+                        aria-label={`Ver ${produto.produto}`}
                         className="flex items-center gap-x-2 gap-y-0.5 flex-wrap text-left text-sm text-gray-700 hover:text-lm-green transition-colors max-w-full"
                       >
-                        {!nomeDaLojaRepeteOTitulo(item.material, produto.produto) && (
-                          <span className="font-semibold text-gray-700 truncate max-w-full">{produto.produto}</span>
-                        )}
                         {preco != null && <span className="font-bold text-lm-green">{moeda(Number(preco))}</span>}
                         <span className="flex items-center gap-0.5"><MapPin size={10} /> {produto.corredor}</span>
                       </button>

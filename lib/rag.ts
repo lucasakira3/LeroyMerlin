@@ -125,6 +125,47 @@ export function notaDoCandidato(
   return semelhanca + PESO_PALAVRAS * palavras + pesoDaCategoria(produto.categoria, categoria)
 }
 
+// Medidas elétricas que não podem ser trocadas por outra: bitola do fio (mm²), corrente (A),
+// tensão (V) e potência (W). Se o material pede uma, o nome do produto precisa ter a MESMA —
+// "Fio Flexível 6,0mm²" (chuveiro) caía no cabo de 1,5mm², que esquenta; a loja não tem
+// 6mm², então o certo é não sugerir nada. Produto sem a medida no nome também não serve:
+// "Disjuntor Bipolar 40A" caía no disjuntor DR (30mA, proteção contra choque) e no quadro
+// de distribuição, que não substituem um disjuntor de 40A. Outras medidas
+// (L, kg, cm, mm de comprimento) ficam de fora de propósito: tinta de 3,6L pela lata de 18L
+// ou fita crepe de 48mm pela de 18mm são trocas aceitáveis.
+const MEDIDA_ELETRICA = /(\d+(?:[.,]\d+)?)(?:\s*(mm²|mm2)|(a|v|w))(?![a-z0-9])/g
+// Em fio/cabo, "2,5mm" quer dizer bitola (a IA às vezes esquece o ²)
+const BITOLA_SEM_QUADRADO = /(\d+(?:[.,]\d+)?)\s*mm(?![²2a-z0-9])/g
+
+function medidasEletricas(texto: string): Map<string, Set<number>> {
+  const t = normalizar(texto)
+  const porUnidade = new Map<string, Set<number>>()
+  const anotar = (unidade: string, numero: string) => {
+    if (!porUnidade.has(unidade)) porUnidade.set(unidade, new Set())
+    porUnidade.get(unidade)!.add(Number(numero.replace(',', '.')))
+  }
+  for (const [, numero, bitola, outra] of t.matchAll(MEDIDA_ELETRICA)) anotar(bitola ? 'mm²' : outra, numero)
+  if (/\b(fio|cabo)\b/.test(t)) for (const [, numero] of t.matchAll(BITOLA_SEM_QUADRADO)) anotar('mm²', numero)
+  return porUnidade
+}
+
+export function medidasConflitam(material: string, nomeDoProduto: string): boolean {
+  const doProduto = medidasEletricas(nomeDoProduto)
+  for (const [unidade, pedidas] of medidasEletricas(material)) {
+    const tem = doProduto.get(unidade)
+    if (!tem || ![...pedidas].some(v => tem.has(v))) return true
+  }
+  return false
+}
+
+// Em ferramentas e jardim a potência/tensão é preferência, não segurança ("Furadeira 650W"
+// pode levar a de 550W ou a de 700W) — lá a regra das medidas não vale.
+const CATEGORIAS_SEM_REGRA_DE_MEDIDA = new Set(['ferramentas', 'jardim'])
+
+function produtoServe(item: MaterialParaCasar, nomeDoProduto: string): boolean {
+  return CATEGORIAS_SEM_REGRA_DE_MEDIDA.has(normalizar(item.categoria)) || !medidasConflitam(item.material, nomeDoProduto)
+}
+
 export interface MaterialParaCasar { material: string; categoria: string }
 
 // Vetores de materiais já vistos, enquanto o servidor está de pé. Na conversa de edição do
@@ -155,7 +196,7 @@ export async function casarMateriaisComCatalogo(itens: MaterialParaCasar[], quan
     return itens.map((item, i) => {
       const candidatos = comVetor
         .map(p => ({ p, semelhanca: cosineSimilarity(vetores[i], p.embedding) }))
-        .filter(c => c.semelhanca >= SEMELHANCA_MINIMA)
+        .filter(c => c.semelhanca >= SEMELHANCA_MINIMA && produtoServe(item, c.p.produto))
         .map(c => ({ ...c, nota: notaDoCandidato(item.material, item.categoria, c.p, c.semelhanca) }))
         .filter(c => c.nota >= NOTA_MINIMA)
         .sort((a, b) => b.nota - a.nota || (b.p.estoque > 0 ? 1 : 0) - (a.p.estoque > 0 ? 1 : 0))
@@ -166,6 +207,8 @@ export async function casarMateriaisComCatalogo(itens: MaterialParaCasar[], quan
   } catch (erro) {
     console.error('[rag] casamento por significado indisponível, usando palavras:', erro instanceof Error ? erro.message : erro)
     const produtos = await carregarProdutos()
-    return itens.map(item => buscaTextoSimples(produtos, item.material, quantos))
+    return itens.map(item =>
+      buscaTextoSimples(produtos, item.material, quantos).filter(r => produtoServe(item, r.produto.produto))
+    )
   }
 }
