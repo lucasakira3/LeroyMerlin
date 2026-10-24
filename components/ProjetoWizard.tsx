@@ -322,9 +322,16 @@ export default function ProjetoWizard({ onTotalChange }: { onTotalChange?: (tota
       <div className={`flex-1 flex flex-col min-h-0 ${resultado && viewMode !== 'chat' ? 'hidden' : ''}`}>
         <div className="flex-1 p-4 space-y-4 overflow-y-auto">
           <BolhaBot>
-            <p>Oi! Vou te ajudar a montar a lista de materiais do seu projeto.</p>
-            <p className="mt-1.5 font-semibold">Quais cômodos você vai reformar?</p>
-          </BolhaBot>
+          <p>Oi! Eu transformo a sua ideia de reforma em um plano de obra: materiais e ferramentas
+    em etapas, com preço e corredor de cada item.</p>
+          <ul className="mt-1.5 space-y-0.5 list-disc pl-4">
+            <li>Materiais e ferramentas, até o que costuma ser esquecido</li>
+            <li>Etapas na ordem certa</li>
+            <li>Quantidade, preço e corredor de cada item</li>
+            <li>Total somado no seu orçamento</li>
+          </ul>
+          <p className="mt-1.5 font-semibold">Quais cômodos você vai reformar?</p>
+        </BolhaBot>
 
           {!comodosConfirmados && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
