@@ -73,11 +73,12 @@ export default function CalculadoraMateriais() {
       if (cancelado) return
       // Catálogo nem sempre tem o material exato (ex.: não existe "papel de parede" nos
       // dados) — a busca semântica então devolve o mais parecido que encontrar, mesmo que
-      // seja um score baixo (~0.6) claramente não relacionado (ex.: quadro decorativo pra
-      // "papel de parede"). Corta abaixo de 0.68 — calibrado comparando um match bom real
-      // (tinta → tinta, ~0.73-0.76) com esse caso de fallback ruim (~0.60-0.61) — pra não
+      // seja um score baixo claramente não relacionado (ex.: porta-toalha de papel pra
+      // "papel de parede"). Corta abaixo de 0.75 — calibrado em 24/10/2026, com os vetores no
+      // formato de busca do Google (lib/embeddings.ts), comparando os matches bons reais
+      // (tinta, porcelanato, cimento: 0.79-0.81) com esse caso ruim (0.69-0.70) — pra não
       // sugerir produto errado só porque não achou nada melhor.
-      setProdutos(resultados.filter(r => r.score >= 0.68).map(r => r.produto))
+      setProdutos(resultados.filter(r => r.score >= 0.75).map(r => r.produto))
       setBuscandoProdutos(false)
     })
     return () => { cancelado = true }

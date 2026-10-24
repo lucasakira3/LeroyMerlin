@@ -9,9 +9,13 @@ const ID_REGEX = /^LM-\d{4}$/;
 // Abaixo desse limiar de similaridade semântica, dois produtos da mesma `categoria`
 // (campo largo demais — ex.: "Ferramentas" mistura parafusadeira com máscara PFF2) não são
 // genuinamente comparáveis. Calibrado testando o caso real que motivou essa mudança:
-// Parafusadeira a Bateria 20V Makita x outra parafusadeira/furadeira fica em ~0.75-0.84;
-// x Máscara Respiratória PFF2 (mesma categoria, produto totalmente diferente) fica bem abaixo.
-const LIMIAR_SIMILARIDADE = 0.78;
+// Parafusadeira a Bateria 20V Makita x Parafusadeira 12V Bosch fica em 0.835; x furadeiras
+// 0.76-0.77; x Máscara Respiratória PFF2 (mesma categoria, produto totalmente diferente) 0.69.
+// Era 0.78 até 24/10/2026; subiu junto com as notas quando os vetores passaram pro formato
+// de busca do Google (lib/embeddings.ts). Com 0.83, comparando os 8108 pares do mesmo tipo,
+// deixam de passar trocas que não são a mesma coisa (tinta látex x esmalte sintético, tubo
+// PPR x PVC, telha shingle x policarbonato) e passam lâmpadas LED de potências diferentes.
+const LIMIAR_SIMILARIDADE = 0.83;
 
 // Similaridade sozinha não basta: Tinta Látex Acrílica Fosca 18L Coral x Massa Corrida
 // PVA 18L Coral fica em ~0.81 (acima do limiar) por serem ambos "produtos de pintura pra

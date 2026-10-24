@@ -12,7 +12,7 @@
 //
 // Cota: cada texto transformado em vetor conta 1 na cota diária do Gemini (separada da cota
 // de geração de texto). O Projeto Guiado manda todos os materiais numa chamada só.
-import { cosineSimilarity } from './embeddings'
+import { cosineSimilarity, comoBusca } from './embeddings'
 import { carregarProdutos, carregarProdutosComEmbeddings } from './produtos'
 import { buscarProdutos } from './search'
 import { buscaTextoSimples } from './projetoGuiado'
@@ -79,13 +79,18 @@ export async function gerarEmbeddingsEmLote(textos: string[]): Promise<number[][
 
 const normalizar = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
-// Notas de corte (calibradas com 22 materiais reais do Projeto Guiado em 24/10/2026):
+// Notas de corte (calibradas com 22 materiais reais do Projeto Guiado em 24/10/2026, já com
+// os vetores no formato de busca do Google — ver comoBusca em lib/embeddings.ts):
 //   - semelhança mínima de significado pra ser candidato;
 //   - nota final mínima (significado + palavras + categoria) pra ser sugerido. Abaixo dela o
 //     "mais parecido" é só o menos pior — melhor não sugerir nada do que algo sem relação
-//     (ex.: "Balde Plástico 12L", que a loja não tem, chegava num regador).
-export const SEMELHANCA_MINIMA = 0.6
-export const NOTA_MINIMA = 0.68
+//     (ex.: "Balde Plástico 12L", que a loja não tem, chegava na bandeja de pintura, 0.70);
+//   - distância máxima do melhor: as outras opções (as do "Trocar produto") só entram se
+//     estiverem perto do primeiro. Sem isso "Fita Crepe" oferecia fita isolante (0.86 x 0.70)
+//     e "Desempenadeira Dentada" oferecia lixadeira (0.92 x 0.70).
+export const SEMELHANCA_MINIMA = 0.66
+export const NOTA_MINIMA = 0.74
+const DISTANCIA_MAXIMA_DO_MELHOR = 0.1
 const PESO_PALAVRAS = 0.08
 // Categoria: soma se bate, não conta se é vizinha, desconta se é distante. É o que tira
 // "Extensão para Cabo de Rolo" (Pintura) do cabo elétrico. Vizinhas não descontam porque a
@@ -131,7 +136,7 @@ async function vetoresPara(materiais: string[]): Promise<number[][]> {
   const faltando = [...new Set(materiais.filter(m => !vetoresDosMateriais.has(m)))]
   if (faltando.length > 0) {
     if (vetoresDosMateriais.size > 2000) vetoresDosMateriais.clear() // não crescer sem limite
-    const novos = await gerarEmbeddingsEmLote(faltando)
+    const novos = await gerarEmbeddingsEmLote(faltando.map(comoBusca))
     faltando.forEach((m, i) => vetoresDosMateriais.set(m, novos[i]))
   }
   return materiais.map(m => vetoresDosMateriais.get(m)!)
@@ -154,6 +159,7 @@ export async function casarMateriaisComCatalogo(itens: MaterialParaCasar[], quan
         .map(c => ({ ...c, nota: notaDoCandidato(item.material, item.categoria, c.p, c.semelhanca) }))
         .filter(c => c.nota >= NOTA_MINIMA)
         .sort((a, b) => b.nota - a.nota || (b.p.estoque > 0 ? 1 : 0) - (a.p.estoque > 0 ? 1 : 0))
+        .filter((c, _, ordenados) => c.nota >= ordenados[0].nota - DISTANCIA_MAXIMA_DO_MELHOR)
         .slice(0, quantos)
       return candidatos.map(({ p: { embedding: _e, embedding_text: _et, ...publico }, nota }) => ({ produto: publico, score: nota }))
     })

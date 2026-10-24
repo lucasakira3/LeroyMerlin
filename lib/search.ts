@@ -1,4 +1,4 @@
-import { gerarEmbedding, cosineSimilarity } from "./embeddings";
+import { gerarEmbedding, cosineSimilarity, comoBusca } from "./embeddings";
 import { carregarProdutosComEmbeddings } from "./produtos";
 import type { Produto, SearchResult } from "@/types/produto";
 
@@ -48,7 +48,7 @@ export async function buscarProdutos(
   // Tenta busca semântica; se a API falhar, usa busca por texto
   if (produtosComEmbedding.length > 0) {
     try {
-      const queryEmbedding = await gerarEmbedding(query);
+      const queryEmbedding = await gerarEmbedding(comoBusca(query));
       const resultados: SearchResult[] = produtosComEmbedding.map((produto) => {
         const score = cosineSimilarity(queryEmbedding, produto.embedding);
         const { embedding: _e, embedding_text: _et, ...produtoPublico } = produto;

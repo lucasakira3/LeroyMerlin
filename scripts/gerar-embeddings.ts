@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
 import { config } from "dotenv";
+import { textoDoProdutoParaVetor } from "../lib/embeddings";
 
 config({ path: path.join(process.cwd(), ".env.local") });
 
@@ -13,9 +14,10 @@ const CASAS_DECIMAIS = 6;  // mesma precisão usada na migração que separou em
 interface ProdutoLean {
   id: string;
   produto: string;
+  categoria: string;
   pergunta: string;
   resposta_ia: string;
-  embedding_text: string;
+  tags: string[];
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -84,7 +86,8 @@ async function main(): Promise<void> {
     process.stdout.write(`[${num}/${total}] ${p.id}... `);
 
     try {
-      const texto = p.embedding_text || `${p.produto} — ${p.pergunta} ${p.resposta_ia}`;
+      // Mesmo formato que a busca espera do lado do produto (ver comoBusca em lib/embeddings.ts).
+      const texto = textoDoProdutoParaVetor(p);
       embeddings[p.id] = arredondar(await gerarEmbedding(apiKey, texto));
       processados++;
       process.stdout.write("✓\n");
